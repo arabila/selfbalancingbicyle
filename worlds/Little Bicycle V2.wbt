@@ -79,8 +79,7 @@ Robot {
             }
           ]
         }
-        physics Physics {
-        }
+        physics NULL
       }
     }
     DEF crank HingeJoint {
@@ -133,8 +132,7 @@ Robot {
                   }
                 ]
               }
-              physics Physics {
-              }
+              physics NULL
             }
           }
           DEF pedal HingeJoint {
@@ -166,8 +164,7 @@ Robot {
                   }
                 ]
               }
-              physics Physics {
-              }
+              physics NULL
             }
           }
         ]
@@ -196,8 +193,7 @@ Robot {
             }
           ]
         }
-        physics Physics {
-        }
+        physics NULL
       }
     }
     DEF Handlebars_and_Fork HingeJoint {
@@ -252,8 +248,7 @@ Robot {
                   }
                 ]
               }
-              physics Physics {
-              }
+              physics NULL
             }
           }
         ]
@@ -411,8 +406,7 @@ Robot {
             }
           ]
         }
-        physics Physics {
-        }
+        physics NULL
       }
     }
     Camera {
@@ -589,8 +583,7 @@ Robot {
       }
     ]
   }
-  physics Physics {
-  }
+  physics NULL
   controller "little_bicycle_P_V2"
   supervisor TRUE
 }
