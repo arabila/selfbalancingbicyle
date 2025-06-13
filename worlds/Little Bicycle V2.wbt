@@ -79,7 +79,11 @@ Robot {
             }
           ]
         }
-        physics NULL
+        physics Physics {
+          mass 0.5
+          coulombFriction 0.8
+          rollingFriction 0.01
+        }
       }
     }
     DEF crank HingeJoint {
@@ -132,7 +136,11 @@ Robot {
                   }
                 ]
               }
-              physics NULL
+              physics Physics {
+                mass 0.2
+                coulombFriction 0.8
+                rollingFriction 0.01
+              }
             }
           }
           DEF pedal HingeJoint {
@@ -164,7 +172,11 @@ Robot {
                   }
                 ]
               }
-              physics NULL
+                physics Physics {
+                  mass 0.2
+                  coulombFriction 0.8
+                  rollingFriction 0.01
+                }
             }
           }
         ]
@@ -193,7 +205,11 @@ Robot {
             }
           ]
         }
-        physics NULL
+          physics Physics {
+            mass 0.3
+            coulombFriction 0.8
+            rollingFriction 0.01
+          }
       }
     }
     DEF Handlebars_and_Fork HingeJoint {
@@ -248,7 +264,11 @@ Robot {
                   }
                 ]
               }
-              physics NULL
+                physics Physics {
+                  mass 0.5
+                  coulombFriction 0.8
+                  rollingFriction 0.01
+                }
             }
           }
         ]
@@ -406,7 +426,11 @@ Robot {
             }
           ]
         }
-        physics NULL
+          physics Physics {
+            mass 2.0
+            coulombFriction 0.8
+            rollingFriction 0.01
+          }
       }
     }
     Camera {
@@ -583,7 +607,12 @@ Robot {
       }
     ]
   }
-  physics NULL
+  physics Physics {
+    mass 15.0
+    coulombFriction 0.9
+    rollingFriction 0.02
+    damping 0.05
+  }
   controller "little_bicycle_P_V2"
   supervisor TRUE
 }

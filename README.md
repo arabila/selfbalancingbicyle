@@ -12,6 +12,20 @@ Dieses Repository enthält eine Webots-Simulation eines selbstbalancierenden Fah
 - **handlebars motor**: Rotationsmotor für die Lenkung des Vorderrads.
 - **Display**: Eingebauter Display-Device zur Darstellung von Hilfslinien und Status.
 
+## Physikalische Einflüsse
+Um ein realistischeres Fahrverhalten zu erzielen, sind in der World-Datei nun
+Reibungs- und Dämpfungsparameter definiert. Die wichtigen Objekte besitzen einen
+`Physics`-Knoten mit folgenden beispielhaften Werten:
+
+- `mass`: Masse des jeweiligen Bauteils (z.B. 0.5 kg für die Räder).
+- `coulombFriction`: Reibungskoeffizient zwischen Reifen und Untergrund.
+- `rollingFriction`: Widerstand, der das Ausrollen verlangsamt.
+- `damping`: Globale Dämpfung des Fahrrads (nur im Hauptrahmen).
+
+Diese Parameter wirken sowohl auf das Fahrrad selbst als auch auf dessen
+Interaktion mit dem Untergrund und sorgen dafür, dass Beschleunigung und
+Abbremsen physikalisch nachvollziehbarer ablaufen.
+
 ## Regelung
 Das Fahrzeug wird über einen PID-Regler stabilisiert. Die Kamera liefert eine Querabweichung `P`, daraus werden die Größen `I` und `D` gebildet. Der resultierende Korrekturwert (`PID`) beeinflusst sowohl den Lenkwinkel als auch die Geschwindigkeit.
 
