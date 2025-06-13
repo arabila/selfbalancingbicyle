@@ -6,6 +6,13 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 
 WorldInfo {
   basicTimeStep 16
+  gravity -9.81
+}
+ContactProperties {
+  material1 "rubber"
+  material2 "asphalt"
+  coulombFriction 0.9
+  bounce 0
 }
 Viewpoint {
   orientation 0.43591338593605095 0.43591338593605233 -0.7873747772970213 1.807602482235174
@@ -17,6 +24,7 @@ TexturedBackground {
 TexturedBackgroundLight {
 }
 RectangleArena {
+  contactMaterial "asphalt"
   floorSize 10 10
   floorTileSize 10 10
   floorAppearance PBRAppearance {
@@ -54,9 +62,10 @@ Robot {
           multiplier 2
         }
       ]
-      endPoint Solid {
-        translation 0 0.083 0
-        rotation 1 0 0 0
+    endPoint Solid {
+      translation 0 0.083 0
+      rotation 1 0 0 0
+      contactMaterial "rubber"
         children [
           DEF wheel Transform {
             scale 0.001 0.001 0.001
@@ -69,18 +78,20 @@ Robot {
             ]
           }
         ]
-        boundingObject Transform {
-          rotation 0 1 0 1.5708
-          children [
-            Cylinder {
-              height 0.015
-              radius 0.055
-              subdivision 72
-            }
-          ]
-        }
-        physics NULL
+      boundingObject Transform {
+        rotation 0 1 0 1.5708
+        children [
+          Cylinder {
+            height 0.015
+            radius 0.055
+            subdivision 72
+          }
+        ]
       }
+      physics Physics {
+        mass 2
+      }
+    }
     }
     DEF crank HingeJoint {
       jointParameters HingeJointParameters {
@@ -223,9 +234,10 @@ Robot {
             jointParameters HingeJointParameters {
               anchor 0 -0.037 -0.102
             }
-            endPoint Solid {
-              translation 0 -0.037 -0.102
-              rotation 1 0 0 0
+              endPoint Solid {
+                translation 0 -0.037 -0.102
+                rotation 1 0 0 0
+                contactMaterial "rubber"
               children [
                 DEF wheel Transform {
                   scale 0.001 0.001 0.001
@@ -248,8 +260,10 @@ Robot {
                   }
                 ]
               }
-              physics NULL
-            }
+                physics Physics {
+                  mass 2
+                }
+              }
           }
         ]
         name "solid(1)"
@@ -583,7 +597,9 @@ Robot {
       }
     ]
   }
-  physics NULL
+  physics Physics {
+    mass 15
+  }
   controller "little_bicycle_P_V2"
   supervisor TRUE
 }
