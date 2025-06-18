@@ -1,0 +1,12 @@
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/edit_cache.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/reset_autobike.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/md49_polling_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/autobike.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/rebuild_cache.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/steering_pid_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/hnm_remote_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/hnm_pid_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/remote_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/hnm_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/bno_test.dir
+/var/lib/cloud9/fahrradprojekt/autobike/build/CMakeFiles/steering_test.dir

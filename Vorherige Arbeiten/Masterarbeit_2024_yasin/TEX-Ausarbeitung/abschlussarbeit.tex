@@ -1,0 +1,84 @@
+%%
+%% Masterarbeit zum Thema: 
+%%
+
+% Definitionen
+\def\type{Masterarbeit}
+\def\titel{Spezifikationsgesteuerte Abstraktionsverfeinerung f\"ur die formale Verifikation analoger Schaltungen (im Titel lassen sich umlaute nur auf die alte Weise mit slash schreiben)}
+\def\author{Name}
+\def\matNr{1234567}
+\def\abgabedatum{14.\,Mai 2010 }
+\def\betreuer{M.\,Sc.\,Julius von Rosen}
+\def\pruefI{Prof.~Dr.~L.~Hedrich}
+\def\pruefII{Prof.~Dr.~U.~Brinkschulte}
+
+
+\documentclass[11pt,a4paper,oneside,listsleft,numbers=noenddot]{scrreprt}
+
+% In einstellungen.tex befinden sich alle Einstellungen, die hier oben vorgenommen würden. 
+% Der gesamte Seitenstil, das Aussehen von lstlistings
+\input{einstellungen.tex}
+
+
+\begin{document}
+ \pagenumbering{roman}
+% \numberwithin{equation}{section}  % Numerierung für Gleichungen
+% \numberwithin{figure}{section}    % Numerierung für Abbildungen
+% \numberwithin{table}{section}    	% Numerierung für Abbildungen
+% \numberwithin{lstlisting}{section}% Numerierung für Abbildungen
+%\numberwithin{equation}{chapter}  	% Numerierung für Gleichungen
+% \numberwithin{figure}{section}    % Numerierung für Abbildungen
+% \numberwithin{table}{section}    	% Numerierung für Abbildungen
+%\numberwithin{lstlisting}{section} % Numerierung für Abbildungen
+
+\input{cover.tex}
+ \newpage                  %
+\verb||\\                 % empty page after eides
+\vfill
+\thispagestyle{empty}
+
+
+\input{titelblatt.tex}
+
+\input{danksagung.tex}
+    
+\input{eides.tex}  % Eidesstattliche Versicherung
+%   \newpage
+\input{aufgabe.tex}
+%   \newpage
+
+ 
+\tableofcontents
+    \newpage 
+\addcontentsline{toc}{section}{Abkürzungsverzeichnis}
+ \input{abk.tex}
+    \newpage
+\addcontentsline{toc}{section}{Formelzeichen}
+ \input{formel.tex}
+    \newpage
+
+
+\pagenumbering{arabic}
+
+\input{einleitung.tex}
+ \newpage
+
+\input{grundlagen.tex}
+ \newpage
+
+%\input{operationen.tex}
+% \newpage
+%\input{exploration.tex}
+% \newpage
+
+\input{zus_aus.tex}
+ \newpage
+
+\input{quellen.tex} 
+ \newpage
+
+
+\input{anhang.tex}
+ \newpage
+
+\end{document}

@@ -1,0 +1,18 @@
+# To view the registers of the pru
+/sys/kernel/debug/remoteproc/remoteproc1$ sudo cat regs
+
+# To start or stop the pru
+/sys/class/remoteproc/remoteproc1$ echo "start" > state
+
+# To compile the files using the makefile
+/var/lib/cloud9/fahrradprojekt/autobike/pru_bike_speed$ make
+# To install the code onto the pru 
+### If this installation doesn't work, try setting the state of the pru to running and
+### try again.
+/var/lib/cloud9/fahrradprojekt/autobike/pru_bike_speed$ sudo make install_PRU0
+
+# Access the memory at the given address
+sudo ./devmem2 0x4a300000
+
+# for this code to work the gpio pin has to be configured.
+config-pin p8.15 pruin

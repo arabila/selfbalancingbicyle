@@ -1,0 +1,34 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/var/lib/cloud9/fahrradprojekt/autobike/ab_error_handling.h
+stdio.h
+-
+stdlib.h
+-
+
+/var/lib/cloud9/fahrradprojekt/autobike/interfaces/ab_md49.h
+stdint.h
+-
+
+/var/lib/cloud9/fahrradprojekt/autobike/tests/md49_polling_test.c
+stdio.h
+-
+unistd.h
+-
+signal.h
+-
+time.h
+-
+sys/time.h
+-
+../interfaces/ab_md49.h
+/var/lib/cloud9/fahrradprojekt/autobike/interfaces/ab_md49.h
+../ab_error_handling.h
+/var/lib/cloud9/fahrradprojekt/autobike/ab_error_handling.h
+

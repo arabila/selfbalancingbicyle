@@ -1,0 +1,920 @@
+\chapter{Zustandsraumexploration \label{ch_zustand}}
+
+Die Erforschung des Zustandsraumes analoger Schaltungen für die Verifikation ist mit erheblichen Schwierigkeiten verbunden.
+% und harrt der Lösungen. 
+%stellt sich weiterhin als ein schwieriges Terrain heraus. 
+Allgemein betrachtet, ist der Zustandsraum eine formale Abbildung des Verhaltens der Schaltung. Für die digital-technische Verifikation entspricht der Zustandsraum einem Quadrupel (die Gesamtmenge an Zuständen, die Zustandsübergangsrelationen, eine nicht-leere Menge an Startzuständen und eine nicht-leere Menge an Zielzuständen), der als Automat das Systemverhalten zeigt. Für analoge Schaltungen lässt sich das Systemverhalten nicht mehr als eine diskrete Menge an Zuständen abbilden. Vielmehr wird die wertkontinuierliche Zustandsmenge von einem mehrdimensionalen Differentialgleichungssystem aufgespannt. Die Dimensionsgröße wird von der Anzahl der Variablen und der Anzahl der energiespeichernden Komponenten bestimmt und bewirkt, dass die Größe des Zustandsraumes exponentiell wächst. 
+
+Des Weiteren können in nicht-deterministischen Automaten pro Zustand mehrere Nachfolger existieren, sodass die zu prüfende Zustandsmenge um ein Vielfaches anwächst. Dieses Wachstum, auch \glqq Zustandsraumexplosion\grqq{} genannt, ist unter dem Begriff \glq Model-Checking Problem\grq{} in der Forschung bekannt\cite{Clarke03ce-ga}. 
+Es erklärt auch, warum der bisherige Forschungsansatz \glqq die vollständige Diskretisierung\grqq{} eine $np$-harte Komplexitätsklasse nach sich zieht und damit für genügend große Schaltungen unbrauchbar wird.
+Jedoch ist dies nicht die einzige Herausforderung, der sich das Model-Checking analoger Schaltungen stellt. Es existieren weitere Schranken für die Diskretisierung von analogen Schaltungen, die die Komplexität der Verifikation erhöhen. 
+Die Berechnung des Zustandsraums fordert ein hohes Maß an Rechenleistung. Dies basiert zum einen auf der Abbildung des analogen Schaltungsverhaltens auf ein diskretes Transitionssystem und zum anderen auf der Durchführung der formalen Verifikation zur Prüfung der Bedingungen. Mit der Erhöhung des Grades der Genauigkeit der Abbildung und/oder der Verifikation steigt die geforderte Rechenleistung exponentiell. %Die Anzahl der Zustände eines modellierten analogen Systems wächst exponential mit der Anzahl an Variablen und Energie-speichernden Komponenten.
+Auch der Visualisierung der Ergebnismengen ist eine Grenze durch das räumliche Vorstellungsvermögen des Menschen gesetzt. Eine Visualisierung muss daher auf drei Dimensionen begrenzt werden, um Designern nach dem Model-Checking die Chance zu geben, mit der Ergebnismenge arbeiten zu können. Ausnahmen mit Darstellungen von vier Dimensionen existieren jedoch \cite{peterDA}. 
+%Mehr als drei Dimensionen kann sich der Mensch praktisch nicht vorstellen.
+
+%HMMM: Model-Checking an sich ist effizient, wird aber durch den hohen Speicherplatzbedarf ausgebremst. 
+Zusammenfassend sind die drei entscheidenden Schranken, in denen sich die Verifikation von analogen Schaltungen bewegt, 
+\begin{itemize}
+	\item die Darstellung des Zustandsraums analoger Schaltungen,
+	\item die Diskretisierung des analogen Zustandsraumes und
+	\item die Möglichkeit der Visualisierung der Ergebnisse.
+\end{itemize}
+
+Die drei Schranken werden in den folgenden drei Abschnitten \ref{sec:zustandsraum} bis \ref{sec:visuZust} analysiert und daraus resultierend Lösungen zur Problemreduktion erarbeitet.
+
+
+\section{Zustandsraum-Darstellung analoger Schaltungen \label{sec:zustandsraum}}
+
+Eine analoge Schaltung lässt sich anhand eines nichtlinearer Algebro-Differentialgleichungssystems erster Ordnung (engl. nonlinear first order differential algebraic equation) formal beschreiben \cite{har03mod,steinhorst09joint}. Die Algebro-Differentialgleichungen (DAE) setzen sich dabei aus expliziten gewöhnlichen Differentialgleichungen, gekoppelt mit algebraischen Nebenbedingungen, zusammen. Die Nebenbedingungen sind ableitungsfrei. 
+
+Für die systembeschreibenden DAE einer analogen Schaltung müssen folgende drei Parameter definiert werden:
+\begin{enumerate}
+	\item Input-Vektor $u(t)$ (Eingangsvariablen)
+	\item Vektor mit den Systemvariablen $x(t)$
+	\item Vektor, mit der ersten Ableitung der Systemvariablen $\dot x(t)$
+\end{enumerate}
+Formel \eqref{eq:as_dae} zeigt die Differentialgleichung zur Darstellung analoger Systeme: %, die zu gelten hat.
+\begin{equation}
+	f \bigl( \dot x(t), x(t), u(t) \bigr) = 0
+	\label{eq:as_dae}
+\end{equation}
+Die beiden Vektoren $u(t)$ und $x(t)$ werden durch eine erweiterte \glqq modifizierte Knotenanalyse\grqq{}(engl. Modified Nodal Analysis (MNA)), die auf die Netzliste der Schaltung angewandt wird, gewonnen. 
+%http://www.analog-electronics.eu/analog-electronics/modified-nodal-analysis/modified-nodal-analysis.xhtml
+% Hier ist eine gute Beschreibung geliefert => ggf für eine Quellen-Angabe
+Der Zustandsraum aus dem daraus resultierenden Algebro-Differentialgleichungssystem wird von den Input-Variablen und den energiespeichernden Systemvariablen $x_e(t)$, wie beispielsweise Kapazitäten oder Induktivitäten, aufgespannt.
+Anschließend werden im aufgespannten Raum Zufalls-Messpunkte gleichmäßig verteilt. Daraus werden, basierend auf numerischen Integrationsschritten mit einer kurzen, konstanten Integrationszeit, die das Verhalten der Ableitung der Systemvariablen $\dot x_e(t)$ repräsentiert, weitere Messpunkte generiert. 
+Durch die Schrittweitensteuerung steigt die Dichte der Messpunkte in den Gebieten von nicht-homogenem Systemverhalten. 
+So ergibt sich ein diskretes Vektorfeld $V_D$ mit einer Menge an Messpunkten $Q = \left\{ q_1, \: \ldots, \: q_m \right\} $, das eine Schaltung modelliert.
+Es wird also ein Vektorfeld $V : \mathbb R^n \ \rightarrow \ \mathbb {R}^n $ mit einer diskreten Menge $Q = \left\{ q_1, \: \ldots, \: q_m \right\}$ mit $m$ Messpunkten $q_i$ betrachtet. Für diese diskrete Menge gilt, dass im Zustandsraum das diskrete Vektorfeld $V_D : Q \ \rightarrow \ V_D $ als 
+\begin{equation}
+	V_D (q_i) = \left\{ v_i \; | \; \exists q_i \in Q : v_i = \frac{\delta q_i}{\delta t} \right\} \notag
+\end{equation}
+definiert ist.
+Das diskrete Vektorfeld $V_D$ wird demnach von den Ortsvektoren $p_i$ abgebildet, welche neben den Messpunkten auch die Richtungsvektoren $v_i = V_D(q_i)$ mit ihrer Bewegungsrichtung und Geschwindigkeit ausweisen.
+%Der Sampling-Prozess wird geführt von der Divergenz der Länge und Winkel von benachbarten Vektoren.
+Diese Modellierung des Vektorfeldes wird von dem prototypischen Werkzeug \textit{amcheck}\footnote{\textit{amcheck} ist ein Model-Checker für analoge Schaltungen mit Zeitbedingungen. Er wurde am Institut für Mikroelektronische Schaltungen der Universität Hannover entwickelt. \cite{har03mod} } 
+genutzt. 
+%(Wir betrachten ein Vektorfeld $V : \mathbb R^n \ \rightarrow \ \mathbb {R}^n $ in welchem für die diskrete Menge $Q = \left\{ q_1, \: \ldots, \: q_m \right\}$ mit $m$ Sampling-Punkten $q_i$ im Zustandsraum das diskrete Vektorfeld $V_D : Q \ \rightarrow \ V_D $ als 
+%\begin{equation}
+%	V_D (q_i) = \left\{ v_i \; | \; \exists q_i \in Q : v_i = \frac{\delta q_i}{\delta t} \right\}
+%\end{equation}
+%definiert ist. )
+%We consider a vector field V : Rn ! Rn on which for the discrete set Q = {q1, ..., qm} of m sample points qi in the state space the discrete vector field VD : Q ! VD is defined:
+%(Das diskrete Vektorfeld $V_D$ wird von den Positionsvektoren $p_i$, welche die Sampling-Punkte im Zustandsraum und die Bewegungsrichtung der Richtungsvektoren $v_i = V_D(q_i)$ ermitteln, inklusive der Geschwindigkeit innerhalb $V$ an Position $q_i$, repräsentiert.)
+%In other words, the discrete vector field VD is represented by position vectors qi determining the sample points in the state space and the direction vectors vi = VD(qi) giving the motion direction and speed within V at position qi.
+Eine genauere Beschreibung der Modellierung des Zustandsraumes anhand einer DAE ist in \cite{steinhorst09state} zu finden.
+%, inklusive Beispiele an Schaltungen,
+%
+
+\section{Vollständige Diskretisierung analoger Schaltungen \label{sec:stand}}
+
+Der aktuelle Stand der Technik basiert auf den Algorithmen und Techniken der formalen Verifikation, die für digitale Schaltungen entwickelt wurden.
+%Das Model-Checking ist da keine Ausnahme. 
+Es exisitieren kommerzielle Softwarelösungen, die Aussagen über die Funktionalität, das Timing-Verhalten und andere spezifizierte Kriterien treffen. Daher sind sie in den Entwurfsprozess der Chipentwicklung von digitalen Schaltungen integriert.
+
+Die formale Verifikation von analogen Schaltungen befindet sich im Gegensatz dazu im Anfangsstadium der Entwicklung. Das prototypische Werkzeug \textit{amcheck} wurde im Rahmen von \cite{platte} von CTL-A auf CTL-AT % erweitert. 
+für einen geeigneten Einsatz im Model-Checking analoger Schaltungen erweitert. 
+Neben der Erreichbarkeits- und der Fixpunktanalyse lassen sich zeitliche Kriterien, wie Verzögerungszeiten, prüfen. Jedoch gilt für \textit{amcheck}, wie für alle bisherigen Verfahren, dass sie das Verhalten einer analogen Schaltung diskretisieren. Erst auf dem diskretisierten Zustandsraum werden die Prüfungen der Spezifikation bzw. des Systemverhaltens durchgeführt. 
+
+\subsection{Stand der Technik \label{ss:vollDis}}
+
+Die vollständige Diskretisierung nach \cite{har03mod}, die momentan für das Model-Checking analoger Schaltungen durchgeführt wird, ist ein erheblicher Mehraufwand gegenüber dem Model-Checking digitaler Schaltungen.
+%Das Systemverhalten wird dabei so wenig wie möglich verändert.
+Die Diskretisierung des kontinuierlichen, unendlichen Zustandsraums beginnt mit der Begrenzung desselben durch Festlegen der Intervallgrenzen der Zustandsvariablen. 
+Die Begrenzung wird anhand einiger vorliegender Angaben der Spezifikation, wie zum Beispiel die Betriebs-, Eingangs- oder Ausgangsspannung, bestimmt und der Zustandsraum auf den zu betrachtenden Bereich reduziert. 
+Als Zweites folgt eine Aufteilung des Zustandsraums auf Teilgebiete. Dazu wird der begrenzte Raum in zwei gleichgroße Gebiete aufgeteilt. Jedes Gebiet weist in sich ein bezüglich einer Fehlerschranke homogenes Systemverhalten auf. 
+Die Fehlerschranke ist definiert mit $f \: < \: \epsilon$. 
+Ist die Homogenität verletzt, wird das Teilgebiet weiter halbiert, bis die Homogenität für jedes dieser neuen Teilgebiete eintritt. 
+
+Der dritte Schritt ist die Vernetzung der Gebiete. Für jedes Zustandsraumteilgebiet wird eine oder mehrere Nachfolgerelation(en) festgelegt. Dies geschieht durch die Auswertung von randomisierten Testpunkten innerhalb eines Gebietes, die wegen der Homogenität alle eine gemeinsame Richtung aufweisen. Treffen alle getesteten Richtungsvektoren in ein einzelnes anderes Teilgebiet, so existiert eine Nachfolgerelation zwischen den beiden Teilgebieten. Werden mehrere Teilgebiete getroffen, so liegen mehrere Transitionsrelationen aus dem einen Teilgebiet vor. 
+
+Abbildung \ref{pic:vernVollDis} zeigt die unterschiedlichen, in sich homogenen Teilgebiete der vollständigen Diskretisierung eines gedämpften RLC-Schwingkreises und die daraus resultierende Bestimmung der Transitionsrelationen. 
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.8\textwidth]{picture/Graphen/vernVollDis3.eps} 
+    \caption[Diskretisierung der Zustandsraumteilgebiete]{Diskretisierung der Zustandsraumteilgebiete eines RLC-Schwingkreises (Quelle: \cite{PlatteGraHed05})}
+    \label{pic:vernVollDis}
+  \end{center}
+\end{figure}
+%Aus diesen entstandenden Lösungsvektoren werden nun durch Näherungsverfahren die Transitionen in die benachbarten Gebiete abgeleitet. 
+Betrachtet man die Teilgebiete als Zustandsknoten und die Transitionen als Kanten, stellt der nun vorliegende endliche Automat das Systemverhalten des Vektorfeldes der analogen Schaltung dar. Auf dem Automaten können nun die verschiedenen CTL-AT - Operationen des Model-Checkings zur Prüfung der Erfüllbarkeit der Bedingungen durchgeführt werden. 
+%Das Verfahren wurde erstmals in \cite{har03mod} beschrieben. 
+
+
+\subsection{Die Grenzen der vollständigen Diskretisierung \label{ss:grenz_vollDis}}
+
+Model-Checking mit CTL-AT - Formeln setzt eine vollständige Diskretisierung voraus. Die Exploration des Zustandsraums wird mittels des Differentialgleichungssystems \eqref{eq:as_dae} durchgeführt. Da jedoch keine Kenntnis zum Zustandsraum vorliegt, kann nur eine vordefinierte Abtastung des Zustandsraums erfolgen. Systemrelevante Eigenschaften werden erst nach der vollständigen Diskretisierung analysierbar. 
+Zudem folgt, dass manche Zustandsraumteilgebiete nicht genügend genau betrachtet werden, um verifizierende Aussagen treffen zu können.
+Dies ist auf den Trade-off zwischen Diskretisierungstiefe, Zustandsraumgröße und Rechnerkapazität(Zeit \& Geschwindigkeit) zurückzuführen. Model-Checking mit der vollständigen Diskretisierung ist daher sehr aufwendig, wenn eine hohe Genauigkeit vorausgesetzt wird.
+
+Dies leitet in eine weitere Beschränkung, mit der sich die vollständige Diskretisierung auseinandersetzt. Die Anwendung der Verifikationsalgorithmen ist sehr rechenzeitintensiv und untersucht nur den von der Spezifikation beschriebenen Teil des Systems. Der restliche Zustandsraum bleibt weiterhin unverifiziert. 
+
+Ein Risiko dieses Verfahrens ist, dass durch den Diskretisierungsfehler bei der vollständigen Diskretisierung unbemerkt das Systemverhalten verändert werden kann. Durch die randomisierten Testpunkte und ihrer Transitionen zur Bestimmung der Vernetzung der in sich homogenen Teilgebiete können Nachfolgerelationen angegeben werden, die nicht existieren. 
+Abbildung \ref{pic:vernVollDis} zeigt in der Vergrößerung vier Teilmengen, wovon drei mit den Buchstaben $\Phi, \Psi$ und $\Xi$ definiert sind. Die Homogenität deutet an, dass eine Nachfolgerelation von $\Phi$ nach $\Psi$ (grüner Pfeil) gilt. Gemäß der Testpunkte und ihrer Transitionen (rote Pfeile) wird allerdings auch $\Phi \: \rightarrow \: \Xi$ (grüner Pfeil) angegeben. 
+Auch können bei schlechter Wahl der Testpunkte Nachfolgerelationen nicht angegeben werden, obwohl diese existent sind. Im endlichen Automaten beeinflussen diese Unterschiede das Ergebnis der CTL-Operationen, obwohl sie eigentlich keinen Einfluss haben dürften.
+
+
+\section{Visualisierung des Zustandsraumes \label{sec:visuZust}}
+
+Die räumliche Auffassungsgabe der Menschen setzt der graphischen Auswertung im hochdimensionalen Raum ihre Grenzen. Für die Visualisierung des Zustandsraums, im speziellen der Ergebnismenge des Zustandsraums, ist die dreidimensionale Visualisierung die obere Schranke. Die Vierte ist in Einzelfällen noch verständlich, doch ab dann lassen sich die $n$-dimensionalen Zustandsräume nicht mehr zeigen. 
+
+Die Schwierigkeit besteht allerdings in der Tatsache, dass der Zustandsraum von mehr als nur drei Dimensionen aufgespannt wird. Der Wert von $n$ für den $n$-dimensionalen Zustandsraum wird von der Anzahl der Systemvariablen $x(t)$ und der Anzahl der energiespeichernden Systemvariablen $x_e(t)$ bestimmt. Er ist daher in der Regel deutlich größer als drei. Daraus folgt, dass die Forschung eine Methode entwickeln muss, höherdimensionale Visualisierung für den Menschen verständlich zu machen %. Einzige andere Möglichkeit besteht darin
+oder, dass für die Visualisierung die drei aussagenrelevanten Dimensionen bestimmt und gezeigt werden. 
+
+Einige derzeitige Forschungsansätze suchen nach Methoden zur automatisierten Bestimmung von relevanten Zustandsvariablen. Diese werden dann für die graphische Auswertung den Achsen zugewiesen. Weitere Methoden wollen die Ergebisse nur noch in Form von \glqq erfüllbar\grqq{}/\glqq nicht erfüllbar\grqq{} ausgeben, um die Visualisierung und ihre Grenze zu umgehen.
+In \cite{steinhorst09state} wurde erstmals die Visualisierung zur Unterstützung der Transienten-simulation aufgegriffen. Die Idee ist, dass das $n$-dimensionale Vektorfeld die Untersuchung des dynamischen Verhaltens der Schaltung durch eine Visualisierung des Vektorfeldes erlaubt. 
+%Auch wurde eine Visualisierung des n-dimensionalen Vektorfeldes der analogen Schaltungen für die Unterstützung der standardmäßigen Transienten-Simulationen noch nicht umfangreich untersucht. 
+%
+Eine für die Unterstützung der Transientensimulation genutzte Visualisierung ist in Abbildung \ref{pic:visuZust} gezeigt. Jedoch ist diese Verfahren noch zu ungenau, um für die Verifikation von Nutzen zu sein.
+%Eine solche Visualisierung zur Unterstützung der Transientensimulation wurde erstmals in \cite{steinhorst09state} aufgegriffen. 
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{picture/Graphen/tunnel_vect.eps}
+    \caption[Visualisierter Zustandsraum]{Visualisierter Zustandsraum eines Tunneldioden-Oszillators \newline (Quelle: \cite{steinhorst09state})}
+    \label{pic:visuZust}
+  \end{center}
+\end{figure}
+
+
+\section{Schrittweise Exploration des Zustandsraums \label{sec:explor}}
+
+Nachdem nun die Schwächen der vollständigen Diskretisierung näher betrachtet wurden, ist es naheliegend, Methoden oder Verfahren zu entwickeln, die diesen Schwächen entgegenwirken. Ein solches Verfahren stellt die schrittweise Exploration des Zustandsraums dar, das im Rahmen dieser Arbeit entwickelt und nun nachfolgend vorgestellt wird. Es erlaubt zudem, die von der vollständigen Diskretisierung gesteckte Schranke für die Verifikation analoger Schaltungen (zum Teil) aufzuweichen.
+
+Für die schrittweise Exploration%, siehe Abbildung \ref{pic:schr_weit}, 
+bedarf es einer genauen Betrachtung der Spezifikation, um eine Klassifikation eben dieser für eine Verifikation der zu untersuchenden Teile der analogen Schaltung zu ermöglichen. Die Verifikation soll auf Basis einer spezifikationsabhängigen Abstraktionsverfeinerung, anhand derer die nötigen Rahmenbedingungen für die Exploration bestimmt werden, erfolgen. Damit lassen sich on-demand zu untersuchende Zustandsgebiete bestimmen und durch die transienten Simulationstrajektorien diskretisieren, um die für das Model-Checking zu prüfenden Aussagen auswerten zu können. 
+
+%  von einer punktmenge, wie eine Wellenbewegung nach und nach größer werdend
+%  Daher hier mit subfigures vier kleine Bildchen haben
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/schr_weit.eps}
+%    \caption[Schrittweise Exploration]{Darstellung der schrittweisen Exploration}
+%    \label{pic:schr_weit}
+%  \end{center}
+%\end{figure}
+Der in Abbildung \ref{pic:flow_schr_weit} auf Seite \pageref{pic:flow_schr_weit} gezeigte Flow-Chart liefert eine Übersicht der Funk-tionsweise der schrittweisen Exploration.
+%Eine on-demand Diskretisierung der relevanten Zustandsraumgebiete () ist das Resultat.
+
+Die Klassifikation erfolgt im Vorfeld und erlaubt eine Skizzierung der Komplexität der zu verifizierenden Schaltungsbereiche. So lässt sich augenblicklich sagen, welche Systemeigenschaften mit diesem Ansatz verifizierbar oder welche mit anderen Verfahren zu prüfen sind.
+%Gegebenenfalls lassen sich so auch schon Bereiche der Schaltung bei eine möglicherweise notwendige, vollständige Diskretisierung vernachlässigen. Rechenleistung und Zeit wären einzusparen, die dann für die Diskretisierung von \glq interessanteren\grq{} Bereichen des Zustandsraums genutzt werden könnten.
+
+
+\subsection{Verifikation on-demand \label{ss:DisOnD}}
+
+Die vollständige Diskretisierung definiert ihre Komplexität anhand der Anzahl an Dimensionen und der Größe des zu untersuchenden Zustandsraums. Sie steht im Verhältnis zum Aufwand und zur Laufzeit, die für die vollständige Diskretisierung und der dazugehörigen Auswertung benötigt wird. 
+Allerdings erlauben der Aufwand und die Laufzeit keine punktuelle Diskretisierung des Zustandsraums einer analogen Schaltung auf Abfrage.
+
+Die schrittweise Diskretisierung jedoch ermöglicht diese Analyse des Zustandsraums on-demand, da die Laufzeit auf wenige Schritte und der Aufwand auf einen kleinen Bereich des Raums begrenzt werden können. 
+Betrachtet man die schrittweise Exploration zur Analyse des gesamten Zustandsraums im Verhältnis zur vollständigen Diskretisierung, ist es jedoch möglich, dass der Zeitaufwand insgesamt deutlich größer ist. Allerdings ist dies bisher noch nicht untersucht worden.
+
+Die Begrenzung auf einen Teil des Zustandsraums erlaubt ein deutlich detaillierteres Sampling zur Analyse der CTL-AT - Bedingungen. Im Vorfeld sind jedoch zwei wichtige Fragen zu klären:
+\begin{enumerate}
+	\item Lässt sich diese Systemeigenschaft überhaupt mittels CTL-AT on-demand beantworten?
+	\item Wie detailliert gilt es zu samplen, um einen guten Trade-Off zwischen Rechenleistung und Zeit gegenüber Verhaltensgenauigkeit und Diskretisierungstiefe zu erzielen?
+\end{enumerate}
+Kapitel \ref{ch_klasse} liefert eine Klassifikation, durch die diese beiden gestellten Fragen zu beantworten sind.
+
+Der Ansatz ist nicht immer formal, da Situationen auftreten können, in denen formale Aussagen nicht möglich sind. Jedoch ist es möglich, eine gewisse Anzahl an Aussagen bestätigen bzw. widerlegen zu können, wobei der Augenmerk auf dem Widerlegen liegt.
+Dies basiert auf dem Sicherheitsgedanken, der mit den \glq false-positives\grq{} und den \glq false-negatives\grq{} einhergeht und auf der Prüfung der Aussagen.
+
+Unter \glq false-negatives\grq{} werden die Aussagen eingestuft, deren Bedingungen eigentlich zu bestätigen sind, aber fälschlicherweise als widerlegt angegeben werden. Als Beispiel wird dazu meist der angezeigte Schwangerschaftsstrich eines entsprechenden Tests angegeben, der eine Schwangerschaft zeigt, obwohl es zu dieser nicht gekommen ist.
+Dem entgegen stehen die \glq false-positives\grq{}, die die Fälle betrachten, die eine Aussage eigentlich falsifizieren sollten, diese Aussage aber fälschlicherweise als erfüllend bzw. wahr bewerten. Das obige Beispiel aufgreifend, wäre eine nichtangezeigte Schwangerschaft, obwohl diese vorliegt, ein \glq false-negative\grq{}.
+Um diese Beispiele auf analoge Schaltungen zu transformieren, wären Schaltungen, die die Spezifikation eigentlich \textbf{richtig} abbilden, aber als nichterfüllend eingestuft werden, \glq false-negatives\grq{}. Schaltungen hingegen, deren Spezifkationen im Model-Checking als erfüllt angegeben werden, diese aber eigentlich nicht erfüllen, wären \glq false-positives\grq{}. 
+Die \glq false-positives\grq{} sind daher die (gefährlicheren) Aussagen, die es auf jeden Fall zu vermeiden gilt. Eine übervorsichtige Prüfung der mit CTL-AT getroffenen Aussagen mit vermehrten \glq false-negatives\grq{} ist das Resultat.
+Diese Hürde scheint unberechtigterweise sehr hoch, wenn nicht sogar zu hoch zu sein, doch für Werkzeuge, die automatisiert analoge Schaltungen verifizieren sollen, dürfen Schaltungen von \glqq harten Echtzeitsystemen\grqq{} keine Ausnahmen sein. 
+Dies ist unter anderem auch deshalb von besonderer Bedeutung, da immer mehr Schaltungen für \glqq harte Echtzeitsysteme\grqq{} konzipiert und produziert werden.
+
+Bei der Prüfung von Aussagen lässt sich das Widerlegen dieser leichter umsetzen, da ein gefundenes Gegenbeispiel zum Falsifizieren ausreicht. Jedoch lässt sich aus dem Nicht-Finden eines Gegenspiels nicht abstrahieren, dass ein solches nicht doch existiert, sondern nur, dass nicht genau genug untersucht wurde. Dies ist auf den wert- und zeitkontinuierlichen Zustandsraum zurückzuführen, da nicht garantiert werden kann, dass nicht doch ein infinitesimalkleiner Raum die zu prüfenden Bedingungen verletzt. Im reell-wertigen Zahlenbereich 
+existiert für zwei Zahlenwerte $i$ und $j$ immer ein $k$, für das gilt:
+\begin{equation}
+	\forall i, j \: \in \: \mathbb R \ \text{mit} \ i \: < \: j, \ \exists k: \: i \: < \: k \: < \: j \notag
+\end{equation}
+%lässt es sich immer \textit{tiefer} zwischen zwei Zahlenwerten \textit{hinein} analysieren. 
+Daraus lässt sich ableiten, dass nicht alle Gegenbeispiele zur formalen und vollständigen Falsifizierung gefunden werden können.
+% und auch die informal gefundenen Gegenbeispiele von großer Bedeutung beim Model-Checking sind. 
+
+%HIER NOCHMAL MIT HARTONG ABGLEICHEN: LIPSCHITZ-STETIG
+Bei der Suche nach Beispielen für oder gegen eine erfüllende Belegung kann allerdings eine als positiv zu bewertende Besonderheit von Schaltungen angenommen werden. Der Entwurf von Schaltungen %für in der Regel sehr ... ... (allg. Situa.) 
+bringt eine gewisse \glqq Gutmütigkeit\grqq{} des Systemverhaltens mit sich. Die Schaltungen sollen möglichst in allen Zuständen das tun, wofür sie der Designer vorgesehen hat. Verletzungen der Gutmütigkeit liegen nicht im Interesse der Designer, da sie das Systemverhalten verfälschen. Sie können nur durch bewusstes Einmischen des Designers hervorgerufen werden, die dann von Anfang an bekannt und beabsichtigt sind und in der Spezifikation hinterlegt sein sollten. Aktive Suche nach Verletzungen ohne entsprechende Hinweise aus der Spezifikation wären zudem zu aufwendig, als dass die schrittweise Exploration die Suche durchführen könnte.
+
+
+\subsection{Spezifikationsgesteuerte Abstraktionsverfeinerung \label{ss:spezAbs}}
+
+Bei der Prüfung von Systemeigenschaften im Rahmen des Model-Checkings einer analogen Schaltung kann die Verifikation des modellierten (und abstrahierten) Zustandsmodells fehlschlagen. Dies kann auf der einen Seite als Ursache eine fehlerhafte Modellierung sein, die die Verifikation schlicht nicht ermöglicht oder aber auf der anderen Seite aus der Nicht-Erfüllbarkeit der Eigenschaft resultieren.
+
+Die bisher in der Forschung benutzten Werkzeuge für das Model-Checking erzeugen ein Gegenbeispiel in Form einer Zustandsmenge, wenn eine Eigenschaft nicht erfüllbar ist. Anhand dieses Gegenbeispiels gilt es die Gültigkeit der Aussage zu prüfen:
+\begin{enumerate}
+	\item Existiert die aus der Zustandsmenge resultierende konkrete Transitionsfolge und ist sie konsistent mit der Schaltungsmodellierung/-abstrahierung?
+	\item Tritt das gefundene Gegenbeispiel nur in der Modellierung auf?
+\end{enumerate}
+
+Gilt Fall eins, dann ist die Spezifikation tatsächlich nicht erfüllbar. Gilt jedoch das gefundene Gegenbeispiel nur im abstrahierten Modell, dann ist die Modellierung noch nicht fehlerfrei und muss angepasst werden. Dazu werden der Spezifikation weitere Prädikate für die Erfüllbarkeitsprüfung hinzugefügt. Die Prädikate werden aus einer genauen Betrachtung/ Analyse des Gegenbeispiels und der Transitionsrelationen gewonnen und repräsentieren Bedingungen. Anschließend wird mit dem neuen spezifikationsgesteuerten, abstrahierten Modell eine erneute Prüfung der Eigenschaften durchgeführt \cite{Rybalchenko2002, DIP2799}.
+
+Erwähnenswert ist, dass dieses Verfahren automatisiert werden kann. Dafür werden mögliche Bedingungen aus dem Systemverhalten gefiltert, um sie im Rahmen des automatischen Zyklus des Model-Checkings und des \glq Abstraction-Refinements\grq{} nach und nach der Spezifikation hinzuzufügen. Die Spezifikation wird dadurch erweitert, sodass sich am Ende der Verifikation vermehrt Informationen generieren lassen, wo eventuelle Fehler in der Schaltung sein könnten. Auch entfallen mögliche mehrfache Prüfungen einer Systemeigenschaft.
+
+%Im Rahmen dieser Arbeit äußert sich die spezifikationsgesteuerte Abstraktionsverfeinerung in den folgenden Formen.
+Transferiert man nun das Prinzip des Abstraction-Refinements auf die Anforderungen der schrittweisen Exploration, so lassen sich einige Bereiche nennen. Die wohl Entscheidensten für die schrittweise Exploration betreffen das Abstrahieren von Zustandsraumbegrenzungen und Abbruchbedingungen, die Bestimmung der Start- und/oder Zielgebiete und die Betrachtung der Schrittweite der Transitionen.
+%lässt es sich in einigen Bereichen anwenden. 
+%Auf die schrittweise Exploration lässt sich die Abstraktionsverfeinerung auf ... zurückführen/transferieren. 
+
+Abbildung \ref{pic:flow_schr_weit} zeigt einen Flow-Chart, der die Funktionsweise der schrittweisen Exploration darstellt. Er veranschaulicht, welche Rahmenbedingungen erfüllt sein müssen, damit die schrittweise Exploration mit ihren Verfahren und Analysen temporallogische Formeln verifizieren kann. Auch wird daraus ersichtlich, wie die spezifikationsgesteuerte Abstraktionsverfeinerung die Rahmenbedingungen für die Verifikation anpassen kann.
+%wie das abstraction refinement da rein spielt, wenn einer der Abbruchbedingungen verletzt wurden!!!
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.9\textwidth]{picture/Graphen/flow.eps}
+    \caption[Flow-Chart zur Schrittweise Exploration]{Flow-Chart zur Darstellung der schrittweisen Exploration}
+    \label{pic:flow_schr_weit}
+  \end{center}
+\end{figure}
+
+%- abstrahieren von Grenzen und ggf nachbessern 
+Zu Beginn der schrittweisen Exploration muss für die Abstrahierung des wert- und zeitkontinuierlichen Zustandsraums ein Rahmen festgelegt werden. Dieser Rahmen grenzt den Zustandsraum auf die entsprechend zu prüfenden Bereiche ein. %Somit werden anfangs die Bereiche des Zustandsraums, die von der formulierten CTL-AT - Formel unbetroffen zu seien scheinen, als vorerst uninteressant klassifiziert. 
+Auch muss anhand der zu prüfenden Formel festgelegt werden, welche Kriterien eintreten müssen, um die Prüfung zu beenden. Der Sinn der Abbruchbedingungen liegt darin, ein möglicherweise unendlich lange Exploration im Zustandsraum zu verhindern. 
+Kapitel \ref{ss:rahmen} beleuchtet die zu steckenden Rahmen- und Abbruchbedingungen genauer und zeigt, wie diese sich durch die Spezifikation steuern und immer wieder anpassen lassen.
+
+Bei der Bestimmung von Start- und/oder Zielgebieten ist hierbei vor allem entscheidend, dass die Gebiete nicht wahllos definiert, sondern entsprechend der zu prüfenden Bedingungen festgelegt werden. Der Designer wählt eine beliebige, die Bedingungen erfüllende Menge an Punkten, die anschließend von der kleinsten, alle Punkte einschließenden, konvexen Hülle, siehe Kapitel \ref{sss:pun_konH}, umgeben wird. Eine solche Hülle lässt sich anschließend für die Auswertung mit CTL-AT Formeln beispielsweise als $\Phi$ definieren. 
+
+%- Schrittweiten 
+Die Bestimmung der Schrittweite einer Transition ist auch ein Bereich, der sich mit der Spezifkation steuern lässt. Bei der Berechnung der Nachfolgerelation eines Ortsvektors im Zustandsraum ist die Schrittweite von essentieller Bedeutung. Daher ist eine Obergrenze für die Schrittweite festzulegen, die für alle möglichen Situationen angepasst werden kann. Die Obergrenze schränkt die unterschiedlich benötigten Schrittweiten der Transitionen einer Punktmenge innerhalb des Zustandsraums ein, die bei der Exploration der einzelnen Transitionen auftreten kann. Abschnitt \ref{sss:schr_kon} befasst sich daher mit der Kontrolle der Schrittweiten.
+
+
+\subsection{Herausforderungen an die schrittweise Exploration \label{ss:heraus}}
+
+Beim Entwurf neuer Herangehensweisen zur Weiterentwicklung bestehender Verfahren werden zur Orientierung sogenannte Meilensteine definiert, an denen sich die Weiterentwicklung ausrichten kann. Diese Meilensteine enthalten sowohl Anforderungen, die es zu erfüllen als auch Ziele, die es zu erreichen gilt. 
+%Interessant bei der Definition der Ziele ist, dass sie im Zusammenhang mit anderen Forschungsarbeiten stehen und 
+%Die Ziele werden meist von anderen Forschungsarbeiten gesteckt und um die \textit{Wünsche} der Forscher erweitert. 
+Auch werden Hindernisse angesprochen, die zwar keinen direkten Einfluss auf die Ergebnisse haben, aber die Ergebnisfindung maßgeblich beeinflussen. 
+
+\subsubsection{Aufdeckung des Zustandsraums \label{sss:entdeck}}
+
+Da dem hier entwickelten Model-Checking-Verfahren anfangs keine vollständige Diskretisierung des Zustandsraums vorliegt, sind zur Prüfung der Systemeigenschaften keinerlei Informationen, abgesehen von der Spezifikation, vorhanden. Ferner ist es die Aufgabe der Verifikation der Systemeigenschaften zu prüfen, ob die Spezifikation der analogen Schaltung erfüllt wird. Die Spezifikation ist daher nur als eine Liste von Hinweisen zu sehen, die es noch zu prüfen gilt. Der Zustandsraum und das Verhalten der Schaltung sind aus diesem Grund anfangs vollkommen unbekannt.
+
+Die ersten Informationen bezüglich des Zustandsraums und des Verhaltens werden von den gewählten Punktmengen, die das Start- und/oder Zielgebiet repräsentieren, geliefert. Diese von den Designern gewählten Punktmengen zielen jedoch auf die nun on-demand zu prüfende Systemeigenschaft und lassen primär nur Rückschlüsse auf diese Prüfung zu. 
+%diese müssen dann analysiert werden, um erste Auswertungen zu liefern und die ersten Gebiete des gesamten Zustandsraums aufzudecken.
+Anschließend gilt es von den Start- und Zielgebieten aus, den Zustandsraum (abhängig von der on-demand gestellten, mit CTL-AT beschriebenen Prüfung einer Systemeigenschaft) zu erkunden. Nach der Auswertung der ersten Systemeigenschaft werden erneut Start- und/oder Zielgebiete per Punktmenge für die Prüfung einer weiteren Systemeigenschaft definiert, die ihrerseits weitere Gebiete des Zustandsraums aufdecken. %, wie in Abbildung \ref{pic:entdecken} gezeigt wird. 
+So lässt sich schrittweise der Zustandsraum und das Verhalten der analogen Schaltung aufdecken und die Verifikation der Spezifikation durchführen. Diese schrittweise Erkundung eines unbekannten Gebiets ist in der Entwicklung von Computerspielen als \glqq Nebel des Krieges\grqq{} bekannt. 
+%
+%  von einer punktmenge, entdeckung
+%  und einer weiteren Punktmenge und entdeckung
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/entdecken1.eps}
+%    \caption[Aufdecken des Zustandsraums]{Aufdecken des Zustandsraums}
+%    \label{pic:entdecken} 
+%  \end{center}
+%\end{figure}
+
+\subsubsection{Temporallogik und die Komplexität \label{sss:tl_on}}
+
+Bei der Entdeckung des Zustandsraums ist die Komplexitätsklasse abhängig von den in CTL-AT - formulierten zu prüfenden Bedingungen.
+%stoßen einige CTL-AT - formulierte Prüfungen in ihrer Komplexitätsklasse an $np$-harte Problemstellungen an. 
+Es ist daher unerlässlich, dass die CTL-AT - Formeln automatisiert umgeformt werden, so dass die Komplexitätsklasse der Prüfung niedrig gehalten wird. Daher muss im Vorfeld der on-demand Verifikation klar abgesteckt sein, welche Prüfungen in welchem Rahmen durchgeführt werden können und wie sich dazu die Auswertung, insbesondere die zeitliche Komponente, verhält. 
+
+Kapitel \ref{ch_klasse} befasst sich intensiv mit dieser Thematik. Es zeigt, welche Systemeigenschaften mit CTL-AT abgebildet werden können und wie diese mit der schrittweisen Exploration zu prüfen sind. Auch wird die Umformung der Formeln aufgegriffen, die veranschaulicht, inwieweit welche Pfad- und Temporaloperatoren die Komplexitätsklasse verändern. Je kleiner die einzelnen Suchbereiche zur Prüfung sind, desto leichter lassen sich Ergebnisse der Prüfungen erzielen. 
+%- entscheidung, in wie weit welcher A-/E- Quantor eingestellt wird (sollte eine Umkehrung durchgeführt werden, um den Suchbereich so klein und schnell wie möglich zu halten
+In Kapitel \ref{ch_ergebnis} folgt zudem eine Analyse der Komplexitätsklassen der Verfahren zur schrittweisen Exploration.
+
+\subsubsection{Zielsetzung der on-demand Verifikation \label{sss:disOD}}
+
+Der Prozess des Model-Checkings prüft automatisch, ob die Systemeigenschaften der Spezifikation entsprechen. Entscheidenden Beitrag zur (formalen) Verifikation beim Model-Checking leistet dabei die verwendete Algorithmik zur Bearbeitung der Spezifikationssprache. 
+
+Zur Verifikation auf erzeugten Graphstrukturen bieten die ASL-Algorithmen eine Verifikation komplexer Systemeigenschaften \cite{HedSte08, steinhorst09joint}. 
+Die Anzahl der prüfbaren Systemeigenschaften, wie beispielsweise
+\begin{itemize}
+	\item Common Mode Rejection Ratio (CMRR), %CMRR Gleichtaktunterdrückungsverhältnis
+	\item Power Supply Rejection Ratio (PSRR), %PSRR  Netzstörungsunterdrückungsverhältnis
+	\item Slew Rate (SR) und  %Flankensteilheit ($\Delta U / \Delta t$)
+	\item Voltage-Controlled Oscillator (VCO) Input Sensitivity,
+\end{itemize}
+konnten wesentlich gegenüber CTL-AT gesteigert werden.
+
+Ein anderes Verfahren befasst sich zwar auch mit der Temporallogik, verifiziert aber über die Simulation. 
+Hauptziel ist die Prüfung der Erfüllbarkeit der gewünschten zeitlichen Systemeigenschaften robuster Systeme auf allen transienten Simulationstrajektorien. Dazu wurde eigens eine Logik, die \glq Metric Temporal Logic\grq{}(MTL) entworfen, um die zeitlichen Eigenschaften entsprechend abbilden zu können. 
+%Die simulations-abhängigen Algorithmen auf MTL prüfen 
+Als entscheidender Ansatz dient folgendes: \textit{Je robuster ein System in Abhängigkeit der Spezifikation, desto weniger Simulationsdurchläufe werden benötigt, um die Eigenschaften zu verifizieren.}
+Näheres dazu ist in \cite{temp_logic} zu finden.
+
+%Compared to approaches using temporal logic specification [15], the number of verifiable circuit properties such as Offset, Gain, CMRR, PSRR, Slew Rate, Overshoot, Startup Time, Oscillation, and VCO Input Sensitivity is increased significantly.
+%
+Entscheidend bei der Zielsetzung der on-demand Verifikation ist, Systemeigenschaften mit CTL-AT verifizierbar zu machen, die bisher als nichtverifizierbar bzw. nichtspezifizierbar eingestuft werden. 
+%Auch gilt es bestehenden Verfahren mit der on-demand Verifikation zu vergleichen, um eine Bewertung dieser durchführen zu können. Somit lässt sich abschließend die Frage beantworten, wie Model-Checking mit CTL-AT und der on-demand Verifikation gegenüber den anderen Verfahren einzustufen ist. 
+Entsprechende Ergebnisse werden in Kapitel \ref{ch_ergebnis} gezeigt.
+
+
+\subsection{Grundlegende Verfahren \label{ss:grund}}
+
+Für eine aussagekräftigte on-demand Prüfung der Spezifikation anhand von CTL-AT bedarf es einiger grundlegender Verfahren, die während der unterschiedlichen Analysen eingesetzt werden. Sie sind Kontroll- und Berechungseinheiten zur Beeinflussung und Bewertung der schrittweisen Exploration. Die beiden essentiellen Verfahren sind die Schrittweitenkontrolle und die Bestimmung der Freiheitsgrade. Mit ihnen geht eine Kontrolle über den Zustandsraum einher, da sie die Größe der Ergebnismenge maßgeblich beeinflussen.
+Die anderen dienen der Vereinfachung der Analyse und der Rechnungen innerhalb des Zustandsraums. Sie sollen die Komplexität zur Prüfung der Formeln senken. 
+%sind Rechnungsgrundlage und  .. zugleich. 
+
+\subsubsection{Vorwärtsschritt \label{sss:vor_schr}}
+
+Anfangs ist nur ein Ortsvektor im Zustandsraum bekannt. Für den Vorwärtsschritt wird nun der Ziel-Ortsvektor anhand der definierten, nichtlinearen DAE erster Ordnung errechnet. Die Position des Ziel-Ortsvektors ist allerdings abhängig vom Zeitfaktor, der der DAE hinzugefügt wird. 
+%Abbildung \ref{pic:entdecken1} zeigt den Vorwärtsschritt eines Ortsvektors. 
+%   Bild 1 aus den subfigures der Wellen beim Aufdecken des Zustandsraum 
+%   mit Buchstaben p  -  p'  
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/entdecken1.eps}
+%    \caption[Vorwärtsschritt]{Vorwärtsschritt}
+%    \label{pic:entdecken1}
+%  \end{center}
+%\end{figure}
+
+Aus den beiden Ortsvektoren lässt sich nun der Richtungsvektor bestimmen, der in Verbindung mit dem Ortsvektor auf den Zielort zeigt. Eine Transition entspricht demnach dem Richtungsvektor eines Ortsvektors und stellt eine Trajektorie im Zustandsraum dar. Der Vorwärtsschritt dient der Visualisierung des Fortschrittes einer Punktmenge. 
+
+Des Weiteren ist für den Vorwärtsschritt die Laufzeit der Trajektorie, auch Schrittweite genannt, von Bedeutung. Fixiert man die Laufzeit konstant auf einen Wert, so entstehen Linearisierungsfehler bei der Berechung des DAE, wie in Abbildung \ref{pic:kon_schr} zu sehen ist. Damit wird das Systemverhalten fehlerhaft abgebildet. %weswegen es möglich ist, dass falsche Annahmen zum Verhalten getroffen werden. 
+Dem entgegen steht eine dynamische Laufzeit, die für jede einzelne Trajektorie den optimalen Zeitfaktor berechnet, um das Verhalten abzubilden. Die dynamische Schrittweite erlaubt daher für jede Transition die selbstständige Bestimmung des optimalen Zeitwerts zur Berechnung des Nachfolgervektors. 
+
+Die Berechnung der Schrittweite wird von der Schrittweitenkontrolle der DAE durchgeführt. Sie nimmt in der Verifikation von analogen Schaltungen einen wichtigen Platz ein. 
+Abbildung \ref{pic:kon_schr} zeigt die Schrittweiten $\Delta sw_i$, die für die einzelnen Transitionen gelten.
+%
+% zustandsraum, kurvige transition
+% linearisierungsfehler durch zu große Schrittweite
+% schauen wie die Punkte in der Abbildung angegeben sind
+\begin{figure}[htb]
+  \begin{center}
+    \includegraphics[width=0.6\textwidth]{picture/Graphen/kon_schr.eps}
+    \caption[Fehlerbetrachtung durch konstante Schrittweite]{Fehlerbetrachtung durch konstante Schrittweite}
+    \label{pic:kon_schr}
+  \end{center}
+\end{figure}
+
+%Listing \ref{ls:vor_schr} zeigt die Transitionsberechnung als Pseudo-Code.
+%\begin{lstlisting}[caption=Vorwärtsschritt, label= ls:vor_schr]{vorwaerts}
+%	/* Festlegen der Schrittweite
+%	$step$ := Schrittweite
+%	
+%	/* Aufruf der DAE für die Transitionsberechnung
+%	$\left[ retStep, Nachfolger \right]$ := callc.call_target_point(Standpunkt, $step$);
+%	
+%	/* Schrittweitenkontrolle:
+%	Wird Schrittweite ($retStep$) akzeptiert
+%		return;
+%	sonst
+%		wiederholen mit neuer Schrittweite;
+%	end;
+%\end{lstlisting}
+
+\subsubsection{Definition der Schrittweitenobergrenze \label{sss:schr_kon}}
+
+Die Definition einer Schrittweitenobergrenze dient als Kontrollinstanz innerhalb der schrittweisen Exploration. Mit ihr lassen sich die Schrittweiten der Transitionen $sw_i$ einer Punktmenge kontrollieren, um eine unproportionale Exploration der Punkte einer Menge zu verhindern. Die Transitionen mit Schrittweiten größer der OG werden durch Transitionen mit Schrittweiten gleich der OG ersetzt.
+
+Daher sollte die OG anfangs sorgfältig anhand der Spezifikation gewählt werden, da sich mit ihr die Geschwindigkeit der Exploration des Zustandsraums kontrollieren lässt. 
+%Als Richtlinie dienen dabei mehrere Faktoren. Die Obergrenze sollte nicht zu niedrig sein, um den Zustandsraum nicht unnötig \glqq aufzublähen\grqq{} und damit unnötig Rechenleistung und Zeit zu beanspruchen. Dem entgegen sollte die Grenze \textit{nicht zu hoch} gewählt werden, um die Möglichkeit des Auseinanderreißens der Punktmenge zu minimieren beziehungsweise die Größe der konvexen Hülle der Punktmenge möglichst konstant zu halten.
+%Lassen sich diese Faktoren kontrollieren, kann eine dynamische Schrittweitenbestimmung jeder transienten Simulationstrajektorie genutzt werden. 
+Da sich die Schrittweise bei der Berechnung der Trajektorie anhand der DAE allerdings dynamisch anpasst, gilt es, diese Dynamik auf die Bestimmung der Obergrenze zu transferieren. Dazu betrachtet man die Schrittweiten der Transitionsberechnungen der Punktmenge und berechnet die durchschnittliche Weite, wie in Formel \eqref{eq:schr_OG} definiert. Es gilt, dass $n$ der Anzahl der Punkte einer Punktmenge $j$ entspricht, während $j$ die Anzahl der Punktmengen darstellt.
+\begin{equation}
+	sw^{OG}_j \: = \: \frac{\sum^n _{i=1} sw_i }{ n }    \label{eq:schr_OG}
+\end{equation}
+Durch die Berechnung der durchschnittlichen Weite passt sich die OG den einzelnen Bereichen des Zustandsraums an und verändert somit selbstständig ihren Wert. Um die Dynamik aber im vollen Umfang auszunutzen, muss eine Wachstumsrate $wr$ vom Designer vorgegeben werden, damit die Obergrenze auch angehoben werden kann. Ohne diese Rate lässt sich die Obergrenze nur verkleinern. Ist die Schrittweite einer Transition $sw_i$ kleiner als $ OG \cdot (1 + wr) $, wird die Transition nicht verworfen. Die Berechnung der durchschnittlichen Schrittweite kann daher um den Faktor $(1 + wr)$ erhöht werden und dies wirkt sich auf $sw^{OG}$ aus.
+
+Die Angabe einer Untergrenze für die Schrittweite eignet sich nicht. Die Rechenleistung und auch die Zeitdauer werden zwar verringert, doch sprechen zwei essentielle Faktoren dagegen:
+\begin{enumerate}
+	\item Die Trajektorien werden möglicherweise nicht richtig dargestellt und verlieren dadurch Teile ihrer Informationen.
+	\item Ein erzwungener, zu hoher Linearisierungsfehler einer Trajektorie kann die Abbildung des Systemverhaltens negativ beeinflussen.
+\end{enumerate}
+Untergrenzen für Schrittweiten sind nicht sinnvoll.
+
+\subsubsection{Punktmengen und ihre konvexen Hüllen \label{sss:pun_konH}}
+
+Zu Beginn jeder Prüfung von Systemeigenschaften gilt es für den Designer, Punktmengen innerhalb des Zustandsraums anzugeben. Diese Punktmengen sollen Bedingungen oder Eigenschaften repräsentieren, die für die CTL-AT - Formeln und der Verifikation der Spezifikation essentiell sind. Jedoch sollte die Wahl der Punkte wohlüberlegt sein. Falsch gewählte Punktmengen erhöhen die Komplexität der Exploration und können die Ergebnismenge verfälschen, wenn nicht sogar die Berechnung einer Ergebnismenge unmöglich machen. 
+
+Da einzelne Punktmengen nur ein geringes Maß an Informationen enthalten, wird für jede Punktmenge die kleinste, alle Punkte der Menge umschließende Hülle berechnet. %Eine Visualisierung ist in  Abbildung \ref{pic:konvHull} zu finden, während 
+Die Formel $f(\vec p)$ zeigt die Definition der konvexen Hülle einer Punktmenge $\vec p$.
+%Diese konvexe Hülle der Punktmenge zeigt die genaue Grenze der Menge an und ermöglicht die Generierung von Informationen zum Zustandsraum. 
+%Die Punktmenge wird dadurch aber nicht ignoriert, sondern weiterhin bei der schrittweisen Exploration und Entdeckung des Zustandsraums beachtet. 
+Die ersten Prüfungen zum Systemverhalten werden an den Eckpunkten der konvexen Hülle und deren Transitionen durchgeführt. Auch lässt sich mit den Eckpunkten gezielt die gesamte Hülle und das Innere der Figur analysieren, wie dies Abschnitt \ref{ss:geb_ana} zeigt.
+
+Die ausgewählte Punktmenge sollte nicht als eine einfache Punktmenge betrachtet werden, sondern abstrakt gesehen als ein Zustand im Zustandsraum. Dieser Zustand enthält Transitionen zu anderen Zuständen (Punktmengen) und lässt sich somit als ein Zustandsgraph abbilden, der das Systemverhalten der analogen Schaltung zu einer CTL-AT - Formel zeigt.
+
+\subsubsection{Bounding Boxen \label{sss:aabb}}
+
+Die konvexen Hüllen von Punktmengen stellen eine Vereinfachung der Bearbeitungsmöglichkeit dar. Jedoch sind die konvexen Hüllen für einige Analysen des Zustandsraums noch immer zu komplex. Daher werden um die konvexen Hüllen rechtwinklige, nach den Achsen ausgerichtete Vielecke, sogenannte \glq Axis-Aligned Bounding Boxes\grq{} (AABB), gelegt. 
+
+Die Algorithmik zur Berechnung der AABB folgt in Listing \ref{ls:aabb}. Interessant ist die Berechnung der Maxima und Minima der Koordinaten. Sie stellen als solche auch Koordinaten dar, die die Untergrenze (UG) und Obergrenze (OB) der Box abbilden. Somit lassen sich die Intervallgrenzen auf den Achsen abstecken, um die konvexe Hülle mit einer AABB zu umschließen.
+\begin{lstlisting}[caption=Axis-Aligned Bounding Box, label= ls:aabb]{aabb}  
+	$koords$ = Koordinaten der Eckpunkte der konvexen Hülle;
+	$dim$ = Dimensionsgröße;
+		
+	// Auslesen der Koordinaten und Bestimmung der Min & Max
+	// $dim$ = Anzahl Spalten = Anzahl an Dimensionen
+	Durchlauf $\:$ $koords$ für jede Spalte
+		$mins$ = Speichere Minimum jeder Spalte
+		$maxs$ = Speichere Maximum jeder Spalte
+	end
+	
+	// Matrix mit $2^{dim}$ Zeilen,
+	// zeigt $dim$-bit Binärzahlen von 0 bis $2^{dim}-1$
+	$box$ := ($2^{dim} \! \times \! dim$)Matrix aus 0- & 1-en;
+	
+	// Mergen der Min- & Max-Werte mit $\:$ $box$
+	// $\Rightarrow \:$ AABB abhängig von $\:$ $koords$
+	Durchlaufe die $\: box$ 
+		if $ \  box(i,j) \: == \: $ 1 $ \ $ do
+			Trage $mins(1,j)$ in $box(i,j)$ ein
+		else
+			Trage $maxs(1,j)$ in $box(i,j)$ ein
+		end
+	end
+\end{lstlisting}
+
+Die Vielecke ermöglichen schnell und einfach folgende Berechnungen bzw. Beobachtungen durchzuführen:
+%Mit ihnen werden folgende Berechnungen beziehungsweise Beobachtungen ermöglicht:
+\begin{itemize}
+	\item Kollisionserkennung
+  \item Mittelpunktbestimmung \& Distanzberechnungen
+  \item Bestimmung des Verhältnisses der AABB zur konvexen Hülle der Punktmenge
+  \item Analyse der zusammenhängenden Kette der Bounding Boxen
+\end{itemize}
+%Die AABB's dienen mehreren einfachen Berechnungen für erste Betrachtug
+
+\paragraph*{Kollisionserkennung \label{para:koll}}
+Bei der Entdeckung des Zustandsraums anhand der schrittweisen Exploration gilt es zu prüfen, ob Abbruchbedingungen verletzt werden. Eine wichtige Abbruchbedingung ist, dass die Zielmenge erreicht wird. Da die Kollisionserkennung bei konvexen Figuren sehr rechen- und zeitintensiv ist, werden der Einfachheit halber die AABB dazu verwendet.\footnote{Das Einsparpotenzial bei der Kollisionserkennung von AABB gegenüber anderen Figuren wurde in diversen Forschungsarbeiten und in der Computerspiele-Entwicklung umfangreich gezeigt \cite{920962}.}
+Erst wenn eine Kollision zweier AABB vorliegt, sollte die rechenaufwendigen Kollisionsberechnung zweier konvexer Hüllen durchgeführt werden. 
+
+%
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/koll_aabb.eps}
+%    \caption[Kollisionserkennung zweier Bounding Boxen]{Kollisionserkennung zweier Bounding Boxen}
+%    \label{pic:koll_aabb}
+%  \end{center}
+%\end{figure}
+Eine Überschneidung (zweier AABB) findet dann statt, wenn sie sich in Richtung aller $dim$-Koordinatenachsen überschneiden. %, wie dies in Abbildung \ref{pic:koll_aabb} zu sehen ist. 
+Dabei lässt sich berechnen, % (siehe Formel \eqref{eq:grad_koll} aus Seite \pageref{eq:grad_koll})
+wie stark die Überschneidungen der AABB sind. Je höher der Überschneidungsgrad $\tau_i $ mit $ i \in \left\{ 1, 2 \right\}  $ (in \%), desto mehr wird die Bounding Box $i$ von der jeweils anderen überlappt und desto wahrscheinlicher kollidieren auch die konvexen Hüllen in den Bounding Boxen.
+
+Des Weiteren kann die Kollisionserkennung genutzt werden, um zu prüfen, ob einzelne Transitionen eine AABB schneiden. Solche Berechnungen werden beispielsweise auch bei der Prüfung, ob die Transition eines Eckpunktes in die eigene Hülle zeigt, verwendet. 
+
+Der Kollisionserkennung wird daher bei der schrittweisen Exploration eine große Bedeutung zugesprochen. 
+
+\paragraph*{Mittelpunktbestimmung \& Distanzberechnungen \label{para:mittel}}
+Zur Generierung weiterer Informationen bezüglich des Verhaltens der konvexen Hüllen und der Bounding Boxen werden Mittelpunktbestimmungen sowie Distanzberechnungen durchgeführt. 
+
+Zum einen wird die Berechnung der Mittelpunkte der AABB, die den Schwerpunkten der Boxen entsprechen, durchgeführt. Sie werden für die Kollisionserkennung benötigt. Algorithmisch lässt sich die Mittelpunkt-Bestimmung, wie in Listing \ref{ls:mittel} gezeigt, umsetzen. Dazu werden zwei Diagonalen der AABB bestimmt und deren Schnittpunkte berechnet. Der Schnittpunkt zweier Diagonalen einer AABB ist gleichzeitig der Mittelpunkt der AABB.
+\begin{lstlisting}[caption=Mittelpunktbestimmung, label= ls:mittel]{mittel}
+	$gerade_1$ = eine Diagonale der AABB;
+	$gerade_2$ = zweite Diagonale der AABB;
+	
+	// Berechnung des Schnittpunkts der beiden Geraden
+	$m_{box}$ := schneiden($gerade_1$, $gerade_2$);
+\end{lstlisting}
+
+Zum anderen erfolgt die Berechnung der Mittelpunkte der konvexen Hülle in Formel \eqref{eq:m_konv}. $P_i$ stellt dabei den Ortsvektor eines Eckpunktes der konvexen Hülle dar. Diese Mittelpunkte entsprechen nicht den Schwerpunkten der konvexen Hüllen. 
+\begin{equation}
+	m_{konvH} \: = \: \frac{ \sum P_i}{ \left| P_i \right| } \label{eq:m_konv}
+\end{equation}
+
+Eine Verhältnisrelation von $m_{box}$ und $m_{konvH}$ erlaubt Rückschlüsse zur Position und der Form der konvexen Hülle in der Bounding Box. 
+Auch wird eine Distanzberechnung der Mittelpunkte zueinander durchgeführt, die unter anderem bei der Grenzanalyse (Abschnitt \ref{ss:rahmen}) benutzt wird. Die Metrik hinter der Distanzberechnung (siehe Formel \eqref{eq:distanz}) ist ein einfacher Richtungsvektor, errechnet aus den Ortsvektoren der Mittelpunkte der Boxen/ konvexen Hüllen $i$ und $j$. Beide Mittelpunktberechnungen $m_{box}$ und $m_{konvH}$ werden für die Distanzberechnung verwendet.
+\begin{equation}
+	dis \: = \: m_i \: - \: m_j \ \ \ \text{mit} \ \ \ i \neq j \label{eq:distanz}
+\end{equation}
+Es ist aber zu beachten, dass die Berechnung auf Vektoren der Größe $1 \! \times \! dim$ durchgeführt wird. 
+
+Die Mittelpunkte der AABB werden bei der Kollisionserkennung verwendet, um die Schnittmenge der kollidierenden AABB zu berechnen und Auskunft zu den Positionen der sich treffenden AABB zu geben. Anhand der Vorzeichen der einzelnen Vektorelemente von $dis$ kann spezifiziert werden, welche Bereiche der AABB sich überlappen. Negative Vorzeichen bedeuten, dass der Mittelpunkt der ersten AABB linker, tiefer, näher usw. (entsprechend der jeweiligen Achsen-Repräsentation) liegt, als der Mittelpunkt der zweiten AABB. Betrachtet man die Werte des Vektors ohne Vorzeichen, geben sie die Entfernung der beiden Mittelpunkte zueinander an.
+
+Die Berechnung der Schnittmenge zweier Boxen erfolgt in Listing \ref{ls:schnitt}. Dafür werden sogenannte \textit{Boxmaße} definiert, die die Boxgröße jeder Achse in einem Vektor 
+\begin{equation}
+	v_{maße} \: = \: Achse^{OG}_i \: - \: Achse^{UG}_i \ \ \ \text{mit} \ \ \ i = 1, \ldots, dim  \label{eq:boxmasse}
+\end{equation}
+speichert. %, siehe Abbildung \ref{pic:schnitt_beson}. 
+\begin{lstlisting}[caption=Schnittmengenberechnung, label= ls:schnitt]{mittel}
+	// Zwischenrechnung
+	$vek_1$ = Summe der $Boxmaße$ zweier Boxen
+	$vek_2$ = Distanzwert der Boxen + $\frac{vek_1}{2}$
+	
+	// Schnittmenge gleicht Überlappungsgebiet
+	$vek_{schnitt}$ = $vek_1$ - $vek_2$
+\end{lstlisting}
+
+Für die Schnittmenge ist nur eine Ausnahme zu beachten. Schneiden sich die Boxen an mehr Seiten, als Dimensionen im Zustandsraum, dann ist die Schnittmenge an einer Seite zu groß. %Abbildung \ref{pic:schnitt_beson} visualisiert diese Besonderheit.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.5\textwidth]{picture/Graphen/schnitt_beson.eps}
+%    \caption[Schnittmengenberechnung zweier Bounding Boxen]{Schnittmengenberechnung zweier Bounding Boxen} % BOXMAßE NICHT VERGESSEN
+%    \label{pic:schnitt_beson}
+%  \end{center}
+%\end{figure}
+Allerdings lässt sich dies mit einer einfachen Abfrage abfangen und korrigieren, indem die Maße der Schnittmenge an denen der kleineren AABB angepasst werden. Nachdem nun die Maße der Schnittmenge bekannt sind, folgt die Berechnung der Verhältnisse der Schnittmenge zur eigenen Box. 
+
+Mit der Schnittmenge der beiden kollidierenden Bounding Boxen lässt sich der Überschneidungsgrad $\tau_i $ mit $ i \in \left\{ 1,2 \right\}$ jeder Box berechnen. %, wie in Formel \eqref{eq:grad_koll} gezeigt. 
+%\begin{equation}
+%	\tau_i \: = \:  \label{eq:grad_koll}
+%\end{equation}
+Anschließend wird die Schnittmenge im Verhältnis zur jeweils eigenen Box gesetzt, um den Grad der Überlappung anzugeben. 
+
+\paragraph*{Bestimmung des Verhältnisses der AABB zur umschlossenen, konvexen Hülle \label{para:verhalt}}
+%Bestimmung des Verhältnisses der AABB zur umschlossenen, konvexen Hülle
+Eine potenzielle Gefahr bei AABB geht von der Achsen-Ausrichtung aus. Konvexe Figuren, die diagonal im Raum liegen, verursachen unverhältnismäßig große Bounding-Boxen. Eine Möglichkeit, diesen unproportionalen Größenunterschied zu lösen, existiert nicht. Jedoch lässt sich diese Unproportionalität umgehen, indem man eine Verhältnisrelation der Boxen zur umschlossenen, konvexen Hülle aufbaut. Die AABB und die darin enthaltene konvexe Hülle stehen in einem Größenverhältnis zueinander, das im dreidimensionalen Bereich über die Volumenberechnung zu bestimmen ist. Das Volumen der konvexen Hülle zum Volumen der AABB zeigt an, wie stark die Box von der konvexen Hülle ausgefüllt ist. Niedrige Werte deuten auf eine hohe Unproportionalität hin. In Verbindung mit dem Grad der Überschneidung zweier AABB lässt sich dies sogar für die Kollisionserkennung nutzen. Je kleiner das Verhältnis von konvexer Hülle zu ihrer AABB, desto mehr müssen sich zwei AABB überlappen, so dass eine Kollision zwischen den konvexen Hüllen anzunehmen ist.
+
+Die Berechnung der Relation erfolgt aus den $dim$-dimensionalen Volumina der AABB und der konvexen Hülle, wie es die Formeln \eqref{eq:vol1} und \eqref{eq:vol2} zeigen. %     v_{maße} \: = \: Achse^{OG}_i \: - \: Achse^{UG}_i \ \ \ \text{mit} \ \ \ i = 1 \cdots dim  \label{eq:boxmasse}
+Dafür wird mit Funktion $f\:(\vec p)$ die konvexe Hülle einer Punktmenge abgebildet.
+\begin{align}
+	vol_{box} = & \prod^{dim} _{i = 1} Achse^{OG}_i \: - \: Achse^{UG}_i \label{eq:vol1} \\
+	vol_{konvH} = & \underset{i\! =\! 1 \ \ \ \  dim \ \ \ \ \ \ \ \ \ \ }{\int \cdots \int^{Achse^{OG}_i} _{Achse^{UG}_i} } f(	\vec p)\: d^{dim}p \label{eq:vol2}
+\end{align}
+Aus den beiden Werten lässt sich nun abschließend die Verhältnisrelation generieren. 
+
+\paragraph*{Analyse der zusammenhängenden Kette der AABB}
+
+Die letzte Berechnung basierend auf den Bounding-Boxen ist die Analyse der zusammenhängenden Kette der AABB. Ziel dieser Prüfung ist die als abstrakte Zustände definierten Punktmengen als zusammenhängende Zustandsgraphen zu sehen. % wie dies in Abbildung \ref{pic:konvHull} zu sehen ist.
+Zwischen zwei Zuständen sollen sich bestmöglich keine Gebiete befinden, die nicht von mindestens einer der AABB überdeckt werden. So lässt sich eine Exploration für einen Bereich des Zustandsraums abbilden. Eine geschlossene Gebietsüberdeckung ist beispielsweise auch für den Temporaloperator $U$ von Bedeutung.
+%Abbildung \ref{pic:kette} zeigt die Prüfung, ob die Bounding-Boxen eine Kette bilden, indem es die Prüfung nach jedem Vorwärtsschritt einer Punktmenge durchführt. Berührt/kollidiert die Box der alten Punktmenge mit der Box der neuen Punktmenge, so gelten diese Boxen als Kette. %, wie es in Abbildung \ref{pic:kette} zu sehen ist.
+%2D; transitionen zeigen nach rechts; Boxen liegen demnach kettig nebeneinander 
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.9\textwidth]{picture/Graphen/kette.eps}
+%    \caption{Kette aus Bounding-Boxen}
+%    \label{pic:kette}
+%  \end{center}
+%\end{figure}
+
+
+\subsubsection{Winkelberechnung \label{sss:winkel}}
+
+Die Winkelberechnung einer Transition in Abhängigkeit einer gedachten \textit{Horizontalen} dient dem Zweck der einfachen Richtungsbestimmung, in die die Transition zeigt. Damit eine Vergleichbarkeit der Winkel herrscht, müssen die Dimensionen beachtet und eine \textit{Horizontale} generiert werden. Diese \textit{Horizontale} ist eine Gerade, die sich über $n-1$ Dimensionen erstreckt und eine Orthogonale zur Ordinate (der noch fehlenden Dimension) bildet. Dadurch wird der nötige rechte Winkel geschaffen, der für die Winkelberechnung der Transition mit dem Arkuskosinus gebraucht wird. 
+
+Formel \eqref{eq:winkel} zeigt die Berechnung des Arkuskosinus. Gebraucht wird dazu der Richtungsvektor $\vec x$, der von der Koordinate  $Start$ zur Koordinate $Ziel$ zeigt und der \textit{Horizontalen} $\vec y$, die durch die Koordinate $Start$ führt. 
+%Abbildung \ref{pic:winkel} zeigt den zu bestimmenden Winkel, die beiden Koordinaten $Start$ \& $Ziel$ sowie die \textit{Horizontale} $\vec y$.
+Einzig anzumerken ist, dass die Winkelberechung nur für eine Ausnahme nicht funktioniert. Diese Ausnahme tritt ein, wenn die beiden Koordinaten $Start$ \& $Ziel$ den selben Punkt abbilden. 
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/winkel.eps}
+%    \caption[Winkelberechnung einer Transition im Zustandsraum]{Winkelberechnung einer Transition im Zustandsraum}
+%    \label{pic:winkel}
+%  \end{center}
+%\end{figure}
+
+Diese Berechnung wird bei jeder Transition durchgeführt und erlaubt eine einfache Richtungsbestimmung. Zudem lassen sich die Winkelangaben der Eckpunkte der konvexen Hülle als Richtungsrahmen benutzen, in dem sie ein Intervall definieren, innerhalb dessen sich die Winkel der Transition der Samples befinden müssen. Eine schnelle und einfache Bestimmung des Systemverhaltens, das damit in einem gewissen Grad die Gutmütigkeit des Systems kontrolliert und möglicherweise Ausreisser findet, ist das Resultat. Auch lässt sich eine Abschätzung des Verlaufs der schrittweisen Exploration tätigen. 
+\begin{align}
+	\left| \vec x \right| \: = & \: \sqrt{\sum x^2} \label{eq:winkel} \\
+	\left| \vec y \right| \: = & \: \sqrt{\sum y^2} \notag \\
+	\vec x \cdot \vec y \: = & \: \sum_{i\!=\!1}^{dim} x_i y_i \notag \\
+	\alpha \: = & \: \arccos \: \Biggl( \frac{\vec x \cdot \vec y}{\left| \vec x \right| \: \left| \vec y \right|} \Biggr) \notag
+\end{align}
+
+%Zeigen die Transitionen in alle 
+Ist für die Transitionen keinerlei Homogenität zu zeigen, dann lässt sich über die Winkelberechnung nur aussagen, 
+\begin{enumerate} 
+	\item[]\textbf{a)} $\ $ ob die Transitionen in die eigene, konvexe Hülle zeigen oder
+	\item[]\textbf{b)} $\ $ ob die eigene, konvexe Hülle eine Teilmenge der neuen konvexen Hülle ist oder
+	\item[]\textbf{c)} $\ $ ob weder \textbf{a)} noch \textbf{b)} gilt.
+\end{enumerate}
+%die eigene, konvexe Hülle eine Teilmenge der neuen konvexen Hülle ist. 
+Abgesehen davon können Winkelangaben jedoch andeuten, ob die neue Hülle größer, gleich oder kleiner der aktuellen sein wird, wenn die Transitionen grob in eine Richtung deuten. 
+
+\subsubsection{Freiheitsgrade \label{sss:freiheit}}
+
+%Nach dem Vorwärtsschritt und der Schrittweitenkontrolle folgt
+Das letzte grundlegende Verfahren zur schrittweisen Exploration des Zustandsraums einer analogen Schaltung ist die Bestimmung der Freiheitsgrade der Achsen. Dazu werden die Schaltungen in zwei Bereiche unterteilt. Für die Bereiche gelten beim Model-Checking leicht unterschiedliche Prüfungsalgorithmen der Spezifikation.
+
+Der erste Bereich umfasst die Schaltungen, für die keine Eingangsvariablen $u(t)$ definiert sind und der Zustandsraum nur von den energiespeichernden Systemvariablen $x_e(t)$ aufgespannt wird. Diese Schaltungen werden bei der Analyse des Zustandsraums einzig die Gebiete erreichen, zu denen Transitionen führen. Die Prüfung der CTL-AT - Formeln ist daher von dem definierten Start- und/oder Zielgebiet abhängig. Bewegt sich eine Transition in einen Fixpunkt, endet die schrittweise Exploration an dieser Stelle. 
+
+Sind dem entgegen jedoch Eingangsvariablen $u(t)$ definiert, dann gelten die Achsen, die eine Eingangsvariable abbilden als Freihheitsgrade. Gefundene Fixpunkte können nun umgangen werden, da im Zuge einer frei wählbaren Belegung einer Eingangsvariable, der Fixpunkt in entsprechender Achsenrichtung verlassen werden kann. Die Zustandsraumexploration wird fortgesetzt, ohne dem Fixpunkt Aufmerksamkeit zu schenken. Es liegt daher am Designer, die Fixpunkte im Nachhinein zu untersuchen.
+%
+%Abbildung \ref{fig:frei} zeigt einen Zustandsraum und darin enthaltene Fixpunkte, die auf der Eingangsvariablen-repräsentierende Achse verlassen werden können. Dem entgegen stellt Abbildung \ref{fig:frei_n} einen Zustandsraum ohne Eingangsvariablen dar, in dem Fixpunkte nicht verlassen werden können.
+%\begin{figure}[htb]
+% \centering
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ]
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/frei.eps}
+%    \label{fig:frei}
+%    }
+%  \end{minipage}
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ]
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/frei_nicht.eps}
+%    \label{fig:frei_n}  
+%    }
+%  \end{minipage}
+%  \caption[Zustandsraumexploration mit und ohne Freiheitsgrade]{Zustandsraumexploration mit (\ref{fig:frei}) und ohne (\ref{fig:frei_n}) Freiheitsgrade}
+%  \label{fig:freiheit}
+%\end{figure}
+
+Zusammenfassend lässt sich sagen, dass Schaltungen mit frei wählbaren Eingangsvariablen, wie beispielsweise ein Schmitt-Trigger, eine umfassendere Analyse ermöglichen. 
+%Diese wird aber mit einer erhöhten Komplexität bei der Prüfung, da die Größe der Lösungsmengen abhängig der \glq freien\grq{} Achsen ist, bezahlt. 
+Für Schaltungen ohne solche Freiheitsgrade haben Fixpunkte essentielle Auswirkungen. Sie liefern dem Designer eine Ergebnismenge, die ihm den Zustandsraum abhängig vom definierten Startgebiet bis zum Fixpunkt darlegt.
+
+
+\subsection{Grenzanalyse \label{ss:rahmen}}
+
+Nachdem nun die grundlegenden Verfahren betrachtet wurden, gilt es die Abbruchbedingungen der schrittweisen Exploration zu definieren. 
+Sie dienen dem Zweck, der Exploration einen Rahmen zu bieten und sich nicht im unendlichen Zustandsraum zu verfangen. 
+
+Die wohl wichtigste Abbruchbedingung ist das Erreichen des definierten Zielgebiets, gefolgt von der Beschränkung des Zustandsraums auf das zu untersuchende Gebiet. Jede Abbruchbedingung lässt sich separat \textit{aktivieren/deaktivieren}. Der Designer kann für jede einzelne Prüfung von Systemeigenschaften bestimmen, welche Abbruchbedingungen gelten sollen. Sind keine angegeben, werden standardmäßig die folgenden beiden Abbruchbedingungen angewandt: Der Beweis der Erfüllbarkeit/Nicht-Erfüllbarkeit einer Formel ist erbracht und die Transitionen einer Punktmenge haben keine Möglichkeit der \textit{Fortbewegung} mehr (siehe hierfür Abschnitt \ref{ss:fixpunkt}).
+
+Jede angegebene Punktmenge wird bei der schrittweisen Exploration analysiert und erhält neben der Angabe der konvexen Hülle eine Bounding Box. Entspricht die angegebene Punktmenge beispielsweise der geforderten Zielmenge, deren Erreichbarkeit zu prüfen ist, so rückt die Bounding-Box in den Vordergrund. Meldet die Kollisionserkennung (Abschnitt \ref{sss:aabb}) einen Treffer mit der AABB des Zielgebiets, kann die Exploration für den einen Fall beendet und die Ergebnismenge ausgegeben werden, da ein Weg zum Zielgebiet gefunden wurde. Die zu prüfende Systemeigenschaft mit CTL-AT ist entsprechend der Klassifikation der CTL-AT - Formel entweder verifiziert oder falsifiziert. 
+
+Neben den beiden standardisierten Abbruchbedingungen ist auch das Eingrenzen des Zustandsraums auf das für die Prüfung der Systemeigenschaft zu untersuchende Teilgebiet eine Abbruchbedingung. Dazu werden für jede Achse die Intervallgrenzen festgelegt, innerhalb derer sich das zu untersuchende Teilgebiet befinden muss. Transitionen, die auf irgendeiner der Achsen die angegebenen Intervallgrenzen verletzen, verursachen einen Abbruch der Ergebnisfindung. %Abbildung \ref{pic:begrenzung} zeigt die Begrenzung des Zustandsraums auf das zu untersuchende Teilgebiet.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/zust_begrenz.eps} % Eingrenzung, radius für Weglänge
+%    \caption[Die Abbruchbedingungen des Zustandsraums]{Die Abbruchbedingungen des Zustandsraums}
+%    \label{pic:begrenzung}
+%  \end{center}
+%\end{figure}
+
+%Eine weitere Abbruchbedingung, die sich auf den Zustandsraum bezieht, ist die Betrachtung der \textit{maximalen Weglänge} der Transitionen. Diese Bedingung kann nur genutzt werden, wenn für den Zustandsraum neben dem definierten Startgebiet auch ein zu erreichendes Zielgebiet ausgewählt wurde. Mit der Distanzberechnung der Mittelpunkte der Bounding Boxen der beiden Gebiete wird ein Radius $r$ bestimmt. Dieser dient, entsprechend seiner individuellen Einstellbarkeit, als Stellschraube zur Bestimmung der Gradlinigkeit der Zustandsraumerkundung vom Start- zum Zielgebiet. %, wie dies in Abbildung \ref{pic:begrenzung} zu sehen ist.
+Gleicht die \textit{maximale Weglänge} dem Radius, dann ist die Ergebnisfindung gezwungen, den direkten Weg zwischen Start- und Zielgebiet zu wählen. Weichen die Transitionen nur geringfügig davon ab, wird die \textit{maximale Weglänge} verletzt. Umgekehrt erlaubt schon der doppelte Radius als \textit{maximale Weglänge}, eine umfangreiche Ergebnismenge.
+Ein Faktor $x$ zwischen eins und zwei für den Radius scheint demnach optimal zu sein, wobei für jede Prüfung einer Systemeigenschaft der optimale Faktor ein anderer ist. 
+%
+%KLEINES BILD mit zustandsraum, zwei gebieten und die mögliche erkundung des raums mit doppeltem Radius
+%korridor
+%(rechter winkel)
+%winkelhalbierende läuft durch die Mitte des Zielgebiets
+%Eckpunkt des ... befindet sich auf winkelhalbierende r/2 weiter weg vom Zielgebiet
+%
+%Das Wachstum der Ergebnismenge bei der schrittweisen Exploration lässt sich als eine Abbruchbedingung nutzen. 
+%%Die Größe der Ergebnismenge lässt sich für die Grenzanalyse einspannen. 
+%Betrachtet man das Wachstum der Menge an Punkten, die die formulierte Systemeigenschaft erfüllen, respektive nicht erfüllen, lassen sich einige Informationen zum Verhalten des Zustandsraums generieren.
+%Ein zu schnelles Wachstum der Ergebnismenge reicht aus, um einen Abbruch der Prüfung des Systemverhaltens bewirken. 
+%
+%Dabei stellt die Definition, ab wann genau das Wachstum \glq zu schnell\grq{} ist, eine interessante Aufgabe, mit der man sich künftig genauer auseinander setzen sollte. Die hier genutzte Definition, wie sie in Listing \ref{ls:wachstum} abgebildet ist, basiert auf anfänglichen Beobachtungen und experimentellen Versuchen.
+%\begin{lstlisting}[caption=Wachstumsrate, label= ls:wachstum]{wachstum}
+%	... 
+%\end{lstlisting}
+
+Die letzten im Rahmen dieser Arbeit definierten Abbruchbedingungen, die Suchweitensteuerung und die Zeitbegrenzung, basieren auf dem Prinzip eines Zählers. 
+Die Suchweitensteuerung summiert für jede Transition einer Punktmenge den Faktor eins auf die Suchweite, während die Zeitbegrenzung die durchschnittliche Schrittweite $sw^{OG}_j$ (siehe Formel \eqref{eq:schr_OG} auf Seite \pageref{eq:schr_OG}) der Punktmengentransition $j$ aufsummiert.
+%Ist die obere Schranke des Zählers erreicht, dann wird die schrittweise Exploration abgebrochen. 
+Ähnlich der \textit{maximalen Weglänge}, wird nach Überschreiten der definierten oberen Schranke des Zählers die Prüfung der Eigenschaft abgebrochen. 
+Welcher Wert für die Schranke definiert wird, ist allein vom Designer abhängig. Er sollte sich aber an der Spezifikation orientieren, da anfangs keine Hilfestellung bei der Wahl vorhanden ist. 
+
+
+\subsection{Gebietsanalyse \label{ss:geb_ana}}
+
+Die Analyse eines Zustandsraumgebiets dient zweierlei Zwecken. 
+Zum einen erlaubt diese Analyse, eine Bewertung (der konvexen Hülle) einer Punktmenge durchzuführen. Somit wird unabhängig von den Berechnungen mit der AABB eine Betrachtung des Zustandsraums an der Punktmenge realisiert. Dazu werden unter anderem die Winkelberechnung (Abchnitt \ref{sss:winkel}) und die Bestimmung der Freiheitsgrade (Abschnitt \ref{sss:freiheit}) hinzugezogen. Daraus resultieren Informationen, die eine Abschätzung des Verhaltens der analogen Schaltung und eine Aussage zum Zustandsraum an der Punktmenge zulassen. 
+%Abbildung \ref{pic:gebiets_ana} zeigt die Gebietsanalyse auf einem beispielhaften Zustandsraum. 
+%, wie dies auch der abstrakte Pseudo-Code von Listing \ref{ls:gebiet} suggeriert. 
+Zum anderen ermöglicht die Gebietsanalyse die Ausführung einer der CTL - Operationen. 
+%\begin{figure}[htb]
+%  \centering
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ]   %  $EF \Phi $
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/ge_ana1.eps}
+%    %\caption{Ausschnitt zweier Signalverläufe \ldots}
+%    \label{fig:geh_ana1}  
+%    }
+%  \end{minipage}
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ]   % $ EF \Phi \left[ t_{low}, t_{high} \right] $
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/ge_ana2.eps}
+%    %\caption{\ldots und derer Differenzkurven}
+%    \label{fig:ge_ana2}
+%    }
+%  \end{minipage}
+%  \caption[Gebietsanalyse eines Teilgebiets]{Gebietsanalyse eines Teilgebiets des Zustandsraums}
+%  \label{pic:gebiets_ana}
+%\end{figure}
+Operationen, die den temporalen Operator $G$ enthalten, fordern, dass die mit $G$ definierte Bedingung $\Phi$ generell immer zu gelten hat. Geht man nun davon aus, dass die konvexe Hülle einer Punktmenge als $\Phi$ definiert wird, so sollte jede Transition der konvexen Hülle auch weiterhin in die konvexe Hülle zeigen, um $G$ zu erfüllen. %, wie dies Abbildung \ref{fig:ge_ana2} darstellt.
+
+Um alle erforderlichen Informationen generieren zu können, müssen neben der Auswertung der Eckpunkte der konvexen Hülle auch eine Auswertung des der Hülle ausgeführt werden. Dazu werden die benachbarten Eckpunkte miteinander verbunden. %ist (siehe Abbildung \ref{pic:drei_kant}). 
+%Die Kanten der Verbindungen stellen entweder geschlossen den Rahmen der konvexen Hülle dar oder aber mindestens eine Kante des Dreiecks durchläuft die Figur. 
+und auf den entstandenen Kanten die Samples generiert. 
+%Jedoch entstehen auf diese Art redundante Samples, da einige Kanten mehrfach verwendet und auf diesen Kanten immer wieder die gleichen Punkte gesampelt werden. Die Anzahl der redundanten Samples ist abhängig von der Form der konvexen Hülle der Punktmenge und dem Grad der Samplegenauigkeit.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/drei_kant.eps}
+%    \caption[Aufteilung einer konvexen Hülle in Dreiecke]{Aufteilung einer konvexen Hülle in Dreiecke}
+%    \label{pic:drei_kant}
+%  \end{center}
+%\end{figure}
+
+Da die Form der Hülle nicht veränderbar ist, ist der Grad der Samplegenauigkeit die einzige, wählbare Abstraktion. 
+%Formel \eqref{eq:samp_genau} zeigt, wie diese die Positionen der Samples auf einer Kante bestimmt. Dazu muss vom Designer die Samplerate $samp$ angegeben werden
+%\begin{equation}
+%	samp_{pos} \: = \: ... \label{eq:samp_genau}
+%\end{equation}
+Die Anzahl der Samples beeinflusst die Komplexität (die benötigte Zeit und Rechenleistung) erheblich. Daher ist es von Bedeutung, dass die Anzahl der Samples so gewählt wird, dass das Systemverhalten ausreichend abstrahiert werden kann, die Komplexität aber nur geringfügig beeinflusst wird. 
+Die Auswertung der Samples und ihrer Transitionen dienen nur noch als Bestätigung der getroffenen Aussagen oder als Gegenbeispiel einer CTL-AT - Formel. 
+
+
+\subsection{Vorwärtsanalyse \label{ss:vor_ana}}
+
+Bei der Vorwärtsanalyse gilt es, von der konvexen Hülle einer Menge $\Phi$ aus den Zustandsraum zu erkunden. Man erforscht demnach die Bereiche des Zustandsraums, die von $\Phi$ aus zu erreichen sind. In CTL-AT lässt sich diese Formulierung durch die Zeitumkehr der Operationen erhalten. $\Phi$ stellt daher in der CTL-AT Terminologie die Zielmenge dar, wie sie beispielweise durch $EF^{-1} \: \Phi$ formuliert wird. Die CTL-AT - Operationen mit invertierer Zeitachse werden bei der schrittweisen Exploration anhand der Vorwärtsanalyse abgebildet. 
+
+Die Vorwärtsanalyse folgt auf eine Gebietsanalyse und nutzt nur noch die Eckpunkte der konvexen Hülle und einiger ausgewählter Punkte. %, wie dies in Abbildung \ref{pic:vor_geb} gezeigt ist.
+Die restlichen Zustände innerhalb der Figur können vernachlässigt werden. Das Systemverhalten wurde in der Gebietsanalyse schon betrachtet. % und wird bedingt der angenommenen Gutmütigkeit des Systemverhaltens kaum noch beachtet. 
+Eine gelegentliche Gebietsanalyse der aktuellen, konvexen Hülle jedoch überprüft die Gutmütigkeit des Systemverhaltens. Es dient als erster Schutz vor unvorhersehbaren Verhaltensveränderungen. 
+%
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/vor_geb.eps}
+%    \caption[Darstellung der Vorwärtsanalyse]{Darstellung der Vorwärtsanalyse der schrittweisen Exploration}
+%    \label{pic:vor_geb}
+%  \end{center}
+%\end{figure}
+
+Nachdem die Gebietsanalyse die anfängliche Punktmenge betrachtet hat, werden für die Vorwärtsanalyse nur noch die Eckpunkte und wenige andere Punkte des Zustandsraums betrachtet. Daher wird den übriggebliebenen Ortsvektoren ein Rastermuster auferlegt %(siehe Abbildung \ref{pic:raster})
+und erneut Samples um die Ortsvektoren verteilt. Anschließend werden die Transitionen der Ortsvektoren mit denen der Samples verglichen. 
+%Dies wirkt zwar wie die berühmte Suche nach der \textit{Stecknadel im Heuhaufen}, doch erlaubt es Rückschlüsse für die Auswertung.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/raster.eps}
+%    \caption[Darstellung der Rasterung]{Darstellung der Rasterung}
+%    \label{pic:raster}
+%  \end{center}
+%\end{figure}
+
+Diese Samplings um die Ortsvektoren erlauben es, die Bewegungsveränderungen der Umgebung um den Ortsvektor zu registrieren.
+%Zum einen wird die \glqq Gutmütigkeit\grqq{} des Systemverhaltens weiter beachtet. 
+Eine Bewegungsaussage von mehreren nah aneinanderliegenden Punkten ist zuverlässiger als die eines einzelnen Punktes. Ein einzelner Ortsvektor und seine Transition kann ein Verhalten aufweisen, das nicht repräsentativ für diesen Bereich des Zustandsraums, sondern als Sonderfall einzustufen ist. 
+Verhaltensveränderungen der Samples gegenüber der Ortsvektoren deuten auf eine Inhomogenität des Systemverhalten in dem untersuchten Gebiet hin und sollten daher genauer untersucht werden. 
+
+Listing \ref{ls:vorw} zeigt den stark abstrahiert Aufgabenbereich der Vorwärtsanalyse. 
+\begin{lstlisting}[caption=Vorwärtsanalyse, label= ls:vorw]{vorw}
+	$konvH$ := konvexeHülle($punktmenge$);
+	$box$ := Bounding_Box($punktmenge$);
+	
+	$rastSize$ = Rastergröße;
+	$punkte$ := Rasterabtastung($konvH$, $rastSize$);
+	
+	// Berechnung der Nachfolger aller Elemente der Hülle
+	$nachfolg$ := Vorwärtsschritt($punkte$);
+	$konvH_{neu}$ := konvexeHülle($nachfolg$);
+	
+	$kein$_$abbruch$ := Prüfung auf Abbruchbedingungen($konvH_{neu}$);
+	
+	if $ kein$_$abbruch \: == \: $ true $ \ $ do
+		$punktmenge_{neu}$ = $konvH_{neu}$
+		rerun;
+	else
+	  stop Vorwärtsanalyse;
+	end
+\end{lstlisting}
+
+
+\subsection{Rückwärtsanalyse \label{ss:rueck_ana}}
+
+Die Rückwärtsanalyse folgt vom Prinzip her der Vorwärtsanalyse(Listing \ref{ls:rueck}). Die Auswertungsrichtung bzw. die Transitionsrichtung gleicht der Vorwärtsanalyse, nur gilt es nun, die definierte Menge $\Phi$ zu erreichen. %, wie dies in Abbildung \ref{pic:rue_ana} zu sehen ist. 
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/rue_ana.eps}
+%    \caption[Darstellung der Rückwärtsanalyse]{Darstellung der Rückwärtsanalyse der schrittweisen Exploration}
+%    \label{pic:rue_ana}
+%  \end{center}
+%\end{figure}
+Die Rückwärtsanalyse übernimmt daher die in CTL-AT formulierte Bedingungen-Prüfung ohne invertierte Zeitachsen. $EF \Phi$ wäre beispielsweise eine solche Formel. Allerdings benötigt diese Analyse neben der Angabe eines Zielgebietes $\Phi$, auch die Definition von einer Start-Punktmenge, um eine schrittweise Exploration überhaupt beginnen zu können. Auch gilt für die Rückwärtsanalyse die in Kapitel \ref{sss:schr_kon} beschriebende Schrittweitenobergrenze.
+
+Wie eben erwähnt, beschäftigt sich die Vorwärtsanalyse mit CTL-AT - Formeln mit invertierter Zeitachse, während die Rückwärtsanalyse für die nicht-invertierte Zeitachse gilt. Diese Vertauschung der Vor-/Rückwärtsanalyse bezogen auf die Auswertungsrichtung im Zustandsgraphen liefert Informationen für die Komplexität der Prüfung der Spezifikation. %(DAS HIER LÄSST SICH WEITER AUSSCHMÜCKEN, WENN GEBRAUCHT)
+%Zudem ähnelt die Rückwärtsanalyse der Vorwärtsanalyse und unterscheidet sich nur in der Berechnung der Transitionen 
+%(Austausch von Zeile acht aus Listing \ref{ls:vorw} mit: $nachfolg$ := Vorwärtsschritt($punkte$);).
+\begin{lstlisting}[caption=Rückwärtsanalyse, label= ls:rueck_ana]{vorw}
+  \\ Austausch Zeile 8 mit
+   $nachfolg$ := Vorwärtsschritt($punkte$);
+   
+   \\ Austausch Zeile 17 mit
+   stop Rückwärtsanalyse;
+\end{lstlisting}
+
+Da die Rückwärtsanalyse nach einer Gebietsanalyse durchgeführt wird, ist die Startmenge definiert und betrachtet worden. Daraus resultiert die Exploration der Eckpunkte der konvexen Hülle und weniger, ausgewählter Ortsvektoren. Die restlichen, möglichen Punkte innerhalb der konvexen Hülle können vernachlässigt werden, wobei jedoch eine gelegentliche Gebietsanalyse der aktuellen konvexen Hülle als Sicherheitsabfrage dient.
+
+\subsubsection{Berechnung des Rückwärtsschritts \label{sss:ber_rue_schr}}
+
+Der Vorwärtsschritt befasst sich mit einer Koordinate und berechnet mit der zugrundeliegenden nichtlinearen DAE erster Ordnung die nachfolgende Koordinate. Davon abgeleitet berechnet der Rückwärtsschritt die Koordinaten, um mit einem Vorwärtsschritt die jetzige Koordinate zu erhalten, ein Integrationsschritt mit negativem Zeitverlauf.
+%Der Rückwärtsschritt befasst sich mit der Frage: Wo komme ich her, um da zu landen, wo ich jetzt bin? Diese Frage nach der \textit{Herkunft} gilt es also zu lösen. 
+Aufgrund der DAE ist eine solche Integration mit negativen Zeitschritten allerdings nicht mathematisch lösbar. Für die Berechnung muss daher ein Ansatz zur Verfügung stehen, der die nicht mögliche, rückwirkende Integration immitiert.
+
+Ein Ansatz, aus dem Aspekt der schrittweisen Optimierung geboren, nutzt die Einzelschritt-Berechnung aus Abschnitt \ref{sss:vor_schr}. Dazu wird die Berechnung in zwei Schritte aufgeteilt. %, wie in den Abbildungen \ref{pic:rue_berech1} und \ref{pic:rue_berech2} zu sehen. 
+%\begin{figure}[htb]
+%  \centering
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ] 
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/rue_berech1.eps}
+%    \label{pic:rue_berech1}  
+%    }
+%  \end{minipage}
+%  \begin{minipage}[b]{7 cm}
+%   \subfigure[ ] 
+%   {
+%    \includegraphics[width=\textwidth]{picture/Graphen/rue_berech2.eps}
+%    \label{pic:rue_berech2}
+%    }
+%  \end{minipage}
+%  \caption[Berechnung eines Rückwärtsschrittes]{Berechnung eines Rückwärtsschrittes durch schrittweise Optimierung}
+%  \label{pic:rue_berech}
+%\end{figure}
+
+Schritt eins legt die erste Position der \textit{Herkunft} fest. Dazu wird eine Transition $t_{akt}$ von der aktuellen Position $(x_{akt},y_{akt})$ durchgeführt und der dazugehörige Richtungsvektor $xy_{akt}$ bestimmt. Anschließend wird der negierte Richtungsvektor ($-xy_{akt}$) an $(x_{akt},y_{akt})$ angelegt und ein neuer Ortsvektor $(x_{1},y_{1}) \: = \: (x_{akt},y_{akt}) - xy_{akt}$ (erste Position) berechnet. 
+Mit dem neuen Ortsvektor ist Schritt eins vollständig und es kann mit $(x_{1},y_{1})$ als Grundlage in Schritt zwei übergegangen werden. Dazu wird von $(x_{1},y_{1})$ eine Transition $t_1$ durchgeführt, um den Richtungsvektor $xy_1$ zu erhalten. Der nächste Schritt ist, dass anhand von $xy_1$ ein Dummy $(x_{d},y_{d})$ bestimmt und die Abweichung $xy_{abw} \: = \: (x_{akt},y_{akt}) - (x_{d},y_{d})$ berechnet wird. Für $xy_{abw} = 0$ ist der Rückwärtsschritt beendet und die \textit{Herkunft} der aktuellen Position ist $(x_{1},y_{1})$. Ansonsten wird $(x_{1},y_{1})$ um $xy_{abw}$ angepasst $(x_{2},y_{2})$ und Schritt zwei solange wiederholt, bis $xy_{abw} = 0$ gilt. Der Rückwärtsschritt ist demnach eine Aneinanderreihung von Vorwärtsschritten.
+
+%im direkten Nachfolger-Prozess
+Die einzige Schwierigkeit besteht darin, dass die Anzahl der zu bestimmenden Freiheitsgrade $n+1$ ist. Es gibt $n$ Dimensionen, die berücksichtigt werden müssen und genau \textbf{eine} sich dynamisch anpassende Schrittweite. Daraus folgen $n+1$ Freiheitsgrade für die Berechnung des Rückwärtsschrittes. 
+Aus diesem Grund ist es wichtig, dass ein Rahmen festgelegt wird, innerhalb dessen die Berechnung durchzuführen ist. Wird der Rahmen verletzt, gilt es zu bestimmen, ob der bis zu diesem \textit{Zeitpunkt} gefundene Ortsvektor annehmbar ist (und der daraus zwangsläufig resultierende Fehler akzeptiert wird bzw. vernachlässigbar ist) oder ob der Ortsvektor verworfen wird. 
+
+Die Rahmenbedingungen zur Durchführung der Berechnung eines Rückwartsschrittes sind:
+\begin{itemize}
+	\item Festlegen einer Obergrenze an Transitionsberechnungen und zugehöriger Anpassung zur Bestimmung der \textit{Herkunft}.
+	\item Festlegen des Faktors, ab wann ein Ortsvektor als \textit{Herkunft} akzeptiert wird.
+	\item Festlegen der Vorgehensweise, wenn die Obergrenze erreicht ist und keine akzeptierten Vorgänger gefunden wurden.
+\end{itemize}
+Bei der Wahl der OG für die Berechnungen wurde als Wert $50$ festgelegt. Dieser wurde durch experimentelle Versuche gefunden und beweist bislang ein gutes Verhältnis zwischen Rechenaufwand und Trefferwahrscheinlichkeit. Der Faktor der Abweichung hingegen liegt bei $1 \cdot 10^{-15}$ Prozent, um die Ungenauigkeit so klein wie möglich zu halten. Dies ist der Tatsache geschuldet, dass sich jede minimale Abweichung aufsummiert und damit über die Zeit gesehen zu einer nicht-ignorierbare Abweichung anwächst. 
+
+Anhand dieser Rahmenbedingungen lässt sich die Berechnung des Rückwärtsschritts abstrakt in Listing \ref{ls:rueck} abbilden.
+\begin{lstlisting}[caption=Rückwärtsschritt, label= ls:rueck]{rueckwaerts}
+	// Berechnung des Nachfolgers 
+	$nachfolg$ := Vorwärtsschritt($punkt$);
+	
+	$zwRichtVek$ = $nachfolg$ - $punkt$
+	$zwPunkt$ = $punkt$ - $zwRichtVek$
+	
+	Laufe von $i = 1$ bis $50$
+		$nachfolg$ := Vorwärtsschritt($zwPunkt$);
+
+		/* hier wird eine geringe Abweichung gewährt
+		if $ punkt \: == \: nachfolg \ $ do
+			Rückwärtsschritt gefunden
+			return;
+		end
+		
+		$zwRichtVek$ = $punkt$ - $nachfolg$
+		$zwPunkt$ = $zwPunkt$ + $zwRichtVek$
+	end
+\end{lstlisting}
+
+\subsubsection{Rasterabtastung rückwärts \label{sss:raru_abtast}}
+
+Die Rasterabtastung bei einer rückwirkenden Schrittbestimmung ist gegenüber der Rasterabtastung beim Vorwärtsschritt einigen Veränderungen unterworfen. Die Veränderungen sind abermals auf das nichtlineare DAE erster Ordnung zurückzuführen. Für einen Ortsvektor ist anhand der DAE eindeutig ein Nachfolger zu benennen. Für die Bestimmung der \textit{Herkunft} kann allerdings nicht immer ein eindeutiger Vorgänger angegeben werden. Ein Ortsvektor kann demnach mehrere Vorgänger haben. %, wie in Abbildung \ref{pic:rue_abt} zu sehen.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/rue_abt.eps}
+%    \caption[Rasterabtastung bei der Rückwärtsanalyse]{Rasterabtastung bei der Rückwärtsanalyse der schrittweisen Exploration}
+%    \label{pic:rue_abt}
+%  \end{center}
+%\end{figure}
+
+Setzt man nun die Rasterabtastung auch bei der Rückwärtsanalyse ein, so ist es möglich, eindeutige Vorgänger zu bestimmen. Des Weiteren kann eine entsprechende Ergebnismenge präsentiert werden. 
+Existieren jedoch mehrere Vorgänger $vorg$, dann sind diese der Ergebnismenge hinzuzufügen. Für einen solchen Rückwärtsschritt mit mehrere $vorg$ wächt die Ergebnismenge um den Faktor $ \left| vorg \right| $. 
+Wird die Rückwärtsanalyse fortgesetzt und die Vorgänger der Vorgänger der Ergebnismenge hinzugefügt, dann vergrößert sich die Ergebnismenge exponentiell ($ \left| vorg \right| ^{ \left| Schritte \right| } $).
+Das Wachstum der Ergebnismenge muss daher bei der Rückwärtsanalyse beachtet und die Analyse bei zu schnell anwachsender Ergebnismenge abgebrochen werden.
+
+
+\subsection{Fixpunktbestimmung \label{ss:fixpunkt}}
+
+Die Fixpunktbestimmung ist ein Prüfungsalgorithmus für die schrittweise Exploration. Bei jeder Punktmengentransition werden die Transitionen geprüft, ob sie sich in einen Fixpunkt bewegen. 
+Der Formel \eqref{eq:z_ef1} von Seite \pageref{eq:z_ef1} zufolge, ist ein Fixpunkt erreicht, wenn für eine Transition keine Nachfolgerelationen definiert sind. Eigenschleifen als Nachfolgerelation werden nicht anerkannt. 
+
+Jedoch lässt sich diese Definition ohne einen Grenzwert nicht effizient umsetzen, da im wertkontinuierlichen Zustandraum selbst infinitesimale Transitionen die Formel \eqref{eq:z_ef1} verletzten. Es bedarf einen Grenzwert $gw_{pm}$ für die Bestimmung, ab wann Punktmengentransitionen vernachlässigt und Fixpunktgebiete angenommen werden. 
+\begin{equation}
+	sw_j ^{OG} \: < \: sw^{gw_{pm}} \label{eq:swgrpm}
+\end{equation}
+Erfüllt sich die Formel \eqref{eq:swgrpm} für die Schrittweitenobergrenze, dann wird die Bounding Box der Punktmenge${}_j$ als Fixpunktgebiet deklariert. %, wie in Abbildung \ref{pic:fix_ana} zu sehen.
+%\begin{figure}[htb]
+%  \begin{center}
+%    \includegraphics[width=0.6\textwidth]{picture/Graphen/fix_ana.eps}
+%    \caption[Fixpunktbestimmung]{Fixpunktbestimmung der schrittweisen Exploration}
+%    \label{pic:fix_ana}
+%  \end{center}
+%\end{figure}
+
+Analog dazu ist die Bestimmung eines Fixpunktes für eine einzelne Transition. Formel \ref{eq:swgr} zeigt, welcher Grenzwert $gw_p$ unterschritten werden muss, damit von einem einzelnen Fixpunkt auszugehen ist. 
+\begin{equation}
+	sw_i \: < \: sw^{gw_{p}} \label{eq:swgr}
+\end{equation}
+
+Nachdem sich nun Fixpunkte und Fixpunktgebiete bestimmen lassen, gilt es, diese Bereiche zu analysieren. Dafür werden zum einen die Freiheitsgrade betrachtet und zum anderen die Umgebung gesampelt. So lassen sich Aussagen zu den Teilgebieten generieren und Zustandsräume erkunden, um beispielsweise die Spannungshysterese des Schmitt-Triggers zu definieren.
+
+
+\subsection{Ergebnismenge \label{ss:erg_men}}
+
+Die Auswertung einer CTL-AT - Formel liefert als Ergebnis ein
+\begin{itemize}
+	\item ja (\textbf{true}), die Formel ist erfüllbar oder
+	\item nein (\textbf{false}), die Formel ist nicht erfüllbar.
+\end{itemize}
+Es wird also eine Aussage zur Erfüllbarkeit bzw. die Nicht-Erfüllbarkeit in CTL-AT ausgedrückter Systemeigenschaften getroffen. 
+%Zu guter Letzt beschäftigt man sich mit der Darstellung der Ergebnismenge, die die Erfüllbarkeit bzw. die Nicht-Erfüllbarkeit einer Aussage zum Systemverhalten wiedergibt. 
+Des Weiteren liefert die Auswertung zusätzlich eine Menge an Zuständen, die die getroffene Aussage beweisen. 
+
+Dazu wird angenommen, dass die konvexe Hülle einer Punktmenge als ein Zustand angesehen wird, an dem Bedingungen gelten, die die Punktmenge repräsentieren. Neben den konvexen Hüllen sind auch die AABB in der Ergebnismenge vorhanden, um für die Auswertung die potenziellen Box-Kollisionen zeigen zu können. 
+%Auch lässt sich damit der grobe Verlauf des Systemverhaltens abbilden, im dreidimensionalen Zustandsraum ist dies ein Schlauch, der die (konvexen Hüllen der) Punktmengen umgibt.
+Betrachtet man nun die Transitionen der Eckpunkte der Hülle, so wird eine weitere Punktmenge und deren konvexe Hülle erreicht. Daraus ergibt sich ein Zustandsgraph mit zwei Zuständen und einer Zustandsübergangsrelation (Kante), die die typischen Gewichtungen der Übergänge analoger Schaltungen wie zum Beispiel Dauer und Länge tragen. %, wie dies in Abbildung \ref{pic:konvHull} auf Seite \pageref{pic:konvHull} zu sehen ist.
+
+Bearbeitet man die sich in der Ergebnismenge befindenden Punktmengen und deren Transitionen nach dem obigen Prinzip, 
+%Betrachtet man die in der Ergebnismenge befindenden Punktmengen und deren Transitionen, 
+so ergibt sich ein Zustandsgraph, der die in CTL-AT formulierten Systemeigenschaften abbildet. Der Designer kann anhand des Graphen nachprüfen, ob das Systemverhalten tatschächlich in diesem Teilgebiet des Zustandsraums der Spezifikation entspricht, wie es die Ergebnismenge formal verifiziert hat. Auch lassen sich nachträglich noch weitere Informationen für den Designer aus dem Zustandsgraphen filtern. 
+%Vorsicht ist dennoch geboten, da man sich immer vor Augen führen muss: \textit{Nur weil etwas gerade \glqq nicht zu sehen ist\grqq{}, heisst es nicht, dass es nicht doch unerkannt im Zustandsraum existiert.}
+
+Jede weitere Prüfung von CTL-AT - Formeln deckt mit der Ergebnismenge zu der Formel den Zustandsraum weiter auf. Die Formeln werden on-demand ausgewertet und erforschen den Zustandsraum damit Schritt für Schritt. 
+
+
+\section*{Zusammenfassung}
+
+In diesem Kapitel wurde sich intensiv mit dem Zustandsraum einer analogen Schaltung und den daraus generierbaren Informationen zur Prüfung von Systemeigenschaften auseinandergesetzt. 
+%In diesem Kapitel wurden die für das Model-Checking analoger Schaltungen relevanten Operatoren der temporalen Logiken analysiert. 
+Der erste Schritt bei der Nutzung des Zustandsraums ist die Betrachtung der mathematischen Darstellbarkeit des Zustandsraums. Die nichtlinearen Algebro-Differentialgleichungen erster Ordnung bildet das Verhalten der analogen Schaltung mathematisch ab. 
+%Dabei wird der Zustandsraum von den Eingangsvariablen $u(t)$ und den energiespeichernden Systemvariablen $\dot{x}(t)$ aufgespannt. 
+Dies ermöglicht die Berechnung der Transition eines Punktes im Zustandsraum, womit auch eine Visualisierbarkeit des Verhaltens einhergeht. Betrachtet man eine Menge an Punkten verteilt im Zustandsraum, so zeigt die Gesamtheit der Transitionen das Verhalten der Schaltung an. 
+
+Auf diesem Ansatz basiert die vollständige Diskretisierung des Zustandsraums. Angefangen wurde mit der Eingrenzung auf Intervalle der Zustandsvariablen des Zustandsraums, um auf diesem Teilgebiet die Diskretisierung durchzuführen. Dazu wurden gemäß der Wahl des Designers Samples nach einem Muster über den Zustandsraum verteilt. Die Berechnung der Transitionen und daraus resultierend die Auswertung erlauben eine Bearbeitung von einigen in CTL formulierten Aussagen. Jedoch sind diesem Verfahren Grenzen gesetzt, die mit dem in dieser Arbeit entwickelten Ansatz der schrittweisen Exploration des Zustandsraums erweitert werden sollen. Ziel ist es, die schrittweise Exploration so aufzubauen, dass eine Verifikation von Systemeigenschaften on-demand erfolgen kann. So lassen sich die Prüfungen der Spezifikation im Rahmen des Model-Checkings ausführen. 
+
+Im Zuge der Entwicklung der schrittweisen Exploration wurden eine Reihe von grundlegenden Verfahren und Analysen entwickelt und vorgestellt, die die Exploration unterstützen und auswerten. Die Verfahren befassen sich mit der Transitionsberechnung und der Schrittweitenobergrenze, um den Zustandsraum von einem definierten Startgebiet aus zu erkunden. Die Restlichen gelten als unterstützende Verfahren, die für die verschiedenen Analysen gebraucht werden. Angefangen wurde mit der Grenzanalyse, die eine Reihe von Abbruchbedingungen festlegt, anhand derer eine unendliche Erkundungstour durch den Zustandsraum unterbunden wird. Die Anderen hingegen dienen der Exploration des Verhaltens der analogen Schaltung, um die mit CTL-AT formulierten Systemeigenschaften zu prüfen und auszugeben.
+

@@ -1,0 +1,25 @@
+Drehgriff: Anscheinend ein Hallsensor.
+Liefert eine Spannung zwischen 0.8 und 4 Volt auf dem weissen Kabel
+bezogen aufs schwarze Kabel
+
+und eine Gleichspannung von 4,3V als Versorgungsspannung
+Innenwiderstand zwischen rot und schwarz mit Ohmmeter: 1kOhm.
+
+Offensichtlich                ___________________________
+rot --------------------->VDD|                           |
+weis <-------Signal----------|Drehgriff elektronik (Hall)|
+schwarz ----------------->GND|___________________________|
+
+0,857V= keine Drehung
+3.580V= volle Drehung.
+
+Mit Spannungsquelle Ausprobiert:
+
+  Minus and Schwarz
+  Plus and Blau bzw. weiss.
+  ab 1.0V bis 1.1V geht's los und er fährt.
+  bis 3.6 V.
+
+
+
+

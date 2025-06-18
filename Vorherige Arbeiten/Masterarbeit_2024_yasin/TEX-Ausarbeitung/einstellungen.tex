@@ -1,0 +1,109 @@
+%
+% Einbindung von nötigen Pakten
+%
+\usepackage{makeidx}         % allows index generation
+%\usepackage{multicol}        % used for the two-column index
+\usepackage[bottom]{footmisc}% places footnotes at page bottom
+
+\usepackage{subfigure}
+%\usepackage[bf,hang]{caption2}
+\usepackage{algorithm, algorithmic} % Für Allorithmen
+\usepackage{listings}
+
+\usepackage{url}
+\newcommand{\urlBiBTeX}[1]{\url{#1}}
+%\usepackage{scrpage2}						% Leider keine Ahnung, warum ich das brauche, scheint aber nicht unwichtig zu sein. Kollidiert nur leider mit fancyhdr, wegen chead & cfoot. Daher habe ich es im rahmen der Masterarbeit erstmal auskommentiert
+\usepackage[dvips]{color} %pdftex
+\usepackage{array}
+\usepackage{fancyvrb}
+
+\usepackage{fancyhdr}
+\usepackage{german,graphicx,graphics}
+%\usepackage{german,fancyhdr,graphicx,graphics}
+\usepackage{amsmath,theorem,amsfonts,longtable}
+%\usepackage{amsthm}
+%\usepackage{enumitem}
+
+% Beschriftung von Bildern, Tabellen, etc
+\usepackage{caption3}
+
+%\usepackage{times}
+\usepackage{courier}
+\usepackage{hyperref}
+\usepackage{hhline}
+\usepackage[latin1]{inputenc}       %% deutsche Umlaute wie normale Buchstaben verwenden\hyphenation{Sys-tem Sys-tem-mo-dell}
+
+
+%
+% Grundlegende Einstellungen für das gesamte Dokument
+%
+\renewcommand{\baselinestretch}{1.15}\normalsize %Zeilenabstand
+
+\renewcommand{\captionfont}{\small\itshape}
+\renewcommand{\captionlabelfont}{\small\normalfont\bfseries}
+\renewcommand{\textfraction}{0.05}
+\renewcommand{\topfraction}{0.95}
+\renewcommand{\bottomfraction}{0.95}
+\renewcommand{\floatpagefraction}{0.35}
+\setcounter{totalnumber}{5}
+
+\setlength\parskip{\medskipamount}
+\setlength\parindent{0pt}
+
+\setlength{\marginparwidth}{1.2cm}  %rechter Rand
+\setlength{\textwidth}{15.0cm}    %Textbreite
+
+\setlength{\topmargin}{-1.0cm}    %oberer Rand  -1.0
+\setlength{\textheight}{22cm}   %Texthöhe
+\setlength{\oddsidemargin}{1.2cm} %Linker Rand
+
+% Kleine Veränderung von Dictum, damit das so ausschaut, wie ich das haben möchte
+\renewcommand*{\dictumwidth}{.5\textwidth}
+\renewcommand*{\raggeddictumtext}{\centering}
+%\renewcommand*{\dictumtext}{\setkomafont{}{}}
+
+% Wenn mich nicht alles täuscht, dann ist der Teil hier für die schönen Kopfzeilen zuständig
+\pagestyle{fancy}
+\renewcommand{\sectionmark}[1]{\markright{\thesection\ #1}}			%Damit in der Kopfzeile der Section-Name nicht in Uppercase abgebildet wird
+\lhead[]{\rightmark}
+\rhead[]{} %\thepage
+\cfoot{\thepage}
+\sloppy
+\setlongtables
+
+{\theoremstyle{break}
+\newtheorem {beispiel}{Beispiel}[section]
+\theoremheaderfont{\scshape\bf}}
+
+\newtheorem {definition}{Definition}[section]
+\theorembodyfont{\itshape}
+\theoremheaderfont{\scshape\bf}
+
+{\theoremstyle{break}
+\newtheorem {satz}{Satz}[section]
+\theoremheaderfont{\scshape\bf}}
+
+\setcounter{secnumdepth}{5} 
+\setcounter{tocdepth}{3}
+
+%
+% Festlegen des Aussehens von lstlistings (Algorithmendarstellungen)
+%
+\definecolor{hellgrau}{gray}{0.6}				% Definiere Farbe "hellgrau"
+\lstloadlanguages{Pascal}
+\lstset{%
+  numbers=left,										% Position der Nummerierung 
+  numberstyle=\normalsize, 
+  tabsize=3,
+  numbersep=-10pt,               	% Verschiebung der Nummerierung, sodass sie noch im Kasten erscheint
+	language=Pascal,								% Sprache auswählen
+%	keywordstyle=\bfseries,					% Keywords fett
+%	captionpos= bottom,							% Titelposition
+	frame=shadowbox,								% Bordertype
+	mathescape=true,								% Mathematische Formeln anzeigen
+	rulesepcolor=\color{hellgrau},  % Verwende Farbe "hellgrau" als Randfarbe
+	showspaces=false,
+  showtabs=false,
+  columns=fixed,
+  breaklines=true
+}

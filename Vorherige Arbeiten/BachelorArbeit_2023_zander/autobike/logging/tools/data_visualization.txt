@@ -1,0 +1,57 @@
+# good to know commands
+
+[set key width 1]
+[set border linewidth 2]
+[set tics font ",14"]
+[set ylabel offset -1]
+[linewidth 1 linetype 7 linecolor -1 pointsize 0.6] # würde beim plot mit reinkommen.
+
+
+
+#  before every gnuplot
+
+cd (to current directory)
+cd 'C:\Users\Jonah\Documents\Scans\pc beaglebone backups\logging_files'
+
+
+
+# visualization commands for the bno thread
+
+set datafile separator ","
+set key box
+set key title "BNO Thread Data"
+set yrange [-10:10]
+set ytics nomirror
+set y2tics
+set y2range [-355:355]
+set xrange [0:11]
+set xlabel "time in s"
+set xtics 0,1,15
+set ylabel "angle in degrees"
+set y2label "encoder setpoint value"
+plot "2023-05-12__21-53-52_bno_thread.csv" skip 1 using ($1/1000000):3 title "angle" axis x1y1  with linespoints, \
+"" skip 1 using ($1/1000000):5 title "steering setpoint" axis x1y2  with linespoints, \
+"" skip 1 using ($1/1000000):6 title "p value" axis x1y2  with linespoints, \
+"" skip 1 using ($1/1000000):7 title "i value" axis x1y2  with linespoints, \
+"" skip 1 using ($1/1000000):8 title "d value" axis x1y2  with linespoints, \
+"" skip 1 using ($1/1000000):9 title "error" axis x1y1  with linespoints
+
+
+
+#visualization of the md49 thread
+
+set datafile separator ","
+set key box
+set key title "MD49 Thread Data"
+set yrange [-355:355]
+set ytics nomirror
+set y2tics
+set y2range [-100000:100000]
+set xrange [0:11]
+set xlabel "time in s"
+set xtics 0,1,15
+set ylabel "encoder value"
+set y2label "pwm steering value"
+plot "2023-05-09__15-09-24_md49_thread.csv" skip 1 using ($1/1000000):3 title "encoder setpoint" axis x1y1 with linespoints, \
+"" skip 1 using ($1/1000000):2 title "encoder value" axis x1y1 with linespoints, \
+"" skip 1 using ($1/1000000):4 title "steering value" axis x1y2 with linespoints

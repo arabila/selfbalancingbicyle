@@ -1,0 +1,12 @@
+\thispagestyle{empty}
+\chapter*{Aufgabenstellung}
+\thispagestyle{empty}
+
+Verfahren zum Model-Checking analoger Schaltungen basieren auf einer vollständigen Diskretisierung des Zustandsraums. Diese Diskretisierung überführt den kontinuierlichen Zustandsraum in eine Graph-Datenstruktur, auf der temporallogische Model Checking - Algorithmen angewendet werden können. Diese vollständige Diskretisierung des Zustandsraums vor Anwendung der Verifikationsalgorithmen ist sehr rechenzeitintensiv und abhängig von der auszuwertenden Spezifikation wird nur ein kleiner Teil des erzeugten Modells untersucht. 
+
+Dementsprechend ist das Ziel dieser Arbeit, eine Methodik zu entwickeln, die abhängig von der zu klassifizierenden Spezifikation eine Verifikation nur auf den relevanten Teilen des Zustandsraums durchführt. Dies soll auf Basis einer Abstraktionsverfeinerung durch schrittweise Exploration des Zustandsraums erfolgen, womit eine on-demand Diskretisierung der relevanten Zustandsraumgebiete durch transiente Simulationstrajektorien erreicht wird.
+
+Als Arbeitsumgebung wird eine Schnittstelle zu einem Simulationswerkzeug für analoge
+Schaltungen für die Abtastung des Zustandsraums sowie eine auf GNU Octave basierende
+Entwicklungsumgebung zur Verfügung gestellt.
+

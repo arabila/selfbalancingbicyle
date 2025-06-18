@@ -1,0 +1,54 @@
+\chapter{Grundlagen \label{ch_grund}}
+
+Dieses Kapitel beschreibt die Grundlagen, ...
+
+
+\section{Von der Spezifikation zur Verifikation \label{sec:spezi}}
+
+Bei der Herstellung von analogen, digitalen oder mixed-signal Schaltungen wird von der Idee bis zur Fertigstellung ein definierter Prozess durchlaufen. Dieser beinhaltet folgende Schritte:
+\begin{enumerate}
+	\item die Spezifikation \label{proz_spez}
+	\item den Entwurf
+	\item die Fertigung
+	\item den Test
+\end{enumerate}
+
+
+...
+
+Grammatik \eqref{eq:CTL-AT} repräsentiert die Erweiterung der CTL - Syntax um die Neuerungen von CTL-A und CTL-AT.
+\begin{align}
+	\label{eq:CTL-AT}
+	\Phi  \ :=  \ a  \ & | \ z \: \ast \: v \ | \ \Phi \: \circ \: \Psi \ | \ \neg \: \Phi \   \\
+	& | \ \triangleright \: \diamond \: \Phi \ | \ \triangleright \: \Phi \: U \: \Psi \ | \ \triangleright \: \diamond^{-1} \: \Phi \ | \ \triangleright \: \Phi \: U^{-1} \: \Psi	 \notag \\
+	& | \ \triangleright \: \diamond \: \Box \: \Phi \ | \ \triangleright \: \Phi \: U \: \Box \: \Psi \ | \ \triangleright \: \diamond^{-1} \: \Box \: \Phi \ | \ \triangleright \: \Phi \: U^{-1} \: \Box \: \Psi \notag
+\end{align}
+Zieht man \cite{HartongKlaHed04} für die Beschreibung der CTL-AT - Syntax die Grundlage der CTL-Syntax auf Tabelle \ref{tab:ctlat} , die Erweiterung aus Tabelle \ref{tab:ctlat} auf Seite \pageref{tab:ctlat}und die neu formulierten Zeitbedingungen hinzu, erhält man Tabelle \ref{tab:ctlat}. Die neuen Variablen und die analogen Operatoren reihen sich direkt nach der bool'schen Zustandsvariablen ein. Abgeschlossen wird die Syntaxbeschreibung nun von dem Vergangenheitsoperator und den Zeitbedingungen.
+Diese werden an die temporalen Operatoren, mit Ausnahme des $X$-Operators, als Zeitintervall angehängt, sodass eine minimale und maximale zeitliche Pfadlänge definiert ist. Eine Operatorenschreibweise $\triangleright \ X \ \Box \: \Phi $ bzw. $ \triangleright \ X^{-1} \ \Box \: \Phi $ ist nicht zulässig.
+\begin{table}[htb]
+\centering
+\caption[Beschreibung der CTL-AT - Syntax]{Beschreibung der CTL-AT - Syntax (Quelle: \cite[S. 10]{platte})}
+\begin{tabular}{|p{0.02\textwidth}|p{0.37\textwidth}|p{0.4\textwidth}|}
+\hline
+$a$ & Bool'sche Zustandsvariable &  \\ \hline
+$z$ & Kontinuierliche Zustandsvariable &  \\ \hline
+$v$ & Reeller Zahlenwert ($ \mathbb{R} $) &  \\ \hline
+\multicolumn{ 1}{|l|}{$\ast$} & \multicolumn{ 1}{l|}{Analoge Operatoren} & $\ > \ = \ $ größer \\ \cline{ 3- 3}
+\multicolumn{ 1}{|l|}{} & \multicolumn{ 1}{l|}{} & $\ < \ = \ $ kleiner \\ \hline
+\multicolumn{ 1}{|l|}{$\circ$} & \multicolumn{ 1}{l|}{Bool'sche Operatoren} & $\ \vee \ = \ $ oder \\ \cline{ 3- 3}
+\multicolumn{ 1}{|l|}{} & \multicolumn{ 1}{l|}{} & $\ \wedge \ = \ $ und \\ \cline{ 1- 1}\cline{ 3- 3}
+$\neg$ & \multicolumn{ 1}{l|}{} & $\ \neg \ = \ $ nicht \\ \hline
+\multicolumn{ 1}{|l|}{$\triangleright$} & \multicolumn{ 1}{l|}{Pfadquantoren} & $\ A \ = \ $ auf allen Pfaden \\ \cline{ 3- 3}
+\multicolumn{ 1}{|l|}{} & \multicolumn{ 1}{l|}{} &  $\ E \ = \ $ auf mindestens einem Pfad \\ \hline
+\multicolumn{ 1}{|l|}{$\diamond$} & \multicolumn{ 1}{l|}{Temporale Operatoren} & $\ X \: = \ $ nächster Zeitschritt (neXt) \\ \cline{ 3- 3}
+\multicolumn{ 1}{|l|}{} & \multicolumn{ 1}{l|}{} & $\ F \ = \ $ irgendwann (Finally) \\ \cline{ 3- 3}
+\multicolumn{ 1}{|l|}{} & \multicolumn{ 1}{l|}{} & $\ G \ = \ $ immer (Globally) \\ \cline{ 1- 1}\cline{ 3- 3}
+$U$ & \multicolumn{ 1}{l|}{} & $\ U \ = \ $ bis (Until) \\ \hline
+\multicolumn{1}{|r|}{${}^{-1}$} & Vergangenheit & $ $ Umkehrung der Zeit \\ \hline
+$\Box$ & Zeitintervall & $\ \left[ t_{low}, t_{high} \right] $ mit: \newline $ \ t_{low} \in {\mathbb R}^{+} _{0}, \ t_{high} \in {\mathbb R}^{+} \ $ \newline $  t_{low}\ \leq \ t_{high}$ \\ \hline
+\end{tabular}
+\label{tab:ctlat}
+\end{table}
+
+
+...

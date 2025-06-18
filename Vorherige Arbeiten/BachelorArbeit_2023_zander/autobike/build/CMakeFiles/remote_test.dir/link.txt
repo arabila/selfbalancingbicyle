@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/remote_test.dir/tests/remote_test.c.o CMakeFiles/remote_test.dir/interfaces/ab_remote.c.o CMakeFiles/remote_test.dir/ab_error_handling.c.o CMakeFiles/remote_test.dir/interfaces/ab_io.c.o  -o remote_test 
