@@ -24,17 +24,17 @@
 #define TIME_STEP 16
 #define HISTORY_LEN 5
 
-// PID-Parameter für Winkel -> Lenkung (aus Zanders Arbeit)
-#define ANGLE_PID_KP 10.0f
-#define ANGLE_PID_KI 0.0f
-#define ANGLE_PID_KD 2.2f
+// PID-Parameter für Winkel -> Lenkung (moderater für Stabilität)
+#define ANGLE_PID_KP 15.0f
+#define ANGLE_PID_KI 0.1f
+#define ANGLE_PID_KD 3.0f
 #define ANGLE_PID_OUTPUT_MIN -150.0f
 #define ANGLE_PID_OUTPUT_MAX 150.0f
 #define ANGLE_PID_INTEGRAL_MIN -60.0f
 #define ANGLE_PID_INTEGRAL_MAX 60.0f
 
 // Fahrradgeschwindigkeit
-#define MAX_SPEED 6.0
+#define MAX_SPEED 10.0
 #define MIN_SPEED 3.0
 
 // Lenkwinkel-Grenzen
@@ -253,8 +253,8 @@ void control_bicycle() {
     // PID-Regelung: Soll-Roll-Winkel = 0°
     float steering_output = pid_output(&angle_pid, 0.0f, roll_angle, current_time);
     
-    // Lenkwinkel berechnen (Zanders Logik angepasst)
-    float steering_angle = steering_output * 0.001f;  // Skalierung anpassen
+    // Lenkwinkel berechnen (moderater für Stabilität)
+    float steering_angle = steering_output * 0.002f;  // Moderatere Lenkung
     
     // Lenkwinkel begrenzen
     if(steering_angle > HANDLEBAR_MAX_ANGLE) {

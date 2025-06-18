@@ -31,8 +31,10 @@ RectangleArena {
 }
 DEF forest Group {
   children [
-    scale 0.0995 0.0995 0.0995
-    Solid {
+    Transform {
+      scale 0.0995 0.0995 0.0995
+      children [
+        Solid {
       rotation 0 1 0 0
       children [
         DEF grass Transform {
@@ -51,6 +53,8 @@ DEF forest Group {
           "obj/Grass/grass.obj"
         ]
       }
+        }
+      ]
     }
     Solid {
       translation -0.25 -4.76 0
@@ -2871,7 +2875,7 @@ DEF forest Group {
 }
 Robot {
   translation 0.38 -4.11 0.0549106
-  rotation 0 0 1 -1.5708053071795867
+  rotation 0.005 0 1 -1.5708053071795867
   children [
     DEF frame Transform {
       scale 0.001 0.001 0.001
@@ -3267,6 +3271,9 @@ Robot {
       width 480
       height 320
     }
+    InertialUnit {
+      name "inertial unit"
+    }
   ]
   name "Little Bicycle V2"
   boundingObject Group {
@@ -3430,6 +3437,15 @@ Robot {
     ]
   }
   physics Physics {
+    density -1
+    mass 8.0
+    centerOfMass [
+      0 0 0.08
+    ]
+    inertiaMatrix [
+      0.2 0.6 0.4
+      0 0 0
+    ]
   }
   controller "little_bicycle_P_V2"
   supervisor TRUE

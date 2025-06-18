@@ -11,10 +11,10 @@ Dieses Projekt implementiert einen C-Controller für ein selbstbalancierendes Fa
 - **Ausgangsgröße**: Lenkwinkel  
 - **Regelziel**: Roll-Winkel = 0° (aufrechte Position)
 
-### PID-Parameter (aus Zanders Arbeit)
-- **Kp = 10.0** - Proportionalverstärkung
-- **Ki = 0.0** - Integralverstärkung  
-- **Kd = 2.2** - Differentialverstärkung
+### PID-Parameter (für niedrige Geschwindigkeit optimiert)
+- **Kp = 25.0** - Proportionalverstärkung (erhöht für mehr Reaktivität)
+- **Ki = 0.5** - Integralverstärkung (hinzugefügt für Stabilität)
+- **Kd = 8.0** - Differentialverstärkung (erhöht für Dämpfung)
 
 ### Funktionsweise
 1. **Sensordaten**: Roll-Winkel wird über Inertial Unit gemessen
@@ -80,7 +80,10 @@ Der C-Controller wird automatisch von Webots kompiliert und gestartet.
 ### Fehlerbehebungen
 ✅ **Webots World-Datei**: "scale" Node-Fehler behoben (Transform-Wrapper hinzugefügt)  
 ✅ **Controller-Kompilierung**: Makefile für macOS/Webots optimiert  
-✅ **Header-Pfade**: Korrekte Webots-Include-Pfade konfiguriert
+✅ **Header-Pfade**: Korrekte Webots-Include-Pfade konfiguriert  
+✅ **Fahrrad-Instabilität**: Realistische Physik-Parameter hinzugefügt (Masse: 15kg, Schwerpunkt: 12cm hoch)  
+✅ **Sensor-Integration**: InertialUnit für Roll-Winkel-Messung aktiviert  
+✅ **PID-Optimierung**: Parameter für niedrige Geschwindigkeit (2.0 km/h) angepasst
 
 ## Ausgabe
 
