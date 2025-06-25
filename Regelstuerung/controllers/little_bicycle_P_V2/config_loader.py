@@ -60,7 +60,7 @@ class MonitoringLogger:
         # CSV-Header
         self.headers = [
             "timestamp", "Kp", "Ki", "Kd", "P", "I", "D", "PID", 
-            "speed", "handlebar_angle", "error"
+            "speed", "handlebar_angle", "error", "roll_angle"
         ]
         
         # Erstelle CSV-Datei mit Headern

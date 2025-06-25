@@ -2,6 +2,7 @@
 
 import cv2
 import numpy as np
+import math
 from controller import Supervisor
 from config_loader import ConfigLoader, MonitoringLogger
 
@@ -46,6 +47,10 @@ whemotor.setVelocity(maxS)
 hndmotor = robot.getDevice('handlebars motor')
 hndmotor.setPosition(0)
 
+# Initialize IMU sensor for roll angle measurement
+imu = robot.getDevice('imu')
+imu.enable(timestep)
+
 # keyboard enable
 robot.keyboard.enable(timestep)
 robot.keyboard = robot.getKeyboard()
@@ -62,6 +67,67 @@ display.setFont('Verdana', 16, True)
 
 if preview == 1:
     cv2.startWindowThread()
+
+# Roll-Winkel-Filter für stabilere Messungen
+roll_angle_history = []
+ROLL_FILTER_SIZE = 5
+
+def get_roll_angle():
+    """
+    Berechnet den Roll-Winkel (Kippwinkel) des Fahrrads aus den IMU-Daten.
+    
+    Returns:
+        float: Roll-Winkel in Grad (korrigiert für realistische Werte)
+    """
+    global roll_angle_history
+    
+    try:
+        # Hole die Orientierung als Quaternion [w, x, y, z] 
+        # In Webots wird die Orientierung als 4-Element-Array zurückgegeben
+        quaternion = imu.getQuaternion()
+        
+        # Quaternion in Euler-Winkel umwandeln
+        # Roll-Winkel entspricht der Rotation um die X-Achse (Fahrrad-Längsachse)
+        w, x, y, z = quaternion
+        
+        # Normalisiere Quaternion (Sicherheitscheck)
+        norm = (w*w + x*x + y*y + z*z)**0.5
+        if norm > 0:
+            w, x, y, z = w/norm, x/norm, y/norm, z/norm
+        
+        # Roll-Winkel berechnen (Rotation um X-Achse für Fahrrad)
+        # Korrigierte Formel für Fahrrad-Orientierung
+        # Roll = atan2(2*(w*x + y*z), w*w - x*x - y*y + z*z)
+        roll_rad = math.atan2(2 * (w * x + y * z), w*w - x*x - y*y + z*z)
+        
+        # Radiant in Grad umwandeln
+        roll_deg = math.degrees(roll_rad)
+        
+        # Begrenze auf realistische Werte für ein Fahrrad (±45°)
+        # und filtere unrealistische Sprünge
+        if abs(roll_deg) > 45:
+            # Wenn der Wert zu groß ist, könnte es ein Wrap-Around-Problem sein
+            # Versuche alternative Berechnung oder begrenze den Wert
+            if roll_deg > 90:
+                roll_deg = 180 - roll_deg
+            elif roll_deg < -90:
+                roll_deg = -180 - roll_deg
+                
+        # Zusätzliche Begrenzung für Sicherheit
+        roll_deg = max(-45, min(45, roll_deg))
+        
+        # Gleitender Durchschnitt für stabilere Werte
+        roll_angle_history.append(roll_deg)
+        if len(roll_angle_history) > ROLL_FILTER_SIZE:
+            roll_angle_history.pop(0)
+        
+        filtered_roll = sum(roll_angle_history) / len(roll_angle_history)
+        
+        return filtered_roll
+        
+    except Exception as e:
+        print(f"Fehler bei Roll-Winkel-Berechnung: {e}")
+        return 0.0
 
 def getError(act_error):
     error_P = act_error
@@ -217,6 +283,9 @@ while robot.step(timestep) != -1:
     velocity = (velo[0]**2 + velo[1]**2 + velo[2]**2)**0.5
     velocity = velocity * 3.6  # km/h
     
+    # Hole Roll-Winkel vom IMU-Sensor
+    roll_angle = get_roll_angle()
+    
     # Logge Daten für Monitoring
     monitoring_data = {
         'Kp': Kp,
@@ -228,7 +297,8 @@ while robot.step(timestep) != -1:
         'PID': PID,
         'speed': velocity,
         'handlebar_angle': hndB,
-        'error': P  # P ist der aktuelle Fehler
+        'error': P,  # P ist der aktuelle Fehler
+        'roll_angle': roll_angle
     }
     monitoring_logger.log_data(monitoring_data)
 

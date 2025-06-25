@@ -313,6 +313,7 @@ class BicycleControllerGUI:
             ('pid_components', 'PID-Komponenten (P, I, D, PID)', True),
             ('speed', 'Geschwindigkeit', True),
             ('handlebar_angle', 'Lenkwinkel', True),
+            ('roll_angle', 'Roll-Winkel (Kippwinkel)', True),
             ('error', 'Regelfehler', True),
             ('parameters', 'Parameter (Kp, Ki, Kd)', False)
         ]
@@ -438,6 +439,8 @@ class BicycleControllerGUI:
             active_plots.append('pid')
         if self.plot_vars['speed'].get() or self.plot_vars['handlebar_angle'].get():
             active_plots.append('dynamics')
+        if self.plot_vars['roll_angle'].get():
+            active_plots.append('roll_angle')
         if self.plot_vars['error'].get():
             active_plots.append('error')
         if self.plot_vars['parameters'].get():
@@ -487,7 +490,22 @@ class BicycleControllerGUI:
             ax.grid(True, alpha=0.3, linestyle='--')
             plot_idx += 1
         
-        # Plot 3: Regelfehler
+        # Plot 3: Roll-Winkel (Kippwinkel)
+        if 'roll_angle' in active_plots and 'roll_angle' in df.columns:
+            ax = self.fig.add_subplot(num_plots, 1, plot_idx)
+            ax.plot(df.index, df['roll_angle'], 'orange', label='Roll-Winkel (°)', linewidth=2)
+            ax.axhline(y=0, color='k', linestyle='--', alpha=0.5, linewidth=1)
+            ax.set_title('🏍️ Roll-Winkel (Kippwinkel)', fontsize=12, fontweight='bold')
+            ax.set_ylabel('Roll-Winkel (°)')
+            ax.grid(True, alpha=0.3, linestyle='--')
+            
+            # Füge kritische Winkel-Linien hinzu
+            ax.axhline(y=10, color='red', linestyle=':', alpha=0.7, linewidth=1, label='Kritisch (+10°)')
+            ax.axhline(y=-10, color='red', linestyle=':', alpha=0.7, linewidth=1, label='Kritisch (-10°)')
+            ax.legend(frameon=True, fancybox=True, shadow=True)
+            plot_idx += 1
+        
+        # Plot 4: Regelfehler
         if 'error' in active_plots and 'error' in df.columns:
             ax = self.fig.add_subplot(num_plots, 1, plot_idx)
             ax.plot(df.index, df['error'], 'g-', label='Regelfehler', linewidth=2)
@@ -497,7 +515,7 @@ class BicycleControllerGUI:
             ax.grid(True, alpha=0.3, linestyle='--')
             plot_idx += 1
             
-        # Plot 4: Parameter-Verlauf
+        # Plot 5: Parameter-Verlauf
         if 'parameters' in active_plots and all(col in df.columns for col in ['Kp', 'Ki', 'Kd']):
             ax = self.fig.add_subplot(num_plots, 1, plot_idx)
             ax.plot(df.index, df['Kp'], label='Kp', alpha=0.8, linewidth=1.5)
