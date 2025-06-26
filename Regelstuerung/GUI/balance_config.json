@@ -1,0 +1,56 @@
+{
+    "balance_control": {
+        "angle_pid": {
+            "angle_Kp": 0.001,
+            "angle_Ki": 0.0001,
+            "angle_Kd": 0.001,
+            "angle_output_min": -0.8030459770114943,
+            "angle_output_max": 0.8030459770114943,
+            "angle_integral_min": -60.0,
+            "angle_integral_max": 60.0
+        },
+        "speed_control": {
+            "base_speed": 5.0,
+            "min_speed": 3.0,
+            "max_speed": 8.0,
+            "stability_reduction": 0.5
+        },
+        "mechanical_limits": {
+            "max_handlebar_angle": 0.32,
+            "max_roll_angle": 45.0
+        },
+        "system": {
+            "enable_logging": 1,
+            "enable_preview": 1,
+            "config_reload_interval": 10,
+            "filter_size": 5
+        }
+    },
+    "physics": {
+        "parameters": {
+            "bicycle_mass": 3.5,
+            "wheel_radius": 0.055,
+            "frontal_area": 0.3,
+            "air_density": 1.225,
+            "drag_coefficient": 0.9,
+            "side_area": 0.4,
+            "tire_stiffness": 2000.0,
+            "rolling_resistance_coeff": 0.008,
+            "tire_friction_coeff": 0.8,
+            "imu_noise_sigma": 0.05,
+            "imu_delay_samples": 5,
+            "wind_speed": 2.0,
+            "wind_direction": 1.57,
+            "wind_turbulence": 0.8,
+            "road_slope": 0.1
+        },
+        "effects": {
+            "enable_lateral_forces": true,
+            "enable_aerodynamics": true,
+            "enable_rolling_resistance": true,
+            "enable_gyroscopic": true,
+            "enable_sensor_simulation": true,
+            "enable_environment": true
+        }
+    }
+}
