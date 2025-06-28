@@ -630,17 +630,7 @@ class BalanceControllerGUI:
         # Zoom-Variablen initialisieren
         self.zoom_start = tk.DoubleVar(value=0.0)
         self.zoom_end = tk.DoubleVar(value=100.0)
-        self.zoom_enabled = tk.BooleanVar(value=False)
         self.data_duration = 10.0  # Fallback-Wert
-        
-        # Zoom Enable/Disable Checkbox
-        zoom_checkbox = ttk.Checkbutton(
-            zoom_frame,
-            text="Zoom:",
-            variable=self.zoom_enabled,
-            command=self.toggle_zoom
-        )
-        zoom_checkbox.pack(side=tk.LEFT, padx=3)
         
         # Start-Slider
         start_frame = ttk.Frame(zoom_frame)
@@ -677,18 +667,6 @@ class BalanceControllerGUI:
         self.end_slider.pack()
         self.end_label = ttk.Label(end_frame, text="10.0s", font=("Arial", 8))
         self.end_label.pack()
-        
-        # Reset-Button
-        ttk.Button(
-            zoom_frame,
-            text="Reset",
-            command=self.reset_zoom,
-            width=6
-        ).pack(side=tk.LEFT, padx=5)
-        
-        # Slider initial deaktivieren (da Zoom standardmäßig aus ist)
-        self.start_slider.configure(state='disabled')
-        self.end_slider.configure(state='disabled')
         
         # Plot-Bereich
         self.setup_plot_area(parent)
@@ -1010,7 +988,7 @@ class BalanceControllerGUI:
         self.current_data = df
         
         # Zoom zurücksetzen beim Laden neuer Daten
-        if hasattr(self, 'zoom_enabled'):
+        if hasattr(self, 'zoom_start'):
             self.reset_zoom()
         
         # Plot aktualisieren
@@ -1032,8 +1010,8 @@ class BalanceControllerGUI:
         # Zoom-Bereich aktualisieren
         self.update_zoom_range()
         
-        # Zoom anwenden wenn aktiviert
-        if hasattr(self, 'zoom_enabled') and self.zoom_enabled.get():
+        # Zoom anwenden wenn nicht der komplette Bereich (0-100%) gewählt ist
+        if hasattr(self, 'zoom_start') and (self.zoom_start.get() != 0.0 or self.zoom_end.get() != 100.0):
             min_time = df["timestamp"].min()
             max_time = df["timestamp"].max()
             time_range = max_time - min_time
@@ -1090,8 +1068,8 @@ class BalanceControllerGUI:
         self.ax2.legend()
         self.ax2.grid(True, alpha=0.3)
         
-        # Zoom-Titel hinzufügen wenn aktiv
-        if hasattr(self, 'zoom_enabled') and self.zoom_enabled.get():
+        # Zoom-Titel hinzufügen wenn gezoomt
+        if hasattr(self, 'zoom_start') and (self.zoom_start.get() != 0.0 or self.zoom_end.get() != 100.0):
             start_time = df["timestamp"].min() if len(df) > 0 else 0
             end_time = df["timestamp"].max() if len(df) > 0 else 0
             self.ax1.set_title(f"Gezoomter Bereich: {start_time:.2f}s - {end_time:.2f}s", fontsize=10)
@@ -1102,21 +1080,6 @@ class BalanceControllerGUI:
         
     def update_plot_visibility(self):
         """Handler für Checkbox-Änderungen - aktualisiert die Plot-Sichtbarkeit"""
-        self.refresh_plots()
-        
-    def toggle_zoom(self):
-        """Aktiviert/Deaktiviert den Zoom-Modus"""
-        if self.zoom_enabled.get():
-            # Zoom aktiviert - Slider aktivieren
-            self.start_slider.configure(state='normal')
-            self.end_slider.configure(state='normal')
-            self.status_text.set("X-Achsen-Zoom aktiviert")
-        else:
-            # Zoom deaktiviert - Slider deaktivieren und Plot zurücksetzen
-            self.start_slider.configure(state='disabled')
-            self.end_slider.configure(state='disabled')
-            self.status_text.set("X-Achsen-Zoom deaktiviert")
-        
         self.refresh_plots()
         
     def on_zoom_start_change(self, value):
@@ -1133,8 +1096,7 @@ class BalanceControllerGUI:
             start_time = (start_percent / 100.0) * self.data_duration
             self.start_label.config(text=f"{start_time:.1f}s")
         
-        if self.zoom_enabled.get():
-            self.refresh_plots()
+        self.refresh_plots()
             
     def on_zoom_end_change(self, value):
         """Callback für End-Slider Änderung"""
@@ -1150,14 +1112,12 @@ class BalanceControllerGUI:
             end_time = (end_percent / 100.0) * self.data_duration
             self.end_label.config(text=f"{end_time:.1f}s")
         
-        if self.zoom_enabled.get():
-            self.refresh_plots()
+        self.refresh_plots()
             
     def reset_zoom(self):
         """Setzt den Zoom zurück (zeigt alle Daten)"""
         self.zoom_start.set(0.0)
         self.zoom_end.set(100.0)
-        self.zoom_enabled.set(False)
         
         # Labels aktualisieren
         self.start_label.config(text="0.0s")
@@ -1165,10 +1125,6 @@ class BalanceControllerGUI:
             self.end_label.config(text=f"{self.data_duration:.1f}s")
         else:
             self.end_label.config(text="10.0s")
-        
-        # Slider deaktivieren
-        self.start_slider.configure(state='disabled')
-        self.end_slider.configure(state='disabled')
         
         self.status_text.set("Zoom zurückgesetzt")
         self.refresh_plots()
@@ -1182,8 +1138,8 @@ class BalanceControllerGUI:
                 max_time = df["timestamp"].max()
                 self.data_duration = max_time - min_time
                 
-                # Labels aktualisieren wenn Zoom nicht aktiv
-                if not self.zoom_enabled.get():
+                # Labels aktualisieren wenn auf Vollbereich (0-100%)
+                if self.zoom_start.get() == 0.0 and self.zoom_end.get() == 100.0:
                     self.start_label.config(text=f"{min_time:.1f}s")
                     self.end_label.config(text=f"{max_time:.1f}s")
         
