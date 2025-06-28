@@ -575,9 +575,120 @@ class BalanceControllerGUI:
         control_frame = ttk.Frame(parent)
         control_frame.pack(fill=tk.X, padx=10, pady=10)
         
+        # Buttons links
         ttk.Button(control_frame, text="Log-Datei öffnen", command=self.open_log_file).pack(side=tk.LEFT, padx=5)
         ttk.Button(control_frame, text="Live-Plot starten", command=self.start_live_plot).pack(side=tk.LEFT, padx=5)
         ttk.Button(control_frame, text="Monitoring stoppen", command=self.stop_live_plot).pack(side=tk.LEFT, padx=5)
+        
+        # Separator
+        separator = ttk.Separator(control_frame, orient="vertical")
+        separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+        
+        # Visibility checkboxes rechts
+        visibility_frame = ttk.Frame(control_frame)
+        visibility_frame.pack(side=tk.LEFT, padx=10)
+        
+        ttk.Label(visibility_frame, text="Anzeigen:").pack(side=tk.LEFT, padx=5)
+        
+        # Checkbox-Variablen initialisieren
+        self.plot_visibility = {
+            "roll_angle": tk.BooleanVar(value=True),
+            "steering_output": tk.BooleanVar(value=True),
+            "p_term": tk.BooleanVar(value=True),
+            "i_term": tk.BooleanVar(value=True),
+            "d_term": tk.BooleanVar(value=True)
+        }
+        
+        # Checkboxes erstellen
+        checkbox_config = [
+            ("roll_angle", "Roll-Winkel"),
+            ("steering_output", "Lenkwinkel"),
+            ("p_term", "P-Term"),
+            ("i_term", "I-Term"),
+            ("d_term", "D-Term")
+        ]
+        
+        for key, label in checkbox_config:
+            checkbox = ttk.Checkbutton(
+                visibility_frame,
+                text=label,
+                variable=self.plot_visibility[key],
+                command=self.update_plot_visibility
+            )
+            checkbox.pack(side=tk.LEFT, padx=3)
+        
+        # Separator für Zoom-Controls
+        zoom_separator = ttk.Separator(control_frame, orient="vertical")
+        zoom_separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
+        
+        # X-Achse Zoom Controls
+        zoom_frame = ttk.Frame(control_frame)
+        zoom_frame.pack(side=tk.LEFT, padx=10)
+        
+        ttk.Label(zoom_frame, text="X-Achse Zoom:").pack(side=tk.LEFT, padx=5)
+        
+        # Zoom-Variablen initialisieren
+        self.zoom_start = tk.DoubleVar(value=0.0)
+        self.zoom_end = tk.DoubleVar(value=100.0)
+        self.zoom_enabled = tk.BooleanVar(value=False)
+        self.data_duration = 10.0  # Fallback-Wert
+        
+        # Zoom Enable/Disable Checkbox
+        zoom_checkbox = ttk.Checkbutton(
+            zoom_frame,
+            text="Zoom:",
+            variable=self.zoom_enabled,
+            command=self.toggle_zoom
+        )
+        zoom_checkbox.pack(side=tk.LEFT, padx=3)
+        
+        # Start-Slider
+        start_frame = ttk.Frame(zoom_frame)
+        start_frame.pack(side=tk.LEFT, padx=5)
+        
+        ttk.Label(start_frame, text="Von:", font=("Arial", 8)).pack()
+        self.start_slider = ttk.Scale(
+            start_frame,
+            from_=0.0,
+            to=100.0,
+            variable=self.zoom_start,
+            orient=tk.HORIZONTAL,
+            length=80,
+            command=self.on_zoom_start_change
+        )
+        self.start_slider.pack()
+        self.start_label = ttk.Label(start_frame, text="0.0s", font=("Arial", 8))
+        self.start_label.pack()
+        
+        # End-Slider
+        end_frame = ttk.Frame(zoom_frame)
+        end_frame.pack(side=tk.LEFT, padx=5)
+        
+        ttk.Label(end_frame, text="Bis:", font=("Arial", 8)).pack()
+        self.end_slider = ttk.Scale(
+            end_frame,
+            from_=0.0,
+            to=100.0,
+            variable=self.zoom_end,
+            orient=tk.HORIZONTAL,
+            length=80,
+            command=self.on_zoom_end_change
+        )
+        self.end_slider.pack()
+        self.end_label = ttk.Label(end_frame, text="10.0s", font=("Arial", 8))
+        self.end_label.pack()
+        
+        # Reset-Button
+        ttk.Button(
+            zoom_frame,
+            text="Reset",
+            command=self.reset_zoom,
+            width=6
+        ).pack(side=tk.LEFT, padx=5)
+        
+        # Slider initial deaktivieren (da Zoom standardmäßig aus ist)
+        self.start_slider.configure(state='disabled')
+        self.end_slider.configure(state='disabled')
         
         # Plot-Bereich
         self.setup_plot_area(parent)
@@ -622,6 +733,7 @@ class BalanceControllerGUI:
         }
         
         self.live_plot_active = False
+        self.current_data = None
         
     def setup_preset_tab(self, parent):
         """Erstelle das Preset-Tab"""
@@ -894,25 +1006,186 @@ class BalanceControllerGUI:
         """Lade und plotte Daten aus Log-Datei"""
         df = pd.read_csv(filename)
         
+        # Daten für Live-Update speichern
+        self.current_data = df
+        
+        # Zoom zurücksetzen beim Laden neuer Daten
+        if hasattr(self, 'zoom_enabled'):
+            self.reset_zoom()
+        
+        # Plot aktualisieren
+        self.refresh_plots()
+        
+    def refresh_plots(self):
+        """Aktualisiere Plots basierend auf aktuellen Daten und Sichtbarkeit"""
+        if not hasattr(self, 'current_data') or self.current_data is None:
+            return
+            
+        # Fallback für Sichtbarkeitseinstellungen (alle anzeigen falls nicht initialisiert)
+        if not hasattr(self, 'plot_visibility'):
+            show_all = True
+        else:
+            show_all = False
+            
+        df = self.current_data.copy()
+        
+        # Zoom-Bereich aktualisieren
+        self.update_zoom_range()
+        
+        # Zoom anwenden wenn aktiviert
+        if hasattr(self, 'zoom_enabled') and self.zoom_enabled.get():
+            min_time = df["timestamp"].min()
+            max_time = df["timestamp"].max()
+            time_range = max_time - min_time
+            
+            # Berechne Zoom-Grenzen
+            start_percent = self.zoom_start.get() / 100.0
+            end_percent = self.zoom_end.get() / 100.0
+            
+            zoom_start_time = min_time + (start_percent * time_range)
+            zoom_end_time = min_time + (end_percent * time_range)
+            
+            # Filtere Daten im Zoom-Bereich
+            mask = (df["timestamp"] >= zoom_start_time) & (df["timestamp"] <= zoom_end_time)
+            df = df[mask]
+            
+            if len(df) == 0:
+                # Keine Daten im Zoom-Bereich
+                self.ax1.clear()
+                self.ax2.clear()
+                self.ax1.text(0.5, 0.5, "Keine Daten im gewählten Bereich", 
+                             transform=self.ax1.transAxes, ha='center', va='center')
+                self.ax2.text(0.5, 0.5, "Keine Daten im gewählten Bereich", 
+                             transform=self.ax2.transAxes, ha='center', va='center')
+                self.canvas.draw()
+                return
+        
         # Plot 1: Roll-Winkel und Lenkwinkel
         self.ax1.clear()
-        self.ax1.plot(df["timestamp"], df["roll_angle"], label="Roll-Winkel", color="red")
-        self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="Lenkwinkel", color="blue")
+        
+        if show_all or self.plot_visibility["roll_angle"].get():
+            self.ax1.plot(df["timestamp"], df["roll_angle"] * 180/3.14159, label="Roll-Winkel", color="red", linewidth=2)
+            
+        if show_all or self.plot_visibility["steering_output"].get():
+            self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="Lenkwinkel", color="blue", linewidth=2)
+        
         self.ax1.set_ylabel("Winkel [°]")
         self.ax1.legend()
-        self.ax1.grid(True)
+        self.ax1.grid(True, alpha=0.3)
         
         # Plot 2: PID-Terme
         self.ax2.clear()
-        self.ax2.plot(df["timestamp"], df["p_term"], label="P-Term", color="green")
-        self.ax2.plot(df["timestamp"], df["i_term"], label="I-Term", color="orange")
-        self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple")
+        
+        if show_all or self.plot_visibility["p_term"].get():
+            self.ax2.plot(df["timestamp"], df["p_term"], label="P-Term", color="green", linewidth=2)
+            
+        if show_all or self.plot_visibility["i_term"].get():
+            self.ax2.plot(df["timestamp"], df["i_term"], label="I-Term", color="orange", linewidth=2)
+            
+        if show_all or self.plot_visibility["d_term"].get():
+            self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=2)
+        
         self.ax2.set_xlabel("Zeit [s]")
         self.ax2.set_ylabel("PID-Terme")
         self.ax2.legend()
-        self.ax2.grid(True)
+        self.ax2.grid(True, alpha=0.3)
+        
+        # Zoom-Titel hinzufügen wenn aktiv
+        if hasattr(self, 'zoom_enabled') and self.zoom_enabled.get():
+            start_time = df["timestamp"].min() if len(df) > 0 else 0
+            end_time = df["timestamp"].max() if len(df) > 0 else 0
+            self.ax1.set_title(f"Gezoomter Bereich: {start_time:.2f}s - {end_time:.2f}s", fontsize=10)
+        else:
+            self.ax1.set_title("")
         
         self.canvas.draw()
+        
+    def update_plot_visibility(self):
+        """Handler für Checkbox-Änderungen - aktualisiert die Plot-Sichtbarkeit"""
+        self.refresh_plots()
+        
+    def toggle_zoom(self):
+        """Aktiviert/Deaktiviert den Zoom-Modus"""
+        if self.zoom_enabled.get():
+            # Zoom aktiviert - Slider aktivieren
+            self.start_slider.configure(state='normal')
+            self.end_slider.configure(state='normal')
+            self.status_text.set("X-Achsen-Zoom aktiviert")
+        else:
+            # Zoom deaktiviert - Slider deaktivieren und Plot zurücksetzen
+            self.start_slider.configure(state='disabled')
+            self.end_slider.configure(state='disabled')
+            self.status_text.set("X-Achsen-Zoom deaktiviert")
+        
+        self.refresh_plots()
+        
+    def on_zoom_start_change(self, value):
+        """Callback für Start-Slider Änderung"""
+        start_percent = float(value)
+        
+        # Stelle sicher, dass Start < End
+        if start_percent >= self.zoom_end.get():
+            self.zoom_start.set(self.zoom_end.get() - 1.0)
+            start_percent = self.zoom_start.get()
+        
+        # Berechne tatsächliche Zeit
+        if hasattr(self, 'data_duration'):
+            start_time = (start_percent / 100.0) * self.data_duration
+            self.start_label.config(text=f"{start_time:.1f}s")
+        
+        if self.zoom_enabled.get():
+            self.refresh_plots()
+            
+    def on_zoom_end_change(self, value):
+        """Callback für End-Slider Änderung"""
+        end_percent = float(value)
+        
+        # Stelle sicher, dass End > Start
+        if end_percent <= self.zoom_start.get():
+            self.zoom_end.set(self.zoom_start.get() + 1.0)
+            end_percent = self.zoom_end.get()
+        
+        # Berechne tatsächliche Zeit
+        if hasattr(self, 'data_duration'):
+            end_time = (end_percent / 100.0) * self.data_duration
+            self.end_label.config(text=f"{end_time:.1f}s")
+        
+        if self.zoom_enabled.get():
+            self.refresh_plots()
+            
+    def reset_zoom(self):
+        """Setzt den Zoom zurück (zeigt alle Daten)"""
+        self.zoom_start.set(0.0)
+        self.zoom_end.set(100.0)
+        self.zoom_enabled.set(False)
+        
+        # Labels aktualisieren
+        self.start_label.config(text="0.0s")
+        if hasattr(self, 'data_duration'):
+            self.end_label.config(text=f"{self.data_duration:.1f}s")
+        else:
+            self.end_label.config(text="10.0s")
+        
+        # Slider deaktivieren
+        self.start_slider.configure(state='disabled')
+        self.end_slider.configure(state='disabled')
+        
+        self.status_text.set("Zoom zurückgesetzt")
+        self.refresh_plots()
+        
+    def update_zoom_range(self):
+        """Aktualisiert den Zoom-Bereich basierend auf aktuellen Daten"""
+        if hasattr(self, 'current_data') and self.current_data is not None:
+            df = self.current_data
+            if len(df) > 0:
+                min_time = df["timestamp"].min()
+                max_time = df["timestamp"].max()
+                self.data_duration = max_time - min_time
+                
+                # Labels aktualisieren wenn Zoom nicht aktiv
+                if not self.zoom_enabled.get():
+                    self.start_label.config(text=f"{min_time:.1f}s")
+                    self.end_label.config(text=f"{max_time:.1f}s")
         
     def start_live_plot(self):
         """Starte Live-Plot (sucht nach neuesten Log-Dateien)"""
@@ -936,7 +1209,12 @@ class BalanceControllerGUI:
                         latest_file = max(log_files, key=lambda f: os.path.getctime(os.path.join(self.monitoring_dir, f)))
                         full_path = os.path.join(self.monitoring_dir, latest_file)
                         
-                        self.load_and_plot_data(full_path)
+                        # Lade Daten direkt und aktualisiere
+                        df = pd.read_csv(full_path)
+                        self.current_data = df
+                        
+                        # Thread-sicheres Update über Tkinter
+                        self.root.after(0, self.refresh_plots)
                         self.status_vars["last_update"].set(datetime.now().strftime("%H:%M:%S"))
                         
             except Exception as e:

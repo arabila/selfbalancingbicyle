@@ -10,4 +10,4 @@ fi
 
 # Aktiviere virtuelle Umgebung und starte GUI
 source venv/bin/activate
-python bicycle_controller_gui.py 
+python balance_controller_gui.py 
