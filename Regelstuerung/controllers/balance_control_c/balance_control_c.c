@@ -14,6 +14,8 @@
 #include <webots/keyboard.h>
 #include <webots/display.h>
 #include <webots/camera.h>
+#include <webots/receiver.h>
+#include <webots/emitter.h>
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -33,8 +35,29 @@ static WbDeviceTag handlebars_motor;
 static WbDeviceTag wheel_motor;
 static WbDeviceTag imu_sensor;
 static WbDeviceTag display_device;
+static WbDeviceTag command_receiver;
+static WbDeviceTag status_emitter;
 // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
 static WbNodeRef robot_node;
+
+// Vision-Command-Struktur für IPC
+typedef struct {
+    float steer_command;     // Lenkbefehl von Vision-Controller (-1.0 bis +1.0)
+    float speed_command;     // Geschwindigkeitsbefehl von Vision-Controller (0.0 bis 1.0)
+    int valid;               // Kommando gültig (1) oder nicht (0)
+} vision_command_t;
+
+// Balance-Status-Struktur für IPC
+typedef struct {
+    float roll_angle;        // Aktueller Roll-Winkel (rad)
+    float steering_output;   // Aktueller Lenkwinkel (rad)
+    float current_speed;     // Aktuelle Geschwindigkeit (rad/s)
+    float stability_factor;  // Stabilitätsfaktor (0.0-1.0)
+} balance_status_t;
+
+// Vision-Command-Status
+static vision_command_t last_vision_command = {0.0f, 0.0f, 0};
+static double last_command_time = 0.0;
 
 // Controller-Zustand
 static pid_controller_t angle_pid;
@@ -59,6 +82,8 @@ static void update_display(float roll_angle, float steering_output, float speed)
 static void handle_keyboard_input(void);
 static long long get_time_microseconds(void);
 static void print_status(float roll_angle, float steering_output, float speed);
+static int receive_vision_command(vision_command_t *command);
+static void send_balance_status(const balance_status_t *status);
 
 int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) {
     // Webots initialisieren
@@ -132,12 +157,41 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         else if (steering_output < -config.mechanical_limits.max_handlebar_angle)
             steering_output = -config.mechanical_limits.max_handlebar_angle;
         
-        // 5. Geschwindigkeitsregelung basierend auf Stabilität
-        float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
-        float speed_reduction = stability_factor * config.speed_control.stability_reduction;
-        float target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
+        // 5. Vision-Commands empfangen und verarbeiten
+        vision_command_t vision_cmd;
+        int vision_cmd_received = receive_vision_command(&vision_cmd);
         
-        // Geschwindigkeitsbegrenzung
+        // 6. Zwei-Ebenen-Regelung: Vision + Balance
+        float final_steer = steering_output;  // Balance-PID-Ausgang
+        float target_speed = config.speed_control.base_speed;
+        
+        if (vision_cmd_received && (wb_robot_get_time() - last_command_time) < 0.5) {
+            // Vision-Command ist aktuell (< 500ms alt)
+            // Kombiniere Balance-Korrektur mit Vision-Lenkbefehl
+            float vision_steer = vision_cmd.steer_command * config.mechanical_limits.max_handlebar_angle;
+            
+            // Gewichtete Kombination: 70% Vision, 30% Balance-Korrektur
+            final_steer = 0.7f * vision_steer + 0.3f * steering_output;
+            
+            // Geschwindigkeit von Vision-Controller übernehmen
+            target_speed = config.speed_control.min_speed + 
+                          vision_cmd.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+            
+            printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f\n", 
+                   vision_steer, target_speed, steering_output, final_steer);
+        } else {
+            // Kein aktueller Vision-Command → Nur Balance-Regelung
+            float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
+            float speed_reduction = stability_factor * config.speed_control.stability_reduction;
+            target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
+        }
+        
+        // Finale Begrenzungen
+        if (final_steer > config.mechanical_limits.max_handlebar_angle) 
+            final_steer = config.mechanical_limits.max_handlebar_angle;
+        else if (final_steer < -config.mechanical_limits.max_handlebar_angle)
+            final_steer = -config.mechanical_limits.max_handlebar_angle;
+            
         if (target_speed < config.speed_control.min_speed) 
             target_speed = config.speed_control.min_speed;
         else if (target_speed > config.speed_control.max_speed)
@@ -154,8 +208,17 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         }
         
         // 7. Motoren ansteuern
-        wb_motor_set_position(handlebars_motor, steering_output);
+        wb_motor_set_position(handlebars_motor, final_steer);
         wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
+        
+        // 8. Balance-Status an Vision-Controller senden
+        balance_status_t status = {
+            .roll_angle = roll_angle,
+            .steering_output = final_steer,
+            .current_speed = target_speed,
+            .stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle
+        };
+        send_balance_status(&status);
         
         // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen)
         if (config.system.enable_logging) {
@@ -244,6 +307,21 @@ static void init_devices(int timestep) {
         wb_display_attach_camera(display_device, wb_robot_get_device("camera"));
         wb_display_set_color(display_device, 0x00FF00);
         wb_display_set_font(display_device, "Arial", 16, true);
+    }
+    
+    // IPC: Receiver für Vision-Commands
+    command_receiver = wb_robot_get_device("command_rx");
+    if (command_receiver == 0) {
+        fprintf(stderr, "Fehler: Command Receiver nicht gefunden!\n");
+        exit(1);
+    }
+    wb_receiver_enable(command_receiver, timestep);
+    
+    // IPC: Emitter für Balance-Status
+    status_emitter = wb_robot_get_device("status_tx");
+    if (status_emitter == 0) {
+        fprintf(stderr, "Fehler: Status Emitter nicht gefunden!\n");
+        exit(1);
     }
     
     // Robot-Node für Velocity-Messung
@@ -488,4 +566,38 @@ static void print_status(float roll_angle, float steering_output, float speed) {
            angle_pid.integral_term,
            angle_pid.derivative_term);
     fflush(stdout);
+}
+
+static int receive_vision_command(vision_command_t *command) {
+    if (wb_receiver_get_queue_length(command_receiver) > 0) {
+        const void *data = wb_receiver_get_data(command_receiver);
+        if (data != NULL) {
+            memcpy(command, data, sizeof(vision_command_t));
+            wb_receiver_next_packet(command_receiver);
+            
+            // Plausibilitätsprüfung
+            if (command->steer_command >= -1.0f && command->steer_command <= 1.0f &&
+                command->speed_command >= 0.0f && command->speed_command <= 1.0f &&
+                command->valid == 1) {
+                
+                last_vision_command = *command;
+                last_command_time = wb_robot_get_time();
+                return 1;  // Gültiges Kommando empfangen
+            } else {
+                printf("WARNUNG: Ungültiges Vision-Command empfangen: steer=%.3f, speed=%.3f, valid=%d\n",
+                       command->steer_command, command->speed_command, command->valid);
+            }
+        }
+    }
+    return 0;  // Kein neues Kommando
+}
+
+static void send_balance_status(const balance_status_t *status) {
+    static int send_counter = 0;
+    
+    // Sende Status nur alle 25 Zyklen (25 * 2ms = 50ms → 20 Hz)
+    if (++send_counter >= 25) {
+        wb_emitter_send(status_emitter, status, sizeof(balance_status_t));
+        send_counter = 0;
+    }
 } 

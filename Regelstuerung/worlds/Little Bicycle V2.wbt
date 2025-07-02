@@ -5,7 +5,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2022b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 
 WorldInfo {
-  basicTimeStep 5
+  basicTimeStep 2
   contactProperties [
     ContactProperties {
       material1 "wheel"
@@ -502,6 +502,16 @@ Robot {
       rotation 1 0 0 0
       name "imu"
     }
+    Receiver {
+      name "command_rx"
+      channel 1
+      bufferSize 16
+    }
+    Emitter {
+      name "status_tx"
+      channel 2
+      bufferSize 16
+    }
   ]
   name "Little Bicycle V2"
   boundingObject Group {
@@ -676,5 +686,23 @@ Robot {
     ]
   }
   controller "balance_control_c"
+  supervisor TRUE
+}
+Supervisor {
+  translation 0 0 0
+  children [
+    Emitter {
+      name "command_tx"
+      channel 1
+      bufferSize 16
+    }
+    Receiver {
+      name "status_rx"
+      channel 2
+      bufferSize 16
+    }
+  ]
+  name "Vision Controller"
+  controller "vision_control_py"
   supervisor TRUE
 }
