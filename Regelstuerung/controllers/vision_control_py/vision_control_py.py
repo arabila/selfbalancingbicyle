@@ -162,6 +162,7 @@ class VisionController:
         
     def _init_yolo(self):
         """Initialisiert YOLO-Modell (falls verfügbar)"""
+        global YOLO_AVAILABLE
         self.yolo_model = None
         
         if YOLO_AVAILABLE:

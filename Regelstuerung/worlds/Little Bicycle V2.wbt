@@ -21,7 +21,7 @@ WorldInfo {
 Viewpoint {
   orientation 0.08112360005331364 -0.13795323528772999 -0.9871108683364995 4.565701535911596
   position -3.491144146681085 -10.411647331708812 0.8755702394611999
-  follow "Little Bicycle V2"
+  follow "BICYCLE"
 }
 TexturedBackground {
 }
