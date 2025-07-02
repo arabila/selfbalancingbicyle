@@ -20,6 +20,9 @@ import time
 import math
 from controller import Supervisor
 
+# Setze MPS Fallback für YOLO
+os.environ['PYTORCH_ENABLE_MPS_FALLBACK'] = '1'
+
 # YOLO-Imports (optional - falls verfügbar)
 try:
     import torch
@@ -41,19 +44,15 @@ class VisionController:
         # Devices initialisieren
         self._init_devices()
 
-        # Referenzen auf Fahrrad und Kamera-Mount
+        # Referenz auf Fahrrad für Supervisor-Funktionen
         self.bicycle = self.robot.getFromDef('BICYCLE')
-        self.camera_mount = self.robot.getFromDef('CAMERA_MOUNT')
-        self.camera_offset = np.array([-7.27661e-08, -0.086891, 0.200299])
-        self.camera_rot_axis = np.array([-0.25056306820553154, -0.25056206820525934, 0.9351132545462786])
-        self.camera_rot_angle = -1.6378353071795866
-        self.camera_rot_matrix = self._axis_angle_to_matrix(self.camera_rot_axis, self.camera_rot_angle)
-        if self.camera_mount:
-            self.camera_translation_field = self.camera_mount.getField('translation')
-            self.camera_rotation_field = self.camera_mount.getField('rotation')
-        else:
-            self.camera_translation_field = None
-            self.camera_rotation_field = None
+        
+        # Kamera-Offset relativ zum Fahrrad
+        self.camera_offset = [0, 0.1, 0.35]  # x, y, z Offset
+        self.camera_rotation = [1, 0, 0, -0.3]  # Rotation nach unten
+        
+        # Kamera-Node-Referenz für dynamische Positionierung
+        self.camera_node = self.robot.getSelf().getField('children').getMFNode(0)  # Erste Child (Kamera)
         
         # YOLO-Modell laden (falls verfügbar)
         self._init_yolo()
@@ -80,13 +79,16 @@ class VisionController:
         
         print("=== Vision Controller gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
+        print(f"Supervisor-Kamera: {'✓' if self.camera else '✗'}")
+        print(f"Display: {'✓' if self.display else '✗'}")
+        print(f"Fahrrad-Tracking: {'✓' if self.bicycle else '✗'}")
         print(f"Vision-PID: Kp={self.vision_kp}, Ki={self.vision_ki}, Kd={self.vision_kd}")
         print(f"Speed-Range: {self.min_speed:.1f} - {self.max_speed:.1f}")
         print("====================================\n")
     
     def _init_devices(self):
         """Initialisiert alle Webots-Geräte"""
-        # Kamera
+        # Kamera (direkt am Supervisor)
         self.camera = self.robot.getDevice('camera')
         if self.camera:
             self.camera.enable(self.timestep * 4)  # Reduzierte Kamera-Frequenz
@@ -98,6 +100,8 @@ class VisionController:
         self.display = self.robot.getDevice('display')
         if self.display:
             print("✓ Display initialisiert")
+        else:
+            print("⚠ Display nicht gefunden - nur OpenCV-Anzeige verfügbar")
             
         # IPC: Emitter für Commands
         self.command_emitter = self.robot.getDevice('command_tx')
@@ -117,48 +121,47 @@ class VisionController:
         # Keyboard für Debug-Eingaben
         self.robot.keyboard.enable(self.timestep)
 
-    @staticmethod
-    def _axis_angle_to_matrix(axis, angle):
-        axis = np.array(axis, dtype=float)
-        norm = np.linalg.norm(axis)
-        if norm == 0:
-            return np.identity(3)
-        axis /= norm
-        c = math.cos(angle)
-        s = math.sin(angle)
-        t = 1.0 - c
-        x, y, z = axis
-        return np.array([
-            [t*x*x + c, t*x*y - s*z, t*x*z + s*y],
-            [t*x*y + s*z, t*y*y + c, t*y*z - s*x],
-            [t*x*z - s*y, t*y*z + s*x, t*z*z + c],
-        ])
 
-    @staticmethod
-    def _matrix_to_axis_angle(mat):
-        mat = np.array(mat)
-        angle = math.acos(max(min((np.trace(mat) - 1) / 2.0, 1.0), -1.0))
-        if angle < 1e-6:
-            return [1.0, 0.0, 0.0, 0.0]
-        denom = 2.0 * math.sin(angle)
-        x = (mat[2,1] - mat[1,2]) / denom
-        y = (mat[0,2] - mat[2,0]) / denom
-        z = (mat[1,0] - mat[0,1]) / denom
-        return [x, y, z, angle]
 
-    def _update_camera_mount(self):
-        if not (self.bicycle and self.camera_translation_field and self.camera_rotation_field):
+    def _update_camera_position(self):
+        """Aktualisiert die Kamera-Position relativ zum Fahrrad"""
+        if not (self.bicycle and self.camera_node):
             return
-
-        bike_pos = np.array(self.bicycle.getPosition())
-        bike_rot = np.array(self.bicycle.getOrientation()).reshape((3, 3))
-
-        cam_pos = bike_pos + bike_rot.dot(self.camera_offset)
-        self.camera_translation_field.setSFVec3f(cam_pos.tolist())
-
-        cam_rot_mat = bike_rot.dot(self.camera_rot_matrix)
-        cam_rot = self._matrix_to_axis_angle(cam_rot_mat)
-        self.camera_rotation_field.setSFRotation(cam_rot)
+            
+        try:
+            # Fahrrad-Position und -Rotation abrufen
+            bike_pos = self.bicycle.getPosition()
+            bike_rot = self.bicycle.getOrientation()
+            
+            # Rotation Matrix aus 3x3 Array erstellen
+            import numpy as np
+            rot_matrix = np.array(bike_rot).reshape(3, 3)
+            
+            # Kamera-Offset in Welt-Koordinaten transformieren
+            offset = np.array(self.camera_offset)
+            world_offset = rot_matrix.dot(offset)
+            
+            # Neue Kamera-Position berechnen
+            new_pos = [
+                bike_pos[0] + world_offset[0],
+                bike_pos[1] + world_offset[1], 
+                bike_pos[2] + world_offset[2]
+            ]
+            
+            # Kamera-Position setzen
+            translation_field = self.camera_node.getField('translation')
+            translation_field.setSFVec3f(new_pos)
+            
+            # Kamera-Rotation berechnen (Fahrrad-Rotation + Kamera-Offset-Rotation)
+            # Für Vereinfachung: nur Y-Rotation des Fahrrads verwenden
+            bike_y_rot = math.atan2(rot_matrix[2,0], rot_matrix[0,0])
+            
+            # Neue Rotation: Fahrrad-Y-Rotation + Kamera-Neigung
+            rotation_field = self.camera_node.getField('rotation')
+            rotation_field.setSFRotation([1, 0, 0, self.camera_rotation[3]])
+            
+        except Exception as e:
+            print(f"Kamera-Positionierung-Fehler: {e}")
         
     def _init_yolo(self):
         """Initialisiert YOLO-Modell (falls verfügbar)"""
@@ -357,12 +360,13 @@ class VisionController:
     def update_display(self, frame, mask, error, steer_cmd, speed_cmd):
         """Aktualisiert das Display mit Vision-Overlay"""
         if not self.display:
-            return
+            # Nur OpenCV-Anzeige verfügbar
+            pass
             
         try:
             # Maske als Overlay
             if mask is not None and mask.size > 0:
-                mask_colored = cv2.applyColorMap(mask, cv2.COLORMAP_GREEN)
+                mask_colored = cv2.applyColorMap(mask, cv2.COLORMAP_VIRIDIS)
                 overlay = cv2.addWeighted(frame, 0.7, mask_colored, 0.3, 0)
             else:
                 overlay = frame.copy()
@@ -384,8 +388,8 @@ class VisionController:
                 cv2.putText(overlay, f"Stability: {stability:.2f}", (10, 150), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
             
-            # Optional: Externe Anzeige
-            cv2.imshow("Vision Control", overlay)
+            # OpenCV-Anzeige (immer verfügbar)
+            cv2.imshow("Vision Control - Fahrrad Kamera", overlay)
             cv2.waitKey(1)
             
         except Exception as e:
@@ -434,8 +438,8 @@ class VisionController:
             current_time = self.robot.getTime()
             self.step_counter += 1
 
-            # Kamera-Position an Fahrrad ausrichten
-            self._update_camera_mount()
+            # Kamera-Position an Fahrrad anpassen
+            self._update_camera_position()
             
             # Tastatureingaben verarbeiten
             if not self.handle_keyboard_input():

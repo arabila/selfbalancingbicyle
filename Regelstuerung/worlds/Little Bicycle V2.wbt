@@ -501,6 +501,7 @@ DEF BICYCLE Robot {
       channel 2
       bufferSize 16
     }
+
   ]
   name "Little Bicycle V2"
   boundingObject Group {
@@ -680,24 +681,19 @@ DEF BICYCLE Robot {
 Supervisor {
   translation 0 0 0
   children [
-    DEF CAMERA_MOUNT Solid {
-      translation 0 0 0
-      children [
-        Camera {
-          translation -7.27661e-08 -0.086891 0.200299
-          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
-          fieldOfView 2
-          width 480
-          height 320
-          antiAliasing TRUE
-          name "camera"
-        }
-        Display {
-          width 480
-          height 320
-          name "display"
-        }
-      ]
+    Camera {
+      translation -3.71003 -6.9 -0.0150894
+      rotation 1 0 0 -0.3
+      fieldOfView 1.99
+      width 480
+      height 320
+      antiAliasing TRUE
+      name "camera"
+    }
+    Display {
+      width 480
+      height 320
+      name "display"
     }
     Emitter {
       name "command_tx"
