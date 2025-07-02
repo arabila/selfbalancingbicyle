@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.1288300600819079 -0.11721815528193999 -0.9847145371586584 4.1031537439802985
-  position -2.371709582587984 -8.599340562090218 0.5421273494008182
+  orientation 0.31535402832478643 -0.3972831629103563 -0.8618108407807789 4.57779054571933
+  position -3.7280147585895858 -8.468048754395765 1.6045628815686257
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -43,8 +43,8 @@ RectangleArena {
   }
 }
 DEF BICYCLE Robot {
-  translation -3.70948 -6.35855 -0.0452227
-  rotation 0.002205278903477989 -1.1137950572934092e-05 0.9999975683074955 3.141502601874794
+  translation -3.99946 -6.3506 -0.0438596
+  rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
       scale 0.001 0.001 0.001
@@ -58,7 +58,7 @@ DEF BICYCLE Robot {
     }
     DEF rear_wheel HingeJoint {
       jointParameters HingeJointParameters {
-        position 60.38086775536993
+        position 60.88039628282915
         anchor 0 0.083 0
         dampingConstant 0.1
         staticFriction 0.1
@@ -72,7 +72,7 @@ DEF BICYCLE Robot {
       ]
       endPoint Solid {
         translation 0 0.083 0
-        rotation -1 0 0 2.4509853164259376
+        rotation -1 0 0 1.9514567889667116
         children [
           DEF wheel Transform {
             scale 0.001 0.001 0.001
@@ -111,7 +111,7 @@ DEF BICYCLE Robot {
     }
     DEF crank HingeJoint {
       jointParameters HingeJointParameters {
-        position 30.15885874937782
+        position 30.400672892544396
         dampingConstant 0.05
         staticFriction 0.05
       }
@@ -123,7 +123,7 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        rotation 1 0 0 5.026117520659475
+        rotation 1 0 0 5.26793166382605
         children [
           DEF crank Transform {
             scale 0.001 0.001 0.001
@@ -137,12 +137,12 @@ DEF BICYCLE Robot {
           }
           DEF pedal HingeJoint {
             jointParameters HingeJointParameters {
-              position -30.15883673995859
+              position -30.40025456626206
               anchor -0.0375 -0.03 0
             }
             endPoint Solid {
               translation -0.0375 -0.03 0
-              rotation -1 0 0 5.0260955112402455
+              rotation -1 0 0 5.267513337543714
               children [
                 DEF pedal Transform {
                   scale 0.001 0.001 0.001
@@ -175,12 +175,12 @@ DEF BICYCLE Robot {
           }
           DEF pedal HingeJoint {
             jointParameters HingeJointParameters {
-              position -30.15883673995859
+              position -30.40025456626206
               anchor 0.0375 0.03 0
             }
             endPoint Solid {
               translation 0.0375 0.03 0
-              rotation -1 0 0 5.0260955112402455
+              rotation -1 0 0 5.267513337543714
               children [
                 DEF pedal Transform {
                   scale 0.001 0.001 0.001
@@ -253,7 +253,7 @@ DEF BICYCLE Robot {
     }
     DEF Handlebars_and_Fork HingeJoint {
       jointParameters HingeJointParameters {
-        position 1.4306669605288524e-08
+        position -9.802948738403439e-08
         axis 0 0 1
         anchor 0 -0.0818 0.102
         dampingConstant 0.2
@@ -267,6 +267,7 @@ DEF BICYCLE Robot {
       ]
       endPoint Solid {
         translation 0 -0.0818 0.102
+        rotation 0 0 -1 9.884312124119402e-08
         children [
           DEF fork Transform {
             scale 0.001 0.001 0.001
@@ -280,14 +281,14 @@ DEF BICYCLE Robot {
           }
           DEF wheel HingeJoint {
             jointParameters HingeJointParameters {
-              position 58.76470491407174
+              position 58.84271107812081
               anchor 0 -0.037 -0.102
               dampingConstant 0.1
               staticFriction 0.1
             }
             endPoint Solid {
               translation 0 -0.037 -0.102
-              rotation -1 0 0 4.067148157724122
+              rotation -1 0 0 3.989141993675058
               children [
                 DEF wheel Transform {
                   scale 0.001 0.001 0.001
@@ -494,7 +495,7 @@ DEF BICYCLE Robot {
     }
     Camera {
       translation -7.27661e-08 -0.086891 0.200299
-      rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
+      rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
       fieldOfView 2
       width 480
       height 320
@@ -692,18 +693,18 @@ DEF BICYCLE Robot {
       0 0 0
     ]
   }
-    controller "balance_control_c"
+  controller "balance_control_c"
   supervisor TRUE
 }
 Supervisor {
   children [
     DEF VISION_CAMERA_TRANSFORM Pose {
-      translation -3.70948 -6.35855 -0.0452227
-      rotation 0.002205278903477989 -1.1137950572934092e-05 0.9999975683074955 3.141502601874794
+      translation -3.709465509677524 -6.351110825230749 -0.04517476285409254
+      rotation 0.002261921745702991 -0.00022403723935638146 0.9999974167553293 3.141443442788721
       children [
         Pose {
           translation -7.27661e-08 -0.086891 0.200299
-          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
+          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
           children [
             Camera {
               fieldOfView 2
