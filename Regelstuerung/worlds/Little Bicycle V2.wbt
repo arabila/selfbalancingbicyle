@@ -42,7 +42,7 @@ RectangleArena {
     metalness 0
   }
 }
-Robot {
+DEF BICYCLE Robot {
   translation -3.71003 -6.9 -0.0450894
   rotation 0 0 1 3.14159
   children [
@@ -486,18 +486,6 @@ Robot {
         }
       }
     }
-    Camera {
-      translation -7.27661e-08 -0.086891 0.200299
-      rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
-      fieldOfView 2
-      width 480
-      height 320
-      antiAliasing TRUE
-    }
-    Display {
-      width 480
-      height 320
-    }
     InertialUnit {
       translation 0 0 0.05
       rotation 1 0 0 0
@@ -692,6 +680,25 @@ Robot {
 Supervisor {
   translation 0 0 0
   children [
+    DEF CAMERA_MOUNT Solid {
+      translation 0 0 0
+      children [
+        Camera {
+          translation -7.27661e-08 -0.086891 0.200299
+          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
+          fieldOfView 2
+          width 480
+          height 320
+          antiAliasing TRUE
+          name "camera"
+        }
+        Display {
+          width 480
+          height 320
+          name "display"
+        }
+      ]
+    }
     Emitter {
       name "command_tx"
       channel 1
