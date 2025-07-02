@@ -47,12 +47,11 @@ class VisionController:
         # Referenz auf Fahrrad für Supervisor-Funktionen
         self.bicycle = self.robot.getFromDef('BICYCLE')
         
-        # Kamera-Offset relativ zum Fahrrad
+        # Kamera-Offset relativ zum Fahrrad (nur Translation, Rotation erbt vom Transform)
         self.camera_offset = [0, 0.1, 0.35]  # x, y, z Offset
-        self.camera_rotation = [1, 0, 0, -0.3]  # Rotation nach unten
         
-        # Kamera-Node-Referenz für dynamische Positionierung
-        self.camera_node = self.robot.getSelf().getField('children').getMFNode(0)  # Erste Child (Kamera)
+        # Kamera-Transform-Node-Referenz für dynamische Positionierung
+        self.camera_transform_node = self.robot.getFromDef('CAMERA_TRANSFORM')
         
         # YOLO-Modell laden (falls verfügbar)
         self._init_yolo()
@@ -80,10 +79,12 @@ class VisionController:
         print("=== Vision Controller gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
         print(f"Supervisor-Kamera: {'✓' if self.camera else '✗'}")
+        print(f"Kamera-Transform: {'✓' if self.camera_transform_node else '✗'}")
         print(f"Display: {'✓' if self.display else '✗'}")
         print(f"Fahrrad-Tracking: {'✓' if self.bicycle else '✗'}")
         print(f"Vision-PID: Kp={self.vision_kp}, Ki={self.vision_ki}, Kd={self.vision_kd}")
         print(f"Speed-Range: {self.min_speed:.1f} - {self.max_speed:.1f}")
+        print(f"Kamera-Architektur: Transform-basiert (automatische Fahrtrichtung)")
         print("====================================\n")
     
     def _init_devices(self):
@@ -125,7 +126,7 @@ class VisionController:
 
     def _update_camera_position(self):
         """Aktualisiert die Kamera-Position relativ zum Fahrrad"""
-        if not (self.bicycle and self.camera_node):
+        if not (self.bicycle and self.camera_transform_node):
             return
             
         try:
@@ -133,7 +134,7 @@ class VisionController:
             bike_pos = self.bicycle.getPosition()
             bike_rot = self.bicycle.getOrientation()
             
-            # Rotation Matrix aus 3x3 Array erstellen
+            # Rotation Matrix aus 3x3 Array erstellen für Offset-Transformation
             import numpy as np
             rot_matrix = np.array(bike_rot).reshape(3, 3)
             
@@ -141,47 +142,21 @@ class VisionController:
             offset = np.array(self.camera_offset)
             world_offset = rot_matrix.dot(offset)
             
-            # Neue Kamera-Position berechnen
+            # Neue Kamera-Transform-Position berechnen
             new_pos = [
                 bike_pos[0] + world_offset[0],
                 bike_pos[1] + world_offset[1], 
                 bike_pos[2] + world_offset[2]
             ]
             
-            # Kamera-Position setzen
-            translation_field = self.camera_node.getField('translation')
+            # Kamera-Transform-Position setzen (Rotation wird automatisch vom Transform übernommen)
+            translation_field = self.camera_transform_node.getField('translation')
             translation_field.setSFVec3f(new_pos)
             
-            # Kamera-Rotation berechnen (Ausrichtung des Fahrrads + Kameraneigung)
-            bike_y_rot = math.atan2(rot_matrix[2, 0], rot_matrix[0, 0])
-
-            # Rotationsmatrix aus Yaw (Fahrrad-Richtung) und Pitch (Kameraneigung)
-            cy = math.cos(bike_y_rot)
-            sy = math.sin(bike_y_rot)
-            cp = math.cos(self.camera_rotation[3])
-            sp = math.sin(self.camera_rotation[3])
-
-            # Yaw * Pitch
-            rot = [
-                [cy, sy*sp, sy*cp],
-                [0,  cp,   -sp  ],
-                [-sy, cy*sp, cy*cp]
-            ]
-
-            trace = rot[0][0] + rot[1][1] + rot[2][2]
-            angle = math.acos(max(min((trace - 1) / 2, 1.0), -1.0))
-            if abs(angle) < 1e-6:
-                axis = [1, 0, 0]
-            else:
-                denom = 2 * math.sin(angle)
-                axis = [
-                    (rot[2][1] - rot[1][2]) / denom,
-                    (rot[0][2] - rot[2][0]) / denom,
-                    (rot[1][0] - rot[0][1]) / denom
-                ]
-
-            rotation_field = self.camera_node.getField('rotation')
-            rotation_field.setSFRotation([axis[0], axis[1], axis[2], angle])
+            # Fahrrad-Rotation auf Transform-Knoten übertragen
+            bike_rotation = self.bicycle.getField('rotation').getSFRotation()
+            rotation_field = self.camera_transform_node.getField('rotation')
+            rotation_field.setSFRotation(bike_rotation)
             
         except Exception as e:
             print(f"Kamera-Positionierung-Fehler: {e}")
