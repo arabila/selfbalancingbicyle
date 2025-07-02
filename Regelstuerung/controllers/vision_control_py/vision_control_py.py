@@ -152,13 +152,36 @@ class VisionController:
             translation_field = self.camera_node.getField('translation')
             translation_field.setSFVec3f(new_pos)
             
-            # Kamera-Rotation berechnen (Fahrrad-Rotation + Kamera-Offset-Rotation)
-            # Für Vereinfachung: nur Y-Rotation des Fahrrads verwenden
-            bike_y_rot = math.atan2(rot_matrix[2,0], rot_matrix[0,0])
-            
-            # Neue Rotation: Fahrrad-Y-Rotation + Kamera-Neigung
+            # Kamera-Rotation berechnen (Ausrichtung des Fahrrads + Kameraneigung)
+            bike_y_rot = math.atan2(rot_matrix[2, 0], rot_matrix[0, 0])
+
+            # Rotationsmatrix aus Yaw (Fahrrad-Richtung) und Pitch (Kameraneigung)
+            cy = math.cos(bike_y_rot)
+            sy = math.sin(bike_y_rot)
+            cp = math.cos(self.camera_rotation[3])
+            sp = math.sin(self.camera_rotation[3])
+
+            # Yaw * Pitch
+            rot = [
+                [cy, sy*sp, sy*cp],
+                [0,  cp,   -sp  ],
+                [-sy, cy*sp, cy*cp]
+            ]
+
+            trace = rot[0][0] + rot[1][1] + rot[2][2]
+            angle = math.acos(max(min((trace - 1) / 2, 1.0), -1.0))
+            if abs(angle) < 1e-6:
+                axis = [1, 0, 0]
+            else:
+                denom = 2 * math.sin(angle)
+                axis = [
+                    (rot[2][1] - rot[1][2]) / denom,
+                    (rot[0][2] - rot[2][0]) / denom,
+                    (rot[1][0] - rot[0][1]) / denom
+                ]
+
             rotation_field = self.camera_node.getField('rotation')
-            rotation_field.setSFRotation([1, 0, 0, self.camera_rotation[3]])
+            rotation_field.setSFRotation([axis[0], axis[1], axis[2], angle])
             
         except Exception as e:
             print(f"Kamera-Positionierung-Fehler: {e}")

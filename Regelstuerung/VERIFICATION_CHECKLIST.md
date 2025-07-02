@@ -16,8 +16,8 @@
     children [
       // ... andere Components ...
       Camera {
-        translation -7.27661e-08 -0.086891 0.200299
-        rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.6378353071795866
+        translation -7.3e-08 -0.0869 0.2003
+        rotation 1 0 0 -0.3  # Startrotation, wird vom Controller überschrieben
         fieldOfView 2
         width 480
         height 320
@@ -27,7 +27,7 @@
     ]
   }
   ```
-- **Position**: Kamera ist ca. 20cm über dem Fahrrad-Rahmen, leicht nach vorne geneigt
+- **Position**: Kamera ist ca. 20cm über dem Fahrrad-Rahmen, leicht nach vorne geneigt. Die exakte Ausrichtung folgt der Fahrradrotation und wird im Controller gesetzt.
 - **Auflösung**: 480x320 für optimale Performance
 - **Field of View**: 2 rad (≈ 114°) für gute Straßenerkennung
 
