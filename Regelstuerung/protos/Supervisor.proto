@@ -1,0 +1,21 @@
+#VRML_SIM R2023b utf8
+
+PROTO Supervisor [
+  field SFVec3f translation 0 0 0
+  field SFRotation rotation 0 0 1 0
+  field MFNode children []
+  field SFString name ""
+  field SFString controller "<none>"
+  field MFString controllerArgs []
+]
+{
+  Robot {
+    translation IS translation
+    rotation IS rotation
+    children IS children
+    name IS name
+    controller IS controller
+    controllerArgs IS controllerArgs
+    supervisor TRUE
+  }
+}
