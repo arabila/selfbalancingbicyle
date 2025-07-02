@@ -3420,6 +3420,6 @@ Robot {
   }
   physics Physics {
   }
-  controller "little_bicycle_P_V2"
+  controller "yolo_vision"
   supervisor TRUE
 }

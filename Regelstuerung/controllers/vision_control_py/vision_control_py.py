@@ -50,8 +50,8 @@ class VisionController:
         # Kamera-Offset relativ zum Fahrrad (nur Translation, Rotation erbt vom Transform)
         self.camera_offset = [0, 0.1, 0.35]  # x, y, z Offset
         
-        # Kamera-Transform-Node-Referenz für dynamische Positionierung
-        self.camera_transform_node = self.robot.getFromDef('CAMERA_TRANSFORM')
+        # Vision Controller Kamera-Transform-Node-Referenz für dynamische Positionierung
+        self.camera_transform_node = self.robot.getFromDef('VISION_CAMERA_TRANSFORM')
         
         # YOLO-Modell laden (falls verfügbar)
         self._init_yolo()
@@ -78,24 +78,25 @@ class VisionController:
         
         print("=== Vision Controller gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
-        print(f"Supervisor-Kamera: {'✓' if self.camera else '✗'}")
+        print(f"Vision Controller Kamera: {'✓' if self.camera else '✗'}")
+        print(f"Fahrrad Kamera: ✓ (am Fahrrad montiert)")
         print(f"Kamera-Transform: {'✓' if self.camera_transform_node else '✗'}")
         print(f"Display: {'✓' if self.display else '✗'}")
         print(f"Fahrrad-Tracking: {'✓' if self.bicycle else '✗'}")
         print(f"Vision-PID: Kp={self.vision_kp}, Ki={self.vision_ki}, Kd={self.vision_kd}")
         print(f"Speed-Range: {self.min_speed:.1f} - {self.max_speed:.1f}")
-        print(f"Kamera-Architektur: Transform-basiert (automatische Fahrtrichtung)")
+        print(f"Kamera-Architektur: Dual-Kamera (Vision Controller + Fahrrad)")
         print("====================================\n")
     
     def _init_devices(self):
         """Initialisiert alle Webots-Geräte"""
-        # Kamera (direkt am Supervisor)
+        # Vision Controller Kamera (folgt dem Fahrrad)
         self.camera = self.robot.getDevice('camera')
         if self.camera:
             self.camera.enable(self.timestep * 4)  # Reduzierte Kamera-Frequenz
-            print("✓ Kamera initialisiert")
+            print("✓ Vision Controller Kamera initialisiert")
         else:
-            print("✗ Kamera nicht gefunden!")
+            print("✗ Vision Controller Kamera nicht gefunden!")
             
         # Display für Overlay
         self.display = self.robot.getDevice('display')
@@ -125,41 +126,25 @@ class VisionController:
 
 
     def _update_camera_position(self):
-        """Aktualisiert die Kamera-Position relativ zum Fahrrad"""
+        """Aktualisiert die Vision Controller Kamera-Position relativ zum Fahrrad"""
         if not (self.bicycle and self.camera_transform_node):
             return
             
         try:
             # Fahrrad-Position und -Rotation abrufen
             bike_pos = self.bicycle.getPosition()
-            bike_rot = self.bicycle.getOrientation()
-            
-            # Rotation Matrix aus 3x3 Array erstellen für Offset-Transformation
-            import numpy as np
-            rot_matrix = np.array(bike_rot).reshape(3, 3)
-            
-            # Kamera-Offset in Welt-Koordinaten transformieren
-            offset = np.array(self.camera_offset)
-            world_offset = rot_matrix.dot(offset)
-            
-            # Neue Kamera-Transform-Position berechnen
-            new_pos = [
-                bike_pos[0] + world_offset[0],
-                bike_pos[1] + world_offset[1], 
-                bike_pos[2] + world_offset[2]
-            ]
-            
-            # Kamera-Transform-Position setzen (Rotation wird automatisch vom Transform übernommen)
-            translation_field = self.camera_transform_node.getField('translation')
-            translation_field.setSFVec3f(new_pos)
-            
-            # Fahrrad-Rotation auf Transform-Knoten übertragen
             bike_rotation = self.bicycle.getField('rotation').getSFRotation()
+            
+            # Vision Controller Kamera-Transform exakt an Fahrradposition setzen
+            translation_field = self.camera_transform_node.getField('translation')
+            translation_field.setSFVec3f(bike_pos)
+            
+            # Fahrrad-Rotation auf Vision Controller Transform übertragen
             rotation_field = self.camera_transform_node.getField('rotation')
             rotation_field.setSFRotation(bike_rotation)
             
         except Exception as e:
-            print(f"Kamera-Positionierung-Fehler: {e}")
+            print(f"Vision Controller Kamera-Positionierung-Fehler: {e}")
         
     def _init_yolo(self):
         """Initialisiert YOLO-Modell (falls verfügbar)"""

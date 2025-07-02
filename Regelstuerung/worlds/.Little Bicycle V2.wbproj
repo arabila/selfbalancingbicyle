@@ -7,5 +7,7 @@ centralWidgetVisible: 1
 orthographicViewHeight: 1
 textFiles: 0 "worlds/Little Bicycle V2.wbt"
 consoles: Console:All:All
-renderingDevicePerspectives: Vision Controller:camera;1;1.43438;0.00123837;0.0042553
-renderingDevicePerspectives: Vision Controller:display;1;0.575;0;0
+renderingDevicePerspectives: Little Bicycle V2:camera;1;1;0;0
+renderingDevicePerspectives: Little Bicycle V2:display;1;1;0;0
+renderingDevicePerspectives: Vision Controller:camera;1;1;0;0
+renderingDevicePerspectives: Vision Controller:display;1;1;0;0
