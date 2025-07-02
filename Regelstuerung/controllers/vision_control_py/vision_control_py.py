@@ -246,10 +246,17 @@ class VisionController:
             )
             
             if not results:
+                print("YOLO: Keine Ergebnisse")
                 return 0.0, np.zeros(frame.shape[:2], dtype=np.uint8)
             
             r = results[0]
             mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+            
+            # Debug: Zeige erkannte Klassen
+            if r.boxes is not None and len(r.boxes.cls) > 0:
+                detected_classes = [int(cls) for cls in r.boxes.cls]
+                if self.step_counter % 100 == 0:  # Nur alle 100 Steps
+                    print(f"YOLO: Erkannte Klassen: {detected_classes}")
             
             # Segmentierungsmasken verarbeiten
             if r.masks is not None and r.masks.data is not None:
@@ -258,6 +265,13 @@ class VisionController:
                     seg_resized = cv2.resize(seg, (frame.shape[1], frame.shape[0]), 
                                            interpolation=cv2.INTER_NEAREST)
                     mask = np.maximum(mask, seg_resized.astype(np.uint8))
+                
+                if self.step_counter % 100 == 0:  # Debug-Info
+                    mask_pixels = np.sum(mask > 0)
+                    print(f"YOLO: Segmentierungsmaske mit {mask_pixels} Pixeln erstellt")
+            else:
+                if self.step_counter % 100 == 0:
+                    print("YOLO: Keine Segmentierungsmasken gefunden")
             
             # Suche nach Straßen-Klasse (ID 2 = 'street_main')
             if r.boxes is not None and len(r.boxes.cls) > 0:
@@ -275,7 +289,13 @@ class VisionController:
                     frame_center = frame.shape[1] / 2
                     error = (frame_center - avg_x_center) / frame.shape[1]  # Normiert
                     
+                    if self.step_counter % 100 == 0:
+                        print(f"YOLO: Straße erkannt - Mittelpunkt: {avg_x_center:.1f}, Error: {error:.3f}")
+                    
                     return error, mask
+                else:
+                    if self.step_counter % 100 == 0:
+                        print("YOLO: Keine Straßen-Klasse (ID=2) erkannt")
             
             return 0.0, mask
             
@@ -362,10 +382,11 @@ class VisionController:
             pass
             
         try:
-            # Maske als Overlay
+            # Maske als Overlay - gleiche Methode wie in yolo_vision_mps.py
             if mask is not None and mask.size > 0:
-                mask_colored = cv2.applyColorMap(mask, cv2.COLORMAP_VIRIDIS)
-                overlay = cv2.addWeighted(frame, 0.7, mask_colored, 0.3, 0)
+                # Maske in BGR umwandeln (wie in yolo_vision_mps.py)
+                mask_bgr = cv2.cvtColor(mask * 255, cv2.COLOR_GRAY2BGR)
+                overlay = cv2.addWeighted(frame, 0.6, mask_bgr, 0.4, 0)
             else:
                 overlay = frame.copy()
             
@@ -385,6 +406,16 @@ class VisionController:
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
                 cv2.putText(overlay, f"Stability: {stability:.2f}", (10, 150), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
+            
+            # YOLO-Status anzeigen
+            yolo_status = "YOLO: ✓" if YOLO_AVAILABLE and self.yolo_model else "YOLO: Fallback"
+            cv2.putText(overlay, yolo_status, (10, 180), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+            
+            # Masken-Info anzeigen
+            mask_info = f"Mask: {np.sum(mask > 0)} pixels" if mask is not None and mask.size > 0 else "Mask: None"
+            cv2.putText(overlay, mask_info, (10, 210), 
+                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255), 2)
             
             # OpenCV-Anzeige (immer verfügbar)
             cv2.imshow("Vision Control - Fahrrad Kamera", overlay)
