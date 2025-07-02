@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 import struct
 import time
+import math
 from controller import Supervisor
 
 # YOLO-Imports (optional - falls verfügbar)
@@ -39,6 +40,20 @@ class VisionController:
         
         # Devices initialisieren
         self._init_devices()
+
+        # Referenzen auf Fahrrad und Kamera-Mount
+        self.bicycle = self.robot.getFromDef('BICYCLE')
+        self.camera_mount = self.robot.getFromDef('CAMERA_MOUNT')
+        self.camera_offset = np.array([-7.27661e-08, -0.086891, 0.200299])
+        self.camera_rot_axis = np.array([-0.25056306820553154, -0.25056206820525934, 0.9351132545462786])
+        self.camera_rot_angle = -1.6378353071795866
+        self.camera_rot_matrix = self._axis_angle_to_matrix(self.camera_rot_axis, self.camera_rot_angle)
+        if self.camera_mount:
+            self.camera_translation_field = self.camera_mount.getField('translation')
+            self.camera_rotation_field = self.camera_mount.getField('rotation')
+        else:
+            self.camera_translation_field = None
+            self.camera_rotation_field = None
         
         # YOLO-Modell laden (falls verfügbar)
         self._init_yolo()
@@ -101,9 +116,53 @@ class VisionController:
         
         # Keyboard für Debug-Eingaben
         self.robot.keyboard.enable(self.timestep)
+
+    @staticmethod
+    def _axis_angle_to_matrix(axis, angle):
+        axis = np.array(axis, dtype=float)
+        norm = np.linalg.norm(axis)
+        if norm == 0:
+            return np.identity(3)
+        axis /= norm
+        c = math.cos(angle)
+        s = math.sin(angle)
+        t = 1.0 - c
+        x, y, z = axis
+        return np.array([
+            [t*x*x + c, t*x*y - s*z, t*x*z + s*y],
+            [t*x*y + s*z, t*y*y + c, t*y*z - s*x],
+            [t*x*z - s*y, t*y*z + s*x, t*z*z + c],
+        ])
+
+    @staticmethod
+    def _matrix_to_axis_angle(mat):
+        mat = np.array(mat)
+        angle = math.acos(max(min((np.trace(mat) - 1) / 2.0, 1.0), -1.0))
+        if angle < 1e-6:
+            return [1.0, 0.0, 0.0, 0.0]
+        denom = 2.0 * math.sin(angle)
+        x = (mat[2,1] - mat[1,2]) / denom
+        y = (mat[0,2] - mat[2,0]) / denom
+        z = (mat[1,0] - mat[0,1]) / denom
+        return [x, y, z, angle]
+
+    def _update_camera_mount(self):
+        if not (self.bicycle and self.camera_translation_field and self.camera_rotation_field):
+            return
+
+        bike_pos = np.array(self.bicycle.getPosition())
+        bike_rot = np.array(self.bicycle.getOrientation()).reshape((3, 3))
+
+        cam_pos = bike_pos + bike_rot.dot(self.camera_offset)
+        self.camera_translation_field.setSFVec3f(cam_pos.tolist())
+
+        cam_rot_mat = bike_rot.dot(self.camera_rot_matrix)
+        cam_rot = self._matrix_to_axis_angle(cam_rot_mat)
+        self.camera_rotation_field.setSFRotation(cam_rot)
         
     def _init_yolo(self):
         """Initialisiert YOLO-Modell (falls verfügbar)"""
+        global YOLO_AVAILABLE
         self.yolo_model = None
         
         if YOLO_AVAILABLE:
@@ -374,6 +433,9 @@ class VisionController:
         while self.robot.step(self.timestep) != -1:
             current_time = self.robot.getTime()
             self.step_counter += 1
+
+            # Kamera-Position an Fahrrad ausrichten
+            self._update_camera_mount()
             
             # Tastatureingaben verarbeiten
             if not self.handle_keyboard_input():
