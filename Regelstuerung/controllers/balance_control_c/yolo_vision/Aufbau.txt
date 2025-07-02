@@ -1,0 +1,35 @@
+Hier ist eine Zusammenfassung der Schritte, die du durchgeführt hast, um den Code erfolgreich zum Laufen zu bringen:
+
+1. Einrichtung der Python-Umgebung
+Installation von Miniforge (eine Conda-Distribution für Apple Silicon) über Homebrew:
+brew install --cask miniforge
+Erstellung einer neuen Conda-Umgebung:
+conda create --name pytorch_env python=3.9
+conda activate pytorch_env
+
+2. Installation der benötigten Bibliotheken
+Installation von PyTorch mit Metal-Unterstützung für Apple Silicon:
+conda install pytorch torchvision torchaudio -c pytorch-nightly -c apple
+Installation von OpenCV für Bildverarbeitung:
+conda install -c conda-forge opencv
+Installation der Ultralytics-Bibliothek (YOLOv8) über pip:
+pip install ultralytics
+Installation von cvxpy (für konvexe Optimierung):
+pip install cvxpy
+
+3. Fehlerbehebungen bei fehlenden Abhängigkeiten
+Warnung bezüglich libjpeg-Bibliothek (fehlende Abhängigkeit von torchvision) behoben:
+conda install -c conda-forge libjpeg-turbo
+
+4. Code-Anpassungen an Änderungen in YOLOv8
+Der Attribut-Fehler 'Results' object has no attribute 'inf_time' wurde behoben, indem das veraltete Attribut inf_time durch das neue Dictionary r.speed ersetzt wurde:
+inf_perf = r.speed['inference']  # Inferenzzeit in Millisekunden
+
+5. Zusätzliche Tests und Überprüfungen
+Überprüft, ob alle Bibliotheken korrekt installiert sind (cv2, torch, ultralytics).
+Sicherstellung, dass Python ≥3.9 in der aktiven Umgebung genutzt wird.
+Der Code wurde anschließend erneut gestartet:
+
+python main.py
+
+Falls du diese Schritte in einem Dokument benötigst oder weitere Details brauchst, lass es mich wissen! 😊
