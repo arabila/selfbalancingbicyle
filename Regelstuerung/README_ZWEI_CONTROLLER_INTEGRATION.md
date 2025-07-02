@@ -190,7 +190,7 @@ self.vision_kd = 0.0005    # Differential-Verstärkung
 
 ## 🔍 Troubleshooting
 
-### Problem: "Command Receiver nicht gefunden!"
+### Problem: "Command Receiver nicht gefunden!" ✅ BEHOBEN
 
 **Lösung:** Prüfe, dass die World-Datei korrekt erweitert wurde:
 ```
@@ -201,6 +201,14 @@ Receiver {
   bufferSize 16
 }
 ```
+
+### Problem: "Supervisor-PROTO Fehler" ✅ BEHOBEN
+
+**Ursache:** Inkompatible EXTERNPROTO für Supervisor in Webots R2023b  
+**Lösung:** 
+- ❌ Entfernt: `EXTERNPROTO "...R2022b.../Supervisor.proto"`
+- ✅ Supervisor ist in R2023b eingebaut (kein EXTERNPROTO nötig)
+- ✅ Alle PROTOs auf R2023b aktualisiert
 
 ### Problem: "YOLO nicht verfügbar"
 
