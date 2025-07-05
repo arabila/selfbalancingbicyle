@@ -41,6 +41,11 @@ static WbDeviceTag status_emitter;
 // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
 static WbNodeRef robot_node;
 
+// --- Erweiterte Vision-Filter-Parameter ---
+#define VISION_FILTER_ALPHA 0.5f   // Glättung neuer Vision-Befehle
+#define VISION_DECAY       0.98f  // Langsames Ausklingen bei fehlenden Befehlen
+
+
 // Erweiterte Vision-Command-Struktur für IPC (inkl. Debug-Daten)
 typedef struct {
     float steer_command;     // Lenkbefehl von Vision-Controller (-1.0 bis +1.0)
@@ -64,6 +69,7 @@ typedef struct {
 // Vision-Command-Status (erweitert)
 static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 static double last_command_time = 0.0;
+static float filtered_vision_steer = 0.0f;  // Gemaessigter Vision-Befehl
 
 // Controller-Zustand
 static pid_controller_t angle_pid;
@@ -176,29 +182,35 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         // Stabilitätsfaktor für alle Regelungspfade berechnen
         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
         
-        // Prüfe ob der letzte Vision-Command noch gültig ist (nicht älter als 100ms für 20Hz)
+        // Prüfe ob der letzte Vision-Command noch gültig ist (nicht älter als ~200ms)
         double vision_time = wb_robot_get_time();
-        bool vision_active = (vision_time - last_command_time) < 0.1;  // 100ms Timeout für 20Hz
-        
+        bool vision_active = (vision_time - last_command_time) < 0.2;  // etwas längeres Timeout
+
         if (vision_active && last_vision_command.valid) {
-            // Verwende den letzten gültigen Vision-Command (auch wenn kein neuer empfangen wurde)
-            float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle;
-            
-            // Gewichtete Kombination: 70% Vision, 30% Balance-Korrektur
-            final_steer = 0.7f * vision_steer + 0.3f * steering_output;
-            
+            // Vision-Befehl schrittweise ausblenden, falls kein neues Kommando kommt
+            filtered_vision_steer *= VISION_DECAY;
+            float vision_steer = filtered_vision_steer * config.mechanical_limits.max_handlebar_angle;
+
+            // Dynamisches Gewicht abhängig von Maskenabdeckung
+            float weight = 0.7f * (last_vision_command.mask_coverage / 100.0f);
+            if (weight < 0.0f) weight = 0.0f;
+            if (weight > 0.7f) weight = 0.7f;
+
+            // Kombination aus Vision und Balance
+            final_steer = weight * vision_steer + (1.0f - weight) * steering_output;
+
             // Geschwindigkeit von Vision-Controller übernehmen
-            target_speed = config.speed_control.min_speed + 
+            target_speed = config.speed_control.min_speed +
                           last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
-            
-            // Debug-Ausgabe nur alle 50ms (bei neuem Command)
+
             if (vision_cmd_received) {
-                printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f (age=%.1fms)\n", 
-                       vision_steer, target_speed, steering_output, final_steer, 
-                       (vision_time - last_command_time) * 1000.0);
+                printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f (age=%.1fms, weight=%.2f)\n",
+                       vision_steer, target_speed, steering_output, final_steer,
+                       (vision_time - last_command_time) * 1000.0, weight);
             }
         } else {
             // Kein aktueller Vision-Command → Nur Balance-Regelung
+            filtered_vision_steer *= VISION_DECAY;
             float speed_reduction = stability_factor * config.speed_control.stability_reduction;
             target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
             
@@ -637,6 +649,10 @@ static int receive_vision_command(vision_command_t *command) {
                 
                 last_vision_command = *command;
                 last_command_time = wb_robot_get_time();
+                // Vision-Befehl mit gleitendem Mittelwert filtern
+                filtered_vision_steer =
+                    VISION_FILTER_ALPHA * command->steer_command +
+                    (1.0f - VISION_FILTER_ALPHA) * filtered_vision_steer;
                 printf("DEBUG: Vision-Command AKZEPTIERT\n");
                 return 1;  // Gültiges Kommando empfangen
             } else {
