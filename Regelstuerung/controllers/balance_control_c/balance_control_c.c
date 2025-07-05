@@ -41,9 +41,8 @@
  // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
  static WbNodeRef robot_node;
  
- // --- Erweiterte Vision-Filter-Parameter ---
- #define VISION_FILTER_ALPHA 0.5f   // Glättung neuer Vision-Befehle
- #define VISION_DECAY       0.98f  // Langsames Ausklingen bei fehlenden Befehlen
+ // --- Vision-Parameter ---
+ // (Alte Filter-Parameter werden nicht mehr verwendet - einfache Speicherung implementiert)
  
  
  // Erweiterte Vision-Command-Struktur für IPC (inkl. Debug-Daten)
@@ -67,9 +66,12 @@
  } balance_status_t;
  
  // Vision-Command-Status (erweitert)
- static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
- static double last_command_time = 0.0;
- static float filtered_vision_steer = 0.0f;  // Gemaessigter Vision-Befehl
+static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+static double last_command_time = 0.0;
+
+// Speicherung der letzten gültigen Vision-Werte (verwendet wenn Error = 0)
+static vision_command_t last_valid_vision = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
+static int has_valid_vision = 0;  // Flag ob wir schon mal gültige Vision-Werte hatten
  
  // Controller-Zustand
  static pid_controller_t angle_pid;
@@ -186,42 +188,58 @@
          double vision_time = wb_robot_get_time();
          bool vision_active = (vision_time - last_command_time) < 0.2;  // etwas längeres Timeout
  
+         // Einfache Logik: Verwende aktuelle oder letzte gültige Vision-Werte
+         vision_command_t* vision_to_use = &last_vision_command;
+         
          if (vision_active && last_vision_command.valid) {
-             // Vision-Befehl schrittweise ausblenden, falls kein neues Kommando kommt
-             filtered_vision_steer *= VISION_DECAY;
-             float vision_steer = filtered_vision_steer * config.mechanical_limits.max_handlebar_angle;
- 
-             // Dynamisches Gewicht abhängig von Maskenabdeckung
-             float weight = 0.7f * (last_vision_command.mask_coverage / 100.0f);
+             // Prüfe ob Vision-Error gültig ist (nicht 0)
+             if (fabs(last_vision_command.vision_error) > 0.001f) {
+                 // Gültiger Error → speichere als letzten gültigen Wert
+                 last_valid_vision = last_vision_command;
+                 has_valid_vision = 1;
+                 
+                 if (vision_cmd_received) {
+                     printf("VISION: Neue gültige Werte gespeichert - Error=%.3f, Steer=%.3f\n",
+                            last_vision_command.vision_error, last_vision_command.steer_command);
+                 }
+             } else if (has_valid_vision) {
+                 // Error ist 0 → verwende letzte gültige Werte
+                 vision_to_use = &last_valid_vision;
+                 
+                 if (vision_cmd_received) {
+                     printf("VISION: Error=0, verwende letzte gültige Werte - Error=%.3f, Steer=%.3f\n",
+                            last_valid_vision.vision_error, last_valid_vision.steer_command);
+                 }
+             }
+             
+             // Vision-Lenkung berechnen
+             float vision_steer = vision_to_use->steer_command * config.mechanical_limits.max_handlebar_angle;
+             
+             // Einfache Gewichtung basierend auf Maskenabdeckung
+             float weight = 0.6f * (vision_to_use->mask_coverage / 100.0f);
              if (weight < 0.0f) weight = 0.0f;
-             if (weight > 0.7f) weight = 0.7f;
+             if (weight > 0.6f) weight = 0.6f;
  
              // Kombination aus Vision und Balance
              final_steer = weight * vision_steer + (1.0f - weight) * steering_output;
  
              // Geschwindigkeit von Vision-Controller übernehmen
              target_speed = config.speed_control.min_speed +
-                           last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+                           vision_to_use->speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
  
              if (vision_cmd_received) {
-                 printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f (age=%.1fms, weight=%.2f)\n",
-                        vision_steer, target_speed, steering_output, final_steer,
-                        (vision_time - last_command_time) * 1000.0, weight);
+                 printf("VISION: VisionSteer=%.3f, Balance=%.3f → Final=%.3f (weight=%.2f, coverage=%.1f%%)\n",
+                        vision_steer, steering_output, final_steer, weight, vision_to_use->mask_coverage);
              }
          } else {
              // Kein aktueller Vision-Command → Nur Balance-Regelung
-             filtered_vision_steer *= VISION_DECAY;
              float speed_reduction = stability_factor * config.speed_control.stability_reduction;
              target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
              
-             // Debug-Ausgabe wenn Vision-Command zu alt wird
-             if (last_command_time > 0.0 && (vision_time - last_command_time) >= 0.1) {
-                 static double last_timeout_msg = 0.0;
-                 if ((vision_time - last_timeout_msg) > 1.0) {  // Nur alle 1s ausgeben
-                     printf("VISION TIMEOUT: Alter Command (%.1fms alt), verwende nur Balance-Regelung\n",
-                            (vision_time - last_command_time) * 1000.0);
-                     last_timeout_msg = vision_time;
-                 }
+             static double last_timeout_msg = 0.0;
+             if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 1.0) {
+                 printf("VISION TIMEOUT: Verwende nur Balance-Regelung\n");
+                 last_timeout_msg = vision_time;
              }
          }
          
@@ -274,15 +292,15 @@
                  .error = angle_pid.error_history[angle_pid.history_counter],
                  .stability_factor = stability_factor,
                  
-                 // Vision-Controller-Daten (erweiterte Daten vom IPC)
-                 .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
-                 .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
-                 .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
-                 .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
-                 .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,
-                 .vision_d_term = vision_active ? last_vision_command.vision_d_term : 0.0f,
+                 // Vision-Controller-Daten (verwende die tatsächlich genutzten Werte)
+                 .vision_error = vision_active ? vision_to_use->vision_error : 0.0f,
+                 .vision_steer_command = vision_active ? vision_to_use->steer_command : 0.0f,
+                 .vision_speed_command = vision_active ? vision_to_use->speed_command : 0.0f,
+                 .vision_p_term = vision_active ? vision_to_use->vision_p_term : 0.0f,
+                 .vision_i_term = vision_active ? vision_to_use->vision_i_term : 0.0f,
+                 .vision_d_term = vision_active ? vision_to_use->vision_d_term : 0.0f,
                  .vision_active = vision_active ? 1 : 0,
-                 .vision_mask_coverage = vision_active ? last_vision_command.mask_coverage : 0.0f
+                 .vision_mask_coverage = vision_active ? vision_to_use->mask_coverage : 0.0f
              };
              balance_logging_write(&logger, &log_data);
              
@@ -649,11 +667,9 @@
                  
                  last_vision_command = *command;
                  last_command_time = wb_robot_get_time();
-                 // Vision-Befehl mit gleitendem Mittelwert filtern
-                 filtered_vision_steer =
-                     VISION_FILTER_ALPHA * command->steer_command +
-                     (1.0f - VISION_FILTER_ALPHA) * filtered_vision_steer;
-                 printf("DEBUG: Vision-Command AKZEPTIERT\n");
+                 
+                 printf("DEBUG: Vision-Command AKZEPTIERT - Steer=%.3f, Error=%.3f, Coverage=%.1f%%\n",
+                        command->steer_command, command->vision_error, command->mask_coverage);
                  return 1;  // Gültiges Kommando empfangen
              } else {
                  printf("WARNUNG: Ungültiges Vision-Command empfangen: steer=%.3f, speed=%.3f, valid=%d\n",

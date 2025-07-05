@@ -1,9 +1,9 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 0.15,
+            "angle_Kp": 0.1,
             "angle_Ki": 0.0,
-            "angle_Kd": 0.05,
+            "angle_Kd": 0.0,
             "angle_output_min": -0.8030459770114943,
             "angle_output_max": 0.8030459770114943,
             "angle_integral_min": -60.0,
@@ -45,12 +45,12 @@
             "road_slope": 0.0
         },
         "effects": {
-            "enable_lateral_forces": false,
-            "enable_aerodynamics": false,
-            "enable_rolling_resistance": false,
-            "enable_gyroscopic": false,
-            "enable_sensor_simulation": false,
-            "enable_environment": false
+            "enable_lateral_forces": true,
+            "enable_aerodynamics": true,
+            "enable_rolling_resistance": true,
+            "enable_gyroscopic": true,
+            "enable_sensor_simulation": true,
+            "enable_environment": true
         }
     }
 }

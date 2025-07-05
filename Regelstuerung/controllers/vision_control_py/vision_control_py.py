@@ -57,13 +57,13 @@ class VisionController:
         self._init_yolo()
         
         # Steuerungsparameter
-        self.max_steer = 1.0      # Maximaler Lenkbefehl (-1.0 bis +1.0)
-        self.base_speed = 0.6     # Basis-Geschwindigkeit (0.0 bis 1.0)
+        self.max_steer = 0.4      # Maximaler Lenkbefehl (-1.0 bis +1.0)
+        self.base_speed = 0.5     # Basis-Geschwindigkeit (0.0 bis 1.0)
         self.min_speed = 0.3      # Minimale Geschwindigkeit
-        self.max_speed = 0.9      # Maximale Geschwindigkeit
+        self.max_speed = 0.6      # Maximale Geschwindigkeit
         
         # PID-Parameter für Vision-basierte Lenkung
-        self.vision_kp = 20   # Reduziert für sanftere Lenkung
+        self.vision_kp = 50   # Reduziert für sanftere Lenkung
         self.vision_ki = 0
         self.vision_kd = 0
         
@@ -75,6 +75,15 @@ class VisionController:
         self.vision_d_term = 0.0
         self.vision_error = 0.0
         self.vision_mask_coverage = 0.0
+        
+        # Speicherung der letzten gültigen Werte für Straßenerkennung
+        self.last_valid_error = 0.0
+        self.last_valid_mask = None
+        self.last_valid_mask_coverage = 0.0
+        self.last_valid_timestamp = 0.0
+        self.no_detection_counter = 0
+        self.max_no_detection_steps = 10  # Maximale Anzahl von Schritten ohne Erkennung
+        self.error_decay_factor = 0.95    # Faktor zum langsamen Ausblenden der letzten Werte
         
         # Status
         self.step_counter = 0
@@ -128,8 +137,6 @@ class VisionController:
         # Keyboard für Debug-Eingaben
         self.robot.keyboard.enable(self.timestep)
 
-
-
     def _update_camera_position(self):
         """Aktualisiert die Vision Controller Kamera-Position relativ zum Fahrrad"""
         if not (self.bicycle and self.camera_transform_node):
@@ -179,6 +186,53 @@ class VisionController:
             if not self.yolo_model:
                 print("⚠ Kein YOLO-Modell gefunden - Fallback-Vision aktiviert")
                 YOLO_AVAILABLE = False
+    
+    def _store_valid_values(self, error, mask, mask_coverage):
+        """Speichert die aktuellen gültigen Werte für zukünftige Verwendung"""
+        self.last_valid_error = error
+        self.last_valid_mask = mask.copy() if mask is not None else None
+        self.last_valid_mask_coverage = mask_coverage
+        self.last_valid_timestamp = self.robot.getTime()
+        self.no_detection_counter = 0  # Reset des Counters bei erfolgreicher Erkennung
+        
+        if self.step_counter % 100 == 0:
+            print(f"VISION: Gültige Werte gespeichert - Error: {error:.3f}, Mask-Coverage: {mask_coverage:.1f}%")
+
+    def _use_last_valid_values(self):
+        """Verwendet die letzten gültigen Werte mit langsamem Ausblenden"""
+        self.no_detection_counter += 1
+        current_time = self.robot.getTime()
+        
+        # Wenn wir zu lange keine Erkennung hatten, blende langsam aus
+        if self.no_detection_counter > self.max_no_detection_steps:
+            # Langsames Ausblenden der letzten Werte
+            decay_factor = self.error_decay_factor ** (self.no_detection_counter - self.max_no_detection_steps)
+            error = self.last_valid_error * decay_factor
+            
+            # Nach einer bestimmten Zeit komplett auf 0 setzen
+            if self.no_detection_counter > self.max_no_detection_steps * 3:
+                error = 0.0
+                self.vision_mask_coverage = 0.0
+                mask = np.zeros((480, 640), dtype=np.uint8)  # Standard-Größe
+                
+                if self.step_counter % 100 == 0:
+                    print(f"VISION: Lange keine Erkennung - Error auf 0 gesetzt")
+            else:
+                self.vision_mask_coverage = self.last_valid_mask_coverage * decay_factor
+                mask = self.last_valid_mask if self.last_valid_mask is not None else np.zeros((480, 640), dtype=np.uint8)
+                
+                if self.step_counter % 100 == 0:
+                    print(f"VISION: Verwende ausgeblendete Werte - Error: {error:.3f} (Decay: {decay_factor:.3f})")
+        else:
+            # Verwende die letzten gültigen Werte unverändert
+            error = self.last_valid_error
+            self.vision_mask_coverage = self.last_valid_mask_coverage
+            mask = self.last_valid_mask if self.last_valid_mask is not None else np.zeros((480, 640), dtype=np.uint8)
+            
+            if self.step_counter % 100 == 0:
+                print(f"VISION: Verwende letzte gültige Werte - Error: {error:.3f}, seit {self.no_detection_counter} Steps")
+        
+        return error, mask
     
     def receive_balance_status(self):
         """Empfängt Status vom Balance-Controller"""
@@ -232,9 +286,9 @@ class VisionController:
             return False
     
     def get_vision_error_yolo(self, frame):
-        """YOLO-basierte Straßenerkennung und Fehlerberechnung"""
+        """YOLO-basierte Straßenerkennung und Fehlerberechnung mit Speicherung der letzten gültigen Werte"""
         if not self.yolo_model:
-            return 0.0, np.zeros(frame.shape[:2], dtype=np.uint8)
+            return self._use_last_valid_values()
         
         try:
             # YOLO-Vorhersage
@@ -248,7 +302,7 @@ class VisionController:
             
             if not results:
                 print("YOLO: Keine Ergebnisse")
-                return 0.0, np.zeros(frame.shape[:2], dtype=np.uint8)
+                return self._use_last_valid_values()
             
             r = results[0]
             mask = np.zeros(frame.shape[:2], dtype=np.uint8)
@@ -298,21 +352,20 @@ class VisionController:
                     mask_pixels = np.sum(mask > 0)
                     self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
                     
+                    # Gültige Werte speichern
+                    self._store_valid_values(error, mask, self.vision_mask_coverage)
+                    
                     return error, mask
                 else:
                     if self.step_counter % 100 == 0:
-                        print("YOLO: Keine Straßen-Klasse (ID=2) erkannt")
+                        print("YOLO: Keine Straßen-Klasse (ID=2) erkannt - verwende letzte gültige Werte")
             
-            # Mask-Coverage berechnen auch wenn keine Straße erkannt
-            total_pixels = mask.shape[0] * mask.shape[1]
-            mask_pixels = np.sum(mask > 0)
-            self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
-            
-            return 0.0, mask
+            # Keine Straße erkannt - verwende letzte gültige Werte
+            return self._use_last_valid_values()
             
         except Exception as e:
             print(f"YOLO-Fehler: {e}")
-            return 0.0, np.zeros(frame.shape[:2], dtype=np.uint8)
+            return self._use_last_valid_values()
     
     def get_vision_error_fallback(self, frame):
         """Fallback-Vision ohne YOLO (einfache Kantenerkennung)"""
@@ -356,15 +409,17 @@ class VisionController:
                 mask_pixels = np.sum(mask > 0)
                 self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
                 
+                # Gültige Werte speichern
+                self._store_valid_values(error, mask, self.vision_mask_coverage)
+                
                 return error, mask
             
-            # Keine Konturen gefunden
-            self.vision_mask_coverage = 0.0
-            return 0.0, np.zeros((height, width), dtype=np.uint8)
+            # Keine Konturen gefunden - verwende letzte gültige Werte
+            return self._use_last_valid_values()
             
         except Exception as e:
             print(f"Fallback-Vision-Fehler: {e}")
-            return 0.0, np.zeros(frame.shape[:2], dtype=np.uint8)
+            return self._use_last_valid_values()
     
     def vision_pid_control(self, error, dt):
         """PID-Controller für Vision-basierte Lenkung"""

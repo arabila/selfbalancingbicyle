@@ -19,15 +19,12 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.31535402832478643 -0.3972831629103563 -0.8618108407807789 4.57779054571933
-  position -3.599682655221675 -12.737495186141501 5.814138387776062
+  orientation 0.16487505326895643 -0.31502754688532414 -0.9346517327395129 4.906655731233937
+  position -4.821148159366251 -11.668484828040572 4.258338063504493
   follow "BICYCLE"
 }
 TexturedBackground {
   skybox FALSE
-  skyColor [
-    0.55 0.75 1
-  ]
 }
 TexturedBackgroundLight {
 }
@@ -39,7 +36,7 @@ RectangleArena {
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/track002.jpg"
+        "textures/track004.png"
       ]
     }
     roughness 1
@@ -49,7 +46,7 @@ RectangleArena {
   wallHeight 0.001
 }
 DEF BICYCLE Robot {
-  translation -3.9991 -3.9506 -0.0428559
+  translation -2.5291 -3.22077 -0.0492097
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
@@ -500,7 +497,7 @@ DEF BICYCLE Robot {
       }
     }
     Camera {
-      translation -7.27661e-08 -0.086891 0.200299
+      translation 0.15 -0.171781 0.148268
       rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
       fieldOfView 2
       width 480
