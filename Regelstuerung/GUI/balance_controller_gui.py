@@ -764,8 +764,7 @@ class BalanceControllerGUI:
             # Vision-Controller-Daten
             "vision_error": [],
             "vision_steer_command": [],
-            "vision_speed_command": [],
-            "vision_active": []
+            "vision_speed_command": []
         }
         
         self.live_plot_active = False
@@ -1208,15 +1207,6 @@ class BalanceControllerGUI:
         # Vision Speed Command hinzufügen (falls verfügbar)
         if "vision_speed_command" in df.columns and (show_all or self.plot_visibility["vision_speed_command"].get()):
             self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=2, linestyle=':')
-        
-        # Vision Active Status als Hintergrund-Shading (falls verfügbar)
-        if "vision_active" in df.columns:
-            vision_active_periods = df[df["vision_active"] == 1]
-            if not vision_active_periods.empty:
-                y_min, y_max = self.ax2.get_ylim() if len(self.ax2.lines) > 0 else (-1, 1)
-                for start, end in zip(vision_active_periods["timestamp"].iloc[::2], 
-                                    vision_active_periods["timestamp"].iloc[1::2]):
-                    self.ax2.axvspan(start, end, alpha=0.1, color='green', label='Vision Aktiv' if start == vision_active_periods["timestamp"].iloc[0] else "")
         
         self.ax2.set_xlabel("Zeit [s]")
         self.ax2.set_ylabel("PID-Terme / Vision-Speed")

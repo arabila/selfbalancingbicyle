@@ -157,7 +157,7 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         
         // 3. PID-Regelung: Roll-Winkel → Lenkwinkel
         long long current_time = get_time_microseconds();
-        float steering_output = pid_compute(&angle_pid, 0.0, roll_angle, current_time);
+        float steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
         
         // 4. Lenkwinkel begrenzen
         if (steering_output > config.mechanical_limits.max_handlebar_angle) 
