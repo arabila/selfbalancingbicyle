@@ -589,17 +589,18 @@ class BalanceControllerGUI:
         separator = ttk.Separator(control_frame, orient="vertical")
         separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
         
-        # Visibility checkboxes rechts
-        visibility_frame = ttk.Frame(control_frame)
-        visibility_frame.pack(side=tk.LEFT, padx=10)
+        # Visibility checkboxes rechts mit zwei Zeilen
+        visibility_main_frame = ttk.Frame(control_frame)
+        visibility_main_frame.pack(side=tk.LEFT, padx=10)
         
-        ttk.Label(visibility_frame, text="Anzeigen:").pack(side=tk.LEFT, padx=5)
+        ttk.Label(visibility_main_frame, text="Anzeigen:").pack(anchor="w", padx=5)
         
         # Checkbox-Variablen initialisieren (erweitert um Vision-Control-Daten)
         self.plot_visibility = {
             # Balance-Controller-Daten
             "roll_angle": tk.BooleanVar(value=True),
             "steering_output": tk.BooleanVar(value=True),
+            "final_steer": tk.BooleanVar(value=True),
             "p_term": tk.BooleanVar(value=True),
             "i_term": tk.BooleanVar(value=True),
             "d_term": tk.BooleanVar(value=True),
@@ -609,41 +610,58 @@ class BalanceControllerGUI:
             "vision_speed_command": tk.BooleanVar(value=False)
         }
         
-        # Balance-Controller-Checkboxes
-        balance_checkbox_config = [
+        # Erste Zeile: Balance-Controller-Checkboxes (bis I-Term)
+        visibility_row1 = ttk.Frame(visibility_main_frame)
+        visibility_row1.pack(fill=tk.X, pady=2)
+        
+        balance_checkbox_row1 = [
             ("roll_angle", "Roll-Winkel"),
-            ("steering_output", "Lenkwinkel"),
+            ("steering_output", "⚖️ Balance-Steer"),
+            ("final_steer", "🎯 Final-Steer"),
             ("p_term", "P-Term"),
-            ("i_term", "I-Term"),
-            ("d_term", "D-Term")
+            ("i_term", "I-Term")
         ]
         
-        ttk.Label(visibility_frame, text="Balance:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        ttk.Label(visibility_row1, text="Balance:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
         
-        for key, label in balance_checkbox_config:
+        for key, label in balance_checkbox_row1:
             checkbox = ttk.Checkbutton(
-                visibility_frame,
+                visibility_row1,
                 text=label,
                 variable=self.plot_visibility[key],
                 command=self.update_plot_visibility
             )
             checkbox.pack(side=tk.LEFT, padx=2)
         
+        # Zweite Zeile: D-Term + Vision-Controller-Checkboxes
+        visibility_row2 = ttk.Frame(visibility_main_frame)
+        visibility_row2.pack(fill=tk.X, pady=2)
+        
+        # D-Term zuerst
+        ttk.Label(visibility_row2, text="      ", font=("Arial", 9)).pack(side=tk.LEFT, padx=5)  # Einrückung
+        d_term_checkbox = ttk.Checkbutton(
+            visibility_row2,
+            text="D-Term",
+            variable=self.plot_visibility["d_term"],
+            command=self.update_plot_visibility
+        )
+        d_term_checkbox.pack(side=tk.LEFT, padx=2)
+        
         # Separator für Vision-Daten
-        ttk.Separator(visibility_frame, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=8)
+        ttk.Separator(visibility_row2, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=8)
         
         # Vision-Controller-Checkboxes
         vision_checkbox_config = [
             ("vision_error", "🎯 V.Error"),
-            ("vision_steer_command", "🎮 V.Steer"),
+            ("vision_steer_command", "🎮 Vision-Steer"),
             ("vision_speed_command", "⚡ V.Speed")
         ]
         
-        ttk.Label(visibility_frame, text="Vision:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        ttk.Label(visibility_row2, text="Vision:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
         
         for key, label in vision_checkbox_config:
             checkbox = ttk.Checkbutton(
-                visibility_frame,
+                visibility_row2,
                 text=label,
                 variable=self.plot_visibility[key],
                 command=self.update_plot_visibility
@@ -658,7 +676,7 @@ class BalanceControllerGUI:
         zoom_frame = ttk.Frame(control_frame)
         zoom_frame.pack(side=tk.LEFT, padx=10)
         
-        ttk.Label(zoom_frame, text="X-Achse Zoom:").pack(side=tk.LEFT, padx=5)
+        ttk.Label(zoom_frame, text="X-Achse:").pack(side=tk.LEFT, padx=5)
         
         # Zoom-Variablen initialisieren
         self.zoom_start = tk.DoubleVar(value=0.0)
@@ -738,6 +756,7 @@ class BalanceControllerGUI:
             "time": [],
             "roll_angle": [],
             "steering_output": [],
+            "final_steer": [],
             "speed": [],
             "p_term": [],
             "i_term": [],
@@ -1156,16 +1175,19 @@ class BalanceControllerGUI:
             self.ax1.plot(df["timestamp"], df["roll_angle"] * 180/3.14159, label="Roll-Winkel", color="red", linewidth=2)
             
         if show_all or self.plot_visibility["steering_output"].get():
-            self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="Lenkwinkel", color="blue", linewidth=2)
-        
-        # Vision-Daten zu Plot 1 hinzufügen (falls verfügbar)
-        if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):
-            # Vision Error normalisiert auf ±30° für bessere Darstellung
-            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=2, linestyle='--')
+            self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="⚖️ Balance-Steer", color="blue", linewidth=2, linestyle='-')
         
         if "vision_steer_command" in df.columns and (show_all or self.plot_visibility["vision_steer_command"].get()):
-            # Vision Steer Command in Grad umrechnen (×30° für Skalierung)
-            self.ax1.plot(df["timestamp"], df["vision_steer_command"] * 30, label="🎮 Vision Steer (×30°)", color="cyan", linewidth=2, linestyle='-.')
+            # Vision Steer Command in Grad umrechnen (vision_steer_command ist bereits in Rad * max_angle)
+            self.ax1.plot(df["timestamp"], df["vision_steer_command"] * 180/3.14159, label="🎮 Vision-Steer", color="cyan", linewidth=2, linestyle='--')
+        
+        if "final_steer" in df.columns and (show_all or self.plot_visibility["final_steer"].get()):
+            self.ax1.plot(df["timestamp"], df["final_steer"] * 180/3.14159, label="🎯 Final-Steer", color="darkgreen", linewidth=3, linestyle='-')
+        
+        # Vision-Error zu Plot 1 hinzufügen (falls verfügbar)
+        if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):
+            # Vision Error normalisiert auf ±30° für bessere Darstellung
+            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=2, linestyle=':')
         
         self.ax1.set_ylabel("Winkel [°] / Vision-Werte")
         self.ax1.legend()

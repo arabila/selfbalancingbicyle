@@ -63,7 +63,7 @@ int balance_logging_init(balance_logger_t *logger, const char *log_dir) {
     
     // Erweiterten CSV-Header schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor,"
+            "timestamp,roll_angle,steering_output,final_steer,target_speed,p_term,i_term,d_term,error,stability_factor,"
             "vision_error,vision_steer_command,vision_speed_command,vision_p_term,vision_i_term,vision_d_term,"
             "vision_active,vision_mask_coverage\n");
     fflush(logger->csv_file);
@@ -81,11 +81,12 @@ int balance_logging_write(balance_logger_t *logger, const balance_log_data_t *da
     
     // Erweiterte Daten in CSV-Format schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "%.6f,%.3f,%.6f,%.3f,%.6f,%.6f,%.6f,%.3f,%.3f,"
+            "%.6f,%.3f,%.6f,%.6f,%.3f,%.6f,%.6f,%.6f,%.3f,%.3f,"
             "%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%.2f\n",
             data->timestamp,
             data->roll_angle,
             data->steering_output,
+            data->final_steer,
             data->target_speed,
             data->p_term,
             data->i_term,
@@ -179,7 +180,7 @@ int balance_logging_create_new_file(balance_logger_t *logger, const char *log_di
     
     // Erweiterten CSV-Header schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor,"
+            "timestamp,roll_angle,steering_output,final_steer,target_speed,p_term,i_term,d_term,error,stability_factor,"
             "vision_error,vision_steer_command,vision_speed_command,vision_p_term,vision_i_term,vision_d_term,"
             "vision_active,vision_mask_coverage\n");
     fflush(logger->csv_file);

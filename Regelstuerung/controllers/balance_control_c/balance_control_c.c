@@ -24,6 +24,7 @@
 #include <time.h>
 #include <unistd.h>
 #include <sys/time.h>
+#include <stdbool.h>
 
 #include "balance_pid.h"
 #include "balance_config.h"
@@ -175,24 +176,41 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         // Stabilitätsfaktor für alle Regelungspfade berechnen
         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
         
-        if (vision_cmd_received && (wb_robot_get_time() - last_command_time) < 0.5) {
-            // Vision-Command ist aktuell (< 500ms alt)
-            // Kombiniere Balance-Korrektur mit Vision-Lenkbefehl
-            float vision_steer = vision_cmd.steer_command * config.mechanical_limits.max_handlebar_angle;
+        // Prüfe ob der letzte Vision-Command noch gültig ist (nicht älter als 100ms für 20Hz)
+        double vision_time = wb_robot_get_time();
+        bool vision_active = (vision_time - last_command_time) < 0.1;  // 100ms Timeout für 20Hz
+        
+        if (vision_active && last_vision_command.valid) {
+            // Verwende den letzten gültigen Vision-Command (auch wenn kein neuer empfangen wurde)
+            float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle;
             
             // Gewichtete Kombination: 70% Vision, 30% Balance-Korrektur
             final_steer = 0.7f * vision_steer + 0.3f * steering_output;
             
             // Geschwindigkeit von Vision-Controller übernehmen
             target_speed = config.speed_control.min_speed + 
-                          vision_cmd.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+                          last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
             
-            printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f\n", 
-                   vision_steer, target_speed, steering_output, final_steer);
+            // Debug-Ausgabe nur alle 50ms (bei neuem Command)
+            if (vision_cmd_received) {
+                printf("VISION: Steer=%.3f, Speed=%.2f | Balance=%.3f → Final=%.3f (age=%.1fms)\n", 
+                       vision_steer, target_speed, steering_output, final_steer, 
+                       (vision_time - last_command_time) * 1000.0);
+            }
         } else {
             // Kein aktueller Vision-Command → Nur Balance-Regelung
             float speed_reduction = stability_factor * config.speed_control.stability_reduction;
             target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
+            
+            // Debug-Ausgabe wenn Vision-Command zu alt wird
+            if (last_command_time > 0.0 && (vision_time - last_command_time) >= 0.1) {
+                static double last_timeout_msg = 0.0;
+                if ((vision_time - last_timeout_msg) > 1.0) {  // Nur alle 1s ausgeben
+                    printf("VISION TIMEOUT: Alter Command (%.1fms alt), verwende nur Balance-Regelung\n",
+                           (vision_time - last_command_time) * 1000.0);
+                    last_timeout_msg = vision_time;
+                }
+            }
         }
         
         // Finale Begrenzungen
@@ -236,6 +254,7 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
                 .timestamp = wb_robot_get_time(),
                 .roll_angle = roll_angle,
                 .steering_output = steering_output,
+                .final_steer = final_steer,
                 .target_speed = target_speed,
                 .p_term = angle_pid.proportional_term,
                 .i_term = angle_pid.integral_term,
@@ -244,14 +263,14 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
                 .stability_factor = stability_factor,
                 
                 // Vision-Controller-Daten (erweiterte Daten vom IPC)
-                .vision_error = vision_cmd_received ? last_vision_command.vision_error : 0.0f,
-                .vision_steer_command = vision_cmd_received ? vision_cmd.steer_command : 0.0f,
-                .vision_speed_command = vision_cmd_received ? vision_cmd.speed_command : 0.0f,
-                .vision_p_term = vision_cmd_received ? last_vision_command.vision_p_term : 0.0f,
-                .vision_i_term = vision_cmd_received ? last_vision_command.vision_i_term : 0.0f,
-                .vision_d_term = vision_cmd_received ? last_vision_command.vision_d_term : 0.0f,
-                .vision_active = vision_cmd_received && (wb_robot_get_time() - last_command_time) < 0.5 ? 1 : 0,
-                .vision_mask_coverage = vision_cmd_received ? last_vision_command.mask_coverage : 0.0f
+                .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
+                .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
+                .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
+                .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
+                .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,
+                .vision_d_term = vision_active ? last_vision_command.vision_d_term : 0.0f,
+                .vision_active = vision_active ? 1 : 0,
+                .vision_mask_coverage = vision_active ? last_vision_command.mask_coverage : 0.0f
             };
             balance_logging_write(&logger, &log_data);
             

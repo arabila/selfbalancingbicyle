@@ -64,8 +64,8 @@ class VisionController:
         
         # PID-Parameter für Vision-basierte Lenkung
         self.vision_kp = 5   # Reduziert für sanftere Lenkung
-        self.vision_ki = 1
-        self.vision_kd = 2
+        self.vision_ki = 0
+        self.vision_kd = 0
         
         # PID-Zustand
         self.vision_integral = 0.0
