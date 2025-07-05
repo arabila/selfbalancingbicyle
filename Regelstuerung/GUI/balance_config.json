@@ -1,9 +1,9 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 0.2,
+            "angle_Kp": 0.15,
             "angle_Ki": 0.0,
-            "angle_Kd": 0.0,
+            "angle_Kd": 0.05,
             "angle_output_min": -0.8030459770114943,
             "angle_output_max": 0.8030459770114943,
             "angle_integral_min": -60.0,
@@ -37,20 +37,20 @@
             "tire_stiffness": 2000.0,
             "rolling_resistance_coeff": 0.008,
             "tire_friction_coeff": 0.8,
-            "imu_noise_sigma": 0.0,
+            "imu_noise_sigma": 0.005,
             "imu_delay_samples": 0,
-            "wind_speed": 8.0,
+            "wind_speed": 0.0,
             "wind_direction": 1.57,
-            "wind_turbulence": 0.6,
-            "road_slope": -0.003174603174603186
+            "wind_turbulence": 0.0,
+            "road_slope": 0.0
         },
         "effects": {
-            "enable_lateral_forces": true,
-            "enable_aerodynamics": true,
-            "enable_rolling_resistance": true,
-            "enable_gyroscopic": true,
-            "enable_sensor_simulation": true,
-            "enable_environment": true
+            "enable_lateral_forces": false,
+            "enable_aerodynamics": false,
+            "enable_rolling_resistance": false,
+            "enable_gyroscopic": false,
+            "enable_sensor_simulation": false,
+            "enable_environment": false
         }
     }
 }

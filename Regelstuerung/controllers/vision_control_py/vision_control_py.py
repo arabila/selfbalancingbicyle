@@ -63,7 +63,7 @@ class VisionController:
         self.max_speed = 0.9      # Maximale Geschwindigkeit
         
         # PID-Parameter für Vision-basierte Lenkung
-        self.vision_kp = 5   # Reduziert für sanftere Lenkung
+        self.vision_kp = 20   # Reduziert für sanftere Lenkung
         self.vision_ki = 0
         self.vision_kd = 0
         
@@ -160,7 +160,7 @@ class VisionController:
             # Suche nach YOLO-Modell in verschiedenen Pfaden
             possible_paths = [
                 "../balance_control_c/yolo_vision/runs/segment/train/weights/best.pt",
-                "../balance_control_c/yolo_vision/runs/segment/train/weights/last.pt",
+                "../balance_control_c/yolo_vision/runs/segment/train/weights/best.pt",
                 "yolo_weights/best.pt",
                 "best.pt"
             ]
