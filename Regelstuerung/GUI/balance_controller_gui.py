@@ -328,6 +328,11 @@ class BalanceControllerGUI:
         notebook.add(preset_frame, text="Presets")
         self.setup_preset_tab(preset_frame)
         
+        # Tab 5: Build & Compiler
+        build_frame = ttk.Frame(notebook)
+        notebook.add(build_frame, text="Build & Compiler")
+        self.setup_build_tab(build_frame)
+        
         # Status-Leiste
         self.setup_status_bar()
         
@@ -590,17 +595,22 @@ class BalanceControllerGUI:
         
         ttk.Label(visibility_frame, text="Anzeigen:").pack(side=tk.LEFT, padx=5)
         
-        # Checkbox-Variablen initialisieren
+        # Checkbox-Variablen initialisieren (erweitert um Vision-Control-Daten)
         self.plot_visibility = {
+            # Balance-Controller-Daten
             "roll_angle": tk.BooleanVar(value=True),
             "steering_output": tk.BooleanVar(value=True),
             "p_term": tk.BooleanVar(value=True),
             "i_term": tk.BooleanVar(value=True),
-            "d_term": tk.BooleanVar(value=True)
+            "d_term": tk.BooleanVar(value=True),
+            # Vision-Controller-Daten
+            "vision_error": tk.BooleanVar(value=False),
+            "vision_steer_command": tk.BooleanVar(value=False),
+            "vision_speed_command": tk.BooleanVar(value=False)
         }
         
-        # Checkboxes erstellen
-        checkbox_config = [
+        # Balance-Controller-Checkboxes
+        balance_checkbox_config = [
             ("roll_angle", "Roll-Winkel"),
             ("steering_output", "Lenkwinkel"),
             ("p_term", "P-Term"),
@@ -608,14 +618,37 @@ class BalanceControllerGUI:
             ("d_term", "D-Term")
         ]
         
-        for key, label in checkbox_config:
+        ttk.Label(visibility_frame, text="Balance:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        
+        for key, label in balance_checkbox_config:
             checkbox = ttk.Checkbutton(
                 visibility_frame,
                 text=label,
                 variable=self.plot_visibility[key],
                 command=self.update_plot_visibility
             )
-            checkbox.pack(side=tk.LEFT, padx=3)
+            checkbox.pack(side=tk.LEFT, padx=2)
+        
+        # Separator für Vision-Daten
+        ttk.Separator(visibility_frame, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=8)
+        
+        # Vision-Controller-Checkboxes
+        vision_checkbox_config = [
+            ("vision_error", "🎯 V.Error"),
+            ("vision_steer_command", "🎮 V.Steer"),
+            ("vision_speed_command", "⚡ V.Speed")
+        ]
+        
+        ttk.Label(visibility_frame, text="Vision:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        
+        for key, label in vision_checkbox_config:
+            checkbox = ttk.Checkbutton(
+                visibility_frame,
+                text=label,
+                variable=self.plot_visibility[key],
+                command=self.update_plot_visibility
+            )
+            checkbox.pack(side=tk.LEFT, padx=2)
         
         # Separator für Zoom-Controls
         zoom_separator = ttk.Separator(control_frame, orient="vertical")
@@ -699,15 +732,21 @@ class BalanceControllerGUI:
         self.canvas = FigureCanvasTkAgg(self.fig, plot_frame)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         
-        # Plot-Daten initialisieren
+        # Plot-Daten initialisieren (erweitert um Vision-Control-Daten)
         self.plot_data = {
+            # Balance-Controller-Daten
             "time": [],
             "roll_angle": [],
             "steering_output": [],
             "speed": [],
             "p_term": [],
             "i_term": [],
-            "d_term": []
+            "d_term": [],
+            # Vision-Controller-Daten
+            "vision_error": [],
+            "vision_steer_command": [],
+            "vision_speed_command": [],
+            "vision_active": []
         }
         
         self.live_plot_active = False
@@ -763,6 +802,78 @@ class BalanceControllerGUI:
             load_btn.grid(row=row, column=1, padx=10, pady=5)
             
             row += 2
+        
+    def setup_build_tab(self, parent):
+        """Erstelle das Build & Compiler-Tab"""
+        
+        # Hauptcontainer
+        main_frame = ttk.Frame(parent)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Oberer Bereich: Build-Kontrollen
+        control_frame = ttk.LabelFrame(main_frame, text="Build-Kontrollen")
+        control_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Build-Buttons
+        button_frame = ttk.Frame(control_frame)
+        button_frame.pack(fill=tk.X, padx=10, pady=10)
+        
+        ttk.Button(button_frame, text="🔨 Build Balance Controller", 
+                  command=self.build_balance_controller).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="🔧 Build Vision Controller", 
+                  command=self.build_vision_controller).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="🧹 Clean Build", 
+                  command=self.clean_build).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="📊 Build Status", 
+                  command=self.check_build_status).pack(side=tk.LEFT, padx=5)
+        
+        # Build-Status-Anzeige
+        status_frame = ttk.Frame(control_frame)
+        status_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+        
+        ttk.Label(status_frame, text="Build-Status:").pack(side=tk.LEFT)
+        self.build_status_text = tk.StringVar(value="Unbekannt")
+        self.build_status_label = ttk.Label(status_frame, textvariable=self.build_status_text, 
+                                          font=("Arial", 10, "bold"))
+        self.build_status_label.pack(side=tk.LEFT, padx=10)
+        
+        # Build-Log-Bereich
+        log_frame = ttk.LabelFrame(main_frame, text="Build-Log")
+        log_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Scrollbares Textfeld für Build-Output
+        text_frame = ttk.Frame(log_frame)
+        text_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        self.build_log_text = tk.Text(text_frame, height=20, wrap=tk.WORD, 
+                                     font=("Courier", 10))
+        log_scrollbar = ttk.Scrollbar(text_frame, orient="vertical", 
+                                     command=self.build_log_text.yview)
+        self.build_log_text.configure(yscrollcommand=log_scrollbar.set)
+        
+        self.build_log_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        log_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Log-Kontrollen
+        log_control_frame = ttk.Frame(log_frame)
+        log_control_frame.pack(fill=tk.X, padx=10, pady=(0, 10))
+        
+        ttk.Button(log_control_frame, text="📋 Log löschen", 
+                  command=self.clear_build_log).pack(side=tk.LEFT, padx=5)
+        ttk.Button(log_control_frame, text="💾 Log speichern", 
+                  command=self.save_build_log).pack(side=tk.LEFT, padx=5)
+        
+        # Automatische Überwachung
+        self.build_monitor_var = tk.BooleanVar(value=True)
+        ttk.Checkbutton(log_control_frame, text="🔄 Automatische Überwachung", 
+                       variable=self.build_monitor_var,
+                       command=self.toggle_build_monitoring).pack(side=tk.RIGHT, padx=5)
+        
+        # Initialen Build-Status prüfen
+        self.check_build_status()
+        
+        # Automatische Überwachung starten
+        self.start_build_monitoring()
         
     def setup_status_bar(self):
         """Erstelle die Status-Leiste"""
@@ -1038,7 +1149,7 @@ class BalanceControllerGUI:
                 self.canvas.draw()
                 return
         
-        # Plot 1: Roll-Winkel und Lenkwinkel
+        # Plot 1: Roll-Winkel, Lenkwinkel und Vision-Daten
         self.ax1.clear()
         
         if show_all or self.plot_visibility["roll_angle"].get():
@@ -1047,11 +1158,20 @@ class BalanceControllerGUI:
         if show_all or self.plot_visibility["steering_output"].get():
             self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="Lenkwinkel", color="blue", linewidth=2)
         
-        self.ax1.set_ylabel("Winkel [°]")
+        # Vision-Daten zu Plot 1 hinzufügen (falls verfügbar)
+        if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):
+            # Vision Error normalisiert auf ±30° für bessere Darstellung
+            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=2, linestyle='--')
+        
+        if "vision_steer_command" in df.columns and (show_all or self.plot_visibility["vision_steer_command"].get()):
+            # Vision Steer Command in Grad umrechnen (×30° für Skalierung)
+            self.ax1.plot(df["timestamp"], df["vision_steer_command"] * 30, label="🎮 Vision Steer (×30°)", color="cyan", linewidth=2, linestyle='-.')
+        
+        self.ax1.set_ylabel("Winkel [°] / Vision-Werte")
         self.ax1.legend()
         self.ax1.grid(True, alpha=0.3)
         
-        # Plot 2: PID-Terme
+        # Plot 2: PID-Terme und Vision-Speed-Command
         self.ax2.clear()
         
         if show_all or self.plot_visibility["p_term"].get():
@@ -1063,8 +1183,21 @@ class BalanceControllerGUI:
         if show_all or self.plot_visibility["d_term"].get():
             self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=2)
         
+        # Vision Speed Command hinzufügen (falls verfügbar)
+        if "vision_speed_command" in df.columns and (show_all or self.plot_visibility["vision_speed_command"].get()):
+            self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=2, linestyle=':')
+        
+        # Vision Active Status als Hintergrund-Shading (falls verfügbar)
+        if "vision_active" in df.columns:
+            vision_active_periods = df[df["vision_active"] == 1]
+            if not vision_active_periods.empty:
+                y_min, y_max = self.ax2.get_ylim() if len(self.ax2.lines) > 0 else (-1, 1)
+                for start, end in zip(vision_active_periods["timestamp"].iloc[::2], 
+                                    vision_active_periods["timestamp"].iloc[1::2]):
+                    self.ax2.axvspan(start, end, alpha=0.1, color='green', label='Vision Aktiv' if start == vision_active_periods["timestamp"].iloc[0] else "")
+        
         self.ax2.set_xlabel("Zeit [s]")
-        self.ax2.set_ylabel("PID-Terme")
+        self.ax2.set_ylabel("PID-Terme / Vision-Speed")
         self.ax2.legend()
         self.ax2.grid(True, alpha=0.3)
         
@@ -1310,6 +1443,222 @@ class BalanceControllerGUI:
                 widget_data["value_label"].config(text=f"{int(value)} {unit}")
             else:
                 widget_data["value_label"].config(text=f"{value:.3f} {unit}")
+    
+    # Build-Monitoring-Methoden
+    def build_balance_controller(self):
+        """Kompiliere den Balance Controller"""
+        self.add_build_log("🔨 Starte Balance Controller Build...")
+        
+        import subprocess
+        import threading
+        
+        def build_thread():
+            try:
+                # Wechsel in das Controller-Verzeichnis
+                controller_dir = "../controllers/balance_control_c"
+                
+                # Make-Befehl ausführen
+                result = subprocess.run(
+                    ["make"], 
+                    cwd=controller_dir, 
+                    capture_output=True, 
+                    text=True,
+                    timeout=60
+                )
+                
+                if result.returncode == 0:
+                    self.add_build_log("✅ Balance Controller erfolgreich kompiliert!")
+                    self.build_status_text.set("✅ Erfolgreich")
+                    self.build_status_label.config(foreground="green")
+                else:
+                    self.add_build_log(f"❌ Build-Fehler:\n{result.stderr}")
+                    self.build_status_text.set("❌ Fehler")
+                    self.build_status_label.config(foreground="red")
+                    
+                # Ausgabe hinzufügen
+                if result.stdout:
+                    self.add_build_log(f"Ausgabe:\n{result.stdout}")
+                
+            except subprocess.TimeoutExpired:
+                self.add_build_log("⏱️ Build-Timeout nach 60 Sekunden")
+                self.build_status_text.set("⏱️ Timeout")
+                self.build_status_label.config(foreground="orange")
+            except Exception as e:
+                self.add_build_log(f"💥 Unerwarteter Fehler: {str(e)}")
+                self.build_status_text.set("💥 Fehler")
+                self.build_status_label.config(foreground="red")
+        
+        # Build in separatem Thread starten
+        threading.Thread(target=build_thread, daemon=True).start()
+    
+    def build_vision_controller(self):
+        """Kompiliere den Vision Controller"""
+        self.add_build_log("🔧 Vision Controller wird überprüft...")
+        
+        import subprocess
+        import threading
+        
+        def build_thread():
+            try:
+                # Prüfe ob Vision Controller (Python) korrekt ist
+                vision_file = "../controllers/vision_control_py/vision_control_py.py"
+                
+                result = subprocess.run(
+                    ["python3", "-m", "py_compile", vision_file],
+                    capture_output=True,
+                    text=True,
+                    timeout=30
+                )
+                
+                if result.returncode == 0:
+                    self.add_build_log("✅ Vision Controller Syntax OK!")
+                    self.check_vision_requirements()
+                else:
+                    self.add_build_log(f"❌ Vision Controller Syntax-Fehler:\n{result.stderr}")
+                    self.build_status_text.set("❌ Fehler")
+                    self.build_status_label.config(foreground="red")
+                    
+            except Exception as e:
+                self.add_build_log(f"💥 Vision Controller Fehler: {str(e)}")
+        
+        threading.Thread(target=build_thread, daemon=True).start()
+    
+    def check_vision_requirements(self):
+        """Prüfe Vision Controller Requirements"""
+        try:
+            requirements_file = "../controllers/vision_control_py/requirements.txt"
+            if os.path.exists(requirements_file):
+                self.add_build_log("📋 Prüfe Vision Controller Requirements...")
+                
+                import subprocess
+                result = subprocess.run(
+                    ["pip", "check"], 
+                    capture_output=True, 
+                    text=True
+                )
+                
+                if result.returncode == 0:
+                    self.add_build_log("✅ Vision Controller Requirements OK!")
+                else:
+                    self.add_build_log(f"⚠️ Requirements-Probleme:\n{result.stdout}")
+            else:
+                self.add_build_log("⚠️ Keine requirements.txt für Vision Controller gefunden")
+        except Exception as e:
+            self.add_build_log(f"⚠️ Requirements-Prüfung fehlgeschlagen: {str(e)}")
+    
+    def clean_build(self):
+        """Bereinige Build-Dateien"""
+        self.add_build_log("🧹 Bereinige Build-Dateien...")
+        
+        import subprocess
+        import threading
+        
+        def clean_thread():
+            try:
+                controller_dir = "../controllers/balance_control_c"
+                
+                result = subprocess.run(
+                    ["make", "clean"], 
+                    cwd=controller_dir, 
+                    capture_output=True, 
+                    text=True
+                )
+                
+                if result.returncode == 0:
+                    self.add_build_log("✅ Build-Dateien bereinigt!")
+                    self.build_status_text.set("🧹 Bereinigt")
+                    self.build_status_label.config(foreground="blue")
+                else:
+                    self.add_build_log(f"⚠️ Clean-Warnung:\n{result.stderr}")
+                    
+            except Exception as e:
+                self.add_build_log(f"💥 Clean-Fehler: {str(e)}")
+        
+        threading.Thread(target=clean_thread, daemon=True).start()
+    
+    def check_build_status(self):
+        """Prüfe aktuellen Build-Status"""
+        self.add_build_log("📊 Prüfe Build-Status...")
+        
+        # Prüfe ob ausführbare Dateien existieren
+        balance_exec = "../controllers/balance_control_c/balance_control_c"
+        vision_exec = "../controllers/vision_control_py/vision_control_py.py"
+        
+        balance_ok = os.path.exists(balance_exec)
+        vision_ok = os.path.exists(vision_exec)
+        
+        if balance_ok and vision_ok:
+            self.add_build_log("✅ Alle Controller verfügbar")
+            self.build_status_text.set("✅ Vollständig")
+            self.build_status_label.config(foreground="green")
+        elif balance_ok:
+            self.add_build_log("⚠️ Nur Balance Controller verfügbar")
+            self.build_status_text.set("⚠️ Teilweise")
+            self.build_status_label.config(foreground="orange")
+        elif vision_ok:
+            self.add_build_log("⚠️ Nur Vision Controller verfügbar")
+            self.build_status_text.set("⚠️ Teilweise")
+            self.build_status_label.config(foreground="orange")
+        else:
+            self.add_build_log("❌ Keine Controller verfügbar")
+            self.build_status_text.set("❌ Fehlt")
+            self.build_status_label.config(foreground="red")
+    
+    def add_build_log(self, message):
+        """Füge Nachricht zum Build-Log hinzu"""
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        log_entry = f"[{timestamp}] {message}\n"
+        
+        self.build_log_text.insert(tk.END, log_entry)
+        self.build_log_text.see(tk.END)  # Scrolle zur letzten Zeile
+        
+        # Aktualisiere GUI
+        self.root.update_idletasks()
+    
+    def clear_build_log(self):
+        """Lösche Build-Log"""
+        self.build_log_text.delete(1.0, tk.END)
+        self.add_build_log("📋 Build-Log geleert")
+    
+    def save_build_log(self):
+        """Speichere Build-Log in Datei"""
+        try:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"build_log_{timestamp}.txt"
+            
+            with open(filename, 'w') as f:
+                f.write(self.build_log_text.get(1.0, tk.END))
+            
+            self.add_build_log(f"💾 Build-Log gespeichert: {filename}")
+            
+        except Exception as e:
+            self.add_build_log(f"💥 Speichern fehlgeschlagen: {str(e)}")
+    
+    def toggle_build_monitoring(self):
+        """Schalte automatische Build-Überwachung um"""
+        if self.build_monitor_var.get():
+            self.add_build_log("🔄 Automatische Überwachung aktiviert")
+            self.start_build_monitoring()
+        else:
+            self.add_build_log("⏸️ Automatische Überwachung deaktiviert")
+            self.stop_build_monitoring()
+    
+    def start_build_monitoring(self):
+        """Starte automatische Build-Überwachung"""
+        if not hasattr(self, 'build_monitor_active'):
+            self.build_monitor_active = True
+            self.build_monitor_loop()
+    
+    def stop_build_monitoring(self):
+        """Stoppe automatische Build-Überwachung"""
+        self.build_monitor_active = False
+    
+    def build_monitor_loop(self):
+        """Überwachungsschleife für Build-Änderungen"""
+        if hasattr(self, 'build_monitor_active') and self.build_monitor_active and self.build_monitor_var.get():
+            # Prüfe alle 30 Sekunden den Build-Status
+            self.check_build_status()
+            self.root.after(30000, self.build_monitor_loop)  # 30 Sekunden
 
 def main():
     root = tk.Tk()

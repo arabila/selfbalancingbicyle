@@ -40,11 +40,16 @@ static WbDeviceTag status_emitter;
 // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
 static WbNodeRef robot_node;
 
-// Vision-Command-Struktur für IPC
+// Erweiterte Vision-Command-Struktur für IPC (inkl. Debug-Daten)
 typedef struct {
     float steer_command;     // Lenkbefehl von Vision-Controller (-1.0 bis +1.0)
     float speed_command;     // Geschwindigkeitsbefehl von Vision-Controller (0.0 bis 1.0)
     int valid;               // Kommando gültig (1) oder nicht (0)
+    float vision_error;      // Vision-Fehler (Abweichung von Straße)
+    float vision_p_term;     // P-Term des Vision-PID-Controllers
+    float vision_i_term;     // I-Term des Vision-PID-Controllers  
+    float vision_d_term;     // D-Term des Vision-PID-Controllers
+    float mask_coverage;     // Straßenerkennung-Abdeckung in Prozent
 } vision_command_t;
 
 // Balance-Status-Struktur für IPC
@@ -55,8 +60,8 @@ typedef struct {
     float stability_factor;  // Stabilitätsfaktor (0.0-1.0)
 } balance_status_t;
 
-// Vision-Command-Status
-static vision_command_t last_vision_command = {0.0f, 0.0f, 0};
+// Vision-Command-Status (erweitert)
+static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 static double last_command_time = 0.0;
 
 // Controller-Zustand
@@ -122,6 +127,8 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
     printf("Max Handlebar Angle: %.3f rad (%.1f°)\n", 
            config.mechanical_limits.max_handlebar_angle, 
            config.mechanical_limits.max_handlebar_angle * 180.0 / M_PI);
+    printf("DEBUG: vision_command_t Größe: %zu Bytes\n", sizeof(vision_command_t));
+    printf("DEBUG: balance_status_t Größe: %zu Bytes\n", sizeof(balance_status_t));
     printf("Drücke ESC zum Beenden\n");
     printf("=============================\n\n");
     
@@ -165,6 +172,9 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         float final_steer = steering_output;  // Balance-PID-Ausgang
         float target_speed = config.speed_control.base_speed;
         
+        // Stabilitätsfaktor für alle Regelungspfade berechnen
+        float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
+        
         if (vision_cmd_received && (wb_robot_get_time() - last_command_time) < 0.5) {
             // Vision-Command ist aktuell (< 500ms alt)
             // Kombiniere Balance-Korrektur mit Vision-Lenkbefehl
@@ -181,7 +191,6 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
                    vision_steer, target_speed, steering_output, final_steer);
         } else {
             // Kein aktueller Vision-Command → Nur Balance-Regelung
-            float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
             float speed_reduction = stability_factor * config.speed_control.stability_reduction;
             target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
         }
@@ -220,9 +229,10 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
         };
         send_balance_status(&status);
         
-        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen)
+        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten)
         if (config.system.enable_logging) {
             balance_log_data_t log_data = {
+                // Balance-Controller-Daten
                 .timestamp = wb_robot_get_time(),
                 .roll_angle = roll_angle,
                 .steering_output = steering_output,
@@ -231,7 +241,17 @@ int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) 
                 .i_term = angle_pid.integral_term,
                 .d_term = angle_pid.derivative_term,
                 .error = angle_pid.error_history[angle_pid.history_counter],
-                .stability_factor = stability_factor
+                .stability_factor = stability_factor,
+                
+                // Vision-Controller-Daten (erweiterte Daten vom IPC)
+                .vision_error = vision_cmd_received ? last_vision_command.vision_error : 0.0f,
+                .vision_steer_command = vision_cmd_received ? vision_cmd.steer_command : 0.0f,
+                .vision_speed_command = vision_cmd_received ? vision_cmd.speed_command : 0.0f,
+                .vision_p_term = vision_cmd_received ? last_vision_command.vision_p_term : 0.0f,
+                .vision_i_term = vision_cmd_received ? last_vision_command.vision_i_term : 0.0f,
+                .vision_d_term = vision_cmd_received ? last_vision_command.vision_d_term : 0.0f,
+                .vision_active = vision_cmd_received && (wb_robot_get_time() - last_command_time) < 0.5 ? 1 : 0,
+                .vision_mask_coverage = vision_cmd_received ? last_vision_command.mask_coverage : 0.0f
             };
             balance_logging_write(&logger, &log_data);
             
@@ -569,11 +589,27 @@ static void print_status(float roll_angle, float steering_output, float speed) {
 }
 
 static int receive_vision_command(vision_command_t *command) {
+    static int call_counter = 0;
+    if (++call_counter % 100 == 0) {
+        printf("DEBUG: receive_vision_command aufgerufen - Aufruf #%d, Queue-Länge: %d\n", 
+               call_counter, wb_receiver_get_queue_length(command_receiver));
+    }
+    
     if (wb_receiver_get_queue_length(command_receiver) > 0) {
         const void *data = wb_receiver_get_data(command_receiver);
         if (data != NULL) {
+            int data_size = wb_receiver_get_data_size(command_receiver);
+            printf("DEBUG: IPC empfangen - Datengröße: %d Bytes, erwartet: %zu Bytes\n", 
+                   data_size, sizeof(vision_command_t));
+            
             memcpy(command, data, sizeof(vision_command_t));
             wb_receiver_next_packet(command_receiver);
+            
+            // Debug: Alle empfangenen Werte anzeigen
+            printf("DEBUG: Empfangen - steer=%.3f, speed=%.3f, valid=%d, v_error=%.3f, v_p=%.3f, v_i=%.3f, v_d=%.3f, mask=%.2f\n",
+                   command->steer_command, command->speed_command, command->valid,
+                   command->vision_error, command->vision_p_term, command->vision_i_term, 
+                   command->vision_d_term, command->mask_coverage);
             
             // Plausibilitätsprüfung
             if (command->steer_command >= -1.0f && command->steer_command <= 1.0f &&
@@ -582,6 +618,7 @@ static int receive_vision_command(vision_command_t *command) {
                 
                 last_vision_command = *command;
                 last_command_time = wb_robot_get_time();
+                printf("DEBUG: Vision-Command AKZEPTIERT\n");
                 return 1;  // Gültiges Kommando empfangen
             } else {
                 printf("WARNUNG: Ungültiges Vision-Command empfangen: steer=%.3f, speed=%.3f, valid=%d\n",

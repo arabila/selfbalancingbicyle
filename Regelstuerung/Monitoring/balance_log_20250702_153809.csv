@@ -1,3 +1,0 @@
-timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor
-0.002000,0.005,0.000000,4.995,-0.000000,0.000000,-0.000000,0.000,0.000
-# Log beendet. Einträge: 1

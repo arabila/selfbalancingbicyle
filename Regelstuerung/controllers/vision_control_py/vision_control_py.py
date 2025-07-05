@@ -63,13 +63,18 @@ class VisionController:
         self.max_speed = 0.9      # Maximale Geschwindigkeit
         
         # PID-Parameter für Vision-basierte Lenkung
-        self.vision_kp = 0.005    # Reduziert für sanftere Lenkung
-        self.vision_ki = 0.001
-        self.vision_kd = 0.0005
+        self.vision_kp = 5   # Reduziert für sanftere Lenkung
+        self.vision_ki = 1
+        self.vision_kd = 2
         
         # PID-Zustand
         self.vision_integral = 0.0
         self.vision_last_error = 0.0
+        self.vision_p_term = 0.0
+        self.vision_i_term = 0.0
+        self.vision_d_term = 0.0
+        self.vision_error = 0.0
+        self.vision_mask_coverage = 0.0
         
         # Status
         self.step_counter = 0
@@ -179,7 +184,7 @@ class VisionController:
         """Empfängt Status vom Balance-Controller"""
         if self.status_receiver.getQueueLength() > 0:
             try:
-                data = self.status_receiver.getData()
+                data = self.status_receiver.getBytes()
                 # Struct-Format: 4 floats (roll_angle, steering_output, current_speed, stability_factor)
                 status = struct.unpack('ffff', data[:16])
                 
@@ -200,14 +205,25 @@ class VisionController:
         return False
     
     def send_vision_command(self, steer_cmd, speed_cmd):
-        """Sendet Vision-Command an Balance-Controller"""
+        """Sendet erweiterte Vision-Command an Balance-Controller"""
         try:
             # Begrenzungen anwenden
             steer_cmd = max(-1.0, min(1.0, steer_cmd))
             speed_cmd = max(0.0, min(1.0, speed_cmd))
             
-            # Struct-Format: 2 floats + 1 int (steer_command, speed_command, valid) 
-            command_data = struct.pack('ffi', steer_cmd, speed_cmd, 1)
+            # Erweiterte Struct-Format: 8 Felder (2 floats + 1 int + 5 floats)
+            # (steer_command, speed_command, valid, vision_error, vision_p_term, vision_i_term, vision_d_term, mask_coverage)
+            command_data = struct.pack('ffifffff', 
+                                     steer_cmd, speed_cmd, 1,
+                                     self.vision_error, self.vision_p_term, 
+                                     self.vision_i_term, self.vision_d_term, 
+                                     self.vision_mask_coverage)
+            
+            # Debug: Informationen über das gesendete Command
+            print(f"DEBUG: Vision-Command senden - Größe: {len(command_data)} Bytes")
+            print(f"DEBUG: steer={steer_cmd:.3f}, speed={speed_cmd:.3f}, valid=1")
+            print(f"DEBUG: v_error={self.vision_error:.3f}, v_p={self.vision_p_term:.3f}, v_i={self.vision_i_term:.3f}, v_d={self.vision_d_term:.3f}, mask={self.vision_mask_coverage:.2f}")
+            
             self.command_emitter.send(command_data)
             
             return True
@@ -277,10 +293,20 @@ class VisionController:
                     if self.step_counter % 100 == 0:
                         print(f"YOLO: Straße erkannt - Mittelpunkt: {avg_x_center:.1f}, Error: {error:.3f}")
                     
+                    # Mask-Coverage berechnen
+                    total_pixels = mask.shape[0] * mask.shape[1]
+                    mask_pixels = np.sum(mask > 0)
+                    self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
+                    
                     return error, mask
                 else:
                     if self.step_counter % 100 == 0:
                         print("YOLO: Keine Straßen-Klasse (ID=2) erkannt")
+            
+            # Mask-Coverage berechnen auch wenn keine Straße erkannt
+            total_pixels = mask.shape[0] * mask.shape[1]
+            mask_pixels = np.sum(mask > 0)
+            self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
             
             return 0.0, mask
             
@@ -325,8 +351,15 @@ class VisionController:
                 mask = np.zeros((height, width), dtype=np.uint8)
                 cv2.drawContours(mask, [largest_contour], -1, 255, -1)
                 
+                # Mask-Coverage berechnen
+                total_pixels = mask.shape[0] * mask.shape[1]
+                mask_pixels = np.sum(mask > 0)
+                self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
+                
                 return error, mask
             
+            # Keine Konturen gefunden
+            self.vision_mask_coverage = 0.0
             return 0.0, np.zeros((height, width), dtype=np.uint8)
             
         except Exception as e:
@@ -348,6 +381,12 @@ class VisionController:
         # D-Term
         d_error = (error - self.vision_last_error) / dt if dt > 0 else 0.0
         d_term = self.vision_kd * d_error
+        
+        # PID-Terme für IPC-Übertragung speichern
+        self.vision_p_term = p_term
+        self.vision_i_term = i_term
+        self.vision_d_term = d_term
+        self.vision_error = error
         
         # Gesamtausgang
         output = p_term + i_term + d_term

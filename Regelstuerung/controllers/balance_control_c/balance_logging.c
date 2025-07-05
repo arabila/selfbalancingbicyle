@@ -61,9 +61,11 @@ int balance_logging_init(balance_logger_t *logger, const char *log_dir) {
         return -1;
     }
     
-    // CSV-Header schreiben
+    // Erweiterten CSV-Header schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor\n");
+            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor,"
+            "vision_error,vision_steer_command,vision_speed_command,vision_p_term,vision_i_term,vision_d_term,"
+            "vision_active,vision_mask_coverage\n");
     fflush(logger->csv_file);
     
     logger->is_initialized = 1;
@@ -77,9 +79,10 @@ int balance_logging_write(balance_logger_t *logger, const balance_log_data_t *da
         return -1;
     }
     
-    // Daten in CSV-Format schreiben
+    // Erweiterte Daten in CSV-Format schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "%.6f,%.3f,%.6f,%.3f,%.6f,%.6f,%.6f,%.3f,%.3f\n",
+            "%.6f,%.3f,%.6f,%.3f,%.6f,%.6f,%.6f,%.3f,%.3f,"
+            "%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%d,%.2f\n",
             data->timestamp,
             data->roll_angle,
             data->steering_output,
@@ -88,7 +91,15 @@ int balance_logging_write(balance_logger_t *logger, const balance_log_data_t *da
             data->i_term,
             data->d_term,
             data->error,
-            data->stability_factor);
+            data->stability_factor,
+            data->vision_error,
+            data->vision_steer_command,
+            data->vision_speed_command,
+            data->vision_p_term,
+            data->vision_i_term,
+            data->vision_d_term,
+            data->vision_active,
+            data->vision_mask_coverage);
     
     logger->log_counter++;
     
@@ -166,9 +177,11 @@ int balance_logging_create_new_file(balance_logger_t *logger, const char *log_di
         return -1;
     }
     
-    // CSV-Header schreiben
+    // Erweiterten CSV-Header schreiben (inkl. Vision-Control-Daten)
     fprintf(logger->csv_file, 
-            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor\n");
+            "timestamp,roll_angle,steering_output,target_speed,p_term,i_term,d_term,error,stability_factor,"
+            "vision_error,vision_steer_command,vision_speed_command,vision_p_term,vision_i_term,vision_d_term,"
+            "vision_active,vision_mask_coverage\n");
     fflush(logger->csv_file);
     
     logger->log_counter = 0;

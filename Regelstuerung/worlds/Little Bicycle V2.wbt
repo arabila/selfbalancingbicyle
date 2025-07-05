@@ -513,12 +513,12 @@ DEF BICYCLE Robot {
     Receiver {
       name "command_rx"
       channel 1
-      bufferSize 16
+      bufferSize 64
     }
     Emitter {
       name "status_tx"
       channel 2
-      bufferSize 16
+      bufferSize 64
     }
   ]
   name "Little Bicycle V2"
@@ -723,12 +723,12 @@ Supervisor {
     Emitter {
       name "command_tx"
       channel 1
-      bufferSize 16
+      bufferSize 64
     }
     Receiver {
       name "status_rx"
       channel 2
-      bufferSize 16
+      bufferSize 64
     }
   ]
   name "Vision Controller"
