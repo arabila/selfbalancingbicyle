@@ -1,0 +1,737 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/Supervisor.proto"
+
+WorldInfo {
+  basicTimeStep 2
+  contactProperties [
+    ContactProperties {
+      material1 "wheel"
+      material2 "ground"
+      coulombFriction [
+        0.8
+      ]
+      bounce 0.1
+    }
+  ]
+}
+Viewpoint {
+  orientation 0.032681048900744705 -0.31646337348679865 -0.948041603667319 5.441232304899071
+  position -4.035203910285695 -4.549263601887837 0.5050138157516904
+  follow "BICYCLE"
+}
+TexturedBackground {
+  skybox FALSE
+}
+TexturedBackgroundLight {
+}
+RectangleArena {
+  translation 0 0 -0.1
+  contactMaterial "ground"
+  floorSize 10 10
+  floorTileSize 10 10
+  floorAppearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [
+        "textures/track004.png"
+      ]
+    }
+    roughness 1
+    metalness 0
+  }
+  wallThickness 0.001
+  wallHeight 0.001
+}
+DEF BICYCLE Robot {
+  translation -2.5291 -3.22077 -0.0492097
+  rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
+  children [
+    DEF frame Transform {
+      scale 0.001 0.001 0.001
+      children [
+        CadShape {
+          url [
+            "obj/Little Bicycle V2 - Frame/frame.obj"
+          ]
+        }
+      ]
+    }
+    DEF rear_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0 0.083 0
+        dampingConstant 0.1
+        staticFriction 0.1
+      }
+      device [
+        RotationalMotor {
+          name "motor::wheel"
+          maxVelocity 200
+          multiplier 2
+        }
+      ]
+      endPoint Solid {
+        translation 0 0.083 0
+        rotation -1 0 0 1.9514567889667116
+        children [
+          DEF wheel Transform {
+            scale 0.001 0.001 0.001
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle - Rear Wheel/r_wheel.obj"
+                ]
+              }
+            ]
+          }
+        ]
+        contactMaterial "wheel"
+        boundingObject Pose {
+          rotation 0 1 0 1.5708
+          children [
+            Cylinder {
+              height 0.015
+              radius 0.055
+              subdivision 72
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 0.8
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.001 0.001 0.001
+            0 0 0
+          ]
+        }
+      }
+    }
+    DEF Handlebars_and_Fork HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0 -0.0818 0.102
+        dampingConstant 0.2
+        staticFriction 0.1
+      }
+      device [
+        RotationalMotor {
+          name "handlebars motor"
+          maxTorque 2
+        }
+      ]
+      endPoint Solid {
+        translation 0 -0.0818 0.102
+        rotation 0 0 -1 9.884312124119402e-08
+        children [
+          DEF fork Transform {
+            scale 0.001 0.001 0.001
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle V2 - Handlebars and Fork/fork.obj"
+                ]
+              }
+            ]
+          }
+          DEF wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              position 58.84271107812081
+              anchor 0 -0.037 -0.102
+              dampingConstant 0.1
+              staticFriction 0.1
+            }
+            endPoint Solid {
+              translation 0 -0.037 -0.102
+              rotation -1 0 0 3.989141993675058
+              children [
+                DEF wheel Transform {
+                  scale 0.001 0.001 0.001
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Front Wheel/f_wheel.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              contactMaterial "wheel"
+              boundingObject Pose {
+                rotation 0 1 0 1.5708
+                children [
+                  Cylinder {
+                    height 0.015
+                    radius 0.055
+                    subdivision 72
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 0.6
+                centerOfMass [
+                  0 0 0
+                ]
+                inertiaMatrix [
+                  0.001 0.001 0.001
+                  0 0 0
+                ]
+              }
+            }
+          }
+        ]
+        name "solid(1)"
+        boundingObject Group {
+          children [
+            Pose {
+              translation 0.0125 -0.024 -0.065
+              rotation -1 0 0 0.34909999999999985
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.005 0.005 0.093
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.0125 -0.024 -0.065
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.005 0.005 0.093
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.0125 -0.037 -0.102
+              rotation 0 1 0 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.005
+                    radius 0.01
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.0125 -0.037 -0.102
+              rotation 0 1 0 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.005
+                    radius 0.01
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 -0.008 -0.022
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.01
+                    radius 0.0125
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 0.0035 0.0085
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.075
+                    radius 0.0025
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.062 0.0121 0.05445
+              rotation 0.3796282240312281 0.893242880073478 0.24083099617145198 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.04
+                    radius 0.006
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.062 0.0121 0.05445
+              rotation -0.06982912769991387 -0.9687746404465684 0.23790668118464223 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.04
+                    radius 0.006
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 0.0045 0.0441
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.03 0.005 0.005
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.0203 0.0066 0.0498
+              rotation -0.3866558708915664 0.9082106967389628 -0.16015794652158893 0.855791
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.0201 0.005 0.005
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.0203 0.0066 0.0498
+              rotation 0.3866558708915664 0.9082106967389628 -0.16015794652158893 -0.8557953071795863
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.0201 0.005 0.005
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.036 0.0087 0.0556
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.02 0.005 0.005
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.036 0.0087 0.0556
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.02 0.005 0.005
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 1.2
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.02 0.02 0.005
+            0 0 0
+          ]
+        }
+      }
+    }
+    DEF crank HingeJoint {
+      jointParameters HingeJointParameters {
+        position 30.400672892544396
+        dampingConstant 0.05
+        staticFriction 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor::crank"
+          maxVelocity 100
+          maxTorque 5
+        }
+      ]
+      endPoint Solid {
+        rotation 1 0 0 5.26793166382605
+        children [
+          DEF crank Transform {
+            scale 0.001 0.001 0.001
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle - Crank/crank.obj"
+                ]
+              }
+            ]
+          }
+          DEF pedal HingeJoint {
+            jointParameters HingeJointParameters {
+              position -30.40025456626206
+              anchor -0.0375 -0.03 0
+            }
+            endPoint Solid {
+              translation -0.0375 -0.03 0
+              rotation -1 0 0 5.267513337543714
+              children [
+                DEF pedal Transform {
+                  scale 0.001 0.001 0.001
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Pedal/pedal.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              boundingObject Pose {
+                children [
+                  Shape {
+                    geometry Box {
+                      size 0.02 0.02 0.006
+                    }
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 0.05
+                centerOfMass [
+                  0 0 0
+                ]
+              }
+            }
+          }
+          DEF pedal HingeJoint {
+            jointParameters HingeJointParameters {
+              position -30.40025456626206
+              anchor 0.0375 0.03 0
+            }
+            endPoint Solid {
+              translation 0.0375 0.03 0
+              rotation -1 0 0 5.267513337543714
+              children [
+                DEF pedal Transform {
+                  scale 0.001 0.001 0.001
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Pedal/pedal.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              name "solid(1)"
+              boundingObject Pose {
+                children [
+                  Shape {
+                    geometry Box {
+                      size 0.02 0.02 0.006
+                    }
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 0.05
+                centerOfMass [
+                  0 0 0
+                ]
+              }
+            }
+          }
+        ]
+        name "solid(2)"
+        boundingObject Group {
+          children [
+            Pose {
+              translation -0.0238 -0.015 0
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.005 0.04 0.01
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.0238 0.015 0
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.005 0.04 0.01
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 0.3
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.005 0.005 0.001
+            0 0 0
+          ]
+        }
+      }
+    }
+    Camera {
+      translation 0.15 -0.171781 0.148268
+      rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
+      fieldOfView 2
+      width 480
+      height 320
+      antiAliasing TRUE
+    }
+    Display {
+      width 480
+      height 320
+    }
+    InertialUnit {
+      translation 0 0 0.05
+      rotation 1 0 0 0
+      name "imu"
+    }
+    Receiver {
+      name "command_rx"
+      channel 1
+      bufferSize 64
+    }
+    Emitter {
+      name "status_tx"
+      channel 2
+      bufferSize 64
+    }
+  ]
+  name "Little Bicycle V2"
+  boundingObject Group {
+    children [
+      Pose {
+        translation 0 -0.026 0.0916
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Box {
+              size 0.01 0.11 0.01
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.0162 0.056
+        rotation 1 0 0 -0.2793
+        children [
+          Shape {
+            geometry Box {
+              size 0.01 0.01 0.135
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.045 0.056
+        rotation 1 0 0 0.6632
+        children [
+          Shape {
+            geometry Box {
+              size 0.01 0.01 0.135
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.0125 0.0529 0.038
+        rotation 1 0 0 0.6981
+        children [
+          Shape {
+            geometry Box {
+              size 0.005 0.005 0.1
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.0125 0.0529 0.038
+        rotation 1 0 0 0.6981
+        children [
+          Shape {
+            geometry Box {
+              size 0.005 0.005 0.11
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.0125 0.046 -2.1684e-19
+        children [
+          Shape {
+            geometry Box {
+              size 0.005 0.08 0.005
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.0125 0.046 -2.1684e-19
+        children [
+          Shape {
+            geometry Box {
+              size 0.005 0.08 0.005
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.045 0.1221
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.01
+              radius 0.02405
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.018 0.1221
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.01
+              radius 0.015
+            }
+          }
+        ]
+      }
+      Pose {
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.04
+              radius 0.01
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.082 0.102
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.035
+              radius 0.01
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.0125 0.083 0
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.005
+              radius 0.01
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.0125 0.083 0
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.005
+              radius 0.01
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.0212 0.0747
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.01
+              radius 0.0125
+            }
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 3.5
+    centerOfMass [
+      0 0 0.05
+    ]
+    inertiaMatrix [
+      0.1 0.1 0.05
+      0 0 0
+    ]
+  }
+  controller "balance_control_c"
+  supervisor TRUE
+}
+Supervisor {
+  children [
+    DEF VISION_CAMERA_TRANSFORM Pose {
+      translation -3.709465509677524 -6.351110825230749 -0.04517476285409254
+      rotation 0.002261921745702991 -0.00022403723935638146 0.9999974167553293 3.141443442788721
+      children [
+        Pose {
+          translation -7.27661e-08 -0.2 0.19
+          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
+          children [
+            Camera {
+              fieldOfView 2
+              width 480
+              height 320
+              antiAliasing TRUE
+            }
+          ]
+        }
+      ]
+    }
+    Display {
+      width 480
+      height 320
+    }
+    Emitter {
+      name "command_tx"
+      channel 1
+      bufferSize 64
+    }
+    Receiver {
+      name "status_rx"
+      channel 2
+      bufferSize 64
+    }
+  ]
+  name "Vision Controller"
+  controller "vision_control_py"
+}

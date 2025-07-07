@@ -1,10 +1,11 @@
 #VRML_SIM R2025a utf8
 
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/UnevenTerrain.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "../protos/Supervisor.proto"
 
+#--------------------- Definition der Welt ---------------------
 WorldInfo {
   basicTimeStep 2
   contactProperties [
@@ -18,33 +19,43 @@ WorldInfo {
     }
   ]
 }
+
+#--------------------- Definition der Kamera ---------------------
 Viewpoint {
-  orientation 0.16487505326895643 -0.31502754688532414 -0.9346517327395129 4.906655731233937
-  position -4.821148159366251 -11.668484828040572 4.258338063504493
+  orientation 0.09218476428047824 -0.17977922318869627 -0.9793780680330868 4.758748796181182
+  position -3.8591097144925346 -24.413607006773702 5.826066991971595
   follow "BICYCLE"
 }
+
+#--------------------- Definition des Hintergrunds ---------------------
 TexturedBackground {
   skybox FALSE
 }
 TexturedBackgroundLight {
 }
-RectangleArena {
-  translation 0 0 -0.1
-  contactMaterial "ground"
-  floorSize 10 10
-  floorTileSize 10 10
-  floorAppearance PBRAppearance {
+
+
+#--------------------- Definition des Bodens ---------------------
+UnevenTerrain {
+  translation 0 0 -0.1          # minimal absenken
+  size          10 10 0.02        # 10 m × 10 m, ±2 cm Höhen-Rauschen
+  xDimension    256               # feines Gitter ⇒ viele kleine Bumps
+  yDimension    256
+  seed          31415             # beliebig; ändert das Muster
+  contactMaterial "ground"        # greift mit wheel/ground-Reibung
+  appearance PBRAppearance {
     baseColorMap ImageTexture {
-      url [
-        "textures/track004.png"
-      ]
+      url [ "textures/track004.png" ]   # Foto einer Kiesfläche
     }
     roughness 1
     metalness 0
+    normalMap ImageTexture {                    # optional: 2-D-Bump für Optik
+      url [ "textures/track004.png" ]
+    }
   }
-  wallThickness 0.001
-  wallHeight 0.001
 }
+#--------------------- Definition des Fahrrads ---------------------
+
 DEF BICYCLE Robot {
   translation -2.5291 -3.22077 -0.0492097
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
