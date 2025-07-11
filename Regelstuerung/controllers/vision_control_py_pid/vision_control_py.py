@@ -1,16 +1,14 @@
 """
-Vision Control Python Controller mit MPC-Regelung
+Vision Control Python Controller
 
 Implementiert die langsamere Vision-basierte Pfadplanung mit YOLO-Segmentierung.
 Sendet Steer/Speed-Commands an den ultraschnellen Balance-Controller in C.
-Nutzt Model Predictive Control (MPC) für optimale Trajektorienplanung.
 
 Architektur:
 - Läuft mit 10-20 Hz (jeder 25. Simulation-Step bei 2ms → 50ms)
 - Empfängt Balance-Status vom C-Controller
 - Sendet Vision-Commands an C-Controller
 - Nutzt YOLO für Straßenerkennung und Pfadplanung
-- MPC für prädiktive Fahrzeugkontrolle
 """
 
 import os
@@ -35,231 +33,13 @@ except ImportError:
     YOLO_AVAILABLE = False
     print("⚠ YOLO nicht verfügbar - Fallback-Vision-Modus aktiv")
 
-# MPC-Imports
-try:
-    import cvxpy
-    MPC_AVAILABLE = True
-    print("✓ CVXPY verfügbar - MPC-Regelung aktiv")
-except ImportError:
-    MPC_AVAILABLE = False
-    print("⚠ CVXPY nicht verfügbar - Fallback auf PID-Regelung")
-
-class VisionMPCController:
-    """Model Predictive Controller für Vision-basierte Fahrzeugkontrolle"""
-    
-    def __init__(self):
-        # MPC-Parameter
-        self.NX = 4  # Zustandsvektor: [x, y, v, yaw]
-        self.NU = 2  # Eingänge: [accel, steer]
-        self.T = 3   # Prädiktionshorizont (reduziert für Echtzeitfähigkeit)
-        
-        # Kostenmatrizen
-        self.R = np.diag([0.01, 0.01])      # Eingangskostenmatrix
-        self.Rd = np.diag([0.01, 1.0])      # Eingangsdifferenzkostenmatrix
-        self.Q = np.diag([1.0, 1.0, 0.5, 0.5])  # Zustandskostenmatrix
-        self.Qf = self.Q                    # Terminale Kostenmatrix
-        
-        # Fahrzeugparameter (angepasst für Fahrrad)
-        self.WB = 1.2  # Radstand [m] (Fahrrad)
-        self.DT = 0.1  # Zeitschritt [s] (schneller als Vision-Frequenz)
-        
-        # Begrenzungen (angepasst für Fahrrad)
-        self.MAX_STEER = math.radians(30.0)  # Maximaler Lenkwinkel [rad]
-        self.MAX_DSTEER = math.radians(20.0) # Maximale Lenkwinkelrate [rad/s]
-        self.MAX_SPEED = 8.0                 # Maximale Geschwindigkeit [m/s]
-        self.MIN_SPEED = 0.5                 # Minimale Geschwindigkeit [m/s]
-        self.MAX_ACCEL = 2.0                 # Maximale Beschleunigung [m/s²]
-        
-        # Iterative Parameter
-        self.MAX_ITER = 3  # Reduziert für Echtzeitfähigkeit
-        self.DU_TH = 0.1   # Konvergenz-Schwellwert
-        
-        # Zustandsspeicher
-        self.state = {'x': 0.0, 'y': 0.0, 'v': 2.0, 'yaw': 0.0}
-        self.last_control = {'accel': 0.0, 'steer': 0.0}
-        self.reference_path = []
-        
-        # MPC-Debug-Terme für IPC
-        self.mpc_p_term = 0.0
-        self.mpc_i_term = 0.0
-        self.mpc_d_term = 0.0
-        
-        print("✓ Vision MPC Controller initialisiert")
-    
-    def pi_2_pi(self, angle):
-        """Normalisiert Winkel auf [-π, π]"""
-        while angle > math.pi:
-            angle -= 2.0 * math.pi
-        while angle < -math.pi:
-            angle += 2.0 * math.pi
-        return angle
-    
-    def get_linear_model_matrix(self, v, phi, delta):
-        """Berechnet linearisierte Systemmatrizen"""
-        A = np.zeros((self.NX, self.NX))
-        A[0, 0] = 1.0
-        A[1, 1] = 1.0
-        A[2, 2] = 1.0
-        A[3, 3] = 1.0
-        A[0, 2] = self.DT * math.cos(phi)
-        A[0, 3] = -self.DT * v * math.sin(phi)
-        A[1, 2] = self.DT * math.sin(phi)
-        A[1, 3] = self.DT * v * math.cos(phi)
-        A[3, 2] = self.DT * math.tan(delta) / self.WB
-        
-        B = np.zeros((self.NX, self.NU))
-        B[2, 0] = self.DT
-        B[3, 1] = self.DT * v / (self.WB * math.cos(delta) ** 2)
-        
-        C = np.zeros(self.NX)
-        C[0] = self.DT * v * math.sin(phi) * phi
-        C[1] = -self.DT * v * math.cos(phi) * phi
-        C[3] = v * delta / (self.WB * math.cos(delta) ** 2)
-        
-        return A, B, C
-    
-    def update_state(self, state, accel, steer):
-        """Aktualisiert Fahrzeugzustand"""
-        # Begrenzungen anwenden
-        if steer > self.MAX_STEER:
-            steer = self.MAX_STEER
-        elif steer < -self.MAX_STEER:
-            steer = -self.MAX_STEER
-        
-        # Bicycle model
-        new_state = state.copy()
-        new_state['x'] += new_state['v'] * math.cos(new_state['yaw']) * self.DT
-        new_state['y'] += new_state['v'] * math.sin(new_state['yaw']) * self.DT
-        new_state['yaw'] += new_state['v'] / self.WB * math.tan(steer) * self.DT
-        new_state['v'] += accel * self.DT
-        
-        # Geschwindigkeitsbegrenzungen
-        if new_state['v'] > self.MAX_SPEED:
-            new_state['v'] = self.MAX_SPEED
-        elif new_state['v'] < self.MIN_SPEED:
-            new_state['v'] = self.MIN_SPEED
-        
-        return new_state
-    
-    def generate_reference_path(self, vision_error, current_state):
-        """Generiert Referenzpfad aus Vision-Fehler"""
-        # Einfache Referenztrajectorie: Geradeaus mit Korrektur
-        ref_path = []
-        
-        # Aktueller Zustand als Startpunkt
-        x, y, v, yaw = current_state['x'], current_state['y'], current_state['v'], current_state['yaw']
-        
-        # Ziel-Orientierung basierend auf Vision-Fehler
-        target_yaw = yaw - vision_error * 0.5  # Proportionale Korrektur
-        
-        for i in range(self.T + 1):
-            # Interpolation zwischen aktueller und Ziel-Orientierung
-            alpha = i / self.T
-            ref_yaw = yaw + alpha * (target_yaw - yaw)
-            
-            # Pfad vorwärts projizieren
-            ref_x = x + v * math.cos(ref_yaw) * self.DT * i
-            ref_y = y + v * math.sin(ref_yaw) * self.DT * i
-            ref_v = v  # Konstante Geschwindigkeit
-            
-            ref_path.append([ref_x, ref_y, ref_v, ref_yaw])
-        
-        return np.array(ref_path).T
-    
-    def linear_mpc_control(self, xref, xbar, x0):
-        """Löst MPC-Optimierungsproblem"""
-        if not MPC_AVAILABLE:
-            # Fallback auf einfache Regelung
-            return self._simple_control_fallback(xref, x0)
-        
-        try:
-            x = cvxpy.Variable((self.NX, self.T + 1))
-            u = cvxpy.Variable((self.NU, self.T))
-            
-            cost = 0.0
-            constraints = []
-            
-            for t in range(self.T):
-                cost += cvxpy.quad_form(u[:, t], self.R)
-                
-                if t != 0:
-                    cost += cvxpy.quad_form(xref[:, t] - x[:, t], self.Q)
-                
-                A, B, C = self.get_linear_model_matrix(
-                    xbar[2, t], xbar[3, t], 0.0)  # Linearisierung um Referenz
-                constraints += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t] + C]
-                
-                if t < (self.T - 1):
-                    cost += cvxpy.quad_form(u[:, t + 1] - u[:, t], self.Rd)
-                    constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <= self.MAX_DSTEER * self.DT]
-            
-            cost += cvxpy.quad_form(xref[:, self.T] - x[:, self.T], self.Qf)
-            
-            # Randbedingungen
-            constraints += [x[:, 0] == x0]
-            constraints += [x[2, :] <= self.MAX_SPEED]
-            constraints += [x[2, :] >= self.MIN_SPEED]
-            constraints += [cvxpy.abs(u[0, :]) <= self.MAX_ACCEL]
-            constraints += [cvxpy.abs(u[1, :]) <= self.MAX_STEER]
-            
-            # Problem lösen
-            prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
-            prob.solve(verbose=False)
-            
-            if prob.status == cvxpy.OPTIMAL or prob.status == cvxpy.OPTIMAL_INACCURATE:
-                u_opt = u.value
-                if u_opt is not None:
-                    return u_opt[0, 0], u_opt[1, 0]  # Erste Kontrollaktion
-            
-            print("⚠ MPC-Lösung nicht optimal - Fallback")
-            return self._simple_control_fallback(xref, x0)
-            
-        except Exception as e:
-            print(f"MPC-Fehler: {e}")
-            return self._simple_control_fallback(xref, x0)
-    
-    def _simple_control_fallback(self, xref, x0):
-        """Einfache Regelung als Fallback"""
-        # Einfache P-Regelung
-        y_error = xref[1, 1] - x0[1] if xref.shape[1] > 1 else 0.0
-        yaw_error = xref[3, 1] - x0[3] if xref.shape[1] > 1 else 0.0
-        
-        steer = np.clip(yaw_error * 2.0 + y_error * 0.5, -self.MAX_STEER, self.MAX_STEER)
-        accel = 0.0  # Konstante Geschwindigkeit
-        
-        return accel, steer
-    
-    def control(self, vision_error, dt):
-        """Hauptfunktion des MPC-Controllers"""
-        # Referenzpfad generieren
-        xref = self.generate_reference_path(vision_error, self.state)
-        
-        # Aktueller Zustand
-        x0 = np.array([self.state['x'], self.state['y'], self.state['v'], self.state['yaw']])
-        
-        # MPC-Regelung
-        accel, steer = self.linear_mpc_control(xref, xref, x0)
-        
-        # Zustand aktualisieren
-        self.state = self.update_state(self.state, accel, steer)
-        
-        # Kontrolle speichern
-        self.last_control = {'accel': accel, 'steer': steer}
-        
-        # Debug-Terme für IPC (vereinfacht)
-        self.mpc_p_term = vision_error * 2.0  # Proportionalterm
-        self.mpc_i_term = 0.0  # Nicht verwendet in MPC
-        self.mpc_d_term = steer * 5.0  # Differential-Äquivalent
-        
-        return steer, accel
-
 class VisionController:
     def __init__(self):
         # Webots initialisieren
         self.robot = Supervisor()
         self.timestep = int(self.robot.getBasicTimeStep())
         
-        print(f"Vision Controller mit MPC - Timestep: {self.timestep} ms")
+        print(f"Vision Controller - Timestep: {self.timestep} ms")
         
         # Devices initialisieren
         self._init_devices()
@@ -267,17 +47,14 @@ class VisionController:
         # Referenz auf Fahrrad für Supervisor-Funktionen
         self.bicycle = self.robot.getFromDef('BICYCLE')
         
-        # Kamera-Offset relativ zum Fahrrad
+        # Kamera-Offset relativ zum Fahrrad (nur Translation, Rotation erbt vom Transform)
         self.camera_offset = [0, 0.1, 0.35]  # x, y, z Offset
         
-        # Vision Controller Kamera-Transform-Node-Referenz
+        # Vision Controller Kamera-Transform-Node-Referenz für dynamische Positionierung
         self.camera_transform_node = self.robot.getFromDef('VISION_CAMERA_TRANSFORM')
         
         # YOLO-Modell laden (falls verfügbar)
         self._init_yolo()
-        
-        # MPC-Controller initialisieren
-        self.mpc_controller = VisionMPCController()
         
         # Steuerungsparameter
         self.max_steer = 0.4      # Maximaler Lenkbefehl (-1.0 bis +1.0)
@@ -285,32 +62,44 @@ class VisionController:
         self.min_speed = 0.3      # Minimale Geschwindigkeit
         self.max_speed = 0.6      # Maximale Geschwindigkeit
         
-        # MPC-Zustand für IPC
+        # PID-Parameter für Vision-basierte Lenkung
+        self.vision_kp = 50   # Reduziert für sanftere Lenkung
+        self.vision_ki = 0
+        self.vision_kd = 0
+        
+        # PID-Zustand
+        self.vision_integral = 0.0
+        self.vision_last_error = 0.0
+        self.vision_p_term = 0.0
+        self.vision_i_term = 0.0
+        self.vision_d_term = 0.0
         self.vision_error = 0.0
         self.vision_mask_coverage = 0.0
         
-        # Speicherung der letzten gültigen Werte
+        # Speicherung der letzten gültigen Werte für Straßenerkennung
         self.last_valid_error = 0.0
         self.last_valid_mask = None
         self.last_valid_mask_coverage = 0.0
         self.last_valid_timestamp = 0.0
         self.no_detection_counter = 0
-        self.max_no_detection_steps = 10
-        self.error_decay_factor = 0.95
+        self.max_no_detection_steps = 10  # Maximale Anzahl von Schritten ohne Erkennung
+        self.error_decay_factor = 0.95    # Faktor zum langsamen Ausblenden der letzten Werte
         
         # Status
         self.step_counter = 0
         self.last_balance_status = None
         self.vision_enabled = True
         
-        print("=== Vision Controller mit MPC gestartet ===")
+        print("=== Vision Controller gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
-        print(f"MPC verfügbar: {MPC_AVAILABLE}")
         print(f"Vision Controller Kamera: {'✓' if self.camera else '✗'}")
+        print(f"Fahrrad Kamera: ✓ (am Fahrrad montiert)")
         print(f"Kamera-Transform: {'✓' if self.camera_transform_node else '✗'}")
         print(f"Display: {'✓' if self.display else '✗'}")
         print(f"Fahrrad-Tracking: {'✓' if self.bicycle else '✗'}")
+        print(f"Vision-PID: Kp={self.vision_kp}, Ki={self.vision_ki}, Kd={self.vision_kd}")
         print(f"Speed-Range: {self.min_speed:.1f} - {self.max_speed:.1f}")
+        print(f"Kamera-Architektur: Dual-Kamera (Vision Controller + Fahrrad)")
         print("====================================\n")
     
     def _init_devices(self):
@@ -480,14 +269,14 @@ class VisionController:
             # (steer_command, speed_command, valid, vision_error, vision_p_term, vision_i_term, vision_d_term, mask_coverage)
             command_data = struct.pack('ffifffff', 
                                      steer_cmd, speed_cmd, 1,
-                                     self.vision_error, self.mpc_controller.mpc_p_term, 
-                                     self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term, 
+                                     self.vision_error, self.vision_p_term, 
+                                     self.vision_i_term, self.vision_d_term, 
                                      self.vision_mask_coverage)
             
             # Debug: Informationen über das gesendete Command
             print(f"DEBUG: Vision-Command senden - Größe: {len(command_data)} Bytes")
             print(f"DEBUG: steer={steer_cmd:.3f}, speed={speed_cmd:.3f}, valid=1")
-            print(f"DEBUG: v_error={self.vision_error:.3f}, v_p={self.mpc_controller.mpc_p_term:.3f}, v_i={self.mpc_controller.mpc_i_term:.3f}, v_d={self.mpc_controller.mpc_d_term:.3f}, mask={self.vision_mask_coverage:.2f}")
+            print(f"DEBUG: v_error={self.vision_error:.3f}, v_p={self.vision_p_term:.3f}, v_i={self.vision_i_term:.3f}, v_d={self.vision_d_term:.3f}, mask={self.vision_mask_coverage:.2f}")
             
             self.command_emitter.send(command_data)
             
@@ -632,27 +421,38 @@ class VisionController:
             print(f"Fallback-Vision-Fehler: {e}")
             return self._use_last_valid_values()
     
-    def vision_mpc_control(self, error, dt):
-        """MPC-Controller für Vision-basierte Lenkung"""
-        # MPC-Regelung durchführen
-        steer_rad, accel = self.mpc_controller.control(error, dt)
+    def vision_pid_control(self, error, dt):
+        """PID-Controller für Vision-basierte Lenkung"""
+        # P-Term
+        p_term = self.vision_kp * error
         
-        # Lenkwinkel normalisieren auf [-1, 1] für IPC
-        steer_cmd = np.clip(steer_rad / self.mpc_controller.MAX_STEER, -1.0, 1.0)
+        # I-Term mit Anti-Windup
+        self.vision_integral += error * dt
+        # Begrenze Integral-Term
+        integral_limit = 0.5
+        self.vision_integral = max(-integral_limit, min(integral_limit, self.vision_integral))
+        i_term = self.vision_ki * self.vision_integral
         
-        # Geschwindigkeitsbefehl aus Beschleunigung ableiten
-        current_speed = self.mpc_controller.state['v']
-        target_speed = current_speed + accel * dt
-        target_speed = np.clip(target_speed, self.mpc_controller.MIN_SPEED, self.mpc_controller.MAX_SPEED)
+        # D-Term
+        d_error = (error - self.vision_last_error) / dt if dt > 0 else 0.0
+        d_term = self.vision_kd * d_error
         
-        # Geschwindigkeit auf [0, 1] normalisieren
-        speed_cmd = (target_speed - self.min_speed * 10) / (self.max_speed * 10 - self.min_speed * 10)
-        speed_cmd = np.clip(speed_cmd, 0.0, 1.0)
-        
-        # MPC-Terme für IPC-Übertragung speichern
+        # PID-Terme für IPC-Übertragung speichern
+        self.vision_p_term = p_term
+        self.vision_i_term = i_term
+        self.vision_d_term = d_term
         self.vision_error = error
         
-        return steer_cmd, speed_cmd, self.mpc_controller.mpc_p_term, self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term
+        # Gesamtausgang
+        output = p_term + i_term + d_term
+        
+        # Ausgang begrenzen
+        output = max(-self.max_steer, min(self.max_steer, output))
+        
+        # Für nächsten Zyklus
+        self.vision_last_error = error
+        
+        return output, p_term, i_term, d_term
     
     def update_display(self, frame, mask, error, steer_cmd, speed_cmd):
         """Aktualisiert das Display mit Vision-Overlay"""
@@ -686,9 +486,9 @@ class VisionController:
                 cv2.putText(overlay, f"Stability: {stability:.2f}", (10, 150), 
                            cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
             
-            # MPC-Status anzeigen
-            mpc_status = "MPC: ✓" if MPC_AVAILABLE else "MPC: Fallback"
-            cv2.putText(overlay, mpc_status, (10, 180), 
+            # YOLO-Status anzeigen
+            yolo_status = "YOLO: ✓" if YOLO_AVAILABLE and self.yolo_model else "YOLO: Fallback"
+            cv2.putText(overlay, yolo_status, (10, 180), 
                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
             
             # Masken-Info anzeigen
@@ -712,10 +512,10 @@ class VisionController:
             print(f"Vision {'aktiviert' if self.vision_enabled else 'deaktiviert'}")
             
         elif key == ord('R') or key == ord('r'):
-            # Reset MPC-Controller
-            self.mpc_controller.state = {'x': 0.0, 'y': 0.0, 'v': 2.0, 'yaw': 0.0}
-            self.mpc_controller.last_control = {'accel': 0.0, 'steer': 0.0}
-            print("Vision-MPC zurückgesetzt")
+            # Reset PID
+            self.vision_integral = 0.0
+            self.vision_last_error = 0.0
+            print("Vision-PID zurückgesetzt")
             
         elif key == 27:  # ESC
             print("ESC gedrückt - beende Vision Controller")
@@ -774,9 +574,14 @@ class VisionController:
                             else:
                                 error, mask = self.get_vision_error_fallback(frame_bgr)
                             
-                            # MPC-Regelung
+                            # PID-Controller
                             dt = current_time - last_vision_time
-                            steer_cmd, speed_cmd, p_term, i_term, d_term = self.vision_mpc_control(error, dt)
+                            steer_cmd, p_term, i_term, d_term = self.vision_pid_control(error, dt)
+                            
+                            # Geschwindigkeitsanpassung basierend auf Fehler
+                            speed_reduction = min(abs(error) * 2.0, 0.4)  # Max 40% Reduktion
+                            speed_cmd = self.base_speed - speed_reduction
+                            speed_cmd = max(self.min_speed, min(self.max_speed, speed_cmd))
                             
                             # Command senden
                             self.send_vision_command(steer_cmd, speed_cmd)
@@ -786,7 +591,7 @@ class VisionController:
                             
                             # Status ausgeben (alle 2 Sekunden)
                             if self.step_counter % (int(2.0 / vision_interval)) == 0:
-                                self.print_status(error, steer_cmd, speed_cmd, self.mpc_controller.mpc_p_term, self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term)
+                                self.print_status(error, steer_cmd, speed_cmd, p_term, i_term, d_term)
                     
                     except Exception as e:
                         print(f"Vision-Processing-Fehler: {e}")

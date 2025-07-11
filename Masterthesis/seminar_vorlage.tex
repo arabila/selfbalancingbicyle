@@ -1,0 +1,113 @@
+\documentclass[11pt]{article}
+
+%--------------------------------------------------
+% Pakete
+%--------------------------------------------------
+\usepackage{epsfig}
+\usepackage{graphics}
+\usepackage{graphicx}
+%\usepackage[german]{babel}
+\usepackage{german}
+\usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
+\usepackage{url}
+\newcommand{\urlBiBTeX}[1]{\url{#1}}
+\usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
+
+%--------------------------------------------------
+% Seiten-Layout
+%--------------------------------------------------
+\setlength{\textwidth}{6.5in}     % Textbreite
+\setlength{\hoffset}{0in}
+\setlength{\voffset}{0in}
+\setlength{\textheight}{9in}      % Texthöhe 
+\setlength{\topmargin}{-0.2in}    % oberer Rand
+\setlength{\oddsidemargin}{+.1cm} % linker Rand
+
+\setlength\parskip{\medskipamount}
+\setlength\parindent{0pt}
+\thispagestyle{empty}
+
+%--------------------------------------------------
+% Dokument
+%--------------------------------------------------
+\begin{document}
+\begin{center}
+  \scalebox{0.9}{\includegraphics{header_hwr.eps}}
+\end{center}
+
+\vspace{0.6cm}
+\begin{center}
+  {\LARGE Masterarbeit}\\[2.9cm]
+  {\LARGE\textbf{Auf dem Weg zum autonom fahrenden Fahrrad: Eine videogestützte Regelung des Weges mit Webbots}}\\[2.9cm]
+  {\LARGE Amine Karabila}\\[10.2cm]
+  {\large Wintersemester 2025}
+\end{center}
+
+\vspace{0.4cm}
+
+\newpage
+
+%--------------------------------------------------
+% Inhaltsverzeichnis
+%--------------------------------------------------
+\setcounter{tocdepth}{3} % bis zur Ebene subsubsection anzeigen
+\tableofcontents
+\newpage
+
+%--------------------------------------------------
+% Kapitelstruktur
+%--------------------------------------------------
+
+\section{Abstract}
+
+\section{Einleitung}
+
+\section{Theoretischer Hintergrund}
+  \subsection{Bisherige Arbeiten}
+    \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
+    \subsubsection{Amine Karabila (2022) – Hinterrad-Antrieb \& Elektronik}
+    \subsubsection{Jonah Zander (2023) – PID-Balanceregelung}
+    \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
+  \subsection{Grundlagen der Regelungstechnik (PID, MPC)}
+  \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
+  \subsection{Fahrdynamische Modelle nach Schramm / Hiller / Bardini}
+  \subsubsection{Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}
+  \subsubsection{Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}
+  \subsubsection{Gültigkeitsbereiche und Modellvergleich}
+
+\section{Webots-Simulationsumgebung}
+  \subsection{Übersicht}
+  \subsection{Struktur der Simulationsumgebung}
+  \subsection{Physikalisches Modell des Fahrrads}
+  \subsection{Regelung und Steuerung}
+  \subsection{Experiment-Szenarien}
+
+\section{Kombinierte Regelung}
+  \subsection{Portierung des Balance-PID (Zander)}
+  \subsection{Portierung des Fahrtrichtungs-MPC (Giray)}
+  \subsection{Supervisions-/Koppelkaskade}
+  \subsection{Failsafe-Strategien}
+
+\section{Teststrecken}
+  \subsection{Gerade Strecke mit Störimpuls}
+  \subsection{Slalom-Kurs}
+  \subsection{S-Kurve mit Steigung}
+  \subsection{Kreisfahrt}
+
+\section{Ergebnisse}
+  \subsection{Balance-Stabilität}
+  \subsection{Spurtreue \& Querabweichung}
+  \subsection{Rechenzeit \& Echtzeitfähigkeit}
+
+\section{Grenzen der Arbeit}
+
+\section{Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}
+
+\section{Fazit}
+
+\section{Literaturverzeichnis}
+% Hier später \bibliographystyle und \bibliography einfügen
+
+\section{Anhang (Parametertabellen, Screenshots, Release-Link)}
+
+\end{document}
