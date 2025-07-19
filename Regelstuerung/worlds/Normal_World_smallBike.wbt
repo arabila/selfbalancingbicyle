@@ -586,6 +586,7 @@ DEF BICYCLE Robot {#Beginn des Robot Roots
       translation 0 0 0.05
       rotation 1 0 0 0
       name "imu"
+      noise 0
     }
     Receiver { #Definition des Empfängers
       name "command_rx"

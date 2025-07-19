@@ -145,6 +145,8 @@ disturbance_interval = 15.0  # Durchschnittliches Zeitintervall zwischen Störun
 max_disturbance = 0.2        # Maximale Stärke der Störung
 current_disturbance = 0.0    # Aktuelle aktive Störung
 disturbance_decay = 0.95     # Abklingfaktor der Störung pro Zeitschritt
+# Störungen können über diese Variable ein- bzw. ausgeschaltet werden
+disturbance_enabled = False
 
 def calculate_air_resistance(speed):
     """
@@ -683,6 +685,9 @@ def apply_random_disturbance(dt):
         float: Störeffekt, der auf den Lenkwinkel angewendet werden soll.
     """
     global last_disturbance_time, current_disturbance
+
+    if not disturbance_enabled:
+        return 0.0
     
     current_time = robot.getTime()
     
