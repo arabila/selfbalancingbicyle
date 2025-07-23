@@ -6,12 +6,15 @@
 \usepackage{epsfig}
 \usepackage{graphics}
 \usepackage{graphicx}
-\usepackage[german]{babel}
-%\usepackage{german}
+%\usepackage[german]{babel}
+\usepackage{german}
 \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
 \usepackage{url}
 \newcommand{\urlBiBTeX}[1]{\url{#1}}
 \usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
+\usepackage{multicol} % für mehrere Spalten
+\usepackage{cite}
+\bibliographystyle{plain}
 
 %--------------------------------------------------
 % Seiten-Layout
@@ -40,7 +43,7 @@
   {\LARGE Masterarbeit}\\[2.9cm]
   {\LARGE\textbf{Auf dem Weg zum autonom fahrenden Fahrrad: Eine videogestützte Regelung des Weges mit Webbots}}\\[2.9cm]
   {\LARGE Amine Karabila}\\[10.2cm]
-  {\large Wintersemester 2025}
+  {\large Sommersemester 2025}
 \end{center}
 
 \vspace{0.4cm}
@@ -59,222 +62,126 @@
 %--------------------------------------------------
 
 \section{Abstract}
-
-Diese Masterarbeit stellt die Entwicklung und Implementierung einer videogestützten Regelung für ein selbstbalancierendes Fahrrad in der Webots-Simulationsumgebung vor. Das Projekt baut auf vorherigen Arbeiten auf und kombiniert verschiedene Regelungsansätze zu einem integrierten System.
-
-Die Arbeit entwickelt eine Zwei-Controller-Architektur mit unterschiedlichen Ausführungsfrequenzen: Ein schneller Balance-Controller (C, 500 Hz) gewährleistet die Fahrzeugstabilität durch PID-Regelung basierend auf IMU-Sensordaten, während ein langsamerer Vision-Controller (Python, 20 Hz) die Pfadplanung mittels kamerabasierter Wegerkennung übernimmt. Die Kommunikation zwischen den Controllern erfolgt über Webots' integrierte Emitter/Receiver-IPC-Schnittstelle.
-
-Das Vision-System nutzt YOLO-Segmentierung für die Fahrbahnererkennung mit automatischem Fallback auf konventionelle Kantenerkennung. Die kombinierte Regelung gewichtet Vision-Kommandos zu 70\% und Balance-Korrekturen zu 30\%, um sowohl Spurtreue als auch Stabilität zu gewährleisten. Ein umfassendes Monitoring-System protokolliert alle Regelungsparameter für die Analyse und Optimierung.
-
-Die Implementierung wurde auf verschiedenen Teststrecken (Gerade mit Störimpuls, Slalom-Kurs, S-Kurve mit Steigung, Kreisfahrt) validiert. Die Ergebnisse zeigen erfolgreiche Balance-Stabilität bei gleichzeitiger Spurtreue und Echtzeitfähigkeit des Systems. Die Arbeit demonstriert die erfolgreiche Übertragung von Hardware-basierten Regelungsalgorithmen in eine Simulationsumgebung und schafft die Grundlage für zukünftige Entwicklungen im Bereich autonomer Fahrräder.
-
+Diese Masterarbeit beschäftigt sich mit der Entwicklung einer kombinierten Regelungsstrategie für ein autonom fahrendes,
+selbstbalancierendes Fahrrad, basierend auf den Ergebnissen dreier vorangegangener Forschungsarbeiten. Ziel dieser Arbeit 
+ist die erfolgreiche Integration einer PID-Balanceregelung mit einer MPC-basierten Fahrtrichtungsregelung, die mithilfe 
+eines YOLO-Modells zur visuellen Spurdetektion ergänzt wird. Zur Validierung und Optimierung der kombinierten Regelung 
+wurde die Simulationsumgebung Webots verwendet, wodurch die Robustheit und Funktionalität der entwickelten Regelungsalgorithmen
+realitätsnah überprüft werden konnten. Im Rahmen der Arbeit wurde eine zweistufige Regelungsarchitektur umgesetzt, welche die präzise 
+Balancierung des Fahrrads mittels eines PID-Reglers und die zuverlässige Spurverfolgung sowie Navigation mithilfe eines MPC-Reglers sicherstellt. 
+Die gewonnenen Simulationsergebnisse bestätigen die Machbarkeit und Effizienz des entwickelten Ansatzes und legen damit eine solide Grundlage für die zukünftige
+Implementierung der Regelung in einem realen autonomen Fahrrad.
 \newpage
-
-\newpage
-
+%--------------------------------------------------
+% Einleitung
+%--------------------------------------------------
 
 \section{Einleitung}
 
-Die Entwicklung autonomer Fahrzeuge hat in den letzten Jahren erhebliche Fortschritte gemacht und revolutioniert die Art, wie wir über Mobilität denken. Während sich die Forschung hauptsächlich auf Automobile konzentriert, bieten zweirädrige Fahrzeuge wie Fahrräder und Motorräder einzigartige Herausforderungen und Möglichkeiten für die Entwicklung autonomer Systeme. Das inherent instabile Verhalten zweirädriger Fahrzeuge erfordert kontinuierliche Balanceregelung, was sie zu einem idealen Testfeld für fortgeschrittene Regelungsalgorithmen macht.
+\subsection{Problemstellung}
 
-\subsection{Motivation und Problemstellung}
+\subsection{Theoretischer Hintergrund}
+\subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
+\subsubsection{Amine Karabila (2022) – Hinterrad-Antrieb \& Elektronik}
+\subsubsection{Jonah Zander (2023) – PID-Balanceregelung}
+\subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
 
-Selbstbalancierende Fahrräder stellen ein faszinierendes Forschungsgebiet dar, das multiple Disziplinen vereint: Regelungstechnik, Maschinelles Lernen, Computervision und Fahrdynamik. Die Fähigkeit, ein Fahrrad ohne menschlichen Fahrer stabil zu halten und gleichzeitig einer vordefinierten Route zu folgen, erfordert die Lösung komplexer Probleme der Mehrzieloptimierung. Dabei müssen sowohl die Längsstabilität (Vorwärtsgeschwindigkeit) als auch die Querstabilität (Seitenneigung) kontinuierlich geregelt werden, während das Fahrzeug einer gewünschten Trajektorie folgt.
-
-Die Herausforderung liegt in der Kopplung verschiedener Regelkreise mit unterschiedlichen Zeitkonstanten: Die Balance-Regelung erfordert hochfrequente Korrekturen im Millisekundenbereich, während die Pfadplanung auf Basis von Kamerabildern mit niedrigeren Frequenzen arbeiten kann. Diese unterschiedlichen Anforderungen machen eine sorgfältige Systemarchitektur erforderlich, die beide Aspekte optimal berücksichtigt.
-
-\subsection{Stand der Forschung}
-
-Das Thema selbstbalancierender Fahrräder hat in der wissenschaftlichen Gemeinschaft erhebliche Aufmerksamkeit erhalten. Frühe Arbeiten konzentrierten sich auf die mathematische Modellierung der Fahrraddynamik und die Entwicklung grundlegender Balanceregelungen. Moderne Ansätze integrieren zunehmend Computervision und maschinelles Lernen für die Pfadplanung und Umgebungswahrnehmung.
-
-Im Kontext dieses Projekts baut die vorliegende Arbeit auf einer Reihe von Vorgängerarbeiten auf, die sukzessive die Grundlagen für ein vollständiges System geschaffen haben. Diese Arbeiten werden im Detail im Kapitel "Theoretischer Hintergrund" behandelt und haben gezeigt, dass sowohl die Balance-Regelung als auch die vision-basierte Pfadplanung grundsätzlich funktionieren. Die Integration beider Systeme in einer kohärenten Architektur stellt jedoch eine neue Herausforderung dar, die in der vorliegenden Arbeit adressiert wird.
-
-
-\subsection{Zielsetzung der Arbeit}
-
-Das Hauptziel dieser Masterarbeit ist die Entwicklung und Implementierung einer integrierten videogestützten Regelung für ein selbstbalancierendes Fahrrad in der Webots-Simulationsumgebung. Dabei sollen die bewährten Ansätze aus den Vorgängerarbeiten kombiniert und zu einem funktionsfähigen Gesamtsystem integriert werden.
-
-Die spezifischen Ziele umfassen:
-
-\begin{enumerate}
-\item \textbf{Systemintegration}: Entwicklung einer Zwei-Controller-Architektur, die Balance-Regelung und Vision-basierte Pfadplanung effizient kombiniert.
-\item \textbf{Echtzeitfähigkeit}: Implementierung eines Systems, das die unterschiedlichen Zeitanforderungen beider Regelkreise erfüllt (500 Hz Balance, 20 Hz Vision).
-\item \textbf{Robustheit}: Entwicklung von Failsafe-Mechanismen und adaptiven Regelungsstrategien für verschiedene Fahrsituationen.
-\item \textbf{Validierung}: Umfassende Tests auf verschiedenen Teststrecken zur Bewertung der Systemperformance.
-\item \textbf{Skalierbarkeit}: Erstellung einer erweiterbaren Architektur, die zukünftige Verbesserungen und zusätzliche Funktionen ermöglicht.
-\end{enumerate}
-
-\subsection{Methodisches Vorgehen}
-
-Die Arbeit folgt einem systematischen Ansatz, der sowohl theoretische Grundlagen als auch praktische Implementierung umfasst. Zunächst werden die bestehenden Hardware-Implementierungen analysiert und für die Simulation adaptiert. Anschließend wird eine modulare Software-Architektur entwickelt, die eine saubere Trennung zwischen Balance-Regelung und Vision-Controller ermöglicht.
-
-Die Implementierung erfolgt in der Webots-Simulationsumgebung, die eine realistische Physik-Simulation bei kontrollierten Testbedingungen bietet. Dies ermöglicht die systematische Evaluation verschiedener Regelungsstrategien ohne die Komplexität und Risiken realer Hardware-Tests.
-
-\subsection{Beitrag zur Forschung}
-
-Diese Arbeit leistet mehrere wichtige Beiträge zur Forschung im Bereich autonomer zweirädriger Fahrzeuge:
-
-\begin{itemize}
-\item \textbf{Integrierte Architektur}: Erstmalige erfolgreiche Integration von Balance-Regelung und Vision-basierter Pfadplanung in einem kohärenten System.
-\item \textbf{Multi-Frequenz-Regelung}: Entwicklung einer Architektur, die Regelkreise mit stark unterschiedlichen Zeitkonstanten effizient koordiniert.
-\item \textbf{Simulation-zu-Hardware-Transfer}: Demonstration der erfolgreichen Übertragung von Hardware-basierten Algorithmen in eine Simulationsumgebung.
-\item \textbf{Systematische Evaluation}: Umfassende Bewertung verschiedener Teststrecken und Fahrsituationen.
-\end{itemize}
-
-\subsection{Aufbau der Arbeit}
-
-Die Arbeit ist wie folgt strukturiert: Kapitel 2 behandelt die theoretischen Grundlagen und analysiert die bisherigen Arbeiten. Kapitel 3 stellt die Webots-Simulationsumgebung und das physikalische Modell vor. Kapitel 4 beschreibt die entwickelte kombinierte Regelungsarchitektur im Detail. Kapitel 5 präsentiert die verschiedenen Teststrecken und Validierungsszenarien. Kapitel 6 diskutiert die Ergebnisse und deren Interpretation. Kapitel 7 identifiziert die Grenzen der aktuellen Implementierung, während Kapitel 8 zukünftige Forschungsrichtungen aufzeigt. Die Arbeit schließt mit einem Fazit in Kapitel 9, das die wichtigsten Erkenntnisse zusammenfasst.
-
-\section{Theoretischer Hintergrund}
-  \subsection{Bisherige Arbeiten}
-  
-Die vorliegende Masterarbeit baut auf einer Reihe von Vorgängerarbeiten auf, die sukzessive die Grundlagen für ein vollständiges autonomes Fahrrad-System geschaffen haben. Jede dieser Arbeiten hat spezifische Aspekte des Gesamtsystems entwickelt und implementiert, wodurch eine solide Basis für die integrierte Lösung entstanden ist.
-
-    \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
-    
-Die Bachelorarbeit von Anna Ranz (2021) \cite{Ranz2021} legte den entscheidenden Grundstein für das gesamte Projekt durch die Entwicklung der Hardware-Architektur und die Implementierung der grundlegenden Sensorfusion und Motorsteuerung. Diese Arbeit etablierte die wesentlichen Systemkomponenten und deren Zusammenspiel.
-
-\paragraph{Systemarchitektur und Hardware-Komponenten}
-
-Das von Ranz entwickelte System basiert auf einem BeagleBone Black Einplatinencomputer als zentrale Steuerungseinheit. Die Hardware-Architektur umfasst drei wesentliche Komponenten:
-
-\begin{itemize}
-\item \textbf{BNO055 IMU-Sensor}: Ein 9-Achsen-Inertialsensor von Bosch, der über I2C-Bus (\texttt{/dev/i2c-2}) mit dem BeagleBone kommuniziert. Der Sensor liefert Euler-Winkel (Heading, Roll, Pitch) sowie Gyroskopdaten und verfügt über eine integrierte Sensorfusion.
-
-\item \textbf{MD49 Motorcontroller}: Ein dualer DC-Motorcontroller von Devantech, der über UART (\texttt{/dev/ttyO4}) angesteuert wird. Der Controller verfügt über integrierte Encoder-Auswertung und PID-Regelung für präzise Positionssteuerung.
-
-\item \textbf{EMG49 Lenkmotor}: Ein getriebeloser DC-Motor mit 980 Encoder-Impulsen pro Umdrehung und einem Getriebeverhältnis von 30:44 zwischen Motor und Lenkung.
-\end{itemize}
-
-\paragraph{Software-Architektur}
-
-Die Software-Implementierung erfolgte vollständig in C und zeichnet sich durch eine modulare Architektur aus. Die wichtigsten Funktionsgruppen umfassen:
-
-\begin{itemize}
-\item \textbf{IMU-Funktionen}: Vollständige Implementierung der BNO055-Kommunikation mit Funktionen für Modus-Konfiguration, Achsen-Remapping und Datenauslesung aller Sensoren (Euler-Winkel, Gyroskopdaten).
-
-\item \textbf{Motorsteuerung}: Umfassende MD49-Ansteuerung mit Funktionen für Geschwindigkeitskontrolle, Positionsregelung, Encoder-Auswertung und verschiedene Betriebsmodi.
-
-\item \textbf{Präzise Winkelsteuerung}: Implementierung der Umrechnung zwischen Encoderwerten und Lenkwinkeln unter Berücksichtigung des Getriebeverhältnisses.
-\end{itemize}
-
-Ein charakteristisches Beispiel der Implementierung zeigt die Hauptregelschleife:
-
-\begin{verbatim}
-do{
-    current_roll = get_roll(i2c_fd);
-    next_angle = - (k_phi) * current_roll;
-    res = set_MD49_steering_angle(uart_fd, next_angle);
-    last_roll = current_roll;
-} while(true);
-\end{verbatim}
-
-\paragraph{Technische Innovationen}
-
-Ranz' Arbeit zeichnet sich durch mehrere technische Innovationen aus:
-
-\begin{itemize}
-\item \textbf{Hardwarenahes Systemdesign}: Direkte Implementierung der Hardware-Schnittstellen ohne Abstraktionsschichten, wodurch minimale Latenz und maximale Kontrolle erreicht wird.
-
-\item \textbf{Modulare Testarchitektur}: Separate Testprogramme für IMU (\texttt{imutest.c}) und Motorsteuerung (\texttt{motortest.c}) ermöglichen isolierte Entwicklung und Debugging.
-
-\item \textbf{Präzise Kalibrierung}: Implementierung der korrekten Umrechnungsfaktoren zwischen Encoder-Werten und physikalischen Winkeln unter Berücksichtigung des mechanischen Aufbaus.
-\end{itemize}
-
-\paragraph{Elektrische Systemintegration}
-
-Die Arbeit umfasst auch die vollständige elektrische Systemintegration mit mehreren Spannungsebenen:
-
-\begin{itemize}
-\item 48V-System für Hauptantrieb und Systemversorgung
-\item 24V-System für Motorsteuerung 
-\item 5V-System für Logik und Sensorik
-\item 3.3V-System für BeagleBone-Peripherie
-\end{itemize}
-
-Die Schaltpläne zeigen die Implementierung von Spannungsreglern, Levelshiftern und Sicherheitssystemen einschließlich Not-Aus-Schalter und Zugschalter.
-
-\paragraph{Bedeutung für das Gesamtprojekt}
-
-Die Arbeit von Ranz schuf die essentiellen Grundbausteine für alle nachfolgenden Entwicklungen:
-
-\begin{itemize}
-\item \textbf{Hardwareplatform}: BeagleBone-basierte Architektur mit allen notwendigen Schnittstellen
-\item \textbf{Sensorintegration}: Funktionsfähige IMU-Anbindung mit kalibrierter Sensorfusion
-\item \textbf{Aktorik}: Präzise Motorsteuerung mit Encoder-Feedback
-\item \textbf{Grundregelung}: Erste Implementierung einer proportionalen Roll-Winkel-Regelung
-\end{itemize}
-
-Diese Grundlagen ermöglichten es den nachfolgenden Arbeiten, sich auf höhere Abstraktionsebenen zu konzentrieren, ohne sich mit den Details der Hardware-Ansteuerung befassen zu müssen.
-
-    \subsubsection{Amine Karabila (2022) – Hinterrad-Antrieb \& Elektronik}
-    
-Aufbauend auf den von Ranz geschaffenen Grundlagen entwickelte Amine Karabila (2022) \cite{Karabila2022} das System weiter, mit besonderem Fokus auf den Hinterradantrieb und die Optimierung der Elektronik-Architektur.
-
-    \subsubsection{Jonah Zander (2023) – PID-Balanceregelung}
-    
-Jonah Zander (2023) \cite{Zander2023} implementierte eine ausgeklügelte PID-basierte Balance-Regelung, die die Stabilität des Fahrrads erheblich verbesserte und eine solide Grundlage für die Kombination mit vision-basierten Ansätzen schuf.
-
-    \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
-    
-Yasin Giray (2024) \cite{Giray2024} integrierte moderne Computer-Vision-Techniken mit YOLO-Segmentierung und Model Predictive Control (MPC) für die Fahrtrichtungsregelung und erweiterte das System um autonome Navigationsfähigkeiten.
-  \subsection{Grundlagen der Regelungstechnik (PID, MPC)}
-  \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
+%--------------------------------------------------
+% Theoretischer Hintergrund
+%--------------------------------------------------
+  \section{Überblick zur angewandten Regelungstechnik}
   \subsection{Fahrdynamische Modelle nach Schramm / Hiller / Bardini}
   \subsubsection{Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}
   \subsubsection{Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}
   \subsubsection{Gültigkeitsbereiche und Modellvergleich}
+  \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
+  \subsection{MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}
 
+
+%--------------------------------------------------
+% Webots-Simulationsumgebung
+%--------------------------------------------------
+\newpage
 \section{Webots-Simulationsumgebung}
-  \subsection{Übersicht}
+
+  \subsection{Überblick}
+
+  Webots ist ein frei verfügbares, plattformunabhängiges Robotiksimulations­programm, das seit 1998 von Cyberbotics 
+  kontinuierlich weiterentwickelt wird. Es kombiniert eine moderne Qt-Oberfläche mit dem auf ODE basierenden Physik-Kernel 
+  und einer OpenGL-basierten Rendering-Engine und ermöglicht so fotorealistische 3D-Szenarien inklusive deterministischer 
+  Dynamiksimulation \cite{cyberbotics2025}. Die Software stellt eine hierarchische Szenenstruktur bereit: \textit{World-Dateien} 
+  (\texttt{*.wbt}) enthalten Knoten für Roboter, Objekte und Umweltparameter; jeder Roboter wiederum kapselt Sensor- und Aktuatorknoten, 
+  die über Controller-Prozesse in C/C++, Python, Java, MATLAB oder via ROS-Bridge angesteuert werden können \cite{gupta2023}.  
+  Ein spezieller \textit{Supervisor-API} erlaubt Eingriffe auf Welt-Ebene (z.\,B. Reset, Logging, Auto-Evaluation) und bildet damit 
+  die Grundlage für reproduzierbare Experimente und Wettbewerbe. Typische Einsatzfelder reichen von der frühphasigen Konstruktionsvalidierung 
+  (CAD-Import, Material-/Massen­zuweisung) über Regelungs- und KI-Entwicklung bis hin zu cloudbasierten Multi-Robot-Simulationen. Studien zeigen 
+  zudem, dass Webots dank der offenen Schnittstellen zunehmend als Digital-Twin-Plattform für neuartige Robotertypen – etwa weiche Greifer – genutzt 
+  wird, ohne dass Spezial­hardware erforderlich ist \cite{hadi2024softgripper}.  
+
+  \textbf{Kernmerkmale in Kürze}:
+  \begin{itemize}
+    \item ODE-Physik mit justierbarer Schrittweite; reale Zeit oder beschleunigte Batch-Runs
+    \item Große Sensor-/Aktuator­bibliothek (Kamera, LiDAR, IMU, Propeller u.\,a.)
+    \item ROS\,1/2-Integration (\texttt{webots\_ros2}), Streaming in Web-Browser, HTML-Export
+    \item Versionskontrolle durch Klartext-Weltdaten und Open-Source-Codebasis
+  \end{itemize}
+
+
+
+
   \subsection{Struktur der Simulationsumgebung}
+
+
   \subsection{Physikalisches Modell des Fahrrads}
   \subsection{Regelung und Steuerung}
   \subsection{Experiment-Szenarien}
 
+%--------------------------------------------------
+% Kombinierte Regelung
+%--------------------------------------------------
 \section{Kombinierte Regelung}
   \subsection{Portierung des Balance-PID (Zander)}
   \subsection{Portierung des Fahrtrichtungs-MPC (Giray)}
   \subsection{Supervisions-/Koppelkaskade}
   \subsection{Failsafe-Strategien}
 
-\section{Teststrecken}
-  \subsection{Gerade Strecke mit Störimpuls}
-  \subsection{Slalom-Kurs}
-  \subsection{S-Kurve mit Steigung}
-  \subsection{Kreisfahrt}
-
+%--------------------------------------------------
+% Ergebnisse
+%--------------------------------------------------
 \section{Ergebnisse}
+  \subsection{Teststrecken}
+    \subsubsection{Gerade Strecke mit Störimpuls}
+    \subsubsection{Slalom-Kurs}
+    \subsubsection{S-Kurve mit Steigung}
+    \subsubsection{Kreisfahrt}
   \subsection{Balance-Stabilität}
   \subsection{Spurtreue \& Querabweichung}
   \subsection{Rechenzeit \& Echtzeitfähigkeit}
 
+%--------------------------------------------------
+% Grenzen der Arbeit
+%--------------------------------------------------
 \section{Grenzen der Arbeit}
 
+%--------------------------------------------------
+% Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)
+%--------------------------------------------------
 \section{Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}
 
+%--------------------------------------------------
+% Fazit
+%--------------------------------------------------
 \section{Fazit}
 
-\newpage
-
+%--------------------------------------------------
+% Literaturverzeichnis
+%--------------------------------------------------
 \section{Literaturverzeichnis}
+% Hier später \bibliographystyle und \bibliography einfügen
 
-\begin{thebibliography}{99}
-
-\bibitem{Ranz2021} 
-Ranz, A. (2021). \textit{Steering Control for a Self-Balancing Bicycle}. Bachelorarbeit, Goethe-Universität Frankfurt am Main, Institut für Informatik.
-
-\bibitem{Karabila2022} 
-Karabila, A. (2022). \textit{Hinterrad-Antrieb und Elektronik für ein selbstbalancierendes Fahrrad}. Bachelorarbeit, Goethe-Universität Frankfurt am Main, Institut für Informatik.
-
-\bibitem{Zander2023} 
-Zander, J. (2023). \textit{PID-Balanceregelung für ein selbstbalancierendes Fahrrad}. Bachelorarbeit, Goethe-Universität Frankfurt am Main, Institut für Informatik.
-
-\bibitem{Giray2024} 
-Giray, Y. (2024). \textit{YOLO-basierte Objekterkennung und MPC-Fahrtrichtungsregelung für autonome Fahrräder}. Masterarbeit, Goethe-Universität Frankfurt am Main, Institut für Informatik.
-
-\end{thebibliography}
-
-\section{Anhang (Parametertabellen, Screenshots, Release-Link)}
-
+%--------------------------------------------------
+% Anhang (Parametertabellen, Screenshots, Release-Link)
+%--------------------------------------------------
+\newpage
+\bibliography{refs}
 \end{document}
