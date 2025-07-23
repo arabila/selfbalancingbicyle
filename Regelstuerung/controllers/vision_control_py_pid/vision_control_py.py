@@ -63,7 +63,7 @@ class VisionController:
         self.max_speed = 0.6      # Maximale Geschwindigkeit
         
         # PID-Parameter für Vision-basierte Lenkung
-        self.vision_kp = 50   # Reduziert für sanftere Lenkung
+        self.vision_kp = 20   # Reduziert für sanftere Lenkung
         self.vision_ki = 0
         self.vision_kd = 0
         

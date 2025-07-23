@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  23 JUL 2025 14:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  23 JUL 2025 15:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -382,11 +382,11 @@ Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 39.
 [3]
 
 [4]
-<figures/Fahrt.png, id=239, 530.4618pt x 458.6736pt>
-File: figures/Fahrt.png Graphic file (type png)
-<use figures/Fahrt.png>
-Package pdftex.def Info: figures/Fahrt.png  used on input line 128.
-(pdftex.def)             Requested size: 375.80542pt x 324.96065pt.
+<figures/Fahrt1.png, id=239, 1272.755pt x 699.61375pt>
+File: figures/Fahrt1.png Graphic file (type png)
+<use figures/Fahrt1.png>
+Package pdftex.def Info: figures/Fahrt1.png  used on input line 128.
+(pdftex.def)             Requested size: 375.80542pt x 206.56575pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
@@ -395,7 +395,7 @@ LaTeX Warning: `h' float specifier changed to `ht'.
 
 [5]
 
-[6 <./figures/Fahrt.png>]
+[6 <./figures/Fahrt1.png>]
 
 [7{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
 
@@ -413,14 +413,14 @@ Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
  ) 
 Here is how much of TeX's memory you used:
  9842 strings out of 473190
- 155042 string characters out of 5704335
+ 155049 string characters out of 5704335
  562064 words of memory out of 5000000
  32915 multiletter control sequences out of 15000+600000
  565229 words of font info for 58 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  75i,7n,79p,586b,486s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
-Output written on seminar_vorlage.pdf (10 pages, 701629 bytes).
+Output written on seminar_vorlage.pdf (10 pages, 620071 bytes).
 PDF statistics:
  357 PDF objects out of 1000 (max. 8388607)
  315 compressed objects within 4 object streams

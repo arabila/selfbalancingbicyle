@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex seminar_vorlage"] 1753275306.13128 "seminar_vorlage.aux" "seminar_vorlage.bbl" "seminar_vorlage" 1753275307.6752 0
+["bibtex seminar_vorlage"] 1753275306.13128 "seminar_vorlage.aux" "seminar_vorlage.bbl" "seminar_vorlage" 1753276303.85592 0
   "./refs.bib" 1753274574.09515 1624 3c6cdf18a7477582fabca8437491faee ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/bibtex/bst/base/plain.bst" 1741388039 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "seminar_vorlage.aux" 1753275307.48236 6458 4331351fcedc628d82a84d3a8901949a "pdflatex"
+  "seminar_vorlage.aux" 1753276303.65383 6458 4331351fcedc628d82a84d3a8901949a "pdflatex"
   (generated)
   "seminar_vorlage.bbl"
   "seminar_vorlage.blg"
   (rewritten before read)
-["pdflatex"] 1753275306.21032 "/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" "seminar_vorlage.pdf" "seminar_vorlage" 1753275307.67533 0
-  "/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" 1753275304.42034 12008 d4792c91fdbc80f61212d239ebb8032f ""
+["pdflatex"] 1753276302.92709 "/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" "seminar_vorlage.pdf" "seminar_vorlage" 1753276303.85601 0
+  "/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" 1753276302.68043 12009 e8793a9fae2774c7d0019f84a5df4363 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1741388039 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/fontname/texfonts.map" 1741388039 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/pdftex/updmap/pdftex.map" 1741388039 5466553 2748998d7db8078826afa1f272036265 ""
@@ -97,13 +97,13 @@
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/url/url.sty" 1741388039 12796 8edb7d69a20b857904dd0ea757c14ec9 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/web2c/texmf.cnf" 1741388039 42151 79f67285bdd95beca4d137b380b4b9e5 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-var/web2c/pdftex/pdflatex.fmt" 1741388039 3346141 1288109d02d1c772df65535881471649 ""
-  "figures/Fahrt.png" 1753274294.13333 300544 87edfe9b390c7f79afb697e461048815 ""
+  "figures/Fahrt1.png" 1753276277.33932 576429 477d8208486c84b831ff1b03c8da16fb ""
   "header_hwr.eps" 1142422320 132950 462b36c74c335fecbcef4640e7efe578 ""
-  "seminar_vorlage.aux" 1753275307.48236 6458 4331351fcedc628d82a84d3a8901949a "pdflatex"
+  "seminar_vorlage.aux" 1753276303.65383 6458 4331351fcedc628d82a84d3a8901949a "pdflatex"
   "seminar_vorlage.bbl" 1753275306.20825 1297 5eedb5581d476b215e416f5b2e0e4aa6 "bibtex seminar_vorlage"
-  "seminar_vorlage.out" 1753275307.48335 8947 4a4d366be18460b53b65ba57692a3862 "pdflatex"
-  "seminar_vorlage.tex" 1753275304.42034 12008 d4792c91fdbc80f61212d239ebb8032f ""
-  "seminar_vorlage.toc" 1753275307.48357 3932 0c8fced94ddece2919603465a1fdb3f3 "pdflatex"
+  "seminar_vorlage.out" 1753276303.6547 8947 4a4d366be18460b53b65ba57692a3862 "pdflatex"
+  "seminar_vorlage.tex" 1753276302.68043 12009 e8793a9fae2774c7d0019f84a5df4363 ""
+  "seminar_vorlage.toc" 1753276303.65492 3932 0c8fced94ddece2919603465a1fdb3f3 "pdflatex"
   (generated)
   "seminar_vorlage.aux"
   "seminar_vorlage.log"
