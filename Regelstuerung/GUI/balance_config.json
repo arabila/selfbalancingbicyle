@@ -16,7 +16,7 @@
             "stability_reduction": 0.5
         },
         "mechanical_limits": {
-            "max_handlebar_angle": 0.32,
+            "max_handlebar_angle": 0.5,
             "max_roll_angle": 45.0
         },
         "system": {

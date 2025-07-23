@@ -281,7 +281,7 @@ float get_filtered_roll_angle(void) {
             "stability_factor": 0.5
         },
         "system": {
-            "max_handlebar_angle": 0.32,
+            "max_handlebar_angle": 0.5,
             "max_roll_angle": 45.0,
             "filter_size": 5,
             "enable_logging": true
@@ -300,7 +300,7 @@ balance_params = {
     "Angle PID Ki": {"value": 0.0, "min": 0.0, "max": 10.0},
     "Angle PID Kd": {"value": 2.2, "min": 0.0, "max": 10.0},
     "Base Speed": {"value": 5.0, "min": 1.0, "max": 10.0},
-    "Max Handlebar Angle": {"value": 0.32, "min": 0.1, "max": 0.5}
+    "Max Handlebar Angle": {"value": 0.5, "min": 0.1, "max": 0.8}
 }
 ```
 
