@@ -65,6 +65,19 @@
 \section{Theoretischer Hintergrund}
   \subsection{Bisherige Arbeiten}
     \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
+    \label{subsubsec:ranz2021}
+    Die Bachelorarbeit von Anna Ranz bildete den Startpunkt des Projekts. Ihr Ziel
+    war die Konstruktion eines lauff\"ahigen Prototyps, mit dem grundlegende
+    physikalische Eigenschaften eines selbstbalancierenden Fahrrads untersucht
+    werden konnten. Kern der Hardware ist ein BeagleBone\,Black, der den
+    Lenkmotor mittels MD49-Controller (EMG49) \"uber UART und die
+    Inertialmess\-einheit BNO055 \"uber I\textsuperscript{2}C ansteuert. Ranz
+    implementierte erste PID-Regelkreise, validierte die Sensorik in separaten
+    Testprogrammen und analysierte die Dynamik des Gesamtsystems in Bezug auf
+    Massentr\"agheit, Raddynamik und Lenkkinematik. Die umfangreiche
+    Dokumentation enth\"alt Schaltpl\"ane, 3D-Modelle und Messaufnahmen und
+    bildet damit die hardwareseitige Grundlage f\"ur alle sp\"ateren Arbeiten
+    \cite{ranz2021bachelor}.
     \subsubsection{Amine Karabila (2022) – Hinterrad-Antrieb \& Elektronik}
     \subsubsection{Jonah Zander (2023) – PID-Balanceregelung}
     \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
