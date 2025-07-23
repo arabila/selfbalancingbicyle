@@ -51,6 +51,8 @@ whemotor.setVelocity(bcyS)
 ```
 Die Regelung verringert die Geschwindigkeit bei größeren Abweichungen und stellt den Lenkwinkel entsprechend ein.
 
+Der maximal zulässige Lenkwinkel wurde auf **0.5 rad** (≈29°) erhöht, was nun deutlich engere Kurven ermöglicht.
+
 ## Systemüberblick
 Eine vereinfachte Blockdarstellung der Regelstrecke:
 ```

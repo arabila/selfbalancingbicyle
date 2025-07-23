@@ -184,7 +184,7 @@ void balance_config_set_defaults(balance_config_t *config) {
     config->speed_control.stability_reduction = 0.5f; // 50% Reduktion bei max. Lenkwinkel
     
     // Mechanical Limits
-    config->mechanical_limits.max_handlebar_angle = 0.32f; // ~18° in Radiant
+    config->mechanical_limits.max_handlebar_angle = 0.5f; // ~29° in Radiant
     config->mechanical_limits.max_roll_angle = 45.0f;      // 45° maximaler Roll-Winkel
     
     // System Settings

@@ -109,7 +109,7 @@ class BalanceControllerGUI:
             # Mechanical Limits
             "max_handlebar_angle": {
                 "name": "Max. Lenkwinkel",
-                "value": 0.32,
+                "value": 0.5,
                 "min": 0.1,
                 "max": 0.8,
                 "description": "Maximaler physischer Lenkwinkel",
@@ -1064,7 +1064,7 @@ class BalanceControllerGUI:
             "angle_Kp": 10.0, "angle_Ki": 0.0, "angle_Kd": 2.2,
             "angle_output_min": -0.3, "angle_output_max": 0.3,
             "base_speed": 5.0, "min_speed": 3.0, "max_speed": 8.0, "stability_reduction": 0.5,
-            "max_handlebar_angle": 0.32, "max_roll_angle": 45.0
+            "max_handlebar_angle": 0.5, "max_roll_angle": 45.0
         }
         
         for key, value in defaults.items():
