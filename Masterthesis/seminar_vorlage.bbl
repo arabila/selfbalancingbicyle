@@ -1,13 +1,43 @@
 \begin{thebibliography}{1}
-\providecommand{\natexlab}[1]{#1}
-\providecommand{\url}[1]{\texttt{#1}}
-\expandafter\ifx\csname urlstyle\endcsname\relax
-  \providecommand{\doi}[1]{doi: #1}\else
-  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
 
-\bibitem[web(2024)]{webotsGithub}
-Webots – github repository.
-\newblock \url{https://github.com/cyberbotics/webots}, 2024.
-\newblock Allgemeine Projektübersicht.
+\bibitem{bno055}
+{Bosch Sensortec}.
+\newblock Bno055 intelligent 9-axis absolute orientation sensor.
+\newblock \url{https://www.bosch-sensortec.com}, 2020.
+
+\bibitem{cyberbotics2025}
+Cyberbotics.
+\newblock Webots -- open source robot simulator.
+\newblock \url{https://cyberbotics.com}, 2025.
+
+\bibitem{md49}
+{Devantech Ltd.}
+\newblock Md49 dual motor driver datasheet.
+\newblock \url{https://www.robot-electronics.co.uk}, 2019.
+
+\bibitem{gupta2023}
+R.~Gupta and S.~Lee.
+\newblock Evaluating webots as digital‐twin platform for multi-robot systems.
+\newblock In {\em Proc. IEEE ICRA}, 2023.
+
+\bibitem{hadi2024softgripper}
+M.~et~al. Hadi.
+\newblock Soft‐gripper simulation in webots.
+\newblock {\em Soft Robotics}, 11(2):123--135, 2024.
+
+\bibitem{bts7960}
+{Infineon Technologies}.
+\newblock Bts7960 high-current half-bridge driver.
+\newblock \url{https://www.infineon.com}, 2018.
+
+\bibitem{karabila2022}
+Amine Karabila.
+\newblock Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance.
+\newblock Master's thesis, Goethe-Universität Frankfurt, 2022.
+
+\bibitem{ranz2021bachelor}
+Anna Ranz.
+\newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
+\newblock Master's thesis, HWR Berlin, 2021.
 
 \end{thebibliography}

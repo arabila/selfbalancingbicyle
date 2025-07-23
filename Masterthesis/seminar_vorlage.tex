@@ -6,6 +6,7 @@
 \usepackage{epsfig}
 \usepackage{graphics}
 \usepackage{graphicx}
+\usepackage{amsmath}              %% für \text{} Befehl
 %\usepackage[german]{babel}
 \usepackage{german}
 \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
@@ -62,40 +63,89 @@
 %--------------------------------------------------
 
 \section{Abstract}
-Diese Masterarbeit beschäftigt sich mit der Entwicklung einer kombinierten Regelungsstrategie für ein autonom fahrendes,
-selbstbalancierendes Fahrrad, basierend auf den Ergebnissen dreier vorangegangener Forschungsarbeiten. Ziel dieser Arbeit 
-ist die erfolgreiche Integration einer PID-Balanceregelung mit einer MPC-basierten Fahrtrichtungsregelung, die mithilfe 
-eines YOLO-Modells zur visuellen Spurdetektion ergänzt wird. Zur Validierung und Optimierung der kombinierten Regelung 
-wurde die Simulationsumgebung Webots verwendet, wodurch die Robustheit und Funktionalität der entwickelten Regelungsalgorithmen
-realitätsnah überprüft werden konnten. Im Rahmen der Arbeit wurde eine zweistufige Regelungsarchitektur umgesetzt, welche die präzise 
-Balancierung des Fahrrads mittels eines PID-Reglers und die zuverlässige Spurverfolgung sowie Navigation mithilfe eines MPC-Reglers sicherstellt. 
-Die gewonnenen Simulationsergebnisse bestätigen die Machbarkeit und Effizienz des entwickelten Ansatzes und legen damit eine solide Grundlage für die zukünftige
-Implementierung der Regelung in einem realen autonomen Fahrrad.
+  Diese Masterarbeit beschäftigt sich mit der Entwicklung einer kombinierten Regelungsstrategie für ein autonom fahrendes,
+  selbstbalancierendes Fahrrad, basierend auf den Ergebnissen dreier vorangegangener Forschungsarbeiten. Ziel dieser Arbeit 
+  ist die erfolgreiche Integration einer PID-Balanceregelung mit einer MPC-basierten Fahrtrichtungsregelung, die mithilfe 
+  eines YOLO-Modells zur visuellen Spurdetektion ergänzt wird. Zur Validierung und Optimierung der kombinierten Regelung 
+  wurde die Simulationsumgebung Webots verwendet, wodurch die Robustheit und Funktionalität der entwickelten Regelungsalgorithmen
+  realitätsnah überprüft werden konnten. Im Rahmen der Arbeit wurde eine zweistufige Regelungsarchitektur umgesetzt, welche die präzise 
+  Balancierung des Fahrrads mittels eines PID-Reglers und die zuverlässige Spurverfolgung sowie Navigation mithilfe eines MPC-Reglers sicherstellt. 
+  Die gewonnenen Simulationsergebnisse bestätigen die Machbarkeit und Effizienz des entwickelten Ansatzes und legen damit eine solide Grundlage für die zukünftige
+  Implementierung der Regelung in einem realen autonomen Fahrrad.
 \newpage
 %--------------------------------------------------
 % Einleitung
 %--------------------------------------------------
 
 \section{Einleitung}
+  \subsection{Problemstellung}
+  \subsection{Bisherige Arbeiten}
+    \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
 
-\subsection{Problemstellung}
+      Die Bachelorarbeit von Anna Ranz bildete den Startpunkt des Projekts. Ihr Ziel
+      war die Konstruktion eines lauff\"ahigen Prototyps, mit dem grundlegende
+      physikalische Eigenschaften eines selbstbalancierenden Fahrrads untersucht
+      werden konnten. Kern der Hardware ist ein BeagleBone\,Black, der den
+      Lenkmotor mittels MD49-Controller (EMG49) \"uber UART und die
+      Inertialmess\-einheit BNO055 \"uber I\textsuperscript{2}C ansteuert. Ranz
+      implementierte erste PID-Regelkreise, validierte die Sensorik in separaten
+      Testprogrammen und analysierte die Dynamik des Gesamtsystems in Bezug auf
+      Massentr\"agheit, Raddynamik und Lenkkinematik. Die umfangreiche
+      Dokumentation enth\"alt Schaltpl\"ane, 3D-Modelle und Messaufnahmen und
+      bildet damit die hardwareseitige Grundlage f\"ur alle sp\"ateren Arbeiten
+      \cite{ranz2021bachelor}.
 
-\subsection{Theoretischer Hintergrund}
-\subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
-\subsubsection{Amine Karabila (2022) – Hinterrad-Antrieb \& Elektronik}
-\subsubsection{Jonah Zander (2023) – PID-Balanceregelung}
-\subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
+      \subsubsection{Amine Karabila (2022) – Erste funktionierende Regelung}
 
-%--------------------------------------------------
-% Theoretischer Hintergrund
-%--------------------------------------------------
-  \section{Überblick zur angewandten Regelungstechnik}
-  \subsection{Fahrdynamische Modelle nach Schramm / Hiller / Bardini}
-  \subsubsection{Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}
-  \subsubsection{Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}
-  \subsubsection{Gültigkeitsbereiche und Modellvergleich}
-  \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
-  \subsection{MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}
+        Amine Karabila schloss 2022 unmittelbar an den Hardware-Prototyp von Ranz an und 
+        überführte das System von einzelnen Stellversuchen zu einem geschlossenen, 
+        echtzeitfähigen Regelkreis. Kern­bestandteil ist eine dreistufige P-Regelung 
+        auf dem BeagleBone Black, die den Rollwinkel der BNO055-IMU \cite{bno055} und 
+        die Lenkerstellung des MD49-Encoders \cite{md49} auswertet, während ein hinterer 
+        Nabenmotor die Vortriebsdrehzahl konstant hält \cite{karabila2022}. 
+        Ein erstes Hindernis war die Strombegrenzung des MD49, die den EMG49-Lenkmotor 
+        zu langsam ansprechen ließ. Karabila ersetzte deshalb den Leistungsteil durch eine 
+        BTS7960-H-Brücke \cite{bts7960} und verwendete den MD49 nur noch zur hochauflösenden 
+        Wegmessung. Nicht-blockierende UART-Aufrufe verkürzten die Encoder­abfrage von rund $4\,\mathrm{ms}$ 
+        auf knapp $1\,\mathrm{ms}$, sodass die Gesamttransportzeit des Reglers auf etwa $2\,\mathrm{ms}$ sank. 
+        Die erste Regel­version koppelte die Motorgeschwindigkeit über einen gestreckten $\tanh$-Verlauf an 
+        die Verweildauer des Rollwinkels in einer „habitablen Zone“. Außerhalb des Labors erwies sich 
+        dieses Verfahren als zu träge: Der Lenker schlug regelmäßig an die Endanschläge, und Stützräder 
+        mussten das Fahrrad vor dem Kippen bewahren. Die finale Lösung verknüpfte dagegen den gemessenen 
+        Rollwinkel direkt mit einem geschwindigkeits­abhängigen Soll-Encoderwert. Dadurch pendelte der 
+        Lenker nur noch mit etwa acht Ticks Amplitude um die Nullposition; ein integrierter Dämpfungsanteil 
+        reduzierte die Motordrehzahl automatisch, sobald sich das System seiner Soll-Lage näherte. 
+        Validiert wurde der Regler im Hof des Informatikgebäudes ($\approx 9.5\times26.5\,\text{m}$, fünf 
+        Prozent Steigung). Bei Sollgeschwindigkeiten von $6$–$10\,\mathrm{km/h}$ blieb das Fahrrad während 
+        aller aussagekräftigen Fahrten aufrecht; Tip-Over-Events traten nicht auf. Die erfolgreichste 
+        Versuchsfahrt bei $10\,\mathrm{km/h}$ zeigte Spitzen von unter acht Encoder-Ticks und eine 
+        Querabweichung, die optisch kaum wahrnehmbar war. Abbildung~\ref{fig:karabila_fahrt} dokumentiert 
+        diese Fahrt und bietet sich als Platzhalter für Fotos der Versuchsstrecke an. Damit bewies Karabilas 
+        Arbeit erstmals die Realisierbarkeit einer selbst­balancierenden Regelung und schuf die Grundlage für 
+        die PID-Optimierungen von Zander sowie die MPC-Navigation von Giray.
+        \begin{figure}[h]
+          \centering
+          \includegraphics[width=0.8\textwidth]{figures/Fahrt.png}
+          \caption{Erfolgreiche Versuchsfahrt von Karabila (2022) bei $10\,\mathrm{km/h}$.}
+          \label{fig:karabila_fahrt}
+        \end{figure}
+            
+
+    \subsubsection{Jonah Zander (2023) – Optimierte PID-Balanceregelung}
+    \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
+          
+
+
+        
+    
+  \section{Einleitung der angewandten Regelungstechnik}
+    \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
+    \subsection{Fahrdynamische Modelle nach Schramm / Hiller / Bardini}
+      \subsubsection{Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}
+      \subsubsection{Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}
+      \subsubsection{Gültigkeitsbereiche und Modellvergleich}
+    \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
+    \subsection{MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}
 
 
 %--------------------------------------------------
@@ -157,6 +207,7 @@ Implementierung der Regelung in einem realen autonomen Fahrrad.
   \subsection{Balance-Stabilität}
   \subsection{Spurtreue \& Querabweichung}
   \subsection{Rechenzeit \& Echtzeitfähigkeit}
+\newpage
 
 %--------------------------------------------------
 % Grenzen der Arbeit
