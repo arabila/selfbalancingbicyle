@@ -1,4 +1,4 @@
-\begin{thebibliography}{1}
+\begin{thebibliography}{10}
 
 \bibitem{bno055}
 {Bosch Sensortec}.
@@ -14,6 +14,11 @@ Cyberbotics.
 {Devantech Ltd.}
 \newblock Md49 dual motor driver datasheet.
 \newblock \url{https://www.robot-electronics.co.uk}, 2019.
+
+\bibitem{guo2020pacejka}
+Y.~Guo and L.~Wang.
+\newblock A simplified implementation of the pacejka tire model for real-time vehicle simulation.
+\newblock {\em International Journal of Vehicle Systems Modelling and Testing}, 15(3):221--235, 2020.
 
 \bibitem{gupta2023}
 R.~Gupta and S.~Lee.
@@ -35,9 +40,24 @@ Amine Karabila.
 \newblock Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance.
 \newblock Master's thesis, Goethe-Universität Frankfurt, 2022.
 
+\bibitem{mccarthy1998bicycle}
+J.~McCarthy.
+\newblock {\em The Physics of Bicycles}.
+\newblock Cambridge University Press, 1998.
+
+\bibitem{fme2013webots}
+I.~Petrovic and Z.~Kovacic.
+\newblock Robot simulation using the webots simulator.
+\newblock {\em FME Transactions}, 41(2):115--120, 2013.
+
 \bibitem{ranz2021bachelor}
 Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
 \newblock Master's thesis, HWR Berlin, 2021.
+
+\bibitem{ode2006smith}
+Russell Smith.
+\newblock Open dynamics engine (ode) manual.
+\newblock \url{http://www.ode.org/}, 2006.
 
 \end{thebibliography}

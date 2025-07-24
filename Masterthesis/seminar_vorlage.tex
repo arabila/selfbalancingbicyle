@@ -1,20 +1,21 @@
-\documentclass[11pt]{article}
+  \documentclass[11pt]{article}
 
-%--------------------------------------------------
-% Pakete
-%--------------------------------------------------
-\usepackage{epsfig}
-\usepackage{graphics}
-\usepackage{graphicx}
-\usepackage{amsmath}              %% für \text{} Befehl
-%\usepackage[german]{babel}
-\usepackage{german}
-\usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
-\usepackage{url}
-\newcommand{\urlBiBTeX}[1]{\url{#1}}
-\usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
-\usepackage{multicol} % für mehrere Spalten
-\usepackage{cite}
+  %--------------------------------------------------
+  % Pakete
+  %--------------------------------------------------
+  \usepackage{epsfig}
+  \usepackage{graphics}
+  \usepackage{graphicx}
+  \usepackage{amsmath}              %% für \text{} Befehl
+  %\usepackage[german]{babel}
+  \usepackage{german}
+  \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
+  \usepackage{url}
+  \newcommand{\urlBiBTeX}[1]{\url{#1}}
+  \usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
+  \usepackage{multicol} % für mehrere Spalten
+  \usepackage{cite}
+  \usepackage{pdfcomment}
 \bibliographystyle{plain}
 
 %--------------------------------------------------
@@ -123,12 +124,14 @@
         diese Fahrt und bietet sich als Platzhalter für Fotos der Versuchsstrecke an. Damit bewies Karabilas 
         Arbeit erstmals die Realisierbarkeit einer selbst­balancierenden Regelung und schuf die Grundlage für 
         die PID-Optimierungen von Zander sowie die MPC-Navigation von Giray.
+        
         \begin{figure}[h]
           \centering
           \includegraphics[width=0.8\textwidth]{figures/Fahrt1.png}
           \caption{Erfolgreiche Versuchsfahrt von Karabila (2022) bei $10\,\mathrm{km/h}$.}
           \label{fig:karabila_fahrt}
         \end{figure}
+        \pdfcomment{Bachelorarbeit verschiedene Grafiken der Fahrten anzeigens}
             
 
     \subsubsection{Jonah Zander (2023) – Optimierte PID-Balanceregelung}
@@ -167,22 +170,143 @@
   (CAD-Import, Material-/Massen­zuweisung) über Regelungs- und KI-Entwicklung bis hin zu cloudbasierten Multi-Robot-Simulationen. Studien zeigen 
   zudem, dass Webots dank der offenen Schnittstellen zunehmend als Digital-Twin-Plattform für neuartige Robotertypen – etwa weiche Greifer – genutzt 
   wird, ohne dass Spezial­hardware erforderlich ist \cite{hadi2024softgripper}.  
+  \vspace{0.5cm}
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/webots_overview.png}
+    \caption{Übersicht der Webots-Simulationsumgebung.}
+    \label{fig:webots_overview}
+  \end{figure}
+ 
 
-  \textbf{Kernmerkmale in Kürze}:
-  \begin{itemize}
-    \item ODE-Physik mit justierbarer Schrittweite; reale Zeit oder beschleunigte Batch-Runs
-    \item Große Sensor-/Aktuator­bibliothek (Kamera, LiDAR, IMU, Propeller u.\,a.)
-    \item ROS\,1/2-Integration (\texttt{webots\_ros2}), Streaming in Web-Browser, HTML-Export
-    \item Versionskontrolle durch Klartext-Weltdaten und Open-Source-Codebasis
-  \end{itemize}
-
-
+  \newpage
 
 
   \subsection{Struktur der Simulationsumgebung}
-
-
+  Die verwendete Simulationsumgebung basiert auf Webots und damit auf einer hierarchisch organisierten Szenenbeschreibung 
+  im VRML-Format. Eine \texttt{.wbt}-Datei kapselt sämtliche Entitäten der virtuellen Welt – von globalen 
+  Parametern (Zeitauflösung, Kontaktmodelle) über Umgebungsobjekte (Boden, Hintergrund, Lichtquellen) bis 
+  hin zu Robotern mitsamt deren Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025,gupta2023}. Jeder Knoten (Node) kann wiederum 
+  Unterknoten besitzen, sodass sich komplexe Systeme modular aus standardisierten Bausteinen zusammensetzen 
+  lassen. Für die vorliegende Arbeit ist diese Hierarchie entscheidend, weil sie erlaubt, (i) das physikalische 
+  Verhalten des Fahrrads getrennt von (ii) der Szenengeometrie und (iii) den übergeordneten Reglerprozessen 
+  zu modellieren. Änderungen an einem Teilbereich – etwa an den Reibungsparametern der Reifen oder an der 
+  Position einer Kamera – bleiben somit lokal und beeinträchtigen die übrigen Komponenten nicht.
+  
+  Ausgangspunkt der Welt ist eine rechteckige Bodenarena mit texturierter Fahrbahnoberfläche, die als Referenzstrecke 
+  für die visuelle Spurführung dient. Globale Kontakt- und Reibungsparameter sind hier definiert, um das Zusammenspiel 
+  zwischen Reifen und Untergrund konsistent zu halten. Ein fester Zeitschritt im Millisekundenbereich stellt sicher, 
+  dass sowohl die Balancebewegungen des Fahrrads als auch die Bildverarbeitungsschleifen deterministisch und in Echtzeit 
+  simuliert werden können \cite{cyberbotics2025}. Die Kameraperspektive des Betrachters (Viewpoint) folgt dem Fahrrad aus erhöhter Position, 
+  was die visuelle Analyse der Fahrmanöver während der Versuche erleichtert.
+  
+  Das zentrale Element der Szene ist der Roboterknoten \emph{BICYCLE}, der das selbstbalancierende Fahrrad repräsentiert. 
+  Sein Geometriemodell wurde aus CAD-Daten übernommen und mit vereinfachten Kollisionsvolumina (Boxen und Zylinder) hinterlegt, 
+  um die Physiksimulation effizient zu halten. Die Massen- und Trägheitsparameter der Baugruppen (Rahmen, Räder, Gabel) sind 
+  explizit angegeben, sodass die Dynamik – insbesondere Roll- und Nickbewegungen – realitätsnah nachgebildet wird. Bewegliche 
+  Komponenten sind über Hinge-Joints angebunden: Das Hinterrad wird über einen Rotationsmotor für den Vortrieb angesteuert, 
+  die Lenkbewegung des Vorderrads erfolgt über ein zweites Gelenk mit eigenem Servomotor. Ergänzend existiert ein Kurbel-/Pedal-Gelenk, 
+  das in erster Linie der geometrischen Vollständigkeit und nicht der Antriebserzeugung dient. Zur Zustandserfassung sind 
+  Sensorschnittstellen integriert: Eine Inertialmesseinheit (IMU) liefert dem Balance-Regler fortlaufend Orientierung und 
+  Rollwinkel \cite{bno055}; eine am Fahrrad montierte Kamera kann genutzt werden, um on-board visuelle Informationen 
+  auszuwerten. Ein Display-Modul steht optional für Debug- oder Visualisierungszwecke zur Verfügung. Die Kommunikation 
+  zwischen Fahrrad und übergeordnetem Regler erfolgt über ein Paar aus \texttt{Emitter} und \texttt{Receiver}, die einen 
+  leichten, paketbasierten Nachrichtenaustausch innerhalb von Webots ermöglichen.
+  
+  Übergeordnet ist ein \emph{Supervisor}-Knoten angelegt. Dieser spezielle Robotertyp besitzt in Webots weitreichende 
+  Eingriffsmöglichkeiten auf Welt-Ebene (z.\,B. Position-Reset, Logging, automatisierte Auswertung) und dient hier als 
+  externe Beobachter- und Steuerinstanz. Der Supervisor trägt eine statisch in der Szene platzierte Kamera, die die Fahrbahn 
+  aus einer globalen Perspektive erfasst. Auf Basis dieser Bilder führt der Python-basierte Vision-Controller eine 
+  Spurdetektion (YOLO) durch und berechnet über ein modellprädiktives Regelungsverfahren (MPC) Lenksollwerte bzw.\ Trajektorien. 
+  Diese Kommandos werden per Funkkanal (Emitter) an den Balance-Controller des Fahrrads übertragen, der sie in konkrete 
+  Motorbefehle umsetzt. Umgekehrt sendet das Fahrrad Statusdaten zurück, die der Supervisor für Evaluations- und Loggingzwecke 
+  speichert. Dieses Zusammenspiel zweier Controller-Prozesse – ein echtzeitnaher PID-Regler in C auf Roboterseite und ein 
+  bildverarbeitungsgetriebener MPC-Regler in Python auf Supervisorebene – bildet die Kernstruktur der kombinierten Regelung.
+  
+  Die gewählte Struktur der Simulationsumgebung verfolgt zwei Ziele: Erstens ermöglicht sie reproduzierbare und sichere 
+  Experimente in verschiedensten Fahrszenarien (Geradeausfahrt mit Störimpuls, Slalomkurse, Kurvenfahrten mit Steigung), 
+  ohne das reale Hardware-Risiko des Umkippens oder der Beschädigung einzugehen. Zweitens gestattet die klare Trennung von 
+  physikalischem Modell, Sensorebene und Reglerlogik eine gezielte Variation einzelner Parameter (z.\,B. Reibung, Zeitschritt, 
+  Bildauflösung), um deren Einfluss auf die Gesamtperformance systematisch zu untersuchen. Webots fungiert damit als flexibles 
+  Testbett, in dem sowohl Balance- als auch Spurführungsalgorithmen iterativ entwickelt, validiert und optimiert werden können, 
+  bevor sie auf den realen Prototyp übertragen werden.
+  
   \subsection{Physikalisches Modell des Fahrrads}
+
+  Das Fahrradsystem wird in Webots als Verbund starrer Körper modelliert, dessen Dynamik von der Open Dynamics Engine (ODE)
+  als Physik-Kern simuliert wird \cite{fme2013webots}. Dabei sind die Geometrie- und Masseneigenschaften aller Komponenten 
+  (Rahmen, Räder etc.) in der Weltdatei \texttt{Normal\_World\_smallBike.wbt} festgelegt, ebenso wie Reibungsparameter an den
+  Kontaktpunkten (Reifen–Boden). ODE integriert die Bewegungsgleichungen der starren Körper unter Berücksichtigung von Kräften, 
+  Kollisionen und Gelenkbedingungen und ermöglicht so eine deterministische Simulation der Fahrdynamik \cite{ode2006smith}. 
+  Durch einen Zeitschritt von \texttt{basicTimeStep = 2} (entspricht $2\,\mathrm{ms}$ bzw. $500\,\mathrm{Hz}$) können auch 
+  schnelle Balancebewegungen präzise abgebildet werden.
+  
+  Zur Verbesserung der Modelltreue wurden zusätzlich zu den ODE-internen Kräften weitere fahrdynamische Effekte implementiert. 
+  Diese befinden sich in der Datei \texttt{controllers/balance\_control\_c/bicycle\_physics.c} 
+  des begleitenden Repositorys\footnote{\url{https://github.com/arabila/selfbalancingbicyle}}.
+  
+  \paragraph{Laterale Reifenkräfte.} Die Seitenkräfte der Reifen werden nach einer vereinfachten Pacejka-Formel berechnet. 
+  Für kleine Schlupfwinkel $\alpha$ gilt näherungsweise $F_y \approx C_1 \alpha$, während bei größeren Winkeln ein nichtlinearer 
+  Verlauf nach:
+  
+  \[
+  F_y = D \cdot \sin\left(C \cdot \arctan(B \alpha)\right)
+  \]
+  
+  genutzt wird. Die Parameter $B$, $C$ und $D$ werden dynamisch angepasst, wobei $D = \mu F_z$ mit dem Reibungskoeffizienten $\mu$ und 
+  der Normalkraft $F_z$ \cite{guo2020pacejka}. Die Umsetzung erfolgt in der Funktion \texttt{computeLateralForce()} im C-Modul 
+  \texttt{bicycle\_physics.c}.
+  
+  \paragraph{Aerodynamischer Widerstand.} Die Luftwiderstandskraft wirkt entgegengesetzt zur Bewegungsrichtung und folgt dem bekannten Modell:
+  
+  \[
+  F_\mathrm{drag} = \frac{1}{2} \rho C_d A v^2
+  \]
+  
+  mit Luftdichte $\rho$, Strömungswiderstandskoeffizient $C_d$, Stirnfläche $A$ und Geschwindigkeit $v$. Dieser Effekt ist im Code 
+  unter \texttt{applyDragForce()} realisiert.
+  
+  \paragraph{Rollwiderstand.} Der Rollwiderstand wird als drehmomentbremsende Kraft modelliert:
+  
+  \[
+  M_\mathrm{roll} = C_\mathrm{roll} \cdot F_z \cdot r
+  \]
+  
+  Hierbei ist $r$ der Reifenumfang, $F_z$ die Normalkraft, und $C_\mathrm{roll}$ ein empirisch bestimmter Rollwiderstandskoeffizient. 
+  Diese Kraft reduziert effektiv den Vortrieb, ohne ein explizites Bremsmoment durch ODE zu simulieren.
+  
+  \paragraph{Gyroskopische Effekte.} Zur Simulation des Kreiselmoments der rotierenden Räder wird folgendes Näherungsmodell verwendet:
+  
+  \[
+  \vec{M}_\mathrm{gyro} = I_\mathrm{w} \cdot (\vec{\omega}_\mathrm{rad} \times \vec{\omega}_\mathrm{rahmen})
+  \]
+  
+  Das Moment wirkt insbesondere stabilisierend um die Rollachse und wurde als separates Moment um die Längsachse implementiert \cite{mccarthy1998bicycle}.
+  
+  \paragraph{Sensorrauschen (IMU-Modell).} Zur Nachbildung realer Sensoreffekte wird der von Webots gemessene Rollwinkel um einen künstlichen 
+  Rauschanteil erweitert und über einen FIFO-Puffer verzögert. Diese Funktionalität ist in \texttt{simulateIMUNoise()} enthalten und sorgt für 
+  eine realitätsnahe Simulation mit verrauschten Messwerten und Signalverzögerung.
+  
+  \paragraph{Externe Umwelteinflüsse.} Das physikalische Modell erlaubt auch die Simulation von Seitenwind, Turbulenz und Straßenneigung. 
+  Die Seitenwindkraft wird vektoriell als konstante Störung auf den Rahmen aufgebracht, deren Richtung und Stärke zur Laufzeit angepasst 
+  werden kann. Turbulente Effekte werden über Zufallsrauschen auf diese Kraft überlagert.
+  
+  Die Kombination aus ODE-basierter Dynamik und benutzerdefinierten Zusatzkräften erlaubt eine realitätsnahe Simulation des Balanceverhaltens. 
+  Insbesondere die Stabilisierung durch Kreiselkräfte, das Einlenkverhalten bei Kurvenfahrt und die trägheitsbedingte Verzögerung des Reglerinputs 
+  lassen sich so qualitativ nachvollziehen.
+  
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{figures/webots.png}
+    \caption{Kräfte- und Momentenmodell des simulierten Fahrrads (eigene Darstellung).}
+    \label{fig:bike_forces}
+  \end{figure}
+
+  
+
+
+
   \subsection{Regelung und Steuerung}
   \subsection{Experiment-Szenarien}
 

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  23 JUL 2025 15:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  24 JUL 2025 16:14
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -298,44 +298,136 @@ Package: multicol 2024/09/14 v1.9i multicolumn formatting (FMi)
 LaTeX Info: Redefining \cite on input line 302.
 LaTeX Info: Redefining \nocite on input line 332.
 Package: cite 2015/02/27  v 5.5
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfcomment/pdfcomment.sty
+Package: pdfcomment 2018/11/01 pdfcomment.sty v2.4a - Josef Kleber (C) 2008-2012, 2015-2016, 2018
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/xkeyval/xkeyval.sty
+Package: xkeyval 2022/06/16 v2.9 package option processing (HA)
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/xkeyval/xkeyval.tex (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/xkeyval/xkvutils.tex
+\XKV@toks=\toks25
+\XKV@tempa@toks=\toks26
+)
+\XKV@depth=\count304
+File: xkeyval.tex 2014/12/03 v2.7a key=value parser (HA)
+))
+\c@pc@count@i=\count305
+\c@pc@count@ii=\count306
+\c@pc@count@iii=\count307
+\c@pc@count@iv=\count308
+\pc@mathannot@box=\box100
+\pc@nullbox=\box101
+\pc@dima=\skip57
+\pc@dimb=\skip58
+\pc@Sposx=\skip59
+\pc@Sposy=\skip60
+\pc@Eposx=\skip61
+\pc@Eposy=\skip62
+\pc@column=\skip63
+\pc@box@width=\skip64
+\pc@box@height=\skip65
+\pc@box@depth=\skip66
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/datetime2/datetime2.sty
+Package: datetime2 2021/03/21 v1.5.7 (NLCT) date and time formats
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/tracklang/tracklang.sty
+Package: tracklang 2025/03/04 v1.6.5 (NLCT) Track Languages
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/tracklang/tracklang.tex)) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/datetime2-german/datetime2-german.ldf
+File: datetime2-german.ldf 2019/12/13 v3.0
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/datetime2-german/datetime2-german-base.ldf
+File: datetime2-german-base.ldf 2019/12/13 v3.0
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/iftex/ifxetex.sty
+Package: ifxetex 2019/10/25 v0.7 ifxetex legacy package. Use iftex instead.
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/iftex/ifluatex.sty
+Package: ifluatex 2019/10/25 v1.5 ifluatex legacy package. Use iftex instead.
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/datetime2-german/datetime2-german-base-ascii.ldf
+File: datetime2-german-base-ascii.ldf 2019/12/13 v3.0
+)))) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/zref/zref-savepos.sty
+Package: zref-savepos 2023-09-14 v2.35 Module savepos for zref (HO)
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/zref/zref-base.sty
+Package: zref-base 2023-09-14 v2.35 Module base for zref (HO)
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/auxhook/auxhook.sty
+Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
+)
+Package zref Info: New property list: main on input line 767.
+Package zref Info: New property: default on input line 768.
+Package zref Info: New property: page on input line 769.
+)
+Package zref Info: New property list: savepos on input line 79.
+Package zref Info: New property: posx on input line 81.
+Package zref Info: New property: posy on input line 82.
+)
+\c@zref@unique=\count309
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/ifthen.sty
+Package: ifthen 2024/03/16 v1.1e Standard LaTeX ifthen package (DPC)
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/tools/calc.sty
+Package: calc 2023/07/08 v4.3 Infix arithmetic (KKT,FJ)
+\calc@Acount=\count310
+\calc@Bcount=\count311
+\calc@Adimen=\dimen169
+\calc@Bdimen=\dimen170
+\calc@Askip=\skip67
+\calc@Bskip=\skip68
+LaTeX Info: Redefining \setlength on input line 80.
+LaTeX Info: Redefining \addtolength on input line 81.
+\calc@Ccount=\count312
+\calc@Cskip=\skip69
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/marginnote/marginnote.sty
+Package: marginnote 2018/08/09 1.4b non floating margin notes for LaTeX
+\c@mn@abspage=\count313
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/iftex/ifpdf.sty
+Package: ifpdf 2019/10/25 v3.4 ifpdf legacy package. Use iftex instead.
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/soulpos/soulpos.sty
+Package: soulpos 2021/10/15 v1.2 Fancy underlining
+\ulp@subcnt=\count314
+\ulp@cnt=\count315
+\ulp@out=\write3
+\ulp@in=\read2
+\ulwidth=\dimen171
+)
+
+Package hyperref Warning: Option `pdftex' has already been used,
+(hyperref)                setting the option has no effect on input line 1369.
+
+Package zref Info: New property list: pdfcomment on input line 2735.
+Package zref Info: New property: PCPDFOBJID on input line 2736.
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
-\l__color_backend_stack_int=\count304
-\l__pdf_internal_box=\box100
+\l__color_backend_stack_int=\count316
+\l__pdf_internal_box=\box102
 ) (./seminar_vorlage.aux)
 \openout1 = `seminar_vorlage.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 37.
-LaTeX Font Info:    ... okay on input line 37.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 38.
+LaTeX Font Info:    ... okay on input line 38.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count305
-\scratchdimen=\dimen169
-\scratchbox=\box101
-\nofMPsegments=\count306
-\nofMParguments=\count307
-\everyMPshowfont=\toks25
-\MPscratchCnt=\count308
-\MPscratchDim=\dimen170
-\MPnumerator=\count309
-\makeMPintoPDFobject=\count310
-\everyMPtoPDFconversion=\toks26
+\scratchcounter=\count317
+\scratchdimen=\dimen172
+\scratchbox=\box103
+\nofMPsegments=\count318
+\nofMParguments=\count319
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count320
+\MPscratchDim=\dimen173
+\MPnumerator=\count321
+\makeMPintoPDFobject=\count322
+\everyMPtoPDFconversion=\toks28
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
@@ -348,11 +440,45 @@ File: color.cfg 2016/01/02 v1.6 sample color configuration
 )
 Package color Info: Driver file: pdftex.def on input line 149.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/graphics/mathcolor.ltx))
-Package hyperref Info: Link coloring ON on input line 37.
+Package hyperref Info: Link coloring ON on input line 38.
  (./seminar_vorlage.out) (./seminar_vorlage.out)
-\@outlinefile=\write3
-\openout3 = `seminar_vorlage.out'.
+\@outlinefile=\write4
+\openout4 = `seminar_vorlage.out'.
 
+Package soulpos Info: Loading soulutf8 on input line 38.
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/soul/soulutf8.sty
+Package: soulutf8 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
+
+
+Package soulutf8 Warning: This package is obsolete,
+(soulutf8)                use the soul package directly. 
+(soulutf8)                 on input line 29.
+
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/soul/soul.sty
+Package: soul 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/soul/soul-ori.sty
+Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
+\SOUL@word=\toks29
+\SOUL@lasttoken=\toks30
+\SOUL@syllable=\toks31
+\SOUL@cmds=\toks32
+\SOUL@buffer=\toks33
+\SOUL@token=\toks34
+\SOUL@syllgoal=\dimen174
+\SOUL@syllwidth=\dimen175
+\SOUL@charkern=\dimen176
+\SOUL@hyphkern=\dimen177
+\SOUL@dimen=\dimen178
+\SOUL@dimeni=\dimen179
+\SOUL@minus=\count323
+\SOUL@comma=\count324
+\SOUL@apo=\count325
+\SOUL@grave=\count326
+\SOUL@spaceskip=\skip70
+\SOUL@ttwidth=\dimen180
+\SOUL@uldp=\dimen181
+\SOUL@ulht=\dimen182
+))
 Package epstopdf Info: Source file: <header_hwr.eps>
 (epstopdf)                    date: 2006-03-15 12:32:00
 (epstopdf)                    size: 132950 bytes
@@ -360,22 +486,24 @@ Package epstopdf Info: Source file: <header_hwr.eps>
 (epstopdf)                    date: 2014-04-23 13:59:22
 (epstopdf)                    size: 50266 bytes
 (epstopdf)             Command: <repstopdf --outfile=header_hwr-eps-converted-to.pdf header_hwr.eps>
-(epstopdf)             \includegraphics on input line 39.
+(epstopdf)             \includegraphics on input line 40.
 Package epstopdf Info: Output file is already uptodate.
 <header_hwr-eps-converted-to.pdf, id=164, 512.91624pt x 49.18375pt>
 File: header_hwr-eps-converted-to.pdf Graphic file (type pdf)
 <use header_hwr-eps-converted-to.pdf>
-Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 39.
+Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 40.
 (pdftex.def)             Requested size: 512.915pt x 49.18361pt.
 
 
 [1
 
+\openout3 = `seminar_vorlage.upa'.
+
 {/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/pdftex/updmap/pdftex.map} <./header_hwr-eps-converted-to.pdf>] (./seminar_vorlage.toc
 
 [2])
-\tf@toc=\write4
-\openout4 = `seminar_vorlage.toc'.
+\tf@toc=\write5
+\openout5 = `seminar_vorlage.toc'.
 
 
 
@@ -385,25 +513,57 @@ Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 39.
 <figures/Fahrt1.png, id=239, 1272.755pt x 699.61375pt>
 File: figures/Fahrt1.png Graphic file (type png)
 <use figures/Fahrt1.png>
-Package pdftex.def Info: figures/Fahrt1.png  used on input line 128.
+Package pdftex.def Info: figures/Fahrt1.png  used on input line 130.
 (pdftex.def)             Requested size: 375.80542pt x 206.56575pt.
 
 
 LaTeX Warning: `h' float specifier changed to `ht'.
 
+Package hyperref Info: bookmark level for unknown lpcsec defaults to 0 on input line 134.
 
 
 [5]
 
 [6 <./figures/Fahrt1.png>]
+<figures/webots_overview.png, id=264, 602.25pt x 363.3575pt>
+File: figures/webots_overview.png Graphic file (type png)
+<use figures/webots_overview.png>
+Package pdftex.def Info: figures/webots_overview.png  used on input line 177.
+(pdftex.def)             Requested size: 375.80542pt x 226.74303pt.
 
-[7{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc}]
+
+[7 <./figures/webots_overview.png>]
 
 [8]
+Overfull \hbox (52.11598pt too wide) in paragraph at lines 237--244
+\OT1/cmr/m/n/10.95 Mas-se-nei-gen-schaf-ten al-ler Kom-po-nen-ten (Rah-men, R[]ader etc.) in der Welt-da-tei \OT1/cmtt/m/n/10.95 Normal[]World[]smallBike.wbt
+ []
 
-[9] (./seminar_vorlage.bbl)
 
-[10] (./seminar_vorlage.aux)
+Overfull \hbox (98.65329pt too wide) in paragraph at lines 245--248
+\OT1/cmr/m/n/10.95 na-mi-sche Ef-fek-te im-ple-men-tiert. Die-se be-fin-den sich in der Da-tei \OT1/cmtt/m/n/10.95 controllers/balance[]control[]c/bicycle[]physics.c
+ []
+
+
+
+[9]
+<figures/webots.png, id=304, 308.352pt x 154.176pt>
+File: figures/webots.png Graphic file (type png)
+<use figures/webots.png>
+Package pdftex.def Info: figures/webots.png  used on input line 301.
+(pdftex.def)             Requested size: 352.31624pt x 176.16237pt.
+
+
+[10 <./figures/webots.png>]
+
+[11]
+
+[12] (./seminar_vorlage.bbl)
+
+[13] (./seminar_vorlage.aux * soulpos - computing points - it may take a few seconds *
+\openout3 = `seminar_vorlage.upb'.
+
+ (./seminar_vorlage.upa))
  ***********
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
@@ -412,18 +572,18 @@ Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
 (rerunfilecheck)             Checksum: 4A4D366BE18460B53B65BA57692A3862;8947.
  ) 
 Here is how much of TeX's memory you used:
- 9842 strings out of 473190
- 155049 string characters out of 5704335
- 562064 words of memory out of 5000000
- 32915 multiletter control sequences out of 15000+600000
- 565229 words of font info for 58 fonts, out of 8000000 for 9000
+ 14751 strings out of 473190
+ 270139 string characters out of 5704335
+ 667342 words of memory out of 5000000
+ 37718 multiletter control sequences out of 15000+600000
+ 566732 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 75i,7n,79p,586b,486s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/cm-super/sfrm1095.pfb>
-Output written on seminar_vorlage.pdf (10 pages, 620071 bytes).
+ 86i,8n,92p,641b,488s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
+Output written on seminar_vorlage.pdf (13 pages, 962453 bytes).
 PDF statistics:
- 357 PDF objects out of 1000 (max. 8388607)
- 315 compressed objects within 4 object streams
- 62 named destinations out of 1000 (max. 500000)
- 331 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 413 PDF objects out of 1000 (max. 8388607)
+ 360 compressed objects within 4 object streams
+ 79 named destinations out of 1000 (max. 500000)
+ 341 words of extra memory for PDF output out of 10000 (max. 10000000)
 
