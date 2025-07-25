@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  24 JUL 2025 16:14
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  25 JUL 2025 13:11
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -525,42 +525,52 @@ Package hyperref Info: bookmark level for unknown lpcsec defaults to 0 on input 
 [5]
 
 [6 <./figures/Fahrt1.png>]
-<figures/webots_overview.png, id=264, 602.25pt x 363.3575pt>
+
+[7]
+
+[8]
+
+[9]
+<figures/webots_overview.png, id=320, 602.25pt x 363.3575pt>
 File: figures/webots_overview.png Graphic file (type png)
 <use figures/webots_overview.png>
-Package pdftex.def Info: figures/webots_overview.png  used on input line 177.
+Package pdftex.def Info: figures/webots_overview.png  used on input line 301.
 (pdftex.def)             Requested size: 375.80542pt x 226.74303pt.
 
 
-[7 <./figures/webots_overview.png>]
+[10 <./figures/webots_overview.png>]
 
-[8]
-Overfull \hbox (52.11598pt too wide) in paragraph at lines 237--244
+[11]
+Overfull \hbox (52.11598pt too wide) in paragraph at lines 362--369
 \OT1/cmr/m/n/10.95 Mas-se-nei-gen-schaf-ten al-ler Kom-po-nen-ten (Rah-men, R[]ader etc.) in der Welt-da-tei \OT1/cmtt/m/n/10.95 Normal[]World[]smallBike.wbt
  []
 
 
-Overfull \hbox (98.65329pt too wide) in paragraph at lines 245--248
+Overfull \hbox (98.65329pt too wide) in paragraph at lines 370--373
 \OT1/cmr/m/n/10.95 na-mi-sche Ef-fek-te im-ple-men-tiert. Die-se be-fin-den sich in der Da-tei \OT1/cmtt/m/n/10.95 controllers/balance[]control[]c/bicycle[]physics.c
  []
 
 
 
-[9]
-<figures/webots.png, id=304, 308.352pt x 154.176pt>
+[12]
+<figures/webots.png, id=361, 308.352pt x 154.176pt>
 File: figures/webots.png Graphic file (type png)
 <use figures/webots.png>
-Package pdftex.def Info: figures/webots.png  used on input line 301.
+Package pdftex.def Info: figures/webots.png  used on input line 427.
 (pdftex.def)             Requested size: 352.31624pt x 176.16237pt.
 
 
-[10 <./figures/webots.png>]
+LaTeX Warning: `h' float specifier changed to `ht'.
 
-[11]
 
-[12] (./seminar_vorlage.bbl)
 
-[13] (./seminar_vorlage.aux * soulpos - computing points - it may take a few seconds *
+[13]
+
+[14 <./figures/webots.png>]
+
+[15] (./seminar_vorlage.bbl)
+
+[16] (./seminar_vorlage.aux * soulpos - computing points - it may take a few seconds *
 \openout3 = `seminar_vorlage.upb'.
 
  (./seminar_vorlage.upa))
@@ -569,21 +579,21 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
-(rerunfilecheck)             Checksum: 4A4D366BE18460B53B65BA57692A3862;8947.
+(rerunfilecheck)             Checksum: 9EB6EBBAF3BE41A17623EC12141C56D2;8925.
  ) 
 Here is how much of TeX's memory you used:
- 14751 strings out of 473190
- 270139 string characters out of 5704335
- 667342 words of memory out of 5000000
- 37718 multiletter control sequences out of 15000+600000
+ 14769 strings out of 473190
+ 270363 string characters out of 5704335
+ 668545 words of memory out of 5000000
+ 37724 multiletter control sequences out of 15000+600000
  566732 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  86i,8n,92p,641b,488s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on seminar_vorlage.pdf (13 pages, 962453 bytes).
+Output written on seminar_vorlage.pdf (16 pages, 978590 bytes).
 PDF statistics:
- 413 PDF objects out of 1000 (max. 8388607)
- 360 compressed objects within 4 object streams
- 79 named destinations out of 1000 (max. 500000)
+ 475 PDF objects out of 1000 (max. 8388607)
+ 418 compressed objects within 5 object streams
+ 91 named destinations out of 1000 (max. 500000)
  341 words of extra memory for PDF output out of 10000 (max. 10000000)
 

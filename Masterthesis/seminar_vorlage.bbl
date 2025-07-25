@@ -15,6 +15,11 @@ Cyberbotics.
 \newblock Md49 dual motor driver datasheet.
 \newblock \url{https://www.robot-electronics.co.uk}, 2019.
 
+\bibitem{Ghidaei2024}
+Yassin Ghidaei.
+\newblock Video- und sensorgest\"utztes autonomes fahren f\"ur ein selbstbalancierendes fahrrad.
+\newblock Master's thesis, Goethe-Universit\"at Frankfurt am Main, 2024.
+
 \bibitem{guo2020pacejka}
 Y.~Guo and L.~Wang.
 \newblock A simplified implementation of the pacejka tire model for real-time vehicle simulation.
@@ -30,10 +35,20 @@ M.~et~al. Hadi.
 \newblock Soft‐gripper simulation in webots.
 \newblock {\em Soft Robotics}, 11(2):123--135, 2024.
 
+\bibitem{Hunziker2019}
+Alex Hunziker.
+\newblock Autonomous steering of an electric bicycle based on sensor fusion using model predictive control.
+\newblock Master's thesis, Goethe-Universit\"at Frankfurt am Main, 2019.
+
 \bibitem{bts7960}
 {Infineon Technologies}.
 \newblock Bts7960 high-current half-bridge driver.
 \newblock \url{https://www.infineon.com}, 2018.
+
+\bibitem{Ultralytics2023}
+Glenn Jocher, Ayush Chaurasia, and Jing Qiu.
+\newblock Yolo by ultralytics.
+\newblock \url{https://github.com/ultralytics/ultralytics}, 2023.
 
 \bibitem{karabila2022}
 Amine Karabila.
@@ -44,6 +59,11 @@ Amine Karabila.
 J.~McCarthy.
 \newblock {\em The Physics of Bicycles}.
 \newblock Cambridge University Press, 1998.
+
+\bibitem{park2020}
+Sang-Hyun Park and Seung-Yun Yi.
+\newblock {Active Balancing Control for Unmanned Bicycle Using Scissored-pair Control Moment Gyroscope}.
+\newblock {\em International Journal of Control, Automation and Systems}, 18(1):217--224, 2020.
 
 \bibitem{fme2013webots}
 I.~Petrovic and Z.~Kovacic.
@@ -59,5 +79,15 @@ Anna Ranz.
 Russell Smith.
 \newblock Open dynamics engine (ode) manual.
 \newblock \url{http://www.ode.org/}, 2006.
+
+\bibitem{zander2023}
+Jonah Zander.
+\newblock {Entwurf einer Steuerung f{\"u}r ein selbstbalancierendes Fahrrad}.
+\newblock Bachelorarbeit, Frankfurt University of Applied Sciences, 2023.
+
+\bibitem{Zhao2023}
+Xu~Zhao, Wenchao Ding, Yongqi An, Yinglong Du, Tao Yu, Min Li, Ming Tang, and Jinqiao Wang.
+\newblock Fast segment anything.
+\newblock arXiv:2306.12156 [cs.CV], 2023.
 
 \end{thebibliography}
