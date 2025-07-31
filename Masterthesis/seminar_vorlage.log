@@ -1,9 +1,9 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  25 JUL 2025 13:11
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  31 JUL 2025 15:00
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
-**/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex
-(/Users/amine/Documents/Master/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex
+**/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex
+(/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
 (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/article.cls
@@ -480,15 +480,15 @@ Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
 \SOUL@ulht=\dimen182
 ))
 Package epstopdf Info: Source file: <header_hwr.eps>
-(epstopdf)                    date: 2006-03-15 12:32:00
+(epstopdf)                    date: 2025-07-29 14:39:29
 (epstopdf)                    size: 132950 bytes
 (epstopdf)             Output file: <header_hwr-eps-converted-to.pdf>
-(epstopdf)                    date: 2014-04-23 13:59:22
+(epstopdf)                    date: 2025-07-29 14:39:29
 (epstopdf)                    size: 50266 bytes
 (epstopdf)             Command: <repstopdf --outfile=header_hwr-eps-converted-to.pdf header_hwr.eps>
 (epstopdf)             \includegraphics on input line 40.
 Package epstopdf Info: Output file is already uptodate.
-<header_hwr-eps-converted-to.pdf, id=164, 512.91624pt x 49.18375pt>
+<header_hwr-eps-converted-to.pdf, id=160, 512.91624pt x 49.18375pt>
 File: header_hwr-eps-converted-to.pdf Graphic file (type pdf)
 <use header_hwr-eps-converted-to.pdf>
 Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 40.
@@ -510,7 +510,7 @@ Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 40.
 [3]
 
 [4]
-<figures/Fahrt1.png, id=239, 1272.755pt x 699.61375pt>
+<figures/Fahrt1.png, id=234, 1272.755pt x 699.61375pt>
 File: figures/Fahrt1.png Graphic file (type png)
 <use figures/Fahrt1.png>
 Package pdftex.def Info: figures/Fahrt1.png  used on input line 130.
@@ -531,32 +531,32 @@ Package hyperref Info: bookmark level for unknown lpcsec defaults to 0 on input 
 [8]
 
 [9]
-<figures/webots_overview.png, id=320, 602.25pt x 363.3575pt>
+<figures/webots_overview.png, id=315, 602.25pt x 363.3575pt>
 File: figures/webots_overview.png Graphic file (type png)
 <use figures/webots_overview.png>
-Package pdftex.def Info: figures/webots_overview.png  used on input line 301.
+Package pdftex.def Info: figures/webots_overview.png  used on input line 300.
 (pdftex.def)             Requested size: 375.80542pt x 226.74303pt.
 
 
 [10 <./figures/webots_overview.png>]
 
 [11]
-Overfull \hbox (52.11598pt too wide) in paragraph at lines 362--369
+Overfull \hbox (52.11598pt too wide) in paragraph at lines 361--368
 \OT1/cmr/m/n/10.95 Mas-se-nei-gen-schaf-ten al-ler Kom-po-nen-ten (Rah-men, R[]ader etc.) in der Welt-da-tei \OT1/cmtt/m/n/10.95 Normal[]World[]smallBike.wbt
  []
 
 
-Overfull \hbox (98.65329pt too wide) in paragraph at lines 370--373
+Overfull \hbox (98.65329pt too wide) in paragraph at lines 369--372
 \OT1/cmr/m/n/10.95 na-mi-sche Ef-fek-te im-ple-men-tiert. Die-se be-fin-den sich in der Da-tei \OT1/cmtt/m/n/10.95 controllers/balance[]control[]c/bicycle[]physics.c
  []
 
 
 
 [12]
-<figures/webots.png, id=361, 308.352pt x 154.176pt>
+<figures/webots.png, id=356, 308.352pt x 154.176pt>
 File: figures/webots.png Graphic file (type png)
 <use figures/webots.png>
-Package pdftex.def Info: figures/webots.png  used on input line 427.
+Package pdftex.def Info: figures/webots.png  used on input line 426.
 (pdftex.def)             Requested size: 352.31624pt x 176.16237pt.
 
 
@@ -579,21 +579,21 @@ LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
 Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
-(rerunfilecheck)             Checksum: 9EB6EBBAF3BE41A17623EC12141C56D2;8925.
+(rerunfilecheck)             Checksum: 6E8E2E74C1D4E96FB55C017C4A05F2E7;8550.
  ) 
 Here is how much of TeX's memory you used:
- 14769 strings out of 473190
- 270363 string characters out of 5704335
+ 14767 strings out of 473190
+ 270312 string characters out of 5704335
  668545 words of memory out of 5000000
- 37724 multiletter control sequences out of 15000+600000
+ 37723 multiletter control sequences out of 15000+600000
  566732 words of font info for 64 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 86i,8n,92p,641b,488s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 86i,8n,92p,634b,488s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt9.pfb>
-Output written on seminar_vorlage.pdf (16 pages, 978590 bytes).
+Output written on seminar_vorlage.pdf (16 pages, 978508 bytes).
 PDF statistics:
- 475 PDF objects out of 1000 (max. 8388607)
- 418 compressed objects within 5 object streams
- 91 named destinations out of 1000 (max. 500000)
- 341 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 469 PDF objects out of 1000 (max. 8388607)
+ 412 compressed objects within 5 object streams
+ 90 named destinations out of 1000 (max. 500000)
+ 333 words of extra memory for PDF output out of 10000 (max. 10000000)
 

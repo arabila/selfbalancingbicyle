@@ -41,12 +41,21 @@ typedef struct {
     int filter_size;           // Größe des Roll-Winkel-Filters
 } balance_system_t;
 
+// Vision-Integration-Einstellungen
+typedef struct {
+    float vision_weight;       // Gewichtung des Vision-Controllers (0.0-1.0)
+    float balance_weight;      // Gewichtung des Balance-Controllers (0.0-1.0)
+    int enable_vision;         // Vision-Integration aktivieren (0/1)
+    float vision_timeout_seconds; // Vision-Command-Timeout in Sekunden
+} balance_vision_integration_t;
+
 // Hauptkonfiguration
 typedef struct {
     balance_angle_pid_t angle_pid;
     balance_speed_control_t speed_control;
     balance_mechanical_limits_t mechanical_limits;
     balance_system_t system;
+    balance_vision_integration_t vision_integration;
 } balance_config_t;
 
 /**

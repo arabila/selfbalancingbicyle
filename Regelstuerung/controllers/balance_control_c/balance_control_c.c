@@ -65,13 +65,9 @@
      float stability_factor;  // Stabilitätsfaktor (0.0-1.0)
  } balance_status_t;
  
- // Vision-Command-Status (erweitert)
+ // Vision-Command-Status (vereinfacht)
 static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
 static double last_command_time = 0.0;
-
-// Speicherung der letzten gültigen Vision-Werte (verwendet wenn Error = 0)
-static vision_command_t last_valid_vision = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-static int has_valid_vision = 0;  // Flag ob wir schon mal gültige Vision-Werte hatten
  
  // Controller-Zustand
  static pid_controller_t angle_pid;
@@ -177,71 +173,48 @@ static int has_valid_vision = 0;  // Flag ob wir schon mal gültige Vision-Werte
          vision_command_t vision_cmd;
          int vision_cmd_received = receive_vision_command(&vision_cmd);
          
-         // 6. Zwei-Ebenen-Regelung: Vision + Balance
-         float final_steer = steering_output;  // Balance-PID-Ausgang
-         float target_speed = config.speed_control.base_speed;
-         
-         // Stabilitätsfaktor für alle Regelungspfade berechnen
-         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
-         
-         // Prüfe ob der letzte Vision-Command noch gültig ist (nicht älter als ~200ms)
-         double vision_time = wb_robot_get_time();
-         bool vision_active = (vision_time - last_command_time) < 0.2;  // etwas längeres Timeout
- 
-         // Einfache Logik: Verwende aktuelle oder letzte gültige Vision-Werte
-         vision_command_t* vision_to_use = &last_vision_command;
-         
-         if (vision_active && last_vision_command.valid) {
-             // Prüfe ob Vision-Error gültig ist (nicht 0)
-             if (fabs(last_vision_command.vision_error) > 0.001f) {
-                 // Gültiger Error → speichere als letzten gültigen Wert
-                 last_valid_vision = last_vision_command;
-                 has_valid_vision = 1;
-                 
-                 if (vision_cmd_received) {
-                     printf("VISION: Neue gültige Werte gespeichert - Error=%.3f, Steer=%.3f\n",
-                            last_vision_command.vision_error, last_vision_command.steer_command);
-                 }
-             } else if (has_valid_vision) {
-                 // Error ist 0 → verwende letzte gültige Werte
-                 vision_to_use = &last_valid_vision;
-                 
-                 if (vision_cmd_received) {
-                     printf("VISION: Error=0, verwende letzte gültige Werte - Error=%.3f, Steer=%.3f\n",
-                            last_valid_vision.vision_error, last_valid_vision.steer_command);
-                 }
-             }
-             
-             // Vision-Lenkung berechnen
-             float vision_steer = vision_to_use->steer_command * config.mechanical_limits.max_handlebar_angle;
-             
-             // Einfache Gewichtung basierend auf Maskenabdeckung
-             float weight = 0.6f * (vision_to_use->mask_coverage / 100.0f);
-             if (weight < 0.0f) weight = 0.0f;
-             if (weight > 0.6f) weight = 0.6f;
- 
-             // Kombination aus Vision und Balance
-             final_steer = weight * vision_steer + (1.0f - weight) * steering_output;
- 
-             // Geschwindigkeit von Vision-Controller übernehmen
-             target_speed = config.speed_control.min_speed +
-                           vision_to_use->speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
- 
-             if (vision_cmd_received) {
-                 printf("VISION: VisionSteer=%.3f, Balance=%.3f → Final=%.3f (weight=%.2f, coverage=%.1f%%)\n",
-                        vision_steer, steering_output, final_steer, weight, vision_to_use->mask_coverage);
-             }
-         } else {
-             // Kein aktueller Vision-Command → Nur Balance-Regelung
-             float speed_reduction = stability_factor * config.speed_control.stability_reduction;
-             target_speed = config.speed_control.base_speed * (1.0 - speed_reduction);
-             
-             static double last_timeout_msg = 0.0;
-             if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 1.0) {
-                 printf("VISION TIMEOUT: Verwende nur Balance-Regelung\n");
-                 last_timeout_msg = vision_time;
-             }
-         }
+        // ========================================
+        // 6. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
+        // ========================================
+        float final_steer = steering_output;  // Fallback: Nur Balance
+        float target_speed = config.speed_control.base_speed;
+        
+        // Vision-Timeout prüfen (konfigurierbar)
+        double vision_time = wb_robot_get_time();
+        bool vision_active = config.vision_integration.enable_vision && 
+                            (vision_time - last_command_time) < config.vision_integration.vision_timeout_seconds;
+        
+        if (vision_active && last_vision_command.valid) {
+            // STATISCHE GEWICHTUNG aus Konfiguration
+            float vision_weight = config.vision_integration.vision_weight;
+            float balance_weight = config.vision_integration.balance_weight;
+            
+            // Vision-Lenkung berechnen
+            float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle;
+            
+            // EINFACHE KOMBINATION: Statische Gewichtung
+            final_steer = vision_weight * vision_steer + balance_weight * steering_output;
+            
+            // Geschwindigkeit von Vision-Controller übernehmen
+            target_speed = config.speed_control.min_speed +
+                          last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+            
+            if (vision_cmd_received) {
+                printf("VISION: Vision=%.3f, Balance=%.3f → Final=%.3f (Weights: V=%.1f%%, B=%.1f%%)\n",
+                       vision_steer, steering_output, final_steer, 
+                       vision_weight*100, balance_weight*100);
+            }
+        } else {
+            // Vision inaktiv → Nur Balance-Regelung
+            final_steer = steering_output;
+            target_speed = config.speed_control.base_speed;
+            
+            static double last_timeout_msg = 0.0;
+            if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 2.0) {
+                printf("VISION: Timeout/Inaktiv - Nur Balance-Regelung aktiv\n");
+                last_timeout_msg = vision_time;
+            }
+        }
          
          // Finale Begrenzungen
          if (final_steer > config.mechanical_limits.max_handlebar_angle) 
@@ -268,41 +241,42 @@ static int has_valid_vision = 0;  // Flag ob wir schon mal gültige Vision-Werte
          wb_motor_set_position(handlebars_motor, final_steer);
          wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
          
-         // 8. Balance-Status an Vision-Controller senden
-         balance_status_t status = {
-             .roll_angle = roll_angle,
-             .steering_output = final_steer,
-             .current_speed = target_speed,
-             .stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle
-         };
-         send_balance_status(&status);
-         
-         // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten)
-         if (config.system.enable_logging) {
-             balance_log_data_t log_data = {
-                 // Balance-Controller-Daten
-                 .timestamp = wb_robot_get_time(),
-                 .roll_angle = roll_angle,
-                 .steering_output = steering_output,
-                 .final_steer = final_steer,
-                 .target_speed = target_speed,
-                 .p_term = angle_pid.proportional_term,
-                 .i_term = angle_pid.integral_term,
-                 .d_term = angle_pid.derivative_term,
-                 .error = angle_pid.error_history[angle_pid.history_counter],
-                 .stability_factor = stability_factor,
-                 
-                 // Vision-Controller-Daten (verwende die tatsächlich genutzten Werte)
-                 .vision_error = vision_active ? vision_to_use->vision_error : 0.0f,
-                 .vision_steer_command = vision_active ? vision_to_use->steer_command : 0.0f,
-                 .vision_speed_command = vision_active ? vision_to_use->speed_command : 0.0f,
-                 .vision_p_term = vision_active ? vision_to_use->vision_p_term : 0.0f,
-                 .vision_i_term = vision_active ? vision_to_use->vision_i_term : 0.0f,
-                 .vision_d_term = vision_active ? vision_to_use->vision_d_term : 0.0f,
-                 .vision_active = vision_active ? 1 : 0,
-                 .vision_mask_coverage = vision_active ? vision_to_use->mask_coverage : 0.0f
-             };
-             balance_logging_write(&logger, &log_data);
+                 // 8. Balance-Status an Vision-Controller senden
+        float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
+        balance_status_t status = {
+            .roll_angle = roll_angle,
+            .steering_output = final_steer,
+            .current_speed = target_speed,
+            .stability_factor = stability_factor
+        };
+        send_balance_status(&status);
+        
+        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten)
+        if (config.system.enable_logging) {
+            balance_log_data_t log_data = {
+                // Balance-Controller-Daten
+                .timestamp = wb_robot_get_time(),
+                .roll_angle = roll_angle,
+                .steering_output = steering_output,
+                .final_steer = final_steer,
+                .target_speed = target_speed,
+                .p_term = angle_pid.proportional_term,
+                .i_term = angle_pid.integral_term,
+                .d_term = angle_pid.derivative_term,
+                .error = angle_pid.error_history[angle_pid.history_counter],
+                .stability_factor = stability_factor,
+                
+                // Vision-Controller-Daten (vereinfacht)
+                .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
+                .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
+                .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
+                .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
+                .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,
+                .vision_d_term = vision_active ? last_vision_command.vision_d_term : 0.0f,
+                .vision_active = vision_active ? 1 : 0,
+                .vision_mask_coverage = vision_active ? last_vision_command.mask_coverage : 0.0f
+            };
+            balance_logging_write(&logger, &log_data);
              
              // ZUSÄTZLICH: Physik-Debug-Ausgabe alle 5 Sekunden
              static int physics_debug_counter = 0;

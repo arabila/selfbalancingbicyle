@@ -104,6 +104,12 @@ int balance_config_load(balance_config_t *config, const char *filename) {
     config->system.config_reload_interval = parse_int_from_json(json_content, "config_reload_interval", config->system.config_reload_interval);
     config->system.filter_size = parse_int_from_json(json_content, "filter_size", config->system.filter_size);
     
+    // Vision Integration Settings
+    config->vision_integration.vision_weight = parse_float_from_json(json_content, "vision_weight", config->vision_integration.vision_weight);
+    config->vision_integration.balance_weight = parse_float_from_json(json_content, "balance_weight", config->vision_integration.balance_weight);
+    config->vision_integration.enable_vision = parse_int_from_json(json_content, "enable_vision", config->vision_integration.enable_vision);
+    config->vision_integration.vision_timeout_seconds = parse_float_from_json(json_content, "vision_timeout_seconds", config->vision_integration.vision_timeout_seconds);
+    
     free(json_content);
     
     // Konfiguration validieren
@@ -192,6 +198,12 @@ void balance_config_set_defaults(balance_config_t *config) {
     config->system.enable_preview = 1;         // Preview aktiviert
     config->system.config_reload_interval = 10; // Alle 10 Schritte neu laden
     config->system.filter_size = 5;            // 5-Punkt gleitender Durchschnitt
+    
+    // Vision Integration Settings (Statische Gewichtung)
+    config->vision_integration.vision_weight = 0.7f;    // 70% Vision-Anteil
+    config->vision_integration.balance_weight = 0.3f;   // 30% Balance-Anteil
+    config->vision_integration.enable_vision = 1;       // Vision aktiviert
+    config->vision_integration.vision_timeout_seconds = 0.5f; // 500ms Timeout
 }
 
 int balance_config_validate(const balance_config_t *config) {
@@ -217,6 +229,11 @@ int balance_config_validate(const balance_config_t *config) {
     // System-Parameter
     if (config->system.config_reload_interval < 1 || config->system.config_reload_interval > 1000) return -1;
     if (config->system.filter_size < 1 || config->system.filter_size > 20) return -1;
+    
+    // Vision-Integration-Parameter
+    if (config->vision_integration.vision_weight < 0.0f || config->vision_integration.vision_weight > 1.0f) return -1;
+    if (config->vision_integration.balance_weight < 0.0f || config->vision_integration.balance_weight > 1.0f) return -1;
+    if (config->vision_integration.vision_timeout_seconds < 0.1f || config->vision_integration.vision_timeout_seconds > 5.0f) return -1;
     
     return 0; // Alle Parameter sind gültig
 }

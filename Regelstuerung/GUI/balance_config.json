@@ -24,6 +24,12 @@
             "enable_preview": 1,
             "config_reload_interval": 10,
             "filter_size": 5
+        },
+        "vision_integration": {
+            "vision_weight": 0.7,
+            "balance_weight": 0.3,
+            "enable_vision": 1,
+            "vision_timeout_seconds": 0.5
         }
     },
     "physics": {

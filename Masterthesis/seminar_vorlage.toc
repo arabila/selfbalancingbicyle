@@ -7,13 +7,12 @@
 \contentsline {subsubsection}{\numberline {2.2.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{6}{subsubsection.2.2.3}%
 \contentsline {subsubsection}{\numberline {2.2.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{7}{subsubsection.2.2.4}%
 \contentsline {section}{\numberline {3}Einleitung der angewandten Regelungstechnik}{9}{section.3}%
-\contentsline {subsection}{\numberline {3.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{9}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Fahrdynamische Modelle nach Schramm / Hiller / Bardini}{9}{subsection.3.2}%
-\contentsline {subsubsection}{\numberline {3.2.1}Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}{9}{subsubsection.3.2.1}%
-\contentsline {subsubsection}{\numberline {3.2.2}Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}{9}{subsubsection.3.2.2}%
-\contentsline {subsubsection}{\numberline {3.2.3}Gültigkeitsbereiche und Modellvergleich}{9}{subsubsection.3.2.3}%
-\contentsline {subsection}{\numberline {3.3}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{9}{subsection.3.3}%
-\contentsline {subsection}{\numberline {3.4}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{9}{subsection.3.4}%
+\contentsline {subsection}{\numberline {3.1}Fahrdynamische Modelle nach Schramm / Hiller / Bardini}{9}{subsection.3.1}%
+\contentsline {subsubsection}{\numberline {3.1.1}Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}{9}{subsubsection.3.1.1}%
+\contentsline {subsubsection}{\numberline {3.1.2}Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}{9}{subsubsection.3.1.2}%
+\contentsline {subsubsection}{\numberline {3.1.3}Gültigkeitsbereiche und Modellvergleich}{9}{subsubsection.3.1.3}%
+\contentsline {subsection}{\numberline {3.2}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{9}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{9}{subsection.3.3}%
 \contentsline {section}{\numberline {4}Webots-Simulationsumgebung}{10}{section.4}%
 \contentsline {subsection}{\numberline {4.1}Überblick}{10}{subsection.4.1}%
 \contentsline {subsection}{\numberline {4.2}Struktur der Simulationsumgebung}{11}{subsection.4.2}%
