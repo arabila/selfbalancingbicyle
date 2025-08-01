@@ -429,7 +429,8 @@ bicycle_physics.o: bicycle_physics.c bicycle_physics.h
 static float get_filtered_roll_angle(void) {
     // IMU-Quaternion auslesen
     const double *quaternion = wb_inertial_unit_get_quaternion(imu_sensor);
-    double w = quaternion[0], x = quaternion[1], y = quaternion[2], z = quaternion[3];
+    // Reihenfolge: (x, y, z, w)
+    double x = quaternion[0], y = quaternion[1], z = quaternion[2], w = quaternion[3];
     
     // Quaternion → Roll-Winkel
     float roll_rad = atan2(2*(w*x + y*z), w*w - x*x - y*y + z*z);

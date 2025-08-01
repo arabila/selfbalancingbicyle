@@ -200,7 +200,7 @@ float roll_rad = atan2(2*(w*x + y*z), w*w - x*x - y*y + z*z);
 ```
 
 **Eigenschaften:**
-- **Datenformat**: Quaternion (w, x, y, z)
+- **Datenformat**: Quaternion (x, y, z, w)
 - **Messrate**: 200 Hz (5ms Webots-Timestep)
 - **Rauschen**: Simuliert durch erweiterte Physik
 - **Präzision**: Floating-Point-Genauigkeit

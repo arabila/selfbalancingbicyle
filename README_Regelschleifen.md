@@ -231,10 +231,11 @@ float get_filtered_roll_angle(void) {
     const double *quaternion = wb_inertial_unit_get_quaternion(imu_sensor);
     
     // Quaternion zu Euler-Winkel (Roll um X-Achse)
-    double w = quaternion[0];
-    double x = quaternion[1]; 
-    double y = quaternion[2];
-    double z = quaternion[3];
+    // Webots liefert die Werte als (x, y, z, w)
+    double x = quaternion[0];
+    double y = quaternion[1];
+    double z = quaternion[2];
+    double w = quaternion[3];
     
     // Roll-Winkel berechnen
     double roll_rad = atan2(2 * (w * x + y * z), w*w - x*x - y*y + z*z);

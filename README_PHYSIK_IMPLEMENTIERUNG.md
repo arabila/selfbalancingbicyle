@@ -245,10 +245,11 @@ static float get_filtered_roll_angle(void) {
     const double *quaternion = wb_inertial_unit_get_quaternion(imu_sensor);
     
     // Quaternion zu Euler-Winkel (Roll um X-Achse)
-    double w = quaternion[0];
-    double x = quaternion[1]; 
-    double y = quaternion[2];
-    double z = quaternion[3];
+    // Reihenfolge in Webots: (x, y, z, w)
+    double x = quaternion[0];
+    double y = quaternion[1];
+    double z = quaternion[2];
+    double w = quaternion[3];
     
     // Normalisierung (Sicherheitscheck)
     double norm = sqrt(w*w + x*x + y*y + z*z);

@@ -411,18 +411,19 @@ static double last_command_time = 0.0;
          return 0.0;  // Fallback bei Sensor-Fehler
      }
      
-     // Quaternion zu Euler-Winkel (Roll um X-Achse)
-     double w = quaternion[0];
-     double x = quaternion[1]; 
-     double y = quaternion[2];
-     double z = quaternion[3];
+    // Quaternion zu Euler-Winkel (Roll um X-Achse)
+    // Webots liefert Quaternionen im Format (x, y, z, w)
+    double x = quaternion[0];
+    double y = quaternion[1];
+    double z = quaternion[2];
+    double w = quaternion[3];
      
-     // DEBUG: Quaternion-Werte ausgeben (nur alle 40 Zyklen = 200ms)
-     static int debug_counter = 0;
-     if (++debug_counter >= 40) {
-         printf("DEBUG: Quaternion [w=%.6f, x=%.6f, y=%.6f, z=%.6f]\n", w, x, y, z);
-         debug_counter = 0;
-     }
+    // DEBUG: Quaternion-Werte ausgeben (nur alle 40 Zyklen = 200ms)
+    static int debug_counter = 0;
+    if (++debug_counter >= 40) {
+        printf("DEBUG: Quaternion [x=%.6f, y=%.6f, z=%.6f, w=%.6f]\n", x, y, z, w);
+        debug_counter = 0;
+    }
      
      // Normalisierung (Sicherheitscheck)
      double norm = sqrt(w*w + x*x + y*y + z*z);
