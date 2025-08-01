@@ -403,52 +403,31 @@ static double last_command_time = 0.0;
      );
  }
  
- static float get_filtered_roll_angle(void) {
-     const double *quaternion = wb_inertial_unit_get_quaternion(imu_sensor);
-     
-     if (quaternion == NULL) {
-         printf("DEBUG: Quaternion ist NULL!\n");
-         return 0.0;  // Fallback bei Sensor-Fehler
-     }
-     
-     // Quaternion zu Euler-Winkel (Roll um X-Achse)
-     double w = quaternion[0];
-     double x = quaternion[1]; 
-     double y = quaternion[2];
-     double z = quaternion[3];
-     
-     // DEBUG: Quaternion-Werte ausgeben (nur alle 40 Zyklen = 200ms)
-     static int debug_counter = 0;
-     if (++debug_counter >= 40) {
-         printf("DEBUG: Quaternion [w=%.6f, x=%.6f, y=%.6f, z=%.6f]\n", w, x, y, z);
-         debug_counter = 0;
-     }
-     
-     // Normalisierung (Sicherheitscheck)
-     double norm = sqrt(w*w + x*x + y*y + z*z);
-     if (norm > 0.0001) {
-         w /= norm; x /= norm; y /= norm; z /= norm;
-     } else {
-         printf("DEBUG: Quaternion-Norm zu klein: %.6f\n", norm);
-         return 0.0;
-     }
-     
-     // Alternative Roll-Winkel-Berechnung (robuster)
-     // Roll (X-Achse) - Fahrrad neigt sich seitlich
-     double sinr_cosp = 2.0 * (w * x + y * z);
-     double cosr_cosp = 1.0 - 2.0 * (x * x + y * y);
-     double roll_rad = atan2(sinr_cosp, cosr_cosp);
-     float roll_deg = (float)(roll_rad * 180.0 / M_PI);
-     
-     // KORREKTUR: Fahrrad ist um 180° gedreht, daher Roll-Winkel korrigieren
-     // Wenn das Fahrrad aufrecht steht (aber um 180° gedreht), sollte roll_deg = 0° sein
-     // Bei 180°-Rotation ist der "aufrechte" Zustand bei ±180°, nicht bei 0°
-     if (roll_deg > 90.0) {
-         roll_deg = 180.0 - roll_deg;  // 180° -> 0°, 170° -> 10°, etc.
-     } else if (roll_deg < -90.0) {
-         roll_deg = -180.0 - roll_deg; // -180° -> 0°, -170° -> -10°, etc.
-     }
-     // Für Werte zwischen -90° und 90° bleibt roll_deg unverändert
+static float get_filtered_roll_angle(void) {
+    const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
+
+    if (rpy == NULL) {
+        printf("DEBUG: RPY ist NULL!\n");
+        return 0.0;  // Fallback bei Sensor-Fehler
+    }
+
+    // Roll- und Yaw-Winkel auslesen
+    double roll_rad = rpy[0];
+    double yaw = rpy[2];
+
+    // DEBUG: RPY-Werte ausgeben (nur alle 40 Zyklen = 200ms)
+    static int debug_counter = 0;
+    if (++debug_counter >= 40) {
+        printf("DEBUG: RPY [roll=%.6f, pitch=%.6f, yaw=%.6f]\n", rpy[0], rpy[1], rpy[2]);
+        debug_counter = 0;
+    }
+
+    // Roll-Vorzeichen an Fahrtrichtung koppeln
+    if (cos(yaw) < 0.0) {
+        roll_rad = -roll_rad;
+    }
+
+    float roll_deg = (float)(roll_rad * 180.0 / M_PI);
      
      // Plausibilitätscheck: Maximale Änderung pro Zeitschritt begrenzen
      static float last_roll = 0.0;
