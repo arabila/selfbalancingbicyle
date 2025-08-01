@@ -193,7 +193,7 @@ static double last_command_time = 0.0;
             float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle;
             
             // EINFACHE KOMBINATION: Statische Gewichtung
-            final_steer = vision_weight * vision_steer + balance_weight * steering_output;
+            final_steer = vision_weight * -vision_steer + balance_weight * steering_output;
             
             // Geschwindigkeit von Vision-Controller übernehmen
             target_speed = config.speed_control.min_speed +

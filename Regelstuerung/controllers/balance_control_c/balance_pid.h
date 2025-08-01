@@ -9,7 +9,7 @@
 #define BALANCE_PID_H
 
 #define HISTORY_LEN 5
-#define ROLL_FILTER_SIZE 10
+#define ROLL_FILTER_SIZE 30
 
 typedef struct {
     // Historie für D-Term-Berechnung
