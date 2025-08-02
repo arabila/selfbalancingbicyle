@@ -1,11 +1,11 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 0.1,
+            "angle_Kp": 0.8,
             "angle_Ki": 0.0,
             "angle_Kd": 0.0,
-            "angle_output_min": -0.8030459770114943,
-            "angle_output_max": 0.8030459770114943,
+            "angle_output_min": -1.5030459770114943,
+            "angle_output_max": 1.5030459770114943,
             "angle_integral_min": -60.0,
             "angle_integral_max": 60.0
         },
@@ -26,9 +26,9 @@
             "filter_size": 5
         },
         "vision_integration": {
-            "vision_weight": 0.7,
-            "balance_weight": 0.3,
-            "enable_vision": 1,
+            "vision_weight": 0.0,
+            "balance_weight": 1.0,
+            "enable_vision": 0,
             "vision_timeout_seconds": 0.5
         }
     },

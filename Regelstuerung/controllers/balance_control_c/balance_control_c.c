@@ -139,6 +139,7 @@ static double last_command_time = 0.0;
      
      // Hauptregelschleife
      while (wb_robot_step(timestep) != -1) {
+        printf("DEBUG: wb_robot_step(timestep) = %d\n", wb_robot_step(timestep));
          
          // Konfiguration periodisch neu laden (alle 100ms)
          if (++config_reload_counter >= (100 / timestep)) {

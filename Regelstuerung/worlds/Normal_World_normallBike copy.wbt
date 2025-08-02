@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.1685461407554276 -0.2520533653567801 -0.9529225044298056 4.695068668178476
-  position -19.368237375664414 -75.22480573811129 31.43275825402904
+  orientation 0.16947792740758943 -0.2480424853904421 -0.9538092878363894 4.676001294630524
+  position -17.994211256119286 -34.53862622000874 7.6712667869048445
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -73,8 +73,8 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation 0 0.5312 0
-        rotation -1 0 0 1.9514567889667116
+        translation -7.216176474145186e-07 0.5311901176466811 2.3324557000755426e-06
+        rotation -0.9999999999982916 -1.232177446937478e-06 1.3778993838616832e-06 1.951456788965953
         children [
           DEF wheel Transform {
             scale 0.0064 0.0064 0.0064
@@ -92,7 +92,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.096
+              height 0.014
               radius 0.352
               subdivision 72
             }
@@ -126,7 +126,7 @@ DEF BICYCLE Robot {
       ]
       endPoint Solid {
         translation 0 -0.52352 0.6528
-        rotation 0 0 -1 9.884312124119402e-08
+        rotation 0 0 -0.9999999999999999 9.884312124119402e-08
         children [
           DEF fork Transform {
             scale 0.0064 0.0064 0.0064
@@ -146,8 +146,8 @@ DEF BICYCLE Robot {
               staticFriction 0.1
             }
             endPoint Solid {
-              translation 0 -0.2368 -0.6528
-              rotation -1 0 0 3.989141993675058
+              translation -7.392723766486142e-07 -0.23680995539680655 -0.6528042095113528
+              rotation -0.9999999999986486 -1.4008233643895308e-06 -8.60500312180519e-07 3.9891419936725865
               children [
                 DEF wheel Transform {
                   scale 0.0064 0.0064 0.0064
@@ -165,7 +165,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.096
+                    height 0.014
                     radius 0.352
                     subdivision 72
                   }
@@ -495,7 +495,7 @@ DEF BICYCLE Robot {
       }
     }
     Camera {
-      translation 0.96 -1.10 0.95
+      translation 0.96 -1.1 0.95
       rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
       fieldOfView 2
       width 480
@@ -510,7 +510,6 @@ DEF BICYCLE Robot {
       translation 0 0 0.32
       rotation 1 0 0 0
       name "imu"
-      noise 0.0
     }
     Receiver {
       name "command_rx"
@@ -705,7 +704,7 @@ Supervisor {
       rotation 0.002261921745702991 -0.00022403723935638146 0.9999974167553293 3.141443442788721
       children [
         Pose {
-          translation  0 -1.10 0.95
+          translation 0 -1.1 0.95
           rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
           children [
             Camera {
