@@ -340,10 +340,15 @@ static double last_command_time = 0.0;
          fprintf(stderr, "Fehler: IMU Sensor nicht gefunden!\n");
          exit(1);
      }
-     wb_inertial_unit_enable(imu_sensor, timestep * 2);  // IMU mit 10ms statt 5ms
-     
-     // Keyboard
-     wb_keyboard_enable(timestep);
+    wb_inertial_unit_enable(imu_sensor, timestep * 2);  // IMU mit 10ms statt 5ms
+
+    // Kurze Aufwärmphase für den IMU-Sensor
+    for (int i = 0; i < 2; ++i) {
+        wb_robot_step(timestep);
+    }
+
+    // Keyboard
+    wb_keyboard_enable(timestep);
      
      // Display (optional)
      display_device = wb_robot_get_device("display");
@@ -429,30 +434,33 @@ static float get_filtered_roll_angle(void) {
     }
 
     float roll_deg = (float)(roll_rad * 180.0 / M_PI);
-     
-     // Plausibilitätscheck: Maximale Änderung pro Zeitschritt begrenzen
-     static float last_roll = 0.0;
-     static int first_run = 1;
-     
-     if (!first_run) {
-         float max_change_per_5ms = 5.0;  // Reduziert auf 5° pro 5ms
-         float change = roll_deg - last_roll;
-         
-         if (fabs(change) > max_change_per_5ms) {
-             printf("DEBUG: Unrealistische Änderung erkannt: %.2f° -> %.2f° (Δ=%.2f°)\n", 
-                    last_roll, roll_deg, change);
-             // Begrenze die Änderung
-             if (change > max_change_per_5ms) {
-                 roll_deg = last_roll + max_change_per_5ms;
-             } else if (change < -max_change_per_5ms) {
-                 roll_deg = last_roll - max_change_per_5ms;
-             }
-             printf("DEBUG: Korrigiert auf: %.2f°\n", roll_deg);
-         }
-     }
-     
-     last_roll = roll_deg;
-     first_run = 0;
+
+    // Plausibilitätscheck: Maximale Änderung pro Zeitschritt begrenzen
+    static float last_roll = 0.0f;
+    static int first_run = 1;
+
+    if (first_run) {
+        last_roll = roll_deg;
+        first_run = 0;
+        return 0.0f;
+    }
+
+    float max_change_per_5ms = 5.0f;  // Reduziert auf 5° pro 5ms
+    float change = roll_deg - last_roll;
+
+    if (fabs(change) > max_change_per_5ms) {
+        printf("DEBUG: Unrealistische Änderung erkannt: %.2f° -> %.2f° (Δ=%.2f°)\n",
+               last_roll, roll_deg, change);
+        // Begrenze die Änderung
+        if (change > max_change_per_5ms) {
+            roll_deg = last_roll + max_change_per_5ms;
+        } else if (change < -max_change_per_5ms) {
+            roll_deg = last_roll - max_change_per_5ms;
+        }
+        printf("DEBUG: Korrigiert auf: %.2f°\n", roll_deg);
+    }
+
+    last_roll = roll_deg;
      
      // DEBUG: Rohe Roll-Winkel-Werte (nur alle 40 Zyklen)
      static int debug_counter2 = 0;
