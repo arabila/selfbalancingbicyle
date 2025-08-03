@@ -81,8 +81,12 @@ static double last_command_time = 0.0;
  static int roll_history_filled = 0;
  
  // Timing
- static struct timeval start_time;
- static int config_reload_counter = 0;
+static struct timeval start_time;
+static int config_reload_counter = 0;
+
+// Regelungsstabilisierung - verhindert Aktivierung bis genug Zeit vergangen ist
+static bool control_enabled = false;
+static double simulation_start_time = 0.0;
  
  // Funktionsprototypen
  static void init_devices(int timestep);
@@ -92,8 +96,9 @@ static double last_command_time = 0.0;
  static void handle_keyboard_input(void);
  static long long get_time_microseconds(void);
  static void print_status(float roll_angle, float steering_output, float speed);
- static int receive_vision_command(vision_command_t *command);
- static void send_balance_status(const balance_status_t *status);
+static int receive_vision_command(vision_command_t *command);
+static void send_balance_status(const balance_status_t *status);
+static bool check_roll_angle_stability(float roll_angle, double current_time);
  
  int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) {
      // Webots initialisieren
@@ -102,11 +107,14 @@ static double last_command_time = 0.0;
      int timestep = (int)wb_robot_get_basic_time_step();
      printf("Balance Control C - Timestep: %d ms\n", timestep);
      
-     // Startzeit für Timing-Messungen
-     gettimeofday(&start_time, NULL);
+         // Startzeit für Timing-Messungen
+    gettimeofday(&start_time, NULL);
+    
+    // Simulationsstart-Zeit speichern für Regelungsverzögerung
+    simulation_start_time = wb_robot_get_time();
      
      // Devices initialisieren
-     init_devices(timestep);
+     init_devices(timestep); // Motor, IMU, Keyboard, Display, Command Receiver, Status Emitter, Robot Nodez
      
      // Konfiguration laden und PID initialisieren
      load_and_apply_config();
@@ -149,72 +157,109 @@ static double last_command_time = 0.0;
          
          // Keyboard-Input verarbeiten
          handle_keyboard_input();
+
+
+                 //--------------------------------
+        // 1. Roll-Winkel messen und filtern
+        //--------------------------------
+        float true_roll_angle = get_filtered_roll_angle();
+        
+        
+        //--------------------------------
+        // 2. ERWEITERTE PHYSIK-SIMULATION durchführen
+        //--------------------------------
+        // Berechnet externe Kräfte und simuliert realistische Sensorfehler
+        //float simulated_roll_angle = bicycle_physics_step(&bicycle_physics, true_roll_angle);
+        
+        // Verwende den wahren Roll-Winkel für die Regelung // TODO: Ersetze durch simulierte Roll-Winkel
+        float roll_angle = true_roll_angle;
+        
+        //--------------------------------
+        // 2.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
+        //--------------------------------
+        double current_webots_time = wb_robot_get_time();
+        if (!control_enabled) {
+            control_enabled = check_roll_angle_stability(roll_angle, current_webots_time);
+            if (control_enabled) {
+                printf("STABILISIERUNG: Regelung aktiviert nach %.3f Sekunden\n", 
+                       current_webots_time - simulation_start_time);
+            }
+        }
+        
+        //--------------------------------
+        // 3. PID-Regelung: Roll-Winkel → Lenkwinkel (nur wenn Regelung aktiviert)
+        //--------------------------------
+        long long current_time = get_time_microseconds();
+        float steering_output = 0.0f; // Default: Kein Lenkausschlag
+        
+        if (control_enabled) {
+            steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
+        }
          
-         // 1. Roll-Winkel messen und filtern
-         float true_roll_angle = get_filtered_roll_angle();
-         
-         // 2. ERWEITERTE PHYSIK-SIMULATION durchführen
-         // Berechnet externe Kräfte und simuliert realistische Sensorfehler
-         float simulated_roll_angle = bicycle_physics_step(&bicycle_physics, true_roll_angle);
-         
-         // Verwende simulierten Roll-Winkel für realistischere Regelung
-         float roll_angle = simulated_roll_angle;
-         
-         // 3. PID-Regelung: Roll-Winkel → Lenkwinkel
-         long long current_time = get_time_microseconds();
-         float steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
-         
+         //--------------------------------
          // 4. Lenkwinkel begrenzen
+         //--------------------------------
          if (steering_output > config.mechanical_limits.max_handlebar_angle) 
              steering_output = config.mechanical_limits.max_handlebar_angle;
          else if (steering_output < -config.mechanical_limits.max_handlebar_angle)
              steering_output = -config.mechanical_limits.max_handlebar_angle;
          
+         //--------------------------------
          // 5. Vision-Commands empfangen und verarbeiten
+         //--------------------------------
          vision_command_t vision_cmd;
          int vision_cmd_received = receive_vision_command(&vision_cmd);
          
         // ========================================
         // 6. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
         // ========================================
-        float final_steer = steering_output;  // Fallback: Nur Balance
+        float final_steer = steering_output; 
         float target_speed = config.speed_control.base_speed;
         
         // Vision-Timeout prüfen (konfigurierbar)
         double vision_time = wb_robot_get_time();
-        bool vision_active = config.vision_integration.enable_vision && 
+        bool vision_active = control_enabled && config.vision_integration.enable_vision && 
                             (vision_time - last_command_time) < config.vision_integration.vision_timeout_seconds;
         
-        if (vision_active && last_vision_command.valid) {
-            // STATISCHE GEWICHTUNG aus Konfiguration
-            float vision_weight = config.vision_integration.vision_weight;
-            float balance_weight = config.vision_integration.balance_weight;
-            
-            // Vision-Lenkung berechnen
-            float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle;
-            
-            // EINFACHE KOMBINATION: Statische Gewichtung
-            final_steer = vision_weight * -vision_steer + balance_weight * steering_output;
-            
-            // Geschwindigkeit von Vision-Controller übernehmen
-            target_speed = config.speed_control.min_speed +
-                          last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
-            
-            if (vision_cmd_received) {
-                printf("VISION: Vision=%.3f, Balance=%.3f → Final=%.3f (Weights: V=%.1f%%, B=%.1f%%)\n",
-                       vision_steer, steering_output, final_steer, 
-                       vision_weight*100, balance_weight*100);
-            }
-        } else {
-            // Vision inaktiv → Nur Balance-Regelung
-            final_steer = steering_output;
+        if (control_enabled) {
+            final_steer = steering_output; 
             target_speed = config.speed_control.base_speed;
             
-            static double last_timeout_msg = 0.0;
-            if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 2.0) {
-                printf("VISION: Timeout/Inaktiv - Nur Balance-Regelung aktiv\n");
-                last_timeout_msg = vision_time;
+            if (vision_active && last_vision_command.valid) { 
+                // STATISCHE GEWICHTUNG aus Konfiguration
+                float vision_weight = config.vision_integration.vision_weight; //Vision Anteil
+                float balance_weight = config.vision_integration.balance_weight; //Balance Anteil
+                
+                // Vision-Lenkung berechnen
+                float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle; //TODO: Wieso nochmal begrenzen?
+                
+                // EINFACHE KOMBINATION: Statische Gewichtung
+                final_steer = vision_weight * -vision_steer + balance_weight * steering_output;
+                
+                // Geschwindigkeit von Vision-Controller übernehmen
+                target_speed = config.speed_control.min_speed + // TODO: Nur balance speed!
+                              last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+                
+                if (vision_cmd_received) {
+                    printf("VISION: Vision=%.3f, Balance=%.3f → Final=%.3f (Weights: V=%.1f%%, B=%.1f%%)\n",
+                           vision_steer, steering_output, final_steer, 
+                           vision_weight*100, balance_weight*100);
+                }
+            } else {
+                // Vision inaktiv → Nur Balance-Regelung
+                final_steer = steering_output;
+                target_speed = config.speed_control.base_speed;
+                
+                static double last_timeout_msg = 0.0;
+                if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 2.0) {
+                    printf("VISION: Timeout/Inaktiv - Nur Balance-Regelung aktiv\n");
+                    last_timeout_msg = vision_time;
+                }
             }
+        } else {
+            // Regelung noch nicht aktiviert - sichere Werte verwenden
+            final_steer = 0.0f;
+            target_speed = config.speed_control.min_speed;
         }
          
          // Finale Begrenzungen
@@ -406,22 +451,22 @@ static double last_command_time = 0.0;
  
 static float get_filtered_roll_angle(void) {
     const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
-
+    
     if (rpy == NULL) {
         printf("DEBUG: RPY ist NULL!\n");
         return 0.0;  // Fallback bei Sensor-Fehler
     }
-
+    
     // Roll- und Yaw-Winkel auslesen
     double roll_rad = rpy[0];
     double yaw = rpy[2];
 
-    // DEBUG: RPY-Werte ausgeben (nur alle 40 Zyklen = 200ms)
-    static int debug_counter = 0;
-    if (++debug_counter >= 40) {
-        printf("DEBUG: RPY [roll=%.6f, pitch=%.6f, yaw=%.6f]\n", rpy[0], rpy[1], rpy[2]);
-        debug_counter = 0;
-    }
+         // DEBUG: RPY-Werte ausgeben (reduziert auf alle 200 Zyklen = 1000ms)
+     static int debug_counter = 0;
+     if (++debug_counter >= 200) {
+         printf("DEBUG: RPY [roll=%.6f, pitch=%.6f, yaw=%.6f]\n", rpy[0], rpy[1], rpy[2]);
+         debug_counter = 0;
+     }
 
     // Roll-Vorzeichen an Fahrtrichtung koppeln
     if (cos(yaw) < 0.0) {
@@ -429,13 +474,13 @@ static float get_filtered_roll_angle(void) {
     }
 
     float roll_deg = (float)(roll_rad * 180.0 / M_PI);
-     
+    
      // Plausibilitätscheck: Maximale Änderung pro Zeitschritt begrenzen
      static float last_roll = 0.0;
      static int first_run = 1;
      
      if (!first_run) {
-         float max_change_per_5ms = 5.0;  // Reduziert auf 5° pro 5ms
+                   float max_change_per_5ms = 15.0;  // Erhöht auf 15° pro 5ms für schnellere Reaktion
          float change = roll_deg - last_roll;
          
          if (fabs(change) > max_change_per_5ms) {
@@ -454,12 +499,12 @@ static float get_filtered_roll_angle(void) {
      last_roll = roll_deg;
      first_run = 0;
      
-     // DEBUG: Rohe Roll-Winkel-Werte (nur alle 40 Zyklen)
-     static int debug_counter2 = 0;
-     if (++debug_counter2 >= 40) {
-         printf("DEBUG: Raw Roll = %.3f°, Filtered will be applied\n", roll_deg);
-         debug_counter2 = 0;
-     }
+           // DEBUG: Rohe Roll-Winkel-Werte (reduziert auf alle 200 Zyklen)
+      static int debug_counter2 = 0;
+      if (++debug_counter2 >= 200) {
+          printf("DEBUG: Raw Roll = %.3f°, Filtered will be applied\n", roll_deg);
+          debug_counter2 = 0;
+      }
      
      // KEINE automatische Aufrichtung oder Positionsänderung!
      // Lass das Fahrrad in seiner ursprünglichen Position
@@ -477,7 +522,7 @@ static float get_filtered_roll_angle(void) {
          filtered_roll += roll_angle_history[i];
      }
      return (count > 0) ? filtered_roll / count : 0.0;
- }
+}
  
  static void update_display(float roll_angle, float steering_output, float speed) {
      if (display_device == 0) return;
@@ -562,7 +607,7 @@ static float get_filtered_roll_angle(void) {
      }
  }
  
- static long long get_time_microseconds(void) {
+ static long long get_time_microseconds(void) { 
      struct timeval current_time;
      gettimeofday(&current_time, NULL);
      
@@ -635,11 +680,19 @@ static float get_filtered_roll_angle(void) {
  }
  
  static void send_balance_status(const balance_status_t *status) {
-     static int send_counter = 0;
-     
-     // Sende Status nur alle 25 Zyklen (25 * 2ms = 50ms → 20 Hz)
-     if (++send_counter >= 25) {
-         wb_emitter_send(status_emitter, status, sizeof(balance_status_t));
-         send_counter = 0;
-     }
- } 
+    static int send_counter = 0;
+    
+    // Sende Status nur alle 25 Zyklen (25 * 2ms = 50ms → 20 Hz)
+    if (++send_counter >= 25) {
+        wb_emitter_send(status_emitter, status, sizeof(balance_status_t));
+        send_counter = 0;
+    }
+}
+
+static bool check_roll_angle_stability(float roll_angle, double current_time) {
+    (void)roll_angle; // Parameter nicht verwendet
+    
+    // Einfacher Zeitcheck: Regelung nach 0.25 Sekunden aktivieren
+    double elapsed_time = current_time - simulation_start_time;
+    return elapsed_time >= 0.25;
+} 

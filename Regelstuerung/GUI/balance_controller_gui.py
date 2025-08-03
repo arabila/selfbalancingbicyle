@@ -911,10 +911,10 @@ class BalanceControllerGUI:
         self.update_time()
         
     def update_time(self):
-        """Aktualisiere die Zeit-Anzeige"""
-        current_time = datetime.now().strftime("%H:%M:%S")
+        """Aktualisiere die Zeit-Anzeige mit Millisekunden-Präzision"""
+        current_time = datetime.now().strftime("%H:%M:%S.%f")[:-3]  # Millisekunden (3 Stellen)
         self.time_text.set(current_time)
-        self.root.after(1000, self.update_time)
+        self.root.after(10, self.update_time)  # Update alle 10ms für Echtzeit-Gefühl
         
     def on_parameter_change(self, param_key, value):
         """Handler für Parameter-Änderungen"""
@@ -1310,18 +1310,20 @@ class BalanceControllerGUI:
                         latest_file = max(log_files, key=lambda f: os.path.getctime(os.path.join(self.monitoring_dir, f)))
                         full_path = os.path.join(self.monitoring_dir, latest_file)
                         
-                        # Lade Daten direkt und aktualisiere
+                        # Lade nur die letzten 1000 Datenpunkte für bessere Performance
                         df = pd.read_csv(full_path)
+                        if len(df) > 1000:
+                            df = df.tail(1000)  # Nur die letzten 1000 Zeilen für Echtzeit-Monitoring
                         self.current_data = df
                         
                         # Thread-sicheres Update über Tkinter
                         self.root.after(0, self.refresh_plots)
-                        self.status_vars["last_update"].set(datetime.now().strftime("%H:%M:%S"))
+                        self.status_vars["last_update"].set(datetime.now().strftime("%H:%M:%S.%f")[:-3])  # Millisekunden-Präzision
                         
             except Exception as e:
                 print(f"Live-Plot Fehler: {e}")
                 
-            time.sleep(2)  # Update alle 2 Sekunden
+            time.sleep(0.2)  # Update alle 200ms für Echtzeit-Monitoring
             
     # Neue Physik-Funktionen
     def reset_physics_defaults(self):
@@ -1391,8 +1393,8 @@ class BalanceControllerGUI:
         except Exception as e:
             print(f"Status-Update Fehler: {e}")
             
-        # Alle 3 Sekunden aktualisieren
-        self.root.after(3000, self.update_physics_status)
+        # Alle 1 Sekunde aktualisieren
+        self.root.after(1000, self.update_physics_status)  # Update alle 1s statt 3s
         
     # Szenarien-Funktionen
     def scenario_calm(self):
@@ -1668,9 +1670,9 @@ class BalanceControllerGUI:
     def build_monitor_loop(self):
         """Überwachungsschleife für Build-Änderungen"""
         if hasattr(self, 'build_monitor_active') and self.build_monitor_active and self.build_monitor_var.get():
-            # Prüfe alle 30 Sekunden den Build-Status
+            # Prüfe alle 5 Sekunden den Build-Status
             self.check_build_status()
-            self.root.after(30000, self.build_monitor_loop)  # 30 Sekunden
+            self.root.after(5000, self.build_monitor_loop)  # 5 Sekunden statt 30s
 
 def main():
     root = tk.Tk()
