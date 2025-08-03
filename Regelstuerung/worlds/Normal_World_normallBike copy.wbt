@@ -510,6 +510,7 @@ DEF BICYCLE Robot {
       translation 0 0 0.32
       rotation 1 0 0 0
       name "imu"
+      noise 0.0
     }
     Receiver {
       name "command_rx"
