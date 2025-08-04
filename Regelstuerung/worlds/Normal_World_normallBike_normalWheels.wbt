@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.2117518428745917 0.17776731070907434 0.9610202600790878 2.105998883791126
-  position -7.743111389763342 -41.73113751890632 13.075543288571227
+  orientation -0.2864244798641876 0.21480995814143455 0.9337117859477864 2.165907201627453
+  position -11.41802620634671 -33.4391913105604 10.726863338322133
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -92,7 +92,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.04
+              height 0.08
               radius 0.45
               subdivision 72
             }
@@ -115,14 +115,14 @@ DEF BICYCLE Robot {
       jointParameters HingeJointParameters {
         axis 0 0 1
         anchor 0 -0.52352 0.6528
-        dampingConstant 0.8
+        dampingConstant 0.3
         staticFriction 0.1
       }
       device [
         RotationalMotor {
           name "handlebars motor"
-          maxTorque 15
-          maxVelocity 20.0
+          maxVelocity 50
+          maxTorque 25
         }
         PositionSensor {
           name "handlebars sensor"
@@ -169,7 +169,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.04
+                    height 0.08
                     radius 0.45
                     subdivision 72
                   }

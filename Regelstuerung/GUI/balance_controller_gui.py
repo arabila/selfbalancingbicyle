@@ -601,6 +601,7 @@ class BalanceControllerGUI:
             "roll_angle": tk.BooleanVar(value=True),
             "steering_output": tk.BooleanVar(value=True),
             "final_steer": tk.BooleanVar(value=True),
+            "actual_handlebar_angle": tk.BooleanVar(value=False),
             "p_term": tk.BooleanVar(value=True),
             "i_term": tk.BooleanVar(value=True),
             "d_term": tk.BooleanVar(value=True),
@@ -618,6 +619,7 @@ class BalanceControllerGUI:
             ("roll_angle", "Roll-Winkel"),
             ("steering_output", "⚖️ Balance-Steer"),
             ("final_steer", "🎯 Final-Steer"),
+            ("actual_handlebar_angle", "📏 Sensor-Winkel"),
             ("p_term", "P-Term"),
             ("i_term", "I-Term")
         ]
@@ -757,6 +759,7 @@ class BalanceControllerGUI:
             "roll_angle": [],
             "steering_output": [],
             "final_steer": [],
+            "actual_handlebar_angle": [],
             "speed": [],
             "p_term": [],
             "i_term": [],
@@ -1182,6 +1185,9 @@ class BalanceControllerGUI:
         
         if "final_steer" in df.columns and (show_all or self.plot_visibility["final_steer"].get()):
             self.ax1.plot(df["timestamp"], df["final_steer"] * 180/3.14159, label="🎯 Final-Steer", color="darkgreen", linewidth=3, linestyle='-')
+        
+        if "actual_handlebar_angle" in df.columns and (show_all or self.plot_visibility["actual_handlebar_angle"].get()):
+            self.ax1.plot(df["timestamp"], df["actual_handlebar_angle"] * 180/3.14159, label="📏 Sensor-Winkel", color="purple", linewidth=2, linestyle='-.')
         
         # Vision-Error zu Plot 1 hinzufügen (falls verfügbar)
         if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):

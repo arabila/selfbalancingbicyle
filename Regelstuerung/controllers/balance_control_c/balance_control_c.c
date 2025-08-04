@@ -11,11 +11,11 @@
  #include <webots/supervisor.h>
  #include <webots/motor.h>
  #include <webots/inertial_unit.h>
- #include <webots/keyboard.h>
  #include <webots/display.h>
  #include <webots/camera.h>
  #include <webots/receiver.h>
  #include <webots/emitter.h>
+#include <webots/position_sensor.h>
  
  #include <stdio.h>
  #include <stdlib.h>
@@ -29,7 +29,6 @@
  #include "balance_pid.h"
  #include "balance_config.h"
  #include "balance_logging.h"
- #include "bicycle_physics.h"
  
  // Globale Device-Handles
 static WbDeviceTag handlebars_motor;
@@ -74,7 +73,6 @@ static double last_command_time = 0.0;
  static pid_controller_t angle_pid;
  static balance_config_t config;
  static balance_logger_t logger;
- static bicycle_physics_t bicycle_physics;
  
  // Roll-Winkel-Filter
  static float roll_angle_history[ROLL_FILTER_SIZE];
@@ -94,7 +92,7 @@ static void init_devices(int timestep);
 static void load_and_apply_config(void);
 static float get_filtered_roll_angle(void);
 static void update_display(float roll_angle, float steering_output, float speed);
-static void handle_keyboard_input(void);
+// Keyboard-Input wurde entfernt
 static long long get_time_microseconds(void);
 static void print_status(float roll_angle, float steering_output, float speed);
 static int receive_vision_command(vision_command_t *command);
@@ -115,7 +113,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
     simulation_start_time = wb_robot_get_time();
      
     // Devices initialisieren
-    init_devices(timestep); // Motor, IMU, Keyboard, Display, Command Receiver, Status Emitter, Robot Nodez
+    init_devices(timestep); // Motor, IMU, Display, Command Receiver, Status Emitter, Robot Node
 
     // Konfiguration laden und PID initialisieren
     load_and_apply_config();
@@ -123,15 +121,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      // Logging initialisieren
      balance_logging_init(&logger, "../../Monitoring");
      
-     // Erweiterte Fahrradphysik initialisieren
-     if (bicycle_physics_init(&bicycle_physics, robot_node, timestep) != 0) {
-         printf("FEHLER: Konnte Fahrradphysik nicht initialisieren\n");
-         wb_robot_cleanup();
-         return 1;
-     }
-     
-     // Umgebungsparameter setzen (Beispiel: leichter Seitenwind)
-     bicycle_physics_set_environment(&bicycle_physics, 2.0f, 0.5f, 0.2f); // 2 m/s Seitenwind, 20% Turbulenz
+     // Physik-Simulation wurde entfernt - direkte Regelung ohne zusätzliche Physik-Effekte
      
      printf("=== Balance Control C gestartet ===\n");
      printf("Angle PID: Kp=%.3f, Ki=%.3f, Kd=%.3f\n", 
@@ -156,8 +146,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              config_reload_counter = 0;
          }
          
-        // Keyboard-Input verarbeiten
-        handle_keyboard_input();
+        // Keyboard-Input wurde entfernt
 
         // Aktuellen Lenkwinkel ausgeben
         double handlebar_angle = wb_position_sensor_get_value(handlebars_sensor);
@@ -174,7 +163,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
         // 2. ERWEITERTE PHYSIK-SIMULATION durchführen
         //--------------------------------
         // Berechnet externe Kräfte und simuliert realistische Sensorfehler
-        //float simulated_roll_angle = bicycle_physics_step(&bicycle_physics, true_roll_angle);
+        // Physik-Simulation wurde entfernt - direkter Roll-Winkel wird verwendet
         
         // Verwende den wahren Roll-Winkel für die Regelung // TODO: Ersetze durch simulierte Roll-Winkel
         float roll_angle = true_roll_angle;
@@ -278,15 +267,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
          else if (target_speed > config.speed_control.max_speed)
              target_speed = config.speed_control.max_speed;
          
-         // 6. ROLLWIDERSTAND am Motor anwenden (aus Physik-Simulation)
-         float roll_resistance_torque = bicycle_physics.forces.rolling_resistance_torque;
-         if (fabs(roll_resistance_torque) > 0.001f) {
-             // Rollwiderstand als zusätzliches Bremsmoment anwenden
-             // (Vereinfacht: reduziere Zielgeschwindigkeit entsprechend)
-             float resistance_speed_reduction = fabs(roll_resistance_torque) * 0.1f; // Skalierungsfaktor
-             target_speed = target_speed * (1.0f - resistance_speed_reduction);
-             if (target_speed < 0.1f) target_speed = 0.1f; // Mindestgeschwindigkeit
-         }
+         // 6. Rollwiderstand wurde entfernt - direkte Motoransteuerung ohne Physik-Effekte
          
          // 7. Motoren ansteuern
          wb_motor_set_position(handlebars_motor, final_steer);
@@ -311,6 +292,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
                 .steering_output = steering_output,
                 .final_steer = final_steer,
                 .target_speed = target_speed,
+                .actual_handlebar_angle = (float)handlebar_angle,
                 .p_term = angle_pid.proportional_term,
                 .i_term = angle_pid.integral_term,
                 .d_term = angle_pid.derivative_term,
@@ -350,7 +332,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      
      // Cleanup
      balance_logging_close(&logger);
-     bicycle_physics_cleanup(&bicycle_physics);
+     // Physik-System wurde entfernt
      wb_robot_cleanup();
      
      return 0;
@@ -387,8 +369,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      }
      wb_inertial_unit_enable(imu_sensor, timestep * 2);  // IMU mit 10ms statt 5ms
      
-     // Keyboard
-     wb_keyboard_enable(timestep);
+         // Keyboard wurde entfernt
      
      // Display (optional)
      display_device = wb_robot_get_device("display");
@@ -551,61 +532,7 @@ static float get_filtered_roll_angle(void) {
      wb_display_draw_text(display_device, pid_text, 10, 30);
  }
  
- static void handle_keyboard_input(void) {
-     int key = wb_keyboard_get_key();
-     
-     switch (key) {
-         case 27:  // ESC key
-             printf("ESC gedrückt - Beende Controller\n");
-             wb_robot_cleanup();
-             exit(0);
-             break;
-             
-         case 'r':
-         case 'R':
-             // Konfiguration neu laden
-             printf("Konfiguration wird neu geladen...\n");
-             load_and_apply_config();
-             break;
-             
-         case 's':
-         case 'S':
-             // Status ausgeben
-             printf("\n=== Status ===\n");
-             printf("Angle PID: Kp=%.3f, Ki=%.3f, Kd=%.3f\n", 
-                    config.angle_pid.Kp, config.angle_pid.Ki, config.angle_pid.Kd);
-             printf("Speed: Base=%.1f, Min=%.1f, Max=%.1f\n",
-                    config.speed_control.base_speed, config.speed_control.min_speed, config.speed_control.max_speed);
-             printf("===============\n\n");
-             break;
-             
-         case 'p':
-         case 'P':
-             // Physik-Debug-Ausgabe
-             bicycle_physics_debug_print(&bicycle_physics);
-             break;
-             
-         case 'w':
-         case 'W':
-             {
-                 // Wind-Simulation umschalten
-                 static float wind_modes[] = {0.0f, 2.0f, 5.0f, 10.0f}; // Windgeschwindigkeiten
-                 static int wind_mode_index = 0;
-                 wind_mode_index = (wind_mode_index + 1) % 4;
-                 float wind_speed = wind_modes[wind_mode_index];
-                 bicycle_physics_set_environment(&bicycle_physics, wind_speed, 1.5708f, 0.3f); // Seitenwind
-                 printf("Wind-Simulation: %.1f m/s Seitenwind\n", wind_speed);
-                 break;
-             }
-             
-         case 'e':
-         case 'E':
-             // Umgebungsparameter zurücksetzen
-             bicycle_physics_set_environment(&bicycle_physics, 0.0f, 0.0f, 0.1f);
-             printf("Umgebungsparameter zurückgesetzt\n");
-             break;
-     }
- }
+ // Keyboard-Input komplett entfernt
  
  static long long get_time_microseconds(void) { 
      struct timeval current_time;
@@ -695,5 +622,5 @@ static bool check_roll_angle_stability(float roll_angle, double current_time) {
     // Einfacher Zeitcheck: Regelung nach 0.1 Sekunden aktivieren (reduziert von 0.25s)
     // Grund: IMU-Ausschlag in den ersten ~0.05s umgehen, aber schneller reagieren
     double elapsed_time = current_time - simulation_start_time;
-    return elapsed_time >= 0.1;
+    return elapsed_time >= 0.2;
 } 

@@ -175,7 +175,7 @@ int balance_config_save(const balance_config_t *config, const char *filename) {
 
 void balance_config_set_defaults(balance_config_t *config) {
     // Angle PID Parameter (basierend auf autobike.c)
-    config->angle_pid.Kp = 10.0f;          // ANGLE_PID_KP
+    config->angle_pid.Kp = 2.0f;          // ANGLE_PID_KP
     config->angle_pid.Ki = 0.0f;            // ANGLE_PID_KI (deaktiviert)
     config->angle_pid.Kd = 2.2f;            // ANGLE_PID_KD
     config->angle_pid.output_min = -0.3f;   // ~-17° in Radiant
@@ -200,9 +200,9 @@ void balance_config_set_defaults(balance_config_t *config) {
     config->system.filter_size = 5;            // 5-Punkt gleitender Durchschnitt
     
     // Vision Integration Settings (Statische Gewichtung)
-    config->vision_integration.vision_weight = 0.7f;    // 70% Vision-Anteil
-    config->vision_integration.balance_weight = 0.3f;   // 30% Balance-Anteil
-    config->vision_integration.enable_vision = 1;       // Vision aktiviert
+    config->vision_integration.vision_weight = 0.0f;    // 70% Vision-Anteil
+    config->vision_integration.balance_weight = 1.0f;   // 30% Balance-Anteil
+    config->vision_integration.enable_vision = 0;       // Vision aktiviert
     config->vision_integration.vision_timeout_seconds = 0.5f; // 500ms Timeout
 }
 

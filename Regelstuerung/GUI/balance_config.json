@@ -1,11 +1,11 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 5.0,
-            "angle_Ki": 0.5,
-            "angle_Kd": 1.5,
-            "angle_output_min": -1.5030459770114943,
-            "angle_output_max": 1.5030459770114943,
+            "angle_Kp": 2.0,
+            "angle_Ki": 0.0,
+            "angle_Kd": 0.0,
+            "angle_output_min": -0.3,
+            "angle_output_max": 0.3,
             "angle_integral_min": -60.0,
             "angle_integral_max": 60.0
         },
@@ -16,7 +16,7 @@
             "stability_reduction": 0.5
         },
         "mechanical_limits": {
-            "max_handlebar_angle": 5.0,
+            "max_handlebar_angle": 1.5,
             "max_roll_angle": 45.0
         },
         "system": {
@@ -27,7 +27,7 @@
         },
         "vision_integration": {
             "vision_weight": 0.0,
-            "balance_weight": 1.0,
+            "balance_weight": 0.0,
             "enable_vision": 0,
             "vision_timeout_seconds": 0.5
         }
