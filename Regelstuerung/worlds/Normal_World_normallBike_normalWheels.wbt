@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.21205996833573698 0.17622595431439247 0.9612361743377262 2.115610168959061
-  position -7.53831543055773 -41.54098903957869 13.075543288571227
+  orientation -0.2117518428745917 0.17776731070907434 0.9610202600790878 2.105998883791126
+  position -7.743111389763342 -41.73113751890632 13.075543288571227
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -73,8 +73,8 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation -7.216176474145186e-07 0.5311901176466811 2.3324557000755426e-06
-        rotation -0.9999999999982916 -1.232177446937478e-06 1.3778993838616832e-06 1.951456788965953
+        translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05
+        rotation -0.9999999999994074 4.0589810336105457e-07 1.010137366455216e-06 1.9514567889662362
         children [
           DEF wheel Transform {
             scale 0.0056 0.0081 0.0081
@@ -92,7 +92,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.08
+              height 0.04
               radius 0.45
               subdivision 72
             }
@@ -122,6 +122,7 @@ DEF BICYCLE Robot {
         RotationalMotor {
           name "handlebars motor"
           maxTorque 15
+          maxVelocity 20.0
         }
       ]
       endPoint Solid {
@@ -146,8 +147,8 @@ DEF BICYCLE Robot {
               staticFriction 0.1
             }
             endPoint Solid {
-              translation -7.392723766486142e-07 -0.23680995539680655 -0.6528042095113528
-              rotation -0.9999999999986486 -1.4008233643895308e-06 -8.60500312180519e-07 3.9891419936725865
+              translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
+              rotation -0.9999999999996712 -7.130756857207462e-07 -3.8623405470805726e-07 3.9891419936744623
               children [
                 DEF wheel Transform {
                   scale 0.0056 0.0081 0.0081
@@ -165,7 +166,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.08
+                    height 0.04
                     radius 0.45
                     subdivision 72
                   }

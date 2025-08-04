@@ -287,7 +287,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
          wb_motor_set_position(handlebars_motor, final_steer);
          wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
          
-                 // 8. Balance-Status an Vision-Controller senden
+        // 8. Balance-Status an Vision-Controller senden
         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
         balance_status_t status = {
             .roll_angle = roll_angle,
@@ -326,20 +326,8 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              
              // ZUSÄTZLICH: Physik-Debug-Ausgabe alle 5 Sekunden
              static int physics_debug_counter = 0;
-             if (++physics_debug_counter >= (5000 / timestep)) { // 5 Sekunden
-                 printf("\n=== PHYSIK-STATUS ===\n");
-                 printf("Wahrer Roll-Winkel: %.2f° | Simuliert: %.2f°\n", 
-                        true_roll_angle * 180.0f / M_PI, roll_angle * 180.0f / M_PI);
-                 printf("Slip-Winkel: %.2f° | Geschwindigkeit: %.2f m/s\n",
-                        bicycle_physics.state.slip_angle * 180.0f / M_PI,
-                        sqrtf(bicycle_physics.state.velocity[0]*bicycle_physics.state.velocity[0] + 
-                              bicycle_physics.state.velocity[1]*bicycle_physics.state.velocity[1]));
-                 printf("Seitenkraft: %.1f N | Luftwiderstand: %.1f N\n",
-                        bicycle_physics.forces.lateral_force[1],
-                        sqrtf(bicycle_physics.forces.drag_force[0]*bicycle_physics.forces.drag_force[0] + 
-                              bicycle_physics.forces.drag_force[1]*bicycle_physics.forces.drag_force[1]));
-                 printf("Rollwiderstand: %.3f Nm\n", bicycle_physics.forces.rolling_resistance_torque);
-                 printf("==================\n\n");
+             if (++physics_debug_counter >= (5000 / timestep)) {
+                 printf("PHYSIK-DEBUG: Kräfte und Momente - alle 5s\n");
                  physics_debug_counter = 0;
              }
          }
@@ -353,13 +341,12 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              print_status(roll_angle, steering_output, target_speed);
              status_counter = 0;
          }
-     }
+     } // Ende der while-Schleife
      
      // Cleanup
      balance_logging_close(&logger);
      bicycle_physics_cleanup(&bicycle_physics);
      wb_robot_cleanup();
-     printf("\nBalance Control C - Beendet\n");
      
      return 0;
  }
@@ -692,7 +679,8 @@ static float get_filtered_roll_angle(void) {
 static bool check_roll_angle_stability(float roll_angle, double current_time) {
     (void)roll_angle; // Parameter nicht verwendet
     
-    // Einfacher Zeitcheck: Regelung nach 0.25 Sekunden aktivieren
+    // Einfacher Zeitcheck: Regelung nach 0.1 Sekunden aktivieren (reduziert von 0.25s)
+    // Grund: IMU-Ausschlag in den ersten ~0.05s umgehen, aber schneller reagieren
     double elapsed_time = current_time - simulation_start_time;
-    return elapsed_time >= 0.25;
+    return elapsed_time >= 0.1;
 } 
