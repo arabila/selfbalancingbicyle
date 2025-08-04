@@ -1310,10 +1310,8 @@ class BalanceControllerGUI:
                         latest_file = max(log_files, key=lambda f: os.path.getctime(os.path.join(self.monitoring_dir, f)))
                         full_path = os.path.join(self.monitoring_dir, latest_file)
                         
-                        # Lade nur die letzten 1000 Datenpunkte für bessere Performance
+                        # Lade alle verfügbaren Datenpunkte für vollständiges Monitoring
                         df = pd.read_csv(full_path)
-                        if len(df) > 1000:
-                            df = df.tail(1000)  # Nur die letzten 1000 Zeilen für Echtzeit-Monitoring
                         self.current_data = df
                         
                         # Thread-sicheres Update über Tkinter
