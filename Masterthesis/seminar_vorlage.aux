@@ -1,9 +1,12 @@
 \relax 
 \providecommand\zref@newlabel[2]{}
+\providecommand \babel@aux [2]{\global \let \babel@toc \@gobbletwo }
+\@nameuse{bbl@beforestart}
 \providecommand\hyper@newdestlabel[2]{}
 \providecommand\HyField@AuxAddToFields[1]{}
 \providecommand\HyField@AuxAddToCoFields[2]{}
 \bibstyle{plain}
+\babel@aux{english}{}
 \@writefile{toc}{\contentsline {section}{\numberline {1}Abstract}{4}{section.1}\protected@file@percent }
 \citation{ranz2021bachelor}
 \citation{bno055}
@@ -68,59 +71,51 @@
 \citation{cyberbotics2025}
 \citation{bno055}
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Struktur der Simulationsumgebung}{11}{subsection.4.2}\protected@file@percent }
-\citation{fme2013webots}
-\citation{ode2006smith}
-\citation{guo2020pacejka}
 \@writefile{lpc}{\contentsline {lpcsec}{\numberline {}\ - }{12}{section*.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Physikalisches Modell des Fahrrads}{12}{subsection.4.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Laterale Reifenkräfte.}{12}{section*.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Aerodynamischer Widerstand.}{12}{section*.6}\protected@file@percent }
-\citation{mccarthy1998bicycle}
-\@writefile{toc}{\contentsline {paragraph}{Rollwiderstand.}{13}{section*.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Gyroskopische Effekte.}{13}{section*.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Sensorrauschen (IMU-Modell).}{13}{section*.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {paragraph}{Externe Umwelteinflüsse.}{13}{section*.10}\protected@file@percent }
-\@writefile{lpc}{\contentsline {lpcsec}{\numberline {}\ - }{13}{section*.11}\protected@file@percent }
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Kräfte- und Momentenmodell des simulierten Fahrrads (eigene Darstellung).}}{14}{figure.3}\protected@file@percent }
-\newlabel{fig:bike_forces}{{3}{14}{Kräfte- und Momentenmodell des simulierten Fahrrads (eigene Darstellung)}{figure.3}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Regelung und Steuerung}{14}{subsection.4.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Angebundene GUI}{14}{subsection.4.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {5}Kombinierte Regelung}{14}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{14}{subsection.5.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{14}{subsection.5.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Supervisions-/Koppelkaskade}{14}{subsection.5.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Failsafe-Strategien}{14}{subsection.5.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Ergebnisse}{14}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teststrecken}{14}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Gerade Strecke mit Störimpuls}{14}{subsubsection.6.1.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Slalom-Kurs}{14}{subsubsection.6.1.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.3}S-Kurve mit Steigung}{14}{subsubsection.6.1.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.4}Kreisfahrt}{14}{subsubsection.6.1.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Balance-Stabilität}{14}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Spurtreue \& Querabweichung}{14}{subsection.6.3}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Rechenzeit \& Echtzeitfähigkeit}{14}{subsection.6.4}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {7}Grenzen der Arbeit}{15}{section.7}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {8}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{15}{section.8}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {9}Fazit}{15}{section.9}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {10}Literaturverzeichnis}{15}{section.10}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.3}Das Fahrradmodell}{13}{subsection.4.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Das Fahrradmodell in Webots.}}{13}{figure.3}\protected@file@percent }
+\newlabel{fig:bicycle}{{3}{13}{Das Fahrradmodell in Webots}{figure.3}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {4.3.1}Hinterrad (\texttt  {DEF rear\_wheel})}{13}{subsubsection.4.3.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Physik (\texttt  {Physics})}{13}{section*.5}\protected@file@percent }
+\newlabel{lst:rear_wheel}{{1}{14}{Hinterrad—Kinematik, Kontakt und Physik (Auszug)}{lstlisting.1}{}}
+\@writefile{lol}{\contentsline {lstlisting}{\numberline {1}Hinterrad—Kinematik, Kontakt und Physik (Auszug)}{14}{lstlisting.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.4}Sensoren}{14}{subsection.4.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {paragraph}{Konfiguration in der \texttt  {.wbt}-Datei}{14}{section*.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.5}Aktuatoren}{16}{subsection.4.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.6}Controller}{16}{subsection.4.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.7}Angebundene GUI}{16}{subsection.4.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {5}Kombinierte Regelung}{16}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{16}{subsection.5.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{16}{subsection.5.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.3}Supervisions-/Koppelkaskade}{16}{subsection.5.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {5.4}Failsafe-Strategien}{16}{subsection.5.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Ergebnisse}{16}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Teststrecken}{16}{subsection.6.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.1}Gerade Strecke mit Störimpuls}{16}{subsubsection.6.1.1}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.2}Slalom-Kurs}{16}{subsubsection.6.1.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.3}S-Kurve mit Steigung}{16}{subsubsection.6.1.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {6.1.4}Kreisfahrt}{16}{subsubsection.6.1.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Balance-Stabilität}{16}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Spurtreue \& Querabweichung}{16}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.4}Rechenzeit \& Echtzeitfähigkeit}{16}{subsection.6.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {7}Grenzen der Arbeit}{17}{section.7}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {8}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{17}{section.8}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {9}Fazit}{17}{section.9}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {10}Literaturverzeichnis}{17}{section.10}\protected@file@percent }
 \bibdata{refs}
 \bibcite{bno055}{1}
 \bibcite{cyberbotics2025}{2}
 \bibcite{md49}{3}
 \bibcite{Ghidaei2024}{4}
-\bibcite{guo2020pacejka}{5}
-\bibcite{gupta2023}{6}
-\bibcite{hadi2024softgripper}{7}
-\bibcite{Hunziker2019}{8}
-\bibcite{bts7960}{9}
-\bibcite{Ultralytics2023}{10}
-\bibcite{karabila2022}{11}
-\bibcite{mccarthy1998bicycle}{12}
-\bibcite{park2020}{13}
-\bibcite{fme2013webots}{14}
-\bibcite{ranz2021bachelor}{15}
-\bibcite{ode2006smith}{16}
-\bibcite{zander2023}{17}
-\bibcite{Zhao2023}{18}
+\bibcite{gupta2023}{5}
+\bibcite{hadi2024softgripper}{6}
+\bibcite{Hunziker2019}{7}
+\bibcite{bts7960}{8}
+\bibcite{Ultralytics2023}{9}
+\bibcite{karabila2022}{10}
+\bibcite{park2020}{11}
+\bibcite{ranz2021bachelor}{12}
+\bibcite{zander2023}{13}
+\bibcite{Zhao2023}{14}
 \ulp@afterend
-\gdef \@abspage@last{16}
+\gdef \@abspage@last{18}

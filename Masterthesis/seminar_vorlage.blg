@@ -3,44 +3,44 @@ Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: seminar_vorlage.aux
 The style file: plain.bst
 Database file #1: refs.bib
-You've used 18 entries,
+You've used 14 entries,
             2118 wiz_defined-function locations,
-            591 strings with 6326 characters,
-and the built_in function-call counts, 4532 in all, are:
-= -- 441
-> -- 197
+            568 strings with 5849 characters,
+and the built_in function-call counts, 3439 in all, are:
+= -- 332
+> -- 157
 < -- 0
-+ -- 82
-- -- 62
-* -- 236
-:= -- 800
-add.period$ -- 54
-call.type$ -- 18
-change.case$ -- 84
++ -- 64
+- -- 50
+* -- 170
+:= -- 617
+add.period$ -- 42
+call.type$ -- 14
+change.case$ -- 67
 chr.to.int$ -- 0
-cite$ -- 18
-duplicate$ -- 158
-empty$ -- 391
-format.name$ -- 62
-if$ -- 938
+cite$ -- 14
+duplicate$ -- 117
+empty$ -- 293
+format.name$ -- 50
+if$ -- 710
 int.to.chr$ -- 0
-int.to.str$ -- 18
-missing$ -- 7
-newline$ -- 93
-num.names$ -- 36
-pop$ -- 116
+int.to.str$ -- 14
+missing$ -- 3
+newline$ -- 73
+num.names$ -- 28
+pop$ -- 94
 preamble$ -- 1
-purify$ -- 67
+purify$ -- 53
 quote$ -- 0
-skip$ -- 123
+skip$ -- 94
 stack$ -- 0
-substring$ -- 192
-swap$ -- 15
+substring$ -- 120
+swap$ -- 11
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 70
+type$ -- 56
 warning$ -- 0
-while$ -- 44
-width$ -- 20
-write$ -- 189
+while$ -- 32
+width$ -- 16
+write$ -- 147

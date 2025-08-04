@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.1484069378162491 -0.3576081158295518 -0.9220042387651164 5.067895391464434
-  position -20.46562750529843 -23.987911815775522 3.1906683363444546
+  orientation -0.21205996833573698 0.17622595431439247 0.9612361743377262 2.115610168959061
+  position -7.53831543055773 -41.54098903957869 13.075543288571227
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -46,7 +46,7 @@ RectangleArena {
   wallHeight 0.001
 }
 DEF BICYCLE Robot {
-  translation -17.5476 -19.4694 0.326267
+  translation -16.7776 -19.4694 0.362776
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
@@ -77,7 +77,7 @@ DEF BICYCLE Robot {
         rotation -0.9999999999982916 -1.232177446937478e-06 1.3778993838616832e-06 1.951456788965953
         children [
           DEF wheel Transform {
-            scale 0.0064 0.0064 0.0064
+            scale 0.0056 0.0081 0.0081
             children [
               CadShape {
                 url [
@@ -92,8 +92,8 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.05
-              radius 0.352
+              height 0.08
+              radius 0.45
               subdivision 72
             }
           ]
@@ -111,11 +111,6 @@ DEF BICYCLE Robot {
         }
       }
     }
-
-
-
-
-
     DEF Handlebars_and_Fork HingeJoint {
       jointParameters HingeJointParameters {
         axis 0 0 1
@@ -155,7 +150,7 @@ DEF BICYCLE Robot {
               rotation -0.9999999999986486 -1.4008233643895308e-06 -8.60500312180519e-07 3.9891419936725865
               children [
                 DEF wheel Transform {
-                  scale 0.0064 0.0064 0.0064
+                  scale 0.0056 0.0081 0.0081
                   children [
                     CadShape {
                       url [
@@ -170,8 +165,8 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.05
-                    radius 0.352
+                    height 0.08
+                    radius 0.45
                     subdivision 72
                   }
                 ]
@@ -357,9 +352,6 @@ DEF BICYCLE Robot {
         }
       }
     }
-
-
-    
     DEF crank HingeJoint {
       jointParameters HingeJointParameters {
         position 30.400672892544396

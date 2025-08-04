@@ -4,11 +4,13 @@
   % Pakete
   %--------------------------------------------------
   \usepackage{epsfig}
+
+  \usepackage{wrapfig}
   \usepackage{graphics}
   \usepackage{graphicx}
   \usepackage{amsmath}              %% für \text{} Befehl
   %\usepackage[german]{babel}
-  \usepackage{german}
+  \usepackage[ngerman,english,shorthands=off]{babel}
   \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
   \usepackage{url}
   \newcommand{\urlBiBTeX}[1]{\url{#1}}
@@ -16,6 +18,18 @@
   \usepackage{multicol} % für mehrere Spalten
   \usepackage{cite}
   \usepackage{pdfcomment}
+  % Code-Listings
+  \usepackage{listings}
+  \lstdefinestyle{wbt}{
+    basicstyle=\ttfamily\footnotesize,
+    breaklines=true,
+    columns=fullflexible,
+    keepspaces=true,
+    showstringspaces=false,
+    frame=single,
+    numbers=left,
+    numbersep=6pt
+  }
 \bibliographystyle{plain}
 
 %--------------------------------------------------
@@ -355,84 +369,129 @@
   Testbett, in dem sowohl Balance- als auch Spurführungsalgorithmen iterativ entwickelt, validiert und optimiert werden können, 
   bevor sie auf den realen Prototyp übertragen werden.
   \pdfcomment{Bild der Struktur der Simulationsumgebung anzeigens}
-  
-  \subsection{Physikalisches Modell des Fahrrads}
 
-  Das Fahrradsystem wird in Webots als Verbund starrer Körper modelliert, dessen Dynamik von der Open Dynamics Engine (ODE)
-  als Physik-Kern simuliert wird \cite{fme2013webots}. Dabei sind die Geometrie- und Masseneigenschaften aller Komponenten 
-  (Rahmen, Räder etc.) in der Weltdatei \texttt{Normal\_World\_smallBike.wbt} festgelegt, ebenso wie Reibungsparameter an den
-  Kontaktpunkten (Reifen–Boden). ODE integriert die Bewegungsgleichungen der starren Körper unter Berücksichtigung von Kräften, 
-  Kollisionen und Gelenkbedingungen und ermöglicht so eine deterministische Simulation der Fahrdynamik \cite{ode2006smith}. 
-  Durch einen Zeitschritt von \texttt{basicTimeStep = 2} (entspricht $2\,\mathrm{ms}$ bzw. $500\,\mathrm{Hz}$) können auch 
-  schnelle Balancebewegungen präzise abgebildet werden.
-  
-  Zur Verbesserung der Modelltreue wurden zusätzlich zu den ODE-internen Kräften weitere fahrdynamische Effekte implementiert. 
-  Diese befinden sich in der Datei \texttt{controllers/balance\_control\_c/bicycle\_physics.c} 
-  des begleitenden Repositorys\footnote{\url{https://github.com/arabila/selfbalancingbicyle}}.
-  
-  \paragraph{Laterale Reifenkräfte.} Die Seitenkräfte der Reifen werden nach einer vereinfachten Pacejka-Formel berechnet. 
-  Für kleine Schlupfwinkel $\alpha$ gilt näherungsweise $F_y \approx C_1 \alpha$, während bei größeren Winkeln ein nichtlinearer 
-  Verlauf nach:
-  
-  \[
-  F_y = D \cdot \sin\left(C \cdot \arctan(B \alpha)\right)
-  \]
-  
-  genutzt wird. Die Parameter $B$, $C$ und $D$ werden dynamisch angepasst, wobei $D = \mu F_z$ mit dem Reibungskoeffizienten $\mu$ und 
-  der Normalkraft $F_z$ \cite{guo2020pacejka}. Die Umsetzung erfolgt in der Funktion \texttt{computeLateralForce()} im C-Modul 
-  \texttt{bicycle\_physics.c}.
-  
-  \paragraph{Aerodynamischer Widerstand.} Die Luftwiderstandskraft wirkt entgegengesetzt zur Bewegungsrichtung und folgt dem bekannten Modell:
-  
-  \[
-  F_\mathrm{drag} = \frac{1}{2} \rho C_d A v^2
-  \]
-  
-  mit Luftdichte $\rho$, Strömungswiderstandskoeffizient $C_d$, Stirnfläche $A$ und Geschwindigkeit $v$. Dieser Effekt ist im Code 
-  unter \texttt{applyDragForce()} realisiert.
-  
-  \paragraph{Rollwiderstand.} Der Rollwiderstand wird als drehmomentbremsende Kraft modelliert:
-  
-  \[
-  M_\mathrm{roll} = C_\mathrm{roll} \cdot F_z \cdot r
-  \]
-  
-  Hierbei ist $r$ der Reifenumfang, $F_z$ die Normalkraft, und $C_\mathrm{roll}$ ein empirisch bestimmter Rollwiderstandskoeffizient. 
-  Diese Kraft reduziert effektiv den Vortrieb, ohne ein explizites Bremsmoment durch ODE zu simulieren.
-  
-  \paragraph{Gyroskopische Effekte.} Zur Simulation des Kreiselmoments der rotierenden Räder wird folgendes Näherungsmodell verwendet:
-  
-  \[
-  \vec{M}_\mathrm{gyro} = I_\mathrm{w} \cdot (\vec{\omega}_\mathrm{rad} \times \vec{\omega}_\mathrm{rahmen})
-  \]
-  
-  Das Moment wirkt insbesondere stabilisierend um die Rollachse und wurde als separates Moment um die Längsachse implementiert \cite{mccarthy1998bicycle}.
-  
-  \paragraph{Sensorrauschen (IMU-Modell).} Zur Nachbildung realer Sensoreffekte wird der von Webots gemessene Rollwinkel um einen künstlichen 
-  Rauschanteil erweitert und über einen FIFO-Puffer verzögert. Diese Funktionalität ist in \texttt{simulateIMUNoise()} enthalten und sorgt für 
-  eine realitätsnahe Simulation mit verrauschten Messwerten und Signalverzögerung.
-  
-  \paragraph{Externe Umwelteinflüsse.} Das physikalische Modell erlaubt auch die Simulation von Seitenwind, Turbulenz und Straßenneigung. 
-  Die Seitenwindkraft wird vektoriell als konstante Störung auf den Rahmen aufgebracht, deren Richtung und Stärke zur Laufzeit angepasst 
-  werden kann. Turbulente Effekte werden über Zufallsrauschen auf diese Kraft überlagert.
-  
-  Die Kombination aus ODE-basierter Dynamik und benutzerdefinierten Zusatzkräften erlaubt eine realitätsnahe Simulation des Balanceverhaltens. 
-  Insbesondere die Stabilisierung durch Kreiselkräfte, das Einlenkverhalten bei Kurvenfahrt und die trägheitsbedingte Verzögerung des Reglerinputs 
-  lassen sich so qualitativ nachvollziehen.
 
-  \pdfcomment{Bild der Kräfte- und Momentenmodell des simulierten Fahrrads anzeigens}
-  \begin{figure}[h]
+
+
+
+  \newpage
+
+
+
+  \subsection{Das Fahrradmodell}
+  \begin{wrapfigure}{r}{0.42\textwidth} % r=rechts, l=links
+    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
     \centering
-    \includegraphics[width=0.75\textwidth]{figures/webots.png}
-    \caption{Kräfte- und Momentenmodell des simulierten Fahrrads (eigene Darstellung).}
-    \label{fig:bike_forces}
-  \end{figure}
+    \includegraphics[width=\linewidth]{figures/bicycle.png}
+    \caption{Das Fahrradmodell in Webots.}
+    \label{fig:bicycle}
+  \end{wrapfigure}
+
+  Das folgende Kapitel führt in das in Webots implementierte Fahrradmodell ein, wie es in der \texttt{.wbt}-Datei spezifiziert ist. 
+  Das Modell ist als kinematischer Baum aus starren Körpern (\texttt{Solid}) aufgebaut, die über eindimensionale Drehgelenke 
+  (\texttt{HingeJoint}) verbunden sind. Die sichtbare Geometrie (\texttt{CadShape}) ist vom physikrelevanten Kollisionsmodell 
+  (\texttt{boundingObject} mit einfachen Primitiven) getrennt; Masse, Schwerpunkt und Trägheit sind im \texttt{Physics}-Block definiert. 
+  An ausgewählten Gelenken wirken \texttt{RotationalMotor}-Aktuatoren, während Dämpfung und Haftreibung über 
+  \texttt{HingeJointParameters} festgelegt sind. In den nachfolgenden Unterabschnitten werden die Baugruppen des Fahrrads entlang 
+  der Knotenstruktur der Weltdatei beschrieben und deren Parameter hinsichtlich ihres Einflusses auf die Dynamik (Lenkung, 
+  Rad–Boden-Kontakt, Eigendämpfung) erläutert.
+
+  \subsubsection{Hinterrad (\texttt{DEF rear\_wheel})}
+  Der Knoten \texttt{rear\_wheel} ist Teil des Gesamtfahrrads und definiert das angetriebene Hinterrad (\texttt{HingeJoint}).
+  Die \texttt{HingeJointParameters} beschreiben das Lager des Hinterrads. Der \emph{anchor} \verb|0 0.5312 0| gibt die Position 
+  der Radachse im Elternkoordinatensystem an. Die \emph{dampingConstant} \verb|0.8| ist die viskose Dämpfung des Lagers: höher 
+  bedeutet mehr Beruhigung gegen Schwingungen, aber eine trägere Rotation. Die \emph{staticFriction} \verb|0.1| ist die Haftreibung 
+  im Lager: sie verhindert kleines Flattern nahe Stillstand, erhöht jedoch das zum Anfahren nötige Drehmoment.
+  Das \texttt{endPoint Solid} ist der vom Gelenk bewegte starre Körper auf der Kind-Seite des \texttt{HingeJoint}. 
+  Er rotiert um den am Gelenk definierten Anker/Achse und bildet damit das eigentliche Bauteil (hier: das Hinterrad), 
+  das durch die Bewegung betroffen ist. In der Hierarchie gilt: Elternteil → Gelenk → \texttt{endPoint Solid}; alles, was hier angehängt ist, bewegt sich mit.
+  Das \texttt{boundingObject} definiert die kollisions- und kontaktrelevante Geometrie des Hinterrads, unabhängig vom sichtbaren Mesh. 
+  Es bestimmt, wo das Rad den Boden „berührt“, wo Kräfte eingeleitet werden und wie Kollisionen erkannt werden. Im Modell ist es ein einfacher Zylinder, 
+  der per \texttt{Pose}-Rotation (entspricht Drehung um die \(y\)-Achse um \(90^\circ\)) in die Radebene gedreht wird; so bildet er die Kontaktfläche des Reifens ab. Zusammen mit dem 
+  \texttt{contactMaterial} (z.\,B.\ \texttt{"wheel"}) entstehen daraus die Reib- und Rückpralleigenschaften im Kontakt mit dem Untergrund. 
+  Größe und Ausrichtung des \texttt{boundingObject} sollten zur realen Radgeometrie passen, da es die Kontaktlage und damit das 
+  Fahrverhalten maßgeblich beeinflusst.
+  \paragraph{Physik (\texttt{Physics})}
+  Der \texttt{Physics}-Block definiert die Masseneigenschaften des Hinterrads. \texttt{density -1} bedeutet: Masse und Trägheit werden 
+  \emph{nicht} aus dem \texttt{boundingObject} berechnet, sondern mit \texttt{mass}, \texttt{centerOfMass} und \texttt{inertiaMatrix} 
+  explizit vorgegeben. \texttt{mass 2} setzt die Gesamtmasse (kg), \texttt{centerOfMass [0 0 0]} positioniert den Schwerpunkt im Solid-Frame (hier an der Nabe), 
+  und \texttt{inertiaMatrix [0.122 0.122 0.245 0 0 0]} legt die Rotations-Trägheiten (kg·m\(^2\)) fest; größere Werte bedeuten trägere Reaktion auf 
+  Dreh- bzw.\ Kippbewegungen. Die Off-Diagonale \verb|0 0 0| zeigt an, dass Hauptachsen und Solid-Achsen ausgerichtet sind. Für automatische Berechnung 
+  könnte statt \verb|density -1| eine positive Dichte verwendet werden (dann kommen Masse/Trägheit aus Volumen×Dichte des \texttt{boundingObject}).
+
+
+
+  \begin{lstlisting}[style=wbt,caption={Hinterrad—Kinematik, Kontakt und Physik (Auszug)},label={lst:rear_wheel}]
+  DEF rear_wheel HingeJoint {
+    jointParameters HingeJointParameters {
+      anchor 0 0.5312 0
+      dampingConstant 0.1
+      staticFriction 0.8
+    }
+    device [..] # RotationalMotor (siehe Kaptitel 4.5 Aktuatoren)
+    endPoint Solid {
+      children [
+        Transform {...}  # visuelles Mesh (ohne Physik)
+      ]
+      contactMaterial "wheel"
+      boundingObject Pose {
+        rotation 0 1 0 1.5708
+        children [ Cylinder { height 0.05  radius 0.352  subdivision 72 } ]
+      }
+      physics Physics {
+        density -1, mass 2, centerOfMass [ 0 0 0 ], 
+        inertiaMatrix [ 0.122  0.122  0.245   0 0 0 ]
+      }
+    }
+  }
+  \end{lstlisting}
+
+
+
+
+  \subsection{Sensoren}
+  Das System nutzt zwei primäre Sensorquellen:
+  \begin{itemize}
+    \item \textbf{Inertialmesseinheit (IMU, Gerät „imu“)} am Fahrrad für die Rollwinkelmessung.
+    \item \textbf{Kamera (Gerät „camera“)} am Vision-Controller zur Spur-/Straßenerkennung.
+  \end{itemize}
+  Die IMU treibt die innere, schnelle Stabilisierung (Balance), die Kamera die äußere, langsamere Pfadführung (Vision). Beide werden in einer einfachen, statischen Fusion zusammengeführt.
+  %--------------------------------------------------
+
+ %==========================
+  % IMU: Implementierung (Webots & Code)
+  %==========================
+  \subsubsection*{IMU: Implementierung (Webots \& Code)}
+  \paragraph{Konfiguration in der \texttt{.wbt}-Datei}
+%--------------------------------------------------
+  \textbf{Kamera: Vision-basierte Spurführung}
+  Die Kamera liefert Bildframes, die zur \emph{Spur-/Straßenerkennung} verarbeitet werden:
+  \begin{enumerate}
+    \item \textbf{Merkmalsextraktion:} YOLO-Segmentierung (falls verfügbar) oder ein Fallback (Kanten/ROI) bestimmt den lateralen Fehler \(e\) relativ zur Bildmitte.
+    \item \textbf{Vision-PID:} Ein separater PID-Regler bildet daraus einen normierten Lenkbefehl \(u_{\text{vis}}\in[-1,1]\) sowie eine Geschwindigkeits-\emph{Empfehlung} \(u_v\in[0,1]\) (bei großem Fehler wird Geschwindigkeit reduziert).
+    \item \textbf{Zeitbasis:} Die Verarbeitung läuft bewusst langsamer (\(\approx20\,\mathrm{Hz}\)) als die Balance-Regelung.
+  \end{enumerate}
+
+  \textbf{Sensordatenfusion und Einbindung in die Gesamtrege\-lung}
+  Die Fusion erfolgt im Balance-Controller:
+  \begin{align}
+    \theta_{\text{vis}} &= u_{\text{vis}}\cdot \theta_{\max},\\
+    \theta_{\text{final}} &= w_v\cdot(-\theta_{\text{vis}}) + w_b\cdot \theta_{\text{bal}},\qquad
+    w_v,w_b\in[0,1],\; w_v+w_b=1,\\
+    v_{\text{target}} &= v_{\min} + u_v\,(v_{\max}-v_{\min}).
+  \end{align}
+  Dabei sind \(w_v\) und \(w_b\) konfigurierbare Gewichte. \(\theta_{\text{final}}\) und \(v_{\text{target}}\) werden jeweils auf zulässige Bereiche begrenzt. Bei Vision-Timeout bzw.\ ungültigem Kommando läuft ausschließlich die Balance-Regelung (\(\theta_{\text{final}}=\theta_{\text{bal}}\), \(v_{\text{target}}=v_{\text{base}}\)).
+
+
+
+  \textbf{Kommunikation und Status}
+  Der Vision-Controller sendet periodisch \(\{u_{\text{vis}},u_v\}\) sowie Diagnosewerte (z.\,B.\ Fehler, PID-Terme, Maskenabdeckung) an den Balance-Controller. Umgekehrt publiziert der Balance-Controller an den Vision-Controller u.\,a.\ den aktuellen Rollwinkel, den angewandten Lenkwinkel und einen Stabilitätsindikator. Die Statusdaten dienen Visualisierung/Debug und fließen nicht in die Balance-PID-Schleife ein.
 
   
 
 
-
-  \subsection{Regelung und Steuerung}
+  \subsection{Aktuatoren}
+  \subsection{Controller}
   \subsection{Angebundene GUI}
 
 %--------------------------------------------------

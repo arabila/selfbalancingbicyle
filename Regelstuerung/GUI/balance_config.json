@@ -26,9 +26,9 @@
             "filter_size": 5
         },
         "vision_integration": {
-            "vision_weight": 1.0,
-            "balance_weight": 0.0,
-            "enable_vision": 0,
+            "vision_weight": 0.7,
+            "balance_weight": 0.3,
+            "enable_vision": 1,
             "vision_timeout_seconds": 0.5
         }
     },
