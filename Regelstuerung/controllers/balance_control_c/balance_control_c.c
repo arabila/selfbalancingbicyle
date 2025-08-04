@@ -32,14 +32,15 @@
  #include "bicycle_physics.h"
  
  // Globale Device-Handles
- static WbDeviceTag handlebars_motor;
- static WbDeviceTag wheel_motor;
- static WbDeviceTag imu_sensor;
- static WbDeviceTag display_device;
- static WbDeviceTag command_receiver;
- static WbDeviceTag status_emitter;
- // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
- static WbNodeRef robot_node;
+static WbDeviceTag handlebars_motor;
+static WbDeviceTag wheel_motor;
+static WbDeviceTag imu_sensor;
+static WbDeviceTag display_device;
+static WbDeviceTag command_receiver;
+static WbDeviceTag status_emitter;
+static WbDeviceTag handlebars_sensor;
+// static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
+static WbNodeRef robot_node;
  
  // --- Vision-Parameter ---
  // (Alte Filter-Parameter werden nicht mehr verwendet - einfache Speicherung implementiert)
@@ -89,13 +90,13 @@ static bool control_enabled = false;
 static double simulation_start_time = 0.0;
  
  // Funktionsprototypen
- static void init_devices(int timestep);
- static void load_and_apply_config(void);
- static float get_filtered_roll_angle(void);
- static void update_display(float roll_angle, float steering_output, float speed);
- static void handle_keyboard_input(void);
- static long long get_time_microseconds(void);
- static void print_status(float roll_angle, float steering_output, float speed);
+static void init_devices(int timestep);
+static void load_and_apply_config(void);
+static float get_filtered_roll_angle(void);
+static void update_display(float roll_angle, float steering_output, float speed);
+static void handle_keyboard_input(void);
+static long long get_time_microseconds(void);
+static void print_status(float roll_angle, float steering_output, float speed);
 static int receive_vision_command(vision_command_t *command);
 static void send_balance_status(const balance_status_t *status);
 static bool check_roll_angle_stability(float roll_angle, double current_time);
@@ -113,11 +114,11 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
     // Simulationsstart-Zeit speichern für Regelungsverzögerung
     simulation_start_time = wb_robot_get_time();
      
-     // Devices initialisieren
-     init_devices(timestep); // Motor, IMU, Keyboard, Display, Command Receiver, Status Emitter, Robot Nodez
-     
-     // Konfiguration laden und PID initialisieren
-     load_and_apply_config();
+    // Devices initialisieren
+    init_devices(timestep); // Motor, IMU, Keyboard, Display, Command Receiver, Status Emitter, Robot Nodez
+
+    // Konfiguration laden und PID initialisieren
+    load_and_apply_config();
      
      // Logging initialisieren
      balance_logging_init(&logger, "../../Monitoring");
@@ -155,8 +156,12 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              config_reload_counter = 0;
          }
          
-         // Keyboard-Input verarbeiten
-         handle_keyboard_input();
+        // Keyboard-Input verarbeiten
+        handle_keyboard_input();
+
+        // Aktuellen Lenkwinkel ausgeben
+        double handlebar_angle = wb_position_sensor_get_value(handlebars_sensor);
+        printf("Handlebar angle: %.2f rad\n", handlebar_angle);
 
 
                  //--------------------------------
@@ -361,13 +366,21 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
          exit(1);
      }
      
-     // Motor-Initialisierung
-     wb_motor_set_position(handlebars_motor, 0.0);
-     wb_motor_set_position(wheel_motor, INFINITY);  // Geschwindigkeitsmodus
-     wb_motor_set_velocity(wheel_motor, 5.0);  // Positive Startgeschwindigkeit für Vorwärtsfahrt
-     
-     // IMU Sensor
-     imu_sensor = wb_robot_get_device("imu");
+    // Motor-Initialisierung
+    wb_motor_set_position(handlebars_motor, 0.0);
+    wb_motor_set_position(wheel_motor, INFINITY);  // Geschwindigkeitsmodus
+    wb_motor_set_velocity(wheel_motor, 5.0);  // Positive Startgeschwindigkeit für Vorwärtsfahrt
+
+    // Lenkwinkelsensor
+    handlebars_sensor = wb_robot_get_device("handlebars sensor");
+    if (handlebars_sensor == 0) {
+        fprintf(stderr, "Fehler: Handlebar-Sensor nicht gefunden!\n");
+        exit(1);
+    }
+    wb_position_sensor_enable(handlebars_sensor, timestep);
+
+    // IMU Sensor
+    imu_sensor = wb_robot_get_device("imu");
      if (imu_sensor == 0) {
          fprintf(stderr, "Fehler: IMU Sensor nicht gefunden!\n");
          exit(1);
@@ -417,7 +430,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      printf("IMU Sensor mit %dms Sampling initialisiert\n", timestep * 2);
  }
  
- static void load_and_apply_config(void) {
+static void load_and_apply_config(void) {
      // Konfiguration aus JSON laden
      if (balance_config_load(&config, "../../GUI/balance_config.json") != 0) {
          printf("Warnung: Konfigurationsdatei nicht gefunden, verwende Standardwerte\n");
@@ -434,8 +447,8 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
          config.angle_pid.integral_min,
          config.angle_pid.integral_max
      );
- }
- 
+}
+
 static float get_filtered_roll_angle(void) {
     const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
     
