@@ -1,6 +1,5 @@
 #VRML_SIM R2025a utf8
-
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/UnevenTerrain.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "../protos/Supervisor.proto"
@@ -28,23 +27,24 @@ TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-RectangleArena {
-  translation 0 0 -0.1
-  contactMaterial "ground"
-  floorSize 63 63
-  floorTileSize 63 63
-  floorAppearance PBRAppearance {
+
+UnevenTerrain {
+  translation 0 0 -0.1          # minimal absenken
+  size          63 63 0.02        # 63 m × 63 m, ±2 cm Höhen-Rauschen
+  xDimension    256               # feines Gitter ⇒ viele kleine Bumps
+  yDimension    256
+  appearance PBRAppearance {
     baseColorMap ImageTexture {
-      url [
-        "textures/track004.jpeg"
-      ]
+      url [ "textures/track002.jpg" ]   # Foto einer Kiesfläche
     }
     roughness 1
     metalness 0
+    normalMap ImageTexture {                    # optional: 2-D-Bump für Optik
+      url [ "textures/track002.jpg" ]
+    }
   }
-  wallThickness 0.001
-  wallHeight 0.001
 }
+
 DEF BICYCLE Robot {
   translation -16.7776 -19.4694 0.362776
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446

@@ -125,176 +125,10 @@ class BalanceControllerGUI:
             }
         }
         
-        # Physik-Parameter für erweiterte Simulation
-        self.physics_parameters = {
-            # Physikalische Konstanten
-            "bicycle_mass": {
-                "name": "Fahrrad-Masse",
-                "value": 3.5,
-                "min": 1.0,
-                "max": 10.0,
-                "description": "Gesamtmasse des Fahrrads",
-                "unit": "kg"
-            },
-            "wheel_radius": {
-                "name": "Rad-Radius",
-                "value": 0.055,
-                "min": 0.02,
-                "max": 0.15,
-                "description": "Radius der Fahrradräder",
-                "unit": "m"
-            },
-            "frontal_area": {
-                "name": "Stirnfläche",
-                "value": 0.3,
-                "min": 0.1,
-                "max": 0.8,
-                "description": "Frontale Querschnittsfläche für Aerodynamik",
-                "unit": "m²"
-            },
-            
-            # Aerodynamische Parameter
-            "air_density": {
-                "name": "Luftdichte",
-                "value": 1.225,
-                "min": 0.8,
-                "max": 1.5,
-                "description": "Luftdichte (abhängig von Höhe/Temperatur)",
-                "unit": "kg/m³"
-            },
-            "drag_coefficient": {
-                "name": "Luftwiderstandsbeiwert",
-                "value": 0.9,
-                "min": 0.3,
-                "max": 1.5,
-                "description": "Cd-Wert für Aerodynamik",
-                "unit": ""
-            },
-            "side_area": {
-                "name": "Seitenfläche",
-                "value": 0.4,
-                "min": 0.2,
-                "max": 0.8,
-                "description": "Seitliche Fläche für Querwind",
-                "unit": "m²"
-            },
-            
-            # Reifen-Parameter
-            "tire_stiffness": {
-                "name": "Reifensteifigkeit",
-                "value": 2000.0,
-                "min": 500.0,
-                "max": 5000.0,
-                "description": "Seitenkraft-Steifigkeit der Reifen",
-                "unit": "N/rad"
-            },
-            "rolling_resistance_coeff": {
-                "name": "Rollwiderstandsbeiwert",
-                "value": 0.005,
-                "min": 0.001,
-                "max": 0.02,
-                "description": "Crr-Wert für Rollwiderstand",
-                "unit": ""
-            },
-            "tire_friction_coeff": {
-                "name": "Reibungskoeffizient",
-                "value": 0.8,
-                "min": 0.2,
-                "max": 1.2,
-                "description": "Maximaler Reibungskoeffizient μ",
-                "unit": ""
-            },
-            
-            # Sensorsimulation
-            "imu_noise_sigma": {
-                "name": "IMU-Rauschen",
-                "value": 0.01,
-                "min": 0.0,
-                "max": 0.1,
-                "description": "Standardabweichung des Sensorrauschens",
-                "unit": "rad"
-            },
-            "imu_delay_samples": {
-                "name": "IMU-Verzögerung",
-                "value": 2,
-                "min": 0,
-                "max": 10,
-                "description": "Verzögerung in Zeitschritten (5ms)",
-                "unit": "samples"
-            },
-            
-            # Umweltparameter
-            "wind_speed": {
-                "name": "Windgeschwindigkeit",
-                "value": 0.0,
-                "min": 0.0,
-                "max": 20.0,
-                "description": "Aktuelle Windgeschwindigkeit",
-                "unit": "m/s"
-            },
-            "wind_direction": {
-                "name": "Windrichtung",
-                "value": 0.0,
-                "min": -3.14159,
-                "max": 3.14159,
-                "description": "Windrichtung (0=Gegenwind, π/2=Seitenwind)",
-                "unit": "rad"
-            },
-            "wind_turbulence": {
-                "name": "Wind-Turbulenz",
-                "value": 0.1,
-                "min": 0.0,
-                "max": 1.0,
-                "description": "Turbulenzintensität (0=ruhig, 1=sehr böig)",
-                "unit": ""
-            },
-            "road_slope": {
-                "name": "Straßenneigung",
-                "value": 0.0,
-                "min": -0.2,
-                "max": 0.2,
-                "description": "Straßenneigung (positiv=bergab)",
-                "unit": "rad"
-            }
-        }
-        
-        # Physik-Effekt-Aktivierung
-        self.physics_effects = {
-            "enable_lateral_forces": {
-                "name": "Laterale Reifenkräfte",
-                "value": True,
-                "description": "Pacejka-Modell für Seitenkräfte aktivieren"
-            },
-            "enable_aerodynamics": {
-                "name": "Aerodynamik",
-                "value": True,
-                "description": "Luftwiderstand und Querwind aktivieren"
-            },
-            "enable_rolling_resistance": {
-                "name": "Rollwiderstand",
-                "value": True,
-                "description": "Rollwiderstandsmoment aktivieren"
-            },
-            "enable_gyroscopic": {
-                "name": "Gyroskopmommente",
-                "value": True,
-                "description": "Gyroskopmommente der Räder aktivieren"
-            },
-            "enable_sensor_simulation": {
-                "name": "Sensorsimulation",
-                "value": True,
-                "description": "IMU-Rauschen und Verzögerung aktivieren"
-            },
-            "enable_environment": {
-                "name": "Umwelteinflüsse",
-                "value": True,
-                "description": "Wind und Straßenneigung aktivieren"
-            }
-        }
+        # Physik-Simulation wurde entfernt
         
         # GUI-Komponenten
         self.param_widgets = {}
-        self.physics_widgets = {}
         self.effects_widgets = {}
         self.status_vars = {}
         
@@ -318,17 +152,12 @@ class BalanceControllerGUI:
         notebook.add(monitor_frame, text="Monitoring")
         self.setup_monitoring_tab(monitor_frame)
         
-        # Tab 3: Erweiterte Physik
-        physics_frame = ttk.Frame(notebook)
-        notebook.add(physics_frame, text="Physik")
-        self.setup_physics_tab(physics_frame)
-        
-        # Tab 4: Presets
+        # Tab 3: Presets (Physik-Tab wurde entfernt)
         preset_frame = ttk.Frame(notebook)
         notebook.add(preset_frame, text="Presets")
         self.setup_preset_tab(preset_frame)
         
-        # Tab 5: Build & Compiler
+        # Tab 4: Build & Compiler
         build_frame = ttk.Frame(notebook)
         notebook.add(build_frame, text="Build & Compiler")
         self.setup_build_tab(build_frame)
@@ -417,161 +246,7 @@ class BalanceControllerGUI:
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
         
-    def setup_physics_tab(self, parent):
-        """Erstelle das Erweiterte Physik-Tab"""
-        
-        # Hauptcontainer mit zwei Spalten
-        main_frame = ttk.Frame(parent)
-        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # Linke Spalte: Physik-Parameter
-        left_frame = ttk.LabelFrame(main_frame, text="Physik-Parameter")
-        left_frame.pack(side=tk.LEFT, fill=tk.BOTH, expand=True, padx=(0, 5))
-        
-        # Scrollbarer Frame für Parameter
-        canvas_left = tk.Canvas(left_frame)
-        scrollbar_left = ttk.Scrollbar(left_frame, orient="vertical", command=canvas_left.yview)
-        scrollable_left = ttk.Frame(canvas_left)
-        
-        scrollable_left.bind(
-            "<Configure>",
-            lambda e: canvas_left.configure(scrollregion=canvas_left.bbox("all"))
-        )
-        
-        canvas_left.create_window((0, 0), window=scrollable_left, anchor="nw")
-        canvas_left.configure(yscrollcommand=scrollbar_left.set)
-        
-        # Physik-Parameter-Gruppen
-        physics_groups = {
-            "Fahrzeug-Eigenschaften": ["bicycle_mass", "wheel_radius", "frontal_area"],
-            "Aerodynamik": ["air_density", "drag_coefficient", "side_area"],
-            "Reifen-Parameter": ["tire_stiffness", "rolling_resistance_coeff", "tire_friction_coeff"],
-            "Sensorsimulation": ["imu_noise_sigma", "imu_delay_samples"],
-            "Umwelt-Parameter": ["wind_speed", "wind_direction", "wind_turbulence", "road_slope"]
-        }
-        
-        row = 0
-        for group_name, param_list in physics_groups.items():
-            # Gruppe-Header
-            group_label = ttk.Label(scrollable_left, text=group_name, font=("Arial", 11, "bold"))
-            group_label.grid(row=row, column=0, columnspan=4, sticky="w", pady=(15, 5))
-            row += 1
-            
-            # Parameter in der Gruppe
-            for param_key in param_list:
-                param = self.physics_parameters[param_key]
-                
-                # Label
-                label = ttk.Label(scrollable_left, text=param["name"])
-                label.grid(row=row, column=0, sticky="w", padx=(10, 10), pady=2)
-                
-                # Scale/Slider
-                if param_key == "imu_delay_samples":
-                    # Spezialbehandlung für Integer-Parameter
-                    var = tk.IntVar(value=int(param["value"]))
-                    scale = ttk.Scale(
-                        scrollable_left,
-                        from_=param["min"],
-                        to=param["max"],
-                        variable=var,
-                        orient=tk.HORIZONTAL,
-                        length=150,
-                        command=lambda val, key=param_key: self.on_physics_parameter_change(key, val)
-                    )
-                else:
-                    var = tk.DoubleVar(value=param["value"])
-                    scale = ttk.Scale(
-                        scrollable_left,
-                        from_=param["min"],
-                        to=param["max"],
-                        variable=var,
-                        orient=tk.HORIZONTAL,
-                        length=150,
-                        command=lambda val, key=param_key: self.on_physics_parameter_change(key, val)
-                    )
-                scale.grid(row=row, column=1, padx=5, pady=2)
-                
-                # Wert-Anzeige
-                value_label = ttk.Label(scrollable_left, text=f"{param['value']:.3f} {param['unit']}")
-                value_label.grid(row=row, column=2, padx=5, pady=2)
-                
-                # Beschreibung (kürzer)
-                desc_text = param["description"][:40] + "..." if len(param["description"]) > 40 else param["description"]
-                desc_label = ttk.Label(scrollable_left, text=desc_text, foreground="gray", font=("Arial", 8))
-                desc_label.grid(row=row, column=3, sticky="w", padx=5, pady=2)
-                
-                # Widgets speichern
-                self.physics_widgets[param_key] = {
-                    "var": var,
-                    "scale": scale,
-                    "value_label": value_label
-                }
-                
-                row += 1
-        
-        # Physics Parameter Controls
-        control_frame_left = ttk.Frame(scrollable_left)
-        control_frame_left.grid(row=row, column=0, columnspan=4, pady=15)
-        
-        ttk.Button(control_frame_left, text="Physik Reset", command=self.reset_physics_defaults).pack(side=tk.LEFT, padx=2)
-        ttk.Button(control_frame_left, text="Live Update", command=self.apply_physics_live).pack(side=tk.LEFT, padx=2)
-        
-        # Scrollbar für linke Seite
-        canvas_left.pack(side="left", fill="both", expand=True)
-        scrollbar_left.pack(side="right", fill="y")
-        
-        # Rechte Spalte: Effekt-Aktivierung und Szenarien
-        right_frame = ttk.Frame(main_frame)
-        right_frame.pack(side=tk.RIGHT, fill=tk.Y, padx=(5, 0))
-        
-        # Effekt-Aktivierung
-        effects_frame = ttk.LabelFrame(right_frame, text="Physik-Effekte aktivieren")
-        effects_frame.pack(fill=tk.X, pady=(0, 10))
-        
-        row = 0
-        for effect_key, effect_data in self.physics_effects.items():
-            var = tk.BooleanVar(value=effect_data["value"])
-            checkbox = ttk.Checkbutton(
-                effects_frame,
-                text=effect_data["name"],
-                variable=var,
-                command=lambda key=effect_key: self.on_physics_effect_change(key)
-            )
-            checkbox.grid(row=row, column=0, sticky="w", padx=10, pady=3)
-            
-            # Beschreibung
-            desc_label = ttk.Label(effects_frame, text=effect_data["description"], 
-                                 foreground="gray", font=("Arial", 8))
-            desc_label.grid(row=row+1, column=0, sticky="w", padx=20, pady=(0, 5))
-            
-            self.effects_widgets[effect_key] = var
-            row += 2
-        
-        # Schnelle Szenarien
-        scenarios_frame = ttk.LabelFrame(right_frame, text="Schnelle Szenarien")
-        scenarios_frame.pack(fill=tk.X, pady=10)
-        
-        scenarios = [
-            ("Ruhige Bedingungen", self.scenario_calm),
-            ("Leichter Wind", self.scenario_light_wind),
-            ("Starker Seitenwind", self.scenario_strong_wind),
-            ("Steile Abfahrt", self.scenario_downhill),
-            ("Extrembedingungen", self.scenario_extreme),
-            ("Sensorfehler Test", self.scenario_sensor_errors)
-        ]
-        
-        for i, (name, command) in enumerate(scenarios):
-            ttk.Button(scenarios_frame, text=name, command=command, width=18).pack(pady=2, padx=5)
-        
-        # Physik-Status-Anzeige
-        status_frame = ttk.LabelFrame(right_frame, text="Physik-Status")
-        status_frame.pack(fill=tk.X, pady=10)
-        
-        self.physics_status_text = tk.Text(status_frame, height=8, width=25, font=("Courier", 9))
-        self.physics_status_text.pack(padx=5, pady=5)
-        
-        # Status regelmäßig aktualisieren
-        self.update_physics_status()
+    # Physik-Tab wurde entfernt
         
     def setup_monitoring_tab(self, parent):
         """Erstelle das Monitoring-Tab"""
@@ -934,31 +609,7 @@ class BalanceControllerGUI:
         except ValueError:
             pass
             
-    def on_physics_parameter_change(self, param_key, value):
-        """Handler für Physik-Parameter-Änderungen"""
-        try:
-            if param_key == "imu_delay_samples":
-                int_value = int(float(value))
-                self.physics_parameters[param_key]["value"] = int_value
-                unit = self.physics_parameters[param_key]["unit"]
-                self.physics_widgets[param_key]["value_label"].config(text=f"{int_value} {unit}")
-                self.status_text.set(f"Physik-Parameter {param_key} geändert: {int_value}")
-            else:
-                float_value = float(value)
-                self.physics_parameters[param_key]["value"] = float_value
-                unit = self.physics_parameters[param_key]["unit"]
-                self.physics_widgets[param_key]["value_label"].config(text=f"{float_value:.3f} {unit}")
-                self.status_text.set(f"Physik-Parameter {param_key} geändert: {float_value:.3f}")
-                
-        except ValueError:
-            pass
-            
-    def on_physics_effect_change(self, effect_key):
-        """Handler für Physik-Effekt-Aktivierung"""
-        value = self.effects_widgets[effect_key].get()
-        self.physics_effects[effect_key]["value"] = value
-        status = "aktiviert" if value else "deaktiviert"
-        self.status_text.set(f"Physik-Effekt {effect_key} {status}")
+    # Physik-Handler-Funktionen wurden entfernt
             
     def load_config(self):
         """Lade Konfiguration aus JSON-Datei"""
@@ -981,29 +632,7 @@ class BalanceControllerGUI:
                                 unit = self.parameters[key]["unit"]
                                 self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
                 
-                # Physik-Parameter laden
-                physics_config = config_data.get("physics", {})
-                
-                # Physik-Parameter
-                physics_params = physics_config.get("parameters", {})
-                for key, value in physics_params.items():
-                    if key in self.physics_parameters:
-                        self.physics_parameters[key]["value"] = value
-                        if key in self.physics_widgets:
-                            self.physics_widgets[key]["var"].set(value)
-                            unit = self.physics_parameters[key]["unit"]
-                            if key == "imu_delay_samples":
-                                self.physics_widgets[key]["value_label"].config(text=f"{int(value)} {unit}")
-                            else:
-                                self.physics_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
-                
-                # Physik-Effekte laden
-                physics_effects = physics_config.get("effects", {})
-                for key, value in physics_effects.items():
-                    if key in self.physics_effects:
-                        self.physics_effects[key]["value"] = value
-                        if key in self.effects_widgets:
-                            self.effects_widgets[key].set(value)
+                # Physik-Parameter-Laden wurde entfernt
                 
                 self.status_text.set(f"Konfiguration aus {self.config_file} geladen")
             else:
@@ -1042,15 +671,8 @@ class BalanceControllerGUI:
                         "config_reload_interval": 10,
                         "filter_size": 5
                     }
-                },
-                "physics": {
-                    "parameters": {
-                        key: param["value"] for key, param in self.physics_parameters.items()
-                    },
-                    "effects": {
-                        key: effect["value"] for key, effect in self.physics_effects.items()
-                    }
                 }
+                # Physik-Konfiguration wurde entfernt
             }
             
             with open(self.config_file, 'w') as f:
@@ -1329,138 +951,7 @@ class BalanceControllerGUI:
                 
             time.sleep(0.2)  # Update alle 200ms für Echtzeit-Monitoring
             
-    # Neue Physik-Funktionen
-    def reset_physics_defaults(self):
-        """Setze Physik-Parameter auf Standardwerte zurück"""
-        defaults = {
-            "bicycle_mass": 3.5, "wheel_radius": 0.055, "frontal_area": 0.3,
-            "air_density": 1.225, "drag_coefficient": 0.9, "side_area": 0.4,
-            "tire_stiffness": 2000.0, "rolling_resistance_coeff": 0.005, "tire_friction_coeff": 0.8,
-            "imu_noise_sigma": 0.01, "imu_delay_samples": 2,
-            "wind_speed": 0.0, "wind_direction": 0.0, "wind_turbulence": 0.1, "road_slope": 0.0
-        }
-        
-        for key, value in defaults.items():
-            if key in self.physics_parameters:
-                self.physics_parameters[key]["value"] = value
-                if key in self.physics_widgets:
-                    self.physics_widgets[key]["var"].set(value)
-                    unit = self.physics_parameters[key]["unit"]
-                    if key == "imu_delay_samples":
-                        self.physics_widgets[key]["value_label"].config(text=f"{int(value)} {unit}")
-                    else:
-                        self.physics_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
-        
-        # Alle Effekte aktivieren
-        for key in self.physics_effects:
-            self.physics_effects[key]["value"] = True
-            if key in self.effects_widgets:
-                self.effects_widgets[key].set(True)
-        
-        self.status_text.set("Physik-Standardwerte wiederhergestellt")
-        
-    def apply_physics_live(self):
-        """Wende Physik-Konfiguration sofort an"""
-        self.save_config()
-        self.status_text.set("Physik-Konfiguration live angewendet")
-        
-    def update_physics_status(self):
-        """Aktualisiere Physik-Status-Anzeige"""
-        try:
-            status_text = "=== PHYSIK-STATUS ===\n"
-            
-            # Effekte
-            status_text += "Aktive Effekte:\n"
-            for key, effect in self.physics_effects.items():
-                if effect["value"]:
-                    status_text += f"✓ {effect['name']}\n"
-                else:
-                    status_text += f"✗ {effect['name']}\n"
-                    
-            status_text += "\nUmwelt:\n"
-            wind_speed = self.physics_parameters["wind_speed"]["value"]
-            wind_dir = self.physics_parameters["wind_direction"]["value"] * 180 / 3.14159
-            road_slope = self.physics_parameters["road_slope"]["value"] * 180 / 3.14159
-            
-            status_text += f"Wind: {wind_speed:.1f} m/s @ {wind_dir:.0f}°\n"
-            status_text += f"Neigung: {road_slope:.1f}°\n"
-            
-            # Sensoren
-            noise = self.physics_parameters["imu_noise_sigma"]["value"]
-            delay = self.physics_parameters["imu_delay_samples"]["value"]
-            status_text += f"IMU-Noise: {noise:.3f} rad\n"
-            status_text += f"IMU-Delay: {delay} samples\n"
-            
-            self.physics_status_text.delete(1.0, tk.END)
-            self.physics_status_text.insert(1.0, status_text)
-            
-        except Exception as e:
-            print(f"Status-Update Fehler: {e}")
-            
-        # Alle 1 Sekunde aktualisieren
-        self.root.after(1000, self.update_physics_status)  # Update alle 1s statt 3s
-        
-    # Szenarien-Funktionen
-    def scenario_calm(self):
-        """Ruhige Bedingungen"""
-        self.physics_parameters["wind_speed"]["value"] = 0.0
-        self.physics_parameters["wind_turbulence"]["value"] = 0.0
-        self.physics_parameters["road_slope"]["value"] = 0.0
-        self.physics_parameters["imu_noise_sigma"]["value"] = 0.005
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Ruhige Bedingungen")
-        
-    def scenario_light_wind(self):
-        """Leichter Wind"""
-        self.physics_parameters["wind_speed"]["value"] = 3.0
-        self.physics_parameters["wind_direction"]["value"] = 1.57  # 90°
-        self.physics_parameters["wind_turbulence"]["value"] = 0.2
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Leichter Seitenwind")
-        
-    def scenario_strong_wind(self):
-        """Starker Seitenwind"""
-        self.physics_parameters["wind_speed"]["value"] = 8.0
-        self.physics_parameters["wind_direction"]["value"] = 1.57  # 90°
-        self.physics_parameters["wind_turbulence"]["value"] = 0.6
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Starker Seitenwind")
-        
-    def scenario_downhill(self):
-        """Steile Abfahrt"""
-        self.physics_parameters["road_slope"]["value"] = 0.1  # 5.7°
-        self.physics_parameters["wind_speed"]["value"] = 0.0
-        self.physics_parameters["rolling_resistance_coeff"]["value"] = 0.008
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Steile Abfahrt")
-        
-    def scenario_extreme(self):
-        """Extrembedingungen"""
-        self.physics_parameters["wind_speed"]["value"] = 12.0
-        self.physics_parameters["wind_turbulence"]["value"] = 0.8
-        self.physics_parameters["road_slope"]["value"] = 0.08
-        self.physics_parameters["imu_noise_sigma"]["value"] = 0.02
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Extrembedingungen")
-        
-    def scenario_sensor_errors(self):
-        """Sensorfehler-Test"""
-        self.physics_parameters["imu_noise_sigma"]["value"] = 0.05
-        self.physics_parameters["imu_delay_samples"]["value"] = 5
-        self.physics_parameters["wind_speed"]["value"] = 2.0
-        self.update_physics_widgets()
-        self.status_text.set("Szenario: Sensorfehler-Test")
-        
-    def update_physics_widgets(self):
-        """Aktualisiere alle Physik-Widgets nach Szenario-Änderung"""
-        for key, widget_data in self.physics_widgets.items():
-            value = self.physics_parameters[key]["value"]
-            widget_data["var"].set(value)
-            unit = self.physics_parameters[key]["unit"]
-            if key == "imu_delay_samples":
-                widget_data["value_label"].config(text=f"{int(value)} {unit}")
-            else:
-                widget_data["value_label"].config(text=f"{value:.3f} {unit}")
+    # Alle Physik-Funktionen wurden entfernt
     
     # Build-Monitoring-Methoden
     def build_balance_controller(self):

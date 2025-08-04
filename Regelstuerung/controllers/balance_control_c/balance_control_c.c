@@ -153,23 +153,14 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
         printf("Handlebar angle: %.2f rad\n", handlebar_angle);
 
 
-                 //--------------------------------
+        //--------------------------------
         // 1. Roll-Winkel messen und filtern
         //--------------------------------
-        float true_roll_angle = get_filtered_roll_angle();
+        float roll_angle = get_filtered_roll_angle();
         
         
         //--------------------------------
-        // 2. ERWEITERTE PHYSIK-SIMULATION durchführen
-        //--------------------------------
-        // Berechnet externe Kräfte und simuliert realistische Sensorfehler
-        // Physik-Simulation wurde entfernt - direkter Roll-Winkel wird verwendet
-        
-        // Verwende den wahren Roll-Winkel für die Regelung // TODO: Ersetze durch simulierte Roll-Winkel
-        float roll_angle = true_roll_angle;
-        
-        //--------------------------------
-        // 2.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
+        // 1.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
         //--------------------------------
         double current_webots_time = wb_robot_get_time();
         if (!control_enabled) {
@@ -181,7 +172,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
         }
         
         //--------------------------------
-        // 3. PID-Regelung: Roll-Winkel → Lenkwinkel (nur wenn Regelung aktiviert)
+        // 2. PID-Regelung: Roll-Winkel → Lenkwinkel (nur wenn Regelung aktiviert)
         //--------------------------------
         long long current_time = get_time_microseconds();
         float steering_output = 0.0f; // Default: Kein Lenkausschlag
@@ -191,7 +182,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
         }
          
          //--------------------------------
-         // 4. Lenkwinkel begrenzen
+         // 3. Lenkwinkel begrenzen
          //--------------------------------
          if (steering_output > config.mechanical_limits.max_handlebar_angle) 
              steering_output = config.mechanical_limits.max_handlebar_angle;
@@ -199,13 +190,13 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              steering_output = -config.mechanical_limits.max_handlebar_angle;
          
          //--------------------------------
-         // 5. Vision-Commands empfangen und verarbeiten
+         // 4. Vision-Commands empfangen und verarbeiten
          //--------------------------------
          vision_command_t vision_cmd;
          int vision_cmd_received = receive_vision_command(&vision_cmd);
          
         // ========================================
-        // 6. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
+        // 5. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
         // ========================================
         float final_steer = steering_output; 
         float target_speed = config.speed_control.base_speed;
