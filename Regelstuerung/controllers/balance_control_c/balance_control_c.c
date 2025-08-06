@@ -38,6 +38,7 @@ static WbDeviceTag display_device;
 static WbDeviceTag command_receiver;
 static WbDeviceTag status_emitter;
 static WbDeviceTag handlebars_sensor;
+static WbDeviceTag rear_wheel_sensor;
 // static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
 static WbNodeRef robot_node;
  
@@ -98,6 +99,8 @@ static void print_status(float roll_angle, float steering_output, float speed);
 static int receive_vision_command(vision_command_t *command);
 static void send_balance_status(const balance_status_t *status);
 static bool check_roll_angle_stability(float roll_angle, double current_time);
+static double compute_rear_wheel_omega(double angle_now);
+static double rear_wheel_kmh_from_omega(double omega);
  
  int main(int argc __attribute__((unused)), char **argv __attribute__((unused))) {
      // Webots initialisieren
@@ -138,26 +141,30 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      
      // Hauptregelschleife
      while (wb_robot_step(timestep) != -1) {
-        printf("DEBUG: wb_robot_step(timestep) = %d\n", wb_robot_step(timestep));
-         
          // Konfiguration periodisch neu laden (alle 100ms)
          if (++config_reload_counter >= (100 / timestep)) {
              load_and_apply_config();
              config_reload_counter = 0;
          }
-         
-        // Keyboard-Input wurde entfernt
 
-        // Aktuellen Lenkwinkel ausgeben
+        //--------------------------------
+        // 0. Handlebar- und Raddrehwinkel auslesen
+        //--------------------------------
         double handlebar_angle = wb_position_sensor_get_value(handlebars_sensor);
         printf("Handlebar angle: %.2f rad\n", handlebar_angle);
+        
+        // Raddrehwinkel auslesen
+        double rear_wheel_angle = wb_position_sensor_get_value(rear_wheel_sensor);
+        double omega = compute_rear_wheel_omega(rear_wheel_angle); // rad/s
+        double v_kmh = rear_wheel_kmh_from_omega(omega);           // km/h
+        printf("Rear wheel: ω = %.2f rad/s, v = %.2f km/h\n", omega, v_kmh);
 
 
         //--------------------------------
         // 1. Roll-Winkel messen und filtern
         //--------------------------------
         float roll_angle = get_filtered_roll_angle();
-        
+        printf("Amine: roll_angle = %.2f\n", roll_angle);
         
         //--------------------------------
         // 1.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
@@ -284,6 +291,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
                 .steering_output = steering_output,
                 .final_steer = final_steer,
                 .target_speed = target_speed,
+                .actual_speed_kmh = (float)v_kmh,
                 .actual_handlebar_angle = (float)handlebar_angle,
                 .p_term = angle_pid.proportional_term,
                 .i_term = angle_pid.integral_term,
@@ -341,16 +349,19 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
      }
      
     // Motor-Initialisierung
-    wb_motor_set_position(handlebars_motor, 0.0);
+    wb_motor_set_position(handlebars_motor, 0.0); //
     wb_motor_set_position(wheel_motor, INFINITY);  // Geschwindigkeitsmodus
 
     // Lenkwinkelsensor
     handlebars_sensor = wb_robot_get_device("handlebars sensor");
-    if (handlebars_sensor == 0) {
+    rear_wheel_sensor = wb_robot_get_device("rear wheel sensor");
+
+    if (handlebars_sensor == 0 || rear_wheel_sensor == 0) {
         fprintf(stderr, "Fehler: Handlebar-Sensor nicht gefunden!\n");
         exit(1);
     }
     wb_position_sensor_enable(handlebars_sensor, timestep);
+    wb_position_sensor_enable(rear_wheel_sensor, timestep);
 
     // IMU Sensor
     imu_sensor = wb_robot_get_device("imu");
@@ -615,3 +626,41 @@ static bool check_roll_angle_stability(float roll_angle, double current_time) {
     double elapsed_time = current_time - simulation_start_time;
     return elapsed_time >= 0.2;
 } 
+
+static double compute_rear_wheel_omega(double angle_now) {
+    static int initialized = 0;
+    static double prev_angle = 0.0;
+    static double prev_time  = 0.0;  // s (Webots-Zeit)
+    static double omega_filt = 0.0;
+  
+    double t = wb_robot_get_time(); // s
+    if (!initialized) {
+      prev_angle = angle_now;
+      prev_time  = t;
+      initialized = 1;
+      return 0.0;
+    }
+  
+    double dt = t - prev_time;
+    if (dt <= 0.0) return omega_filt;
+  
+    // Δθ (bei ungebundenen Gelenken meist kontinuierlich; unwrap schadet nicht)
+    double dtheta = angle_now - prev_angle;
+    while (dtheta >  M_PI) dtheta -= 2.0 * M_PI;
+    while (dtheta < -M_PI) dtheta += 2.0 * M_PI;
+  
+    double omega = dtheta / dt;       // rad/s
+  
+    // leichte Glättung gegen Rauschen
+    const double alpha = 0.2;         // 0..1 (höher = weniger Glättung)
+    omega_filt = alpha * omega + (1.0 - alpha) * omega_filt;
+  
+    prev_angle = angle_now;
+    prev_time  = t;
+    return omega_filt;
+  }
+  
+  static double rear_wheel_kmh_from_omega(double omega) {
+    const double R = 0.45;            // m (dein Rad-Radius aus boundingObject)
+    return omega * R * 3.6;           // km/h
+  }

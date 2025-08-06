@@ -277,6 +277,8 @@ class BalanceControllerGUI:
             "steering_output": tk.BooleanVar(value=True),
             "final_steer": tk.BooleanVar(value=True),
             "actual_handlebar_angle": tk.BooleanVar(value=False),
+            "target_speed": tk.BooleanVar(value=False),
+            "actual_speed_kmh": tk.BooleanVar(value=True),
             "p_term": tk.BooleanVar(value=True),
             "i_term": tk.BooleanVar(value=True),
             "d_term": tk.BooleanVar(value=True),
@@ -295,8 +297,8 @@ class BalanceControllerGUI:
             ("steering_output", "⚖️ Balance-Steer"),
             ("final_steer", "🎯 Final-Steer"),
             ("actual_handlebar_angle", "📏 Sensor-Winkel"),
-            ("p_term", "P-Term"),
-            ("i_term", "I-Term")
+            ("target_speed", "🎯 Ziel-Speed"),
+            ("actual_speed_kmh", "📊 Ist-Speed")
         ]
         
         ttk.Label(visibility_row1, text="Balance:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
@@ -310,19 +312,27 @@ class BalanceControllerGUI:
             )
             checkbox.pack(side=tk.LEFT, padx=2)
         
-        # Zweite Zeile: D-Term + Vision-Controller-Checkboxes
+        # Zweite Zeile: PID-Terme + Vision-Controller-Checkboxes
         visibility_row2 = ttk.Frame(visibility_main_frame)
         visibility_row2.pack(fill=tk.X, pady=2)
         
-        # D-Term zuerst
-        ttk.Label(visibility_row2, text="      ", font=("Arial", 9)).pack(side=tk.LEFT, padx=5)  # Einrückung
-        d_term_checkbox = ttk.Checkbutton(
-            visibility_row2,
-            text="D-Term",
-            variable=self.plot_visibility["d_term"],
-            command=self.update_plot_visibility
-        )
-        d_term_checkbox.pack(side=tk.LEFT, padx=2)
+        # PID-Terme
+        pid_checkbox_config = [
+            ("p_term", "P-Term"),
+            ("i_term", "I-Term"),
+            ("d_term", "D-Term")
+        ]
+        
+        ttk.Label(visibility_row2, text="PID:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        
+        for key, label in pid_checkbox_config:
+            checkbox = ttk.Checkbutton(
+                visibility_row2,
+                text=label,
+                variable=self.plot_visibility[key],
+                command=self.update_plot_visibility
+            )
+            checkbox.pack(side=tk.LEFT, padx=2)
         
         # Separator für Vision-Daten
         ttk.Separator(visibility_row2, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=8)
@@ -832,12 +842,19 @@ class BalanceControllerGUI:
         if show_all or self.plot_visibility["d_term"].get():
             self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=2)
         
+        # Geschwindigkeits-Daten hinzufügen
+        if "target_speed" in df.columns and (show_all or self.plot_visibility["target_speed"].get()):
+            self.ax2.plot(df["timestamp"], df["target_speed"], label="🎯 Ziel-Speed", color="blue", linewidth=2, linestyle='--')
+        
+        if "actual_speed_kmh" in df.columns and (show_all or self.plot_visibility["actual_speed_kmh"].get()):
+            self.ax2.plot(df["timestamp"], df["actual_speed_kmh"], label="📊 Ist-Speed (km/h)", color="red", linewidth=3, linestyle='-')
+        
         # Vision Speed Command hinzufügen (falls verfügbar)
         if "vision_speed_command" in df.columns and (show_all or self.plot_visibility["vision_speed_command"].get()):
             self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=2, linestyle=':')
         
         self.ax2.set_xlabel("Zeit [s]")
-        self.ax2.set_ylabel("PID-Terme / Vision-Speed")
+        self.ax2.set_ylabel("PID-Terme / Geschwindigkeit / Vision-Speed")
         self.ax2.legend()
         self.ax2.grid(True, alpha=0.3)
         

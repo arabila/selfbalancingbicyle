@@ -79,6 +79,10 @@ DEF BICYCLE Robot {
           maxVelocity 31.25
           multiplier 2
         }
+        PositionSensor { 
+          name "rear wheel sensor" 
+          }
+
       ]
       endPoint Solid {
         translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05

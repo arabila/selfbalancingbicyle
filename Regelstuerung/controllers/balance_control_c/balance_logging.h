@@ -18,6 +18,7 @@ typedef struct {
     float steering_output;     // Lenkwinkel-Ausgabe in Radiant
     float final_steer;         // Finaler Lenkwinkel (Balance + Vision kombiniert) in Radiant
     float target_speed;        // Zielgeschwindigkeit in rad/s
+    float actual_speed_kmh;    // Tatsächliche gemessene Geschwindigkeit in km/h
     float actual_handlebar_angle; // Tatsächlicher Lenkwinkel vom Position-Sensor in Radiant
     float p_term;              // P-Term des Balance-PID-Controllers
     float i_term;              // I-Term des Balance-PID-Controllers
