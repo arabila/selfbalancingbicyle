@@ -38,6 +38,7 @@ static WbDeviceTag display_device;
 static WbDeviceTag handlebars_sensor;
 static WbDeviceTag rear_wheel_sensor;
 static WbNodeRef robot_node;
+static WbNodeRef frame_node;
  
  
  
@@ -57,7 +58,6 @@ static int config_reload_counter = 0;
 
 // Regelungsstabilisierung - verhindert Aktivierung bis genug Zeit vergangen ist
 static bool control_enabled = true;
-static double simulation_start_time = 0.0;
  
  // Funktionsprototypen
 static void init_devices(int timestep);
@@ -80,9 +80,6 @@ static double rear_wheel_kmh_from_omega(double omega);
          // Startzeit für Timing-Messungen
     gettimeofday(&start_time, NULL);
     
-    // Simulationsstart-Zeit speichern für Regelungsverzögerung
-    simulation_start_time = wb_robot_get_time();
-     
     // Devices initialisieren
     init_devices(timestep); // Motor, IMU, Display, Command Receiver, Status Emitter, Robot Node
 
@@ -104,14 +101,15 @@ static double rear_wheel_kmh_from_omega(double omega);
             config.mechanical_limits.max_handlebar_angle * 180.0 / M_PI);
      printf("Drücke ESC zum Beenden\n");
      printf("=============================\n\n");
+
      
      // Hauptregelschleife
      while (wb_robot_step(timestep) != -1) {
          // Konfiguration periodisch neu laden (alle 100ms)
-         if (++config_reload_counter >= (100 / timestep)) {
-             load_and_apply_config();
-             config_reload_counter = 0;
-         }
+         //if (++config_reload_counter >= (100 / timestep)) {
+        //     load_and_apply_config();
+        //     config_reload_counter = 0;
+        // }
 
         //--------------------------------
         // 0. Handlebar- und Raddrehwinkel auslesen
@@ -130,7 +128,14 @@ static double rear_wheel_kmh_from_omega(double omega);
         // 1. Roll-Winkel messen und filtern
         //--------------------------------
         float roll_angle = get_roll_rad_raw();
-        printf("Amine: roll_angle = %.2f\n", roll_angle);
+        // Bestimme die verwendete Quelle
+        const char* source = "Unknown";
+        if (robot_node != NULL) source = "Robot-Supervisor";
+        else if (frame_node != NULL) source = "Frame-Supervisor";
+        else if (imu_sensor != 0) source = "IMU";
+        
+        printf("Amine: roll_angle = %.4f rad (%.2f°) [%s]\n", 
+               roll_angle, roll_angle * 180.0 / M_PI, source);
         
         //--------------------------------
         // 1.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
@@ -189,7 +194,7 @@ static double rear_wheel_kmh_from_omega(double omega);
          // 6. Motoren ansteuern
          //--------------------------------
          wb_motor_set_position(handlebars_motor, 0); //TODO: final_steer
-         wb_motor_set_velocity(wheel_motor, 8);  // Positive Geschwindigkeit für Vorwärtsfahrt
+         wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
          
          //--------------------------------
         // 7. Stabilitätsfaktor berechnen
@@ -208,7 +213,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                 .final_steer = final_steer,
                 .target_speed = target_speed,
                 .actual_speed_kmh = (float)v_kmh,
-                .actual_handlebar_angle = (float)handlebar_angle,
+                .actual_handlebar_angle = -(float)handlebar_angle,
                 .p_term = angle_pid.proportional_term,
                 .i_term = angle_pid.integral_term,
                 .d_term = angle_pid.derivative_term,
@@ -275,13 +280,14 @@ static double rear_wheel_kmh_from_omega(double omega);
     wb_position_sensor_enable(handlebars_sensor, timestep);
     wb_position_sensor_enable(rear_wheel_sensor, timestep);
 
-    // IMU Sensor
+    // IMU Sensor (optional - nur als Fallback)
     imu_sensor = wb_robot_get_device("imu");
      if (imu_sensor == 0) {
-         fprintf(stderr, "Fehler: IMU Sensor nicht gefunden!\n");
-         exit(1);
-     }
-     wb_inertial_unit_enable(imu_sensor, timestep * 10); 
+         printf("Warnung: IMU Sensor nicht gefunden - verwende nur Supervisor-Orientierung\n");
+     } else {
+         wb_inertial_unit_enable(imu_sensor, timestep);
+         printf("IMU Sensor als Fallback verfügbar\n");
+     } 
      
          // Keyboard wurde entfernt
      
@@ -295,13 +301,17 @@ static double rear_wheel_kmh_from_omega(double omega);
      
 
      
-     // Robot-Node für Velocity-Messung
-     robot_node = wb_supervisor_node_get_self();
-     if (robot_node == NULL) {
-         printf("Warnung: Supervisor-Funktionen nicht verfügbar\n");
-     } else {
-         printf("Supervisor-Funktionen verfügbar - Überwache Fahrrad-Orientierung\n");
-     }
+    // Robot-Node für Velocity-Messung und Orientierungsmessung
+    robot_node = wb_supervisor_node_get_self();
+    if (robot_node == NULL) {
+        printf("Warnung: Supervisor-Funktionen nicht verfügbar\n");
+    } else {
+        printf("Supervisor-Funktionen verfügbar - Überwache Fahrrad-Orientierung\n");
+    }
+    
+    // Frame-Node nicht mehr nötig - verwende Robot-Node direkt
+    frame_node = NULL;  // Explizit auf NULL setzen
+    printf("Verwende Robot-Node für direkte Orientierungsmessung\n");
      
      printf("Device-Initialisierung abgeschlossen\n");
      printf("IMU Sensor mit %dms Sampling initialisiert\n", timestep);
@@ -327,8 +337,59 @@ static void load_and_apply_config(void) {
 }
 
   static inline double get_roll_rad_raw(void) {
-    const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
-    return rpy ? rpy[0] : 0.0;  // rad
+    // Versuche die Robot-Node-Orientierung (sollte sofort reagieren)
+    if (robot_node != NULL) {
+        const double *orientation = wb_supervisor_node_get_orientation(robot_node);
+        if (orientation != NULL) {
+            // Roll-Winkel aus Rotationsmatrix extrahieren
+            double roll = orientation[2];
+            
+            // Debug: Robot-Matrix-Werte ausgeben
+            static int robot_debug_counter = 0;
+           
+            printf("DEBUG Robot Matrix: [%.3f %.3f %.3f] [%.3f %.3f %.3f] [%.3f %.3f %.3f] -> Roll: %.4f\n",
+                   orientation[0], orientation[1], orientation[2],
+                   orientation[3], orientation[4], orientation[5],
+                   orientation[6], orientation[7], orientation[8], roll);
+            
+            
+            return roll;  // rad
+        }
+    }
+    
+    // Fallback: Frame-Node verwenden
+    if (frame_node != NULL) {
+        const double *orientation = wb_supervisor_node_get_orientation(frame_node);
+        if (orientation != NULL) {
+            double roll = atan2(orientation[7], orientation[8]);
+            
+            static int frame_debug_counter = 0;
+            if (++frame_debug_counter % 50 == 0) {
+                printf("DEBUG Frame Matrix: [%.3f %.3f %.3f] [%.3f %.3f %.3f] [%.3f %.3f %.3f] -> Roll: %.4f\n",
+                       orientation[0], orientation[1], orientation[2],
+                       orientation[3], orientation[4], orientation[5],
+                       orientation[6], orientation[7], orientation[8], roll);
+            }
+            
+            return roll;  // rad
+        }
+    }
+    
+    // Fallback: IMU-Sensor verwenden (falls verfügbar)
+    if (imu_sensor != 0) {
+        const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
+        if (rpy) {
+            static int imu_debug_counter = 0;
+            if (++imu_debug_counter % 50 == 0) {
+                printf("DEBUG IMU RPY: Roll=%.4f Pitch=%.4f Yaw=%.4f\n", rpy[0], rpy[1], rpy[2]);
+            }
+            return rpy[0];
+        }
+    }
+    
+    // Kein Sensor verfügbar
+    printf("Warnung: Keine Orientierungsquelle verfügbar!\n");
+    return 0.0;
   }
  
  static void update_display(float roll_angle, float steering_output, float speed) {

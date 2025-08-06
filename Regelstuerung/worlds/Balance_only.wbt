@@ -5,7 +5,7 @@ EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/project
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 
 WorldInfo {
-  basicTimeStep 2
+  basicTimeStep 10
   contactProperties [
     ContactProperties {
       material1 "wheel"
@@ -48,7 +48,6 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity 10 0 0
   boundingObject Box {
     size 100 100 20
   }
@@ -66,6 +65,11 @@ DEF BICYCLE Robot {
           ]
         }
       ]
+    }
+    InertialUnit {
+      translation 0 0 0.32
+      rotation 1 0 0 0
+      name "imu"
     }
     DEF rear_wheel HingeJoint {
       jointParameters HingeJointParameters {
@@ -568,11 +572,6 @@ DEF BICYCLE Robot {
     Display {
       width 480
       height 320
-    }
-    InertialUnit {
-      translation 0 0 0.32
-      rotation 1 0 0 0
-      name "imu"
     }
   ]
   name "Little Bicycle V2"
