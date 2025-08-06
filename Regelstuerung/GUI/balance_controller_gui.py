@@ -18,6 +18,104 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 
+class CheckboxPopup:
+    """Popup-Fenster für Checkbox-Gruppen"""
+    def __init__(self, parent, title, checkboxes, plot_visibility, update_callback):
+        self.parent = parent
+        self.plot_visibility = plot_visibility
+        self.update_callback = update_callback
+        
+        # Popup-Fenster erstellen
+        self.popup = tk.Toplevel(parent)
+        self.popup.title(title)
+        self.popup.geometry("400x300")
+        self.popup.resizable(False, False)
+        
+        # Popup zentrieren
+        self.popup.transient(parent)
+        self.popup.grab_set()
+        
+        # Hauptframe
+        main_frame = ttk.Frame(self.popup)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # Titel
+        title_label = ttk.Label(main_frame, text=title, font=("Arial", 12, "bold"))
+        title_label.pack(pady=(0, 10))
+        
+        # Scrollbarer Frame für Checkboxen
+        canvas = tk.Canvas(main_frame)
+        scrollbar = ttk.Scrollbar(main_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+        
+        # Checkboxen erstellen
+        for key, label in checkboxes:
+            checkbox = ttk.Checkbutton(
+                scrollable_frame,
+                text=label,
+                variable=self.plot_visibility[key],
+                command=self.update_callback
+            )
+            checkbox.pack(anchor="w", pady=2, padx=10)
+        
+        # Scrollbaren Frame einrichten
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+        
+        # Button-Frame
+        button_frame = ttk.Frame(main_frame)
+        button_frame.pack(fill=tk.X, pady=(10, 0))
+        
+        # Alle auswählen / Alle abwählen Buttons
+        ttk.Button(button_frame, text="Alle auswählen", 
+                  command=lambda: self.select_all(checkboxes, True)).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text="Alle abwählen", 
+                  command=lambda: self.select_all(checkboxes, False)).pack(side=tk.LEFT, padx=5)
+        
+        # Schließen-Button
+        ttk.Button(button_frame, text="Schließen", 
+                  command=self.popup.destroy).pack(side=tk.RIGHT, padx=5)
+        
+        # ESC zum Schließen
+        self.popup.bind("<Escape>", lambda e: self.popup.destroy())
+        
+        # Popup zentrieren
+        self.center_popup()
+        
+    def center_popup(self):
+        """Zentriere das Popup-Fenster"""
+        self.popup.update_idletasks()
+        
+        # Hauptfenster-Position und -Größe
+        parent_x = self.parent.winfo_rootx()
+        parent_y = self.parent.winfo_rooty()
+        parent_width = self.parent.winfo_width()
+        parent_height = self.parent.winfo_height()
+        
+        # Popup-Größe
+        popup_width = self.popup.winfo_width()
+        popup_height = self.popup.winfo_height()
+        
+        # Zentrierte Position berechnen
+        x = parent_x + (parent_width // 2) - (popup_width // 2)
+        y = parent_y + (parent_height // 2) - (popup_height // 2)
+        
+        self.popup.geometry(f"+{x}+{y}")
+        
+    def select_all(self, checkboxes, state):
+        """Alle Checkboxen auswählen oder abwählen"""
+        for key, _ in checkboxes:
+            self.plot_visibility[key].set(state)
+        self.update_callback()
+
 class BalanceControllerGUI:
     def __init__(self, root):
         self.root = root
@@ -264,11 +362,11 @@ class BalanceControllerGUI:
         separator = ttk.Separator(control_frame, orient="vertical")
         separator.pack(side=tk.LEFT, fill=tk.Y, padx=10)
         
-        # Visibility checkboxes rechts mit zwei Zeilen
-        visibility_main_frame = ttk.Frame(control_frame)
-        visibility_main_frame.pack(side=tk.LEFT, padx=10)
+        # Kompakte Popup-Buttons für Checkbox-Gruppen
+        popup_frame = ttk.Frame(control_frame)
+        popup_frame.pack(side=tk.LEFT, padx=10)
         
-        ttk.Label(visibility_main_frame, text="Anzeigen:").pack(anchor="w", padx=5)
+        ttk.Label(popup_frame, text="Anzeigen:", font=("Arial", 9, "bold")).pack(anchor="w", padx=5)
         
         # Checkbox-Variablen initialisieren (erweitert um Vision-Control-Daten)
         self.plot_visibility = {
@@ -288,72 +386,61 @@ class BalanceControllerGUI:
             "vision_speed_command": tk.BooleanVar(value=False)
         }
         
-        # Erste Zeile: Balance-Controller-Checkboxes (bis I-Term)
-        visibility_row1 = ttk.Frame(visibility_main_frame)
-        visibility_row1.pack(fill=tk.X, pady=2)
-        
-        balance_checkbox_row1 = [
+        # Checkbox-Gruppen definieren
+        self.balance_checkboxes = [
             ("roll_angle", "Roll-Winkel"),
             ("steering_output", "⚖️ Balance-Steer"),
             ("final_steer", "🎯 Final-Steer"),
             ("actual_handlebar_angle", "📏 Sensor-Winkel"),
             ("target_speed", "🎯 Ziel-Speed"),
-            ("actual_speed_kmh", "📊 Ist-Speed")
+            ("actual_speed_kmh", "📊 Ist-Speed (km/h)")
         ]
         
-        ttk.Label(visibility_row1, text="Balance:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
-        
-        for key, label in balance_checkbox_row1:
-            checkbox = ttk.Checkbutton(
-                visibility_row1,
-                text=label,
-                variable=self.plot_visibility[key],
-                command=self.update_plot_visibility
-            )
-            checkbox.pack(side=tk.LEFT, padx=2)
-        
-        # Zweite Zeile: PID-Terme + Vision-Controller-Checkboxes
-        visibility_row2 = ttk.Frame(visibility_main_frame)
-        visibility_row2.pack(fill=tk.X, pady=2)
-        
-        # PID-Terme
-        pid_checkbox_config = [
-            ("p_term", "P-Term"),
-            ("i_term", "I-Term"),
-            ("d_term", "D-Term")
+        self.pid_checkboxes = [
+            ("p_term", "P-Term (Proportional)"),
+            ("i_term", "I-Term (Integral)"),
+            ("d_term", "D-Term (Differential)")
         ]
         
-        ttk.Label(visibility_row2, text="PID:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
-        
-        for key, label in pid_checkbox_config:
-            checkbox = ttk.Checkbutton(
-                visibility_row2,
-                text=label,
-                variable=self.plot_visibility[key],
-                command=self.update_plot_visibility
-            )
-            checkbox.pack(side=tk.LEFT, padx=2)
-        
-        # Separator für Vision-Daten
-        ttk.Separator(visibility_row2, orient="vertical").pack(side=tk.LEFT, fill=tk.Y, padx=8)
-        
-        # Vision-Controller-Checkboxes
-        vision_checkbox_config = [
-            ("vision_error", "🎯 V.Error"),
-            ("vision_steer_command", "🎮 Vision-Steer"),
-            ("vision_speed_command", "⚡ V.Speed")
+        self.vision_checkboxes = [
+            ("vision_error", "🎯 Vision Error"),
+            ("vision_steer_command", "🎮 Vision-Steer Command"),
+            ("vision_speed_command", "⚡ Vision Speed Command")
         ]
         
-        ttk.Label(visibility_row2, text="Vision:", font=("Arial", 9, "bold")).pack(side=tk.LEFT, padx=5)
+        # Popup-Buttons in einer Zeile
+        button_row = ttk.Frame(popup_frame)
+        button_row.pack(fill=tk.X, pady=2)
         
-        for key, label in vision_checkbox_config:
-            checkbox = ttk.Checkbutton(
-                visibility_row2,
-                text=label,
-                variable=self.plot_visibility[key],
-                command=self.update_plot_visibility
-            )
-            checkbox.pack(side=tk.LEFT, padx=2)
+        # Balance-Popup-Button
+        self.balance_btn = ttk.Button(
+            button_row,
+            text="⚖️ Balance...",
+            command=lambda: self.show_checkbox_popup("Balance Controller", self.balance_checkboxes),
+            width=15
+        )
+        self.balance_btn.pack(side=tk.LEFT, padx=2)
+        
+        # Vision-Popup-Button
+        self.vision_btn = ttk.Button(
+            button_row,
+            text="👁️ Vision...",
+            command=lambda: self.show_checkbox_popup("Vision Controller", self.vision_checkboxes),
+            width=15
+        )
+        self.vision_btn.pack(side=tk.LEFT, padx=2)
+        
+        # Sensor/Aktor-Popup-Button (PID-Terme)
+        self.sensor_btn = ttk.Button(
+            button_row,
+            text="🔧 PID/Sensor...",
+            command=lambda: self.show_checkbox_popup("PID-Terme & Sensoren", self.pid_checkboxes),
+            width=17
+        )
+        self.sensor_btn.pack(side=tk.LEFT, padx=2)
+        
+        # Initialisiere Button-Texte mit Zählern
+        self.update_button_counters()
         
         # Separator für Zoom-Controls
         zoom_separator = ttk.Separator(control_frame, orient="vertical")
@@ -868,8 +955,30 @@ class BalanceControllerGUI:
         
         self.canvas.draw()
         
+    def show_checkbox_popup(self, title, checkboxes):
+        """Zeige Popup für Checkbox-Gruppe"""
+        CheckboxPopup(self.root, title, checkboxes, self.plot_visibility, self.update_plot_visibility)
+        
+    def update_button_counters(self):
+        """Aktualisiere die Button-Texte mit der Anzahl aktivierter Checkboxen"""
+        # Balance-Button
+        balance_count = sum(1 for key, _ in self.balance_checkboxes if self.plot_visibility[key].get())
+        balance_total = len(self.balance_checkboxes)
+        self.balance_btn.config(text=f"⚖️ Balance ({balance_count}/{balance_total})")
+        
+        # Vision-Button  
+        vision_count = sum(1 for key, _ in self.vision_checkboxes if self.plot_visibility[key].get())
+        vision_total = len(self.vision_checkboxes)
+        self.vision_btn.config(text=f"👁️ Vision ({vision_count}/{vision_total})")
+        
+        # Sensor-Button (PID)
+        sensor_count = sum(1 for key, _ in self.pid_checkboxes if self.plot_visibility[key].get())
+        sensor_total = len(self.pid_checkboxes)
+        self.sensor_btn.config(text=f"🔧 PID/Sensor ({sensor_count}/{sensor_total})")
+        
     def update_plot_visibility(self):
         """Handler für Checkbox-Änderungen - aktualisiert die Plot-Sichtbarkeit"""
+        self.update_button_counters()  # Zähler aktualisieren
         self.refresh_plots()
         
     def on_zoom_start_change(self, value):

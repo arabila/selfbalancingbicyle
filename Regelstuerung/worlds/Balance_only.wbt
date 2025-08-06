@@ -3,7 +3,6 @@
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
-EXTERNPROTO "../protos/Supervisor.proto"
 
 WorldInfo {
   basicTimeStep 2
@@ -20,7 +19,7 @@ WorldInfo {
 }
 Viewpoint {
   orientation 0.293724322564915 -0.11358094843886601 -0.9491182173393942 3.595720981944901
-  position -12.033636507423651 -23.096620579888437 4.392000451258099
+  position -1.904691780152262 -27.962559659671967 12.374625051317633
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -49,6 +48,7 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
+  streamVelocity 10 0 0
   boundingObject Box {
     size 100 100 20
   }
@@ -77,13 +77,11 @@ DEF BICYCLE Robot {
         RotationalMotor {
           name "motor::wheel"
           maxVelocity 31.25
-          maxTorque 120 #120Nm: 120Nm * 2 = 240Nm
-          multiplier 1
+          maxTorque 120
         }
-        PositionSensor { 
-          name "rear wheel sensor" 
-          }
-
+        PositionSensor {
+          name "rear wheel sensor"
+        }
       ]
       endPoint Solid {
         translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05
@@ -142,7 +140,7 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "handlebars motor"
-          maxVelocity 50
+          maxVelocity 150
           maxTorque 25
         }
         PositionSensor {
@@ -172,7 +170,7 @@ DEF BICYCLE Robot {
             }
             endPoint Solid {
               translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
-              rotation -0.9999999999996712 -7.130756857207462e-07 -3.8623405470805726e-07 3.9891419936744623
+              rotation -0.9999999999996712 -7.130756857207464e-07 -3.8623405470805737e-07 3.9891419936744623
               children [
                 DEF wheel Transform {
                   scale 0.0056 0.0081 0.0081
@@ -402,7 +400,7 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::crank"
-          maxVelocity 15.625
+          maxVelocity 31.25
           maxTorque 80
         }
       ]
@@ -575,16 +573,6 @@ DEF BICYCLE Robot {
       translation 0 0 0.32
       rotation 1 0 0 0
       name "imu"
-    }
-    Receiver {
-      name "command_rx"
-      channel 1
-      bufferSize 64
-    }
-    Emitter {
-      name "status_tx"
-      channel 2
-      bufferSize 64
     }
   ]
   name "Little Bicycle V2"
@@ -767,44 +755,6 @@ DEF BICYCLE Robot {
       0 0 0
     ]
   }
-  controller "balance_control_c"
+  controller "balance_control_c_onlyBalance"
   supervisor TRUE
-}
-Supervisor {
-  children [
-    DEF VISION_CAMERA_TRANSFORM Pose {
-      translation -3.709465509677524 -6.351110825230749 -0.04517476285409254
-      rotation 0.002261921745702991 -0.00022403723935638146 0.9999974167553293 3.141443442788721
-      children [
-        Pose {
-          translation 0 -1.1 0.95
-          rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
-          children [
-            Camera {
-              fieldOfView 2
-              width 480
-              height 320
-              antiAliasing TRUE
-            }
-          ]
-        }
-      ]
-    }
-    Display {
-      width 480
-      height 320
-    }
-    Emitter {
-      name "command_tx"
-      channel 1
-      bufferSize 64
-    }
-    Receiver {
-      name "status_rx"
-      channel 2
-      bufferSize 64
-    }
-  ]
-  name "Vision Controller"
-  controller "vision_control_py"
 }

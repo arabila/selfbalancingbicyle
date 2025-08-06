@@ -35,40 +35,11 @@ static WbDeviceTag handlebars_motor;
 static WbDeviceTag wheel_motor;
 static WbDeviceTag imu_sensor;
 static WbDeviceTag display_device;
-static WbDeviceTag command_receiver;
-static WbDeviceTag status_emitter;
 static WbDeviceTag handlebars_sensor;
 static WbDeviceTag rear_wheel_sensor;
-// static WbDeviceTag camera_device;  // Für zukünftige Erweiterungen
 static WbNodeRef robot_node;
  
- // --- Vision-Parameter ---
- // (Alte Filter-Parameter werden nicht mehr verwendet - einfache Speicherung implementiert)
  
- 
- // Erweiterte Vision-Command-Struktur für IPC (inkl. Debug-Daten)
- typedef struct {
-     float steer_command;     // Lenkbefehl von Vision-Controller (-1.0 bis +1.0)
-     float speed_command;     // Geschwindigkeitsbefehl von Vision-Controller (0.0 bis 1.0)
-     int valid;               // Kommando gültig (1) oder nicht (0)
-     float vision_error;      // Vision-Fehler (Abweichung von Straße)
-     float vision_p_term;     // P-Term des Vision-PID-Controllers
-     float vision_i_term;     // I-Term des Vision-PID-Controllers  
-     float vision_d_term;     // D-Term des Vision-PID-Controllers
-     float mask_coverage;     // Straßenerkennung-Abdeckung in Prozent
- } vision_command_t;
- 
- // Balance-Status-Struktur für IPC
- typedef struct {
-     float roll_angle;        // Aktueller Roll-Winkel (rad)
-     float steering_output;   // Aktueller Lenkwinkel (rad)
-     float current_speed;     // Aktuelle Geschwindigkeit (rad/s)
-     float stability_factor;  // Stabilitätsfaktor (0.0-1.0)
- } balance_status_t;
- 
- // Vision-Command-Status (vereinfacht)
-static vision_command_t last_vision_command = {0.0f, 0.0f, 0, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-static double last_command_time = 0.0;
  
  // Controller-Zustand
  static pid_controller_t angle_pid;
@@ -85,7 +56,7 @@ static struct timeval start_time;
 static int config_reload_counter = 0;
 
 // Regelungsstabilisierung - verhindert Aktivierung bis genug Zeit vergangen ist
-static bool control_enabled = false;
+static bool control_enabled = true;
 static double simulation_start_time = 0.0;
  
  // Funktionsprototypen
@@ -96,9 +67,6 @@ static void update_display(float roll_angle, float steering_output, float speed)
 // Keyboard-Input wurde entfernt
 static long long get_time_microseconds(void);
 static void print_status(float roll_angle, float steering_output, float speed);
-static int receive_vision_command(vision_command_t *command);
-static void send_balance_status(const balance_status_t *status);
-static bool check_roll_angle_stability(float roll_angle, double current_time);
 static double compute_rear_wheel_omega(double angle_now);
 static double rear_wheel_kmh_from_omega(double omega);
  
@@ -134,8 +102,6 @@ static double rear_wheel_kmh_from_omega(double omega);
      printf("Max Handlebar Angle: %.3f rad (%.1f°)\n", 
             config.mechanical_limits.max_handlebar_angle, 
             config.mechanical_limits.max_handlebar_angle * 180.0 / M_PI);
-     printf("DEBUG: vision_command_t Größe: %zu Bytes\n", sizeof(vision_command_t));
-     printf("DEBUG: balance_status_t Größe: %zu Bytes\n", sizeof(balance_status_t));
      printf("Drücke ESC zum Beenden\n");
      printf("=============================\n\n");
      
@@ -170,13 +136,6 @@ static double rear_wheel_kmh_from_omega(double omega);
         // 1.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
         //--------------------------------
         double current_webots_time = wb_robot_get_time();
-        if (!control_enabled) {
-            control_enabled = check_roll_angle_stability(roll_angle, current_webots_time);
-            if (control_enabled) {
-                printf("STABILISIERUNG: Regelung aktiviert nach %.3f Sekunden\n", 
-                       current_webots_time - simulation_start_time);
-            }
-        }
         
         //--------------------------------
         // 2. PID-Regelung: Roll-Winkel → Lenkwinkel (nur wenn Regelung aktiviert)
@@ -197,57 +156,14 @@ static double rear_wheel_kmh_from_omega(double omega);
              steering_output = -config.mechanical_limits.max_handlebar_angle;
          
          //--------------------------------
-         // 4. Vision-Commands empfangen und verarbeiten
+         // 4. Balance-Regelung anwenden
          //--------------------------------
-         vision_command_t vision_cmd;
-         int vision_cmd_received = receive_vision_command(&vision_cmd);
-         
-        // ========================================
-        // 5. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
-        // ========================================
         float final_steer = steering_output; 
         float target_speed = config.speed_control.base_speed;
-        
-        // Vision-Timeout prüfen (konfigurierbar)
-        double vision_time = wb_robot_get_time();
-        bool vision_active = control_enabled && config.vision_integration.enable_vision && 
-                            (vision_time - last_command_time) < config.vision_integration.vision_timeout_seconds;
         
         if (control_enabled) {
             final_steer = steering_output; 
             target_speed = config.speed_control.base_speed;
-            
-            if (vision_active && last_vision_command.valid) { 
-                // STATISCHE GEWICHTUNG aus Konfiguration
-                float vision_weight = config.vision_integration.vision_weight; //Vision Anteil
-                float balance_weight = config.vision_integration.balance_weight; //Balance Anteil
-                
-                // Vision-Lenkung berechnen
-                float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle; //TODO: Wieso nochmal begrenzen?
-                
-                // EINFACHE KOMBINATION: Statische Gewichtung
-                final_steer = vision_weight * -vision_steer + balance_weight * steering_output;
-                
-                // Geschwindigkeit von Vision-Controller übernehmen
-                target_speed = config.speed_control.min_speed + // TODO: Nur balance speed!
-                              last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
-                
-                if (vision_cmd_received) {
-                    printf("VISION: Vision=%.3f, Balance=%.3f → Final=%.3f (Weights: V=%.1f%%, B=%.1f%%)\n",
-                           vision_steer, steering_output, final_steer, 
-                           vision_weight*100, balance_weight*100);
-                }
-            } else {
-                // Vision inaktiv → Nur Balance-Regelung
-                final_steer = steering_output;
-                target_speed = config.speed_control.base_speed;
-                
-                static double last_timeout_msg = 0.0;
-                if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 2.0) {
-                    printf("VISION: Timeout/Inaktiv - Nur Balance-Regelung aktiv\n");
-                    last_timeout_msg = vision_time;
-                }
-            }
         } else {
             // Regelung noch nicht aktiviert - sichere Werte verwenden
             final_steer = 0.0f;
@@ -272,23 +188,16 @@ static double rear_wheel_kmh_from_omega(double omega);
          //--------------------------------
          // 6. Motoren ansteuern
          //--------------------------------
-         wb_motor_set_position(handlebars_motor, final_steer);
-         wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
+         wb_motor_set_position(handlebars_motor, 0); //TODO: final_steer
+         wb_motor_set_velocity(wheel_motor, 8);  // Positive Geschwindigkeit für Vorwärtsfahrt
          
          //--------------------------------
-        // 7. Balance-Status an Vision-Controller senden
+        // 7. Stabilitätsfaktor berechnen
         //--------------------------------
         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
-        balance_status_t status = {
-            .roll_angle = roll_angle,
-            .steering_output = final_steer,
-            .current_speed = target_speed,
-            .stability_factor = stability_factor
-        };
-        send_balance_status(&status);
         
         //--------------------------------
-        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten)
+        // 8. Balance-Logging-Daten
         //--------------------------------
         if (config.system.enable_logging) {
             balance_log_data_t log_data = {
@@ -306,24 +215,17 @@ static double rear_wheel_kmh_from_omega(double omega);
                 .error = angle_pid.error_history[angle_pid.history_counter],
                 .stability_factor = stability_factor,
                 
-                // Vision-Controller-Daten (vereinfacht)
-                .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
-                .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
-                .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
-                .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
-                .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,
-                .vision_d_term = vision_active ? last_vision_command.vision_d_term : 0.0f,
-                .vision_active = vision_active ? 1 : 0,
-                .vision_mask_coverage = vision_active ? last_vision_command.mask_coverage : 0.0f
+                // Vision-Controller-Daten (leer für Balance-Only)
+                .vision_error = 0.0f,
+                .vision_steer_command = 0.0f,
+                .vision_speed_command = 0.0f,
+                .vision_p_term = 0.0f,
+                .vision_i_term = 0.0f,
+                .vision_d_term = 0.0f,
+                .vision_active = 0,
+                .vision_mask_coverage = 0.0f
             };
             balance_logging_write(&logger, &log_data);
-             
-             // ZUSÄTZLICH: Physik-Debug-Ausgabe alle 5 Sekunden
-             static int physics_debug_counter = 0;
-             if (++physics_debug_counter >= (5000 / timestep)) {
-                 printf("PHYSIK-DEBUG: Kräfte und Momente - alle 5s\n");
-                 physics_debug_counter = 0;
-             }
          }
 
          //--------------------------------
@@ -379,7 +281,7 @@ static double rear_wheel_kmh_from_omega(double omega);
          fprintf(stderr, "Fehler: IMU Sensor nicht gefunden!\n");
          exit(1);
      }
-     wb_inertial_unit_enable(imu_sensor, timestep ); 
+     wb_inertial_unit_enable(imu_sensor, timestep * 10); 
      
          // Keyboard wurde entfernt
      
@@ -391,20 +293,7 @@ static double rear_wheel_kmh_from_omega(double omega);
          wb_display_set_font(display_device, "Arial", 16, true);
      }
      
-     // IPC: Receiver für Vision-Commands
-     command_receiver = wb_robot_get_device("command_rx");
-     if (command_receiver == 0) {
-         fprintf(stderr, "Fehler: Command Receiver nicht gefunden!\n");
-         exit(1);
-     }
-     wb_receiver_enable(command_receiver, timestep*10);
-     
-     // IPC: Emitter für Balance-Status
-     status_emitter = wb_robot_get_device("status_tx");
-     if (status_emitter == 0) {
-         fprintf(stderr, "Fehler: Status Emitter nicht gefunden!\n");
-         exit(1);
-     }
+
      
      // Robot-Node für Velocity-Messung
      robot_node = wb_supervisor_node_get_self();
@@ -500,67 +389,9 @@ static void load_and_apply_config(void) {
      fflush(stdout);
  }
  
- static int receive_vision_command(vision_command_t *command) {
-     static int call_counter = 0;
-     if (++call_counter % 100 == 0) {
-         printf("DEBUG: receive_vision_command aufgerufen - Aufruf #%d, Queue-Länge: %d\n", 
-                call_counter, wb_receiver_get_queue_length(command_receiver));
-     }
-     
-     if (wb_receiver_get_queue_length(command_receiver) > 0) {
-         const void *data = wb_receiver_get_data(command_receiver);
-         if (data != NULL) {
-             int data_size = wb_receiver_get_data_size(command_receiver);
-             printf("DEBUG: IPC empfangen - Datengröße: %d Bytes, erwartet: %zu Bytes\n", 
-                    data_size, sizeof(vision_command_t));
-             
-             memcpy(command, data, sizeof(vision_command_t));
-             wb_receiver_next_packet(command_receiver);
-             
-             // Debug: Alle empfangenen Werte anzeigen
-             printf("DEBUG: Empfangen - steer=%.3f, speed=%.3f, valid=%d, v_error=%.3f, v_p=%.3f, v_i=%.3f, v_d=%.3f, mask=%.2f\n",
-                    command->steer_command, command->speed_command, command->valid,
-                    command->vision_error, command->vision_p_term, command->vision_i_term, 
-                    command->vision_d_term, command->mask_coverage);
-             
-             // Plausibilitätsprüfung
-             if (command->steer_command >= -1.0f && command->steer_command <= 1.0f &&
-                 command->speed_command >= 0.0f && command->speed_command <= 1.0f &&
-                 command->valid == 1) {
-                 
-                 last_vision_command = *command;
-                 last_command_time = wb_robot_get_time();
-                 
-                 printf("DEBUG: Vision-Command AKZEPTIERT - Steer=%.3f, Error=%.3f, Coverage=%.1f%%\n",
-                        command->steer_command, command->vision_error, command->mask_coverage);
-                 return 1;  // Gültiges Kommando empfangen
-             } else {
-                 printf("WARNUNG: Ungültiges Vision-Command empfangen: steer=%.3f, speed=%.3f, valid=%d\n",
-                        command->steer_command, command->speed_command, command->valid);
-             }
-         }
-     }
-     return 0;  // Kein neues Kommando
- }
- 
- static void send_balance_status(const balance_status_t *status) {
-    static int send_counter = 0;
-    
-    // Sende Status nur alle 25 Zyklen (25 * 2ms = 50ms → 20 Hz)
-    if (++send_counter >= 2 ) {
-        wb_emitter_send(status_emitter, status, sizeof(balance_status_t));
-        send_counter = 0;
-    }
-}
 
-static bool check_roll_angle_stability(float roll_angle, double current_time) {
-    (void)roll_angle; // Parameter nicht verwendet
-    
-    // Einfacher Zeitcheck: Regelung nach 0.1 Sekunden aktivieren (reduziert von 0.25s)
-    // Grund: IMU-Ausschlag in den ersten ~0.05s umgehen, aber schneller reagieren
-    double elapsed_time = current_time - simulation_start_time;
-    return elapsed_time >= 0.2;
-} 
+
+
 
 static double compute_rear_wheel_omega(double angle_now) {
     static int initialized = 0;
