@@ -257,9 +257,10 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
              target_speed = config.speed_control.min_speed;
          else if (target_speed > config.speed_control.max_speed)
              target_speed = config.speed_control.max_speed;
+
          
-         // 6. Rollwiderstand wurde entfernt - direkte Motoransteuerung ohne Physik-Effekte
-         
+         printf("Amine: target_speed: %.2f\n", target_speed);
+         printf("Amine: final_steer: %.2f\n", final_steer);
          // 7. Motoren ansteuern
          wb_motor_set_position(handlebars_motor, final_steer);
          wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
@@ -332,7 +333,7 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
  static void init_devices(int timestep) {
      // Motoren
      handlebars_motor = wb_robot_get_device("handlebars motor");
-     wheel_motor = wb_robot_get_device("motor::crank");
+     wheel_motor = wb_robot_get_device("motor::wheel");
      
      if (handlebars_motor == 0 || wheel_motor == 0) {
          fprintf(stderr, "Fehler: Motoren nicht gefunden!\n");
@@ -342,7 +343,6 @@ static bool check_roll_angle_stability(float roll_angle, double current_time);
     // Motor-Initialisierung
     wb_motor_set_position(handlebars_motor, 0.0);
     wb_motor_set_position(wheel_motor, INFINITY);  // Geschwindigkeitsmodus
-    wb_motor_set_velocity(wheel_motor, 5.0);  // Positive Startgeschwindigkeit für Vorwärtsfahrt
 
     // Lenkwinkelsensor
     handlebars_sensor = wb_robot_get_device("handlebars sensor");

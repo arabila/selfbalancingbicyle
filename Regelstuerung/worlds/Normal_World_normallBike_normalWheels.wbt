@@ -1,5 +1,6 @@
 #VRML_SIM R2025a utf8
-EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2025a/projects/objects/floors/protos/UnevenTerrain.proto"
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/floors/protos/RectangleArena.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
 EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
 EXTERNPROTO "../protos/Supervisor.proto"
@@ -18,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.2864244798641876 0.21480995814143455 0.9337117859477864 2.165907201627453
-  position -11.41802620634671 -33.4391913105604 10.726863338322133
+  orientation 0.293724322564915 -0.11358094843886601 -0.9491182173393942 3.595720981944901
+  position -12.033636507423651 -23.096620579888437 4.392000451258099
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -27,24 +28,31 @@ TexturedBackground {
 }
 TexturedBackgroundLight {
 }
-
-UnevenTerrain {
-  translation 0 0 -0.1          # minimal absenken
-  size          63 63 0.02        # 63 m × 63 m, ±2 cm Höhen-Rauschen
-  xDimension    256               # feines Gitter ⇒ viele kleine Bumps
-  yDimension    256
-  appearance PBRAppearance {
+RectangleArena {
+  translation 0 0 -0.1
+  contactMaterial "ground"
+  floorSize 64 64
+  floorTileSize 64 64
+  floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
-      url [ "textures/track002.jpg" ]   # Foto einer Kiesfläche
+      url [
+        "textures/track004.jpeg"
+      ]
     }
     roughness 1
     metalness 0
-    normalMap ImageTexture {                    # optional: 2-D-Bump für Optik
-      url [ "textures/track002.jpg" ]
-    }
+  }
+  wallThickness 0.001
+  wallHeight 0.001
+}
+DEF AIR Fluid {
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  boundingObject Box {
+    size 100 100 20
   }
 }
-
 DEF BICYCLE Robot {
   translation -16.7776 -19.4694 0.362776
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
@@ -88,6 +96,14 @@ DEF BICYCLE Robot {
           }
         ]
         contactMaterial "wheel"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
         boundingObject Pose {
           rotation 0 1 0 1.5708
           children [
@@ -165,6 +181,14 @@ DEF BICYCLE Robot {
                 }
               ]
               contactMaterial "wheel"
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
               boundingObject Pose {
                 rotation 0 1 0 1.5708
                 children [
@@ -190,6 +214,14 @@ DEF BICYCLE Robot {
           }
         ]
         name "fork_solid"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
         boundingObject Group {
           children [
             Pose {
@@ -402,6 +434,14 @@ DEF BICYCLE Robot {
                   ]
                 }
               ]
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
               boundingObject Pose {
                 children [
                   Shape {
@@ -441,6 +481,14 @@ DEF BICYCLE Robot {
                 }
               ]
               name "solid(1)"
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
               boundingObject Pose {
                 children [
                   Shape {
@@ -461,6 +509,14 @@ DEF BICYCLE Robot {
           }
         ]
         name "crank_solid"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
         boundingObject Group {
           children [
             Pose {
@@ -527,6 +583,14 @@ DEF BICYCLE Robot {
     }
   ]
   name "Little Bicycle V2"
+  immersionProperties [
+    ImmersionProperties {
+      fluidName "air"
+      referenceArea "xyz-projected area"
+      dragForceCoefficients 1 1 1
+      dragTorqueCoefficients 0.05 0.05 0.05
+    }
+  ]
   boundingObject Group {
     children [
       Pose {
