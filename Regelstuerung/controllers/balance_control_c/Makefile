@@ -3,7 +3,7 @@
 
 # Webots Umgebungsvariablen (macOS)
 WEBOTS_HOME ?= /Applications/Webots.app/Contents
-WEBOTS_HOME_PATH = $(WEBOTS_HOME)
+WEBOTS_HOME_PATH = $(WEBOTS_HOME)/Contents
 
 # Compiler und Flags
 CC = gcc
