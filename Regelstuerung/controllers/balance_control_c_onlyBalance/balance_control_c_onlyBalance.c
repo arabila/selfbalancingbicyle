@@ -193,7 +193,7 @@ static double rear_wheel_kmh_from_omega(double omega);
          //--------------------------------
          // 6. Motoren ansteuern
          //--------------------------------
-         wb_motor_set_position(handlebars_motor, 0); //TODO: final_steer
+         wb_motor_set_position(handlebars_motor, -final_steer); //TODO: final_steer
          wb_motor_set_velocity(wheel_motor, target_speed);  // Positive Geschwindigkeit für Vorwärtsfahrt
          
          //--------------------------------
