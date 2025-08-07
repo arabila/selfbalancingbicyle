@@ -85,7 +85,7 @@ static struct timeval start_time;
 static int config_reload_counter = 0;
 
 // Regelungsstabilisierung - verhindert Aktivierung bis genug Zeit vergangen ist
-static bool control_enabled = false;
+static bool control_enabled = true;
 static double simulation_start_time = 0.0;
  
  // Funktionsprototypen
@@ -98,7 +98,6 @@ static long long get_time_microseconds(void);
 static void print_status(float roll_angle, float steering_output, float speed);
 static int receive_vision_command(vision_command_t *command);
 static void send_balance_status(const balance_status_t *status);
-static bool check_roll_angle_stability(float roll_angle, double current_time);
 static double compute_rear_wheel_omega(double angle_now);
 static double rear_wheel_kmh_from_omega(double omega);
  
@@ -173,18 +172,8 @@ static double rear_wheel_kmh_from_omega(double omega);
         printf("Amine: roll_angle = %.4f rad (%.2f°) [%s]\n", 
                roll_angle, roll_angle * 180.0 / M_PI, source);
         
-        //--------------------------------
-        // 1.5. ZEITCHECK - Regelung erst nach 0.25 Sekunden aktivieren
-        //--------------------------------
-        double current_webots_time = wb_robot_get_time();
-        if (!control_enabled) {
-            control_enabled = check_roll_angle_stability(roll_angle, current_webots_time);
-            if (control_enabled) {
-                printf("STABILISIERUNG: Regelung aktiviert nach %.3f Sekunden\n", 
-                       current_webots_time - simulation_start_time);
-            }
-        }
-        
+    
+    
         //--------------------------------
         // 2. PID-Regelung: Roll-Winkel → Lenkwinkel (nur wenn Regelung aktiviert)
         //--------------------------------
@@ -217,8 +206,8 @@ static double rear_wheel_kmh_from_omega(double omega);
         
         // Vision-Timeout prüfen (konfigurierbar)
         double vision_time = wb_robot_get_time();
-        bool vision_active = control_enabled && config.vision_integration.enable_vision && 
-                            (vision_time - last_command_time) < config.vision_integration.vision_timeout_seconds;
+        bool vision_active = true; //control_enabled && config.vision_integration.enable_vision && 
+                            //(vision_time - last_command_time) < config.vision_integration.vision_timeout_seconds;
         
         if (control_enabled) {
             final_steer = steering_output; 
@@ -226,14 +215,14 @@ static double rear_wheel_kmh_from_omega(double omega);
             
             if (vision_active && last_vision_command.valid) { 
                 // STATISCHE GEWICHTUNG aus Konfiguration
-                float vision_weight = config.vision_integration.vision_weight; //Vision Anteil
-                float balance_weight = config.vision_integration.balance_weight; //Balance Anteil
+                float vision_weight = 0.5;//config.vision_integration.vision_weight; //Vision Anteil
+                float balance_weight = 0.5; //config.vision_integration.balance_weight; //Balance Anteil
                 
                 // Vision-Lenkung berechnen
                 float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle; //TODO: Wieso nochmal begrenzen?
                 
                 // EINFACHE KOMBINATION: Statische Gewichtung
-                final_steer = vision_weight * -vision_steer + balance_weight * steering_output;
+                final_steer = vision_weight * vision_steer + balance_weight * steering_output;
                 
                 // Geschwindigkeit von Vision-Controller übernehmen
                 target_speed = config.speed_control.min_speed + // TODO: Nur balance speed!
@@ -315,7 +304,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                 
                 // Vision-Controller-Daten (vereinfacht)
                 .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
-                .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
+                .vision_steer_command = vision_active ? -last_vision_command.steer_command : 0.0f,
                 .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
                 .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
                 .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,
@@ -610,14 +599,7 @@ static inline double get_roll_rad_raw(void) {
     }
 }
 
-static bool check_roll_angle_stability(float roll_angle, double current_time) {
-    (void)roll_angle; // Parameter nicht verwendet
-    
-    // Einfacher Zeitcheck: Regelung nach 0.1 Sekunden aktivieren (reduziert von 0.25s)
-    // Grund: IMU-Ausschlag in den ersten ~0.05s umgehen, aber schneller reagieren
-    double elapsed_time = current_time - simulation_start_time;
-    return elapsed_time >= 0.2;
-} 
+
 
 static double compute_rear_wheel_omega(double angle_now) {
     static int initialized = 0;
