@@ -77,13 +77,11 @@ DEF BICYCLE Robot {
         RotationalMotor {
           name "motor::wheel"
           maxVelocity 31.25
-          maxTorque 120 #120Nm: 120Nm * 2 = 240Nm
-          multiplier 1
+          maxTorque 120
         }
-        PositionSensor { 
-          name "rear wheel sensor" 
-          }
-
+        PositionSensor {
+          name "rear wheel sensor"
+        }
       ]
       endPoint Solid {
         translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05
@@ -142,7 +140,7 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "handlebars motor"
-          maxVelocity 50
+          maxVelocity 150
           maxTorque 25
         }
         PositionSensor {
@@ -172,7 +170,7 @@ DEF BICYCLE Robot {
             }
             endPoint Solid {
               translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
-              rotation -0.9999999999996712 -7.130756857207462e-07 -3.8623405470805726e-07 3.9891419936744623
+              rotation -0.9999999999996712 -7.130756857207464e-07 -3.8623405470805737e-07 3.9891419936744623
               children [
                 DEF wheel Transform {
                   scale 0.0056 0.0081 0.0081
@@ -402,7 +400,7 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::crank"
-          maxVelocity 15.625
+          maxVelocity 31.25
           maxTorque 80
         }
       ]
