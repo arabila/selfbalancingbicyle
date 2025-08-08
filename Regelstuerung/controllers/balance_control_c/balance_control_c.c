@@ -304,7 +304,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                 
                 // Vision-Controller-Daten (vereinfacht)
                 .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,
-                .vision_steer_command = vision_active ? -last_vision_command.steer_command : 0.0f,
+                .vision_steer_command = vision_active ? last_vision_command.steer_command : 0.0f,
                 .vision_speed_command = vision_active ? last_vision_command.speed_command : 0.0f,
                 .vision_p_term = vision_active ? last_vision_command.vision_p_term : 0.0f,
                 .vision_i_term = vision_active ? last_vision_command.vision_i_term : 0.0f,

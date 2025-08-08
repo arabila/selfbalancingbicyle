@@ -1,0 +1,54 @@
+{
+  "app.title": "Balance Controller GUI - Self-Balancing Bicycle",
+
+  "tabs.parameters": "Parameters",
+
+  "groups.angle_pid": "Angle PID Parameters",
+  "groups.speed_control": "Speed Control",
+  "groups.mechanical_limits": "Mechanical Limits",
+
+  "params.angle_Kp.name": "Angle PID - Kp",
+  "params.angle_Kp.description": "Proportional gain for roll angle → steering angle",
+  "params.angle_Ki.name": "Angle PID - Ki",
+  "params.angle_Ki.description": "Integral gain (often 0 for stability)",
+  "params.angle_Kd.name": "Angle PID - Kd",
+  "params.angle_Kd.description": "Derivative gain for damping",
+  "params.angle_output_min.name": "Min. steering angle",
+  "params.angle_output_min.description": "Minimum steering angle in radians",
+  "params.angle_output_max.name": "Max. steering angle",
+  "params.angle_output_max.description": "Maximum steering angle in radians",
+
+  "params.base_speed.name": "Base speed",
+  "params.base_speed.description": "Default driving speed",
+  "params.min_speed.name": "Min. speed",
+  "params.min_speed.description": "Minimum speed for stability",
+  "params.max_speed.name": "Max. speed",
+  "params.max_speed.description": "Maximum driving speed",
+  "params.stability_reduction.name": "Stability factor",
+  "params.stability_reduction.description": "Speed reduction under instability (0=none, 1=max)",
+
+  "params.max_handlebar_angle.name": "Max. handlebar angle",
+  "params.max_handlebar_angle.description": "Maximum physical handlebar angle",
+  "params.max_roll_angle.name": "Max. roll angle",
+  "params.max_roll_angle.description": "Maximum roll angle for plausibility checks",
+
+  "buttons.load_config": "Load config",
+  "buttons.save_config": "Save config",
+  "buttons.defaults": "Defaults",
+  "buttons.apply": "Apply",
+
+  "errors.invalid_number": "Invalid number",
+  "errors.out_of_range": "Value out of range ({min} to {max})",
+  "errors.error": "Error",
+  "errors.save_failed": "Error saving configuration: {err}",
+  "errors.validation_failed": "Please correct the highlighted inputs.",
+
+  "status.param_changed": "Parameter {key} changed: {value}",
+  "status.config_loaded": "Configuration loaded from {file}",
+  "status.config_not_found": "Configuration file {file} not found",
+  "status.config_saved": "Configuration saved to {file}",
+  "status.defaults_restored": "Defaults restored",
+  "status.config_applied": "Configuration applied - controller reloads automatically"
+}
+
+

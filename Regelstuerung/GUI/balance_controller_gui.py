@@ -17,6 +17,18 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
+import locale
+
+# Einfache i18n-Unterstützung über .arb-Dateien (DE/EN)
+try:
+    from i18n import t, set_locale
+except Exception:
+    # Fallbacks, falls i18n-Modul noch nicht vorhanden ist (wird im Projekt mitgeliefert)
+    def t(key, **kwargs):
+        # Zeige Key als Text, falls Übersetzung fehlt
+        return key.format(**kwargs) if kwargs else key
+    def set_locale(lang):
+        pass
 
 class CheckboxPopup:
     """Popup-Fenster für Checkbox-Gruppen"""
@@ -119,108 +131,36 @@ class CheckboxPopup:
 class BalanceControllerGUI:
     def __init__(self, root):
         self.root = root
-        self.root.title("Balance Controller GUI - Selbstbalancierendes Fahrrad")
+        # Locale erkennen (de als Standard)
+        sys_locale = (locale.getdefaultlocale() or ("de_DE", None))[0] or "de_DE"
+        lang = "de" if sys_locale.lower().startswith("de") else "en"
+        set_locale(lang)
+
+        self.root.title(t("app.title"))
         self.root.geometry("1200x800")
         
         # Konfigurationsdatei
         self.config_file = "balance_config.json"
         self.monitoring_dir = "../Monitoring"
         
-        # Parameter-Definitionen (mit Limits und Beschreibungen)
+        # Parameter-Definitionen (mit Limits); Texte werden über i18n geladen
         self.parameters = {
             # Angle PID Parameter
-            "angle_Kp": {
-                "name": "Angle PID - Kp",
-                "value": 10.0,
-                "min": 0.0,
-                "max": 50.0,
-                "description": "Proportional-Verstärkung für Roll-Winkel → Lenkwinkel",
-                "unit": ""
-            },
-            "angle_Ki": {
-                "name": "Angle PID - Ki", 
-                "value": 0.0,
-                "min": 0.0,
-                "max": 10.0,
-                "description": "Integral-Verstärkung (meist 0 für Stabilität)",
-                "unit": ""
-            },
-            "angle_Kd": {
-                "name": "Angle PID - Kd",
-                "value": 2.2,
-                "min": 0.0,
-                "max": 10.0,
-                "description": "Differential-Verstärkung für Dämpfung",
-                "unit": ""
-            },
-            "angle_output_min": {
-                "name": "Min. Lenkwinkel",
-                "value": -0.3,
-                "min": -1.57,
-                "max": 0.0,
-                "description": "Minimaler Lenkwinkel in Radiant",
-                "unit": "rad"
-            },
-            "angle_output_max": {
-                "name": "Max. Lenkwinkel",
-                "value": 0.3,
-                "min": 0.0,
-                "max": 1.57,
-                "description": "Maximaler Lenkwinkel in Radiant", 
-                "unit": "rad"
-            },
-            
+            "angle_Kp": {"value": 10.0, "min": 0.0, "max": 50.0, "unit": ""},
+            "angle_Ki": {"value": 0.0, "min": 0.0, "max": 10.0, "unit": ""},
+            "angle_Kd": {"value": 2.2, "min": 0.0, "max": 10.0, "unit": ""},
+            "angle_output_min": {"value": -0.3, "min": -1.57, "max": 0.0, "unit": "rad"},
+            "angle_output_max": {"value": 0.3, "min": 0.0, "max": 1.57, "unit": "rad"},
+
             # Speed Control Parameter
-            "base_speed": {
-                "name": "Basis-Geschwindigkeit",
-                "value": 5.0,
-                "min": 1.0,
-                "max": 15.0,
-                "description": "Standard-Fahrgeschwindigkeit",
-                "unit": "rad/s"
-            },
-            "min_speed": {
-                "name": "Min. Geschwindigkeit",
-                "value": 3.0,
-                "min": 0.5,
-                "max": 10.0,
-                "description": "Mindestgeschwindigkeit für Stabilität",
-                "unit": "rad/s"
-            },
-            "max_speed": {
-                "name": "Max. Geschwindigkeit", 
-                "value": 8.0,
-                "min": 5.0,
-                "max": 20.0,
-                "description": "Maximale Fahrgeschwindigkeit",
-                "unit": "rad/s"
-            },
-            "stability_reduction": {
-                "name": "Stabilitätsfaktor",
-                "value": 0.5,
-                "min": 0.0,
-                "max": 1.0,
-                "description": "Geschwindigkeitsreduktion bei Instabilität (0=keine, 1=maximal)",
-                "unit": ""
-            },
-            
+            "base_speed": {"value": 5.0, "min": 1.0, "max": 15.0, "unit": "rad/s"},
+            "min_speed": {"value": 3.0, "min": 0.5, "max": 10.0, "unit": "rad/s"},
+            "max_speed": {"value": 8.0, "min": 5.0, "max": 20.0, "unit": "rad/s"},
+            "stability_reduction": {"value": 0.5, "min": 0.0, "max": 1.0, "unit": ""},
+
             # Mechanical Limits
-            "max_handlebar_angle": {
-                "name": "Max. Lenkwinkel",
-                "value": 0.5,
-                "min": 0.1,
-                "max": 0.8,
-                "description": "Maximaler physischer Lenkwinkel",
-                "unit": "rad"
-            },
-            "max_roll_angle": {
-                "name": "Max. Roll-Winkel",
-                "value": 45.0,
-                "min": 10.0,
-                "max": 90.0,
-                "description": "Maximaler Roll-Winkel für Plausibilitätsprüfung",
-                "unit": "°"
-            }
+            "max_handlebar_angle": {"value": 0.5, "min": 0.1, "max": 0.8, "unit": "rad"},
+            "max_roll_angle": {"value": 45.0, "min": 10.0, "max": 90.0, "unit": "°"}
         }
         
         # Physik-Simulation wurde entfernt
@@ -242,7 +182,7 @@ class BalanceControllerGUI:
         
         # Tab 1: Parameter-Konfiguration
         param_frame = ttk.Frame(notebook)
-        notebook.add(param_frame, text="Parameter")
+        notebook.add(param_frame, text=t("tabs.parameters"))
         self.setup_parameter_tab(param_frame)
         
         # Tab 2: Monitoring
@@ -279,11 +219,11 @@ class BalanceControllerGUI:
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
         
-        # Parameter-Gruppen
+        # Parameter-Gruppen (Texte via i18n)
         groups = {
-            "Angle PID Parameter": ["angle_Kp", "angle_Ki", "angle_Kd", "angle_output_min", "angle_output_max"],
-            "Geschwindigkeitsregelung": ["base_speed", "min_speed", "max_speed", "stability_reduction"],
-            "Mechanische Grenzen": ["max_handlebar_angle", "max_roll_angle"]
+            t("groups.angle_pid"): ["angle_Kp", "angle_Ki", "angle_Kd", "angle_output_min", "angle_output_max"],
+            t("groups.speed_control"): ["base_speed", "min_speed", "max_speed", "stability_reduction"],
+            t("groups.mechanical_limits"): ["max_handlebar_angle", "max_roll_angle"]
         }
         
         row = 0
@@ -297,48 +237,48 @@ class BalanceControllerGUI:
             for param_key in param_list:
                 param = self.parameters[param_key]
                 
-                # Label
-                label = ttk.Label(scrollable_frame, text=param["name"])
+                # Label (Name aus i18n)
+                label = ttk.Label(scrollable_frame, text=t(f"params.{param_key}.name"))
                 label.grid(row=row, column=0, sticky="w", padx=(20, 10), pady=2)
                 
-                # Scale/Slider
-                var = tk.DoubleVar(value=param["value"])
-                scale = ttk.Scale(
-                    scrollable_frame,
-                    from_=param["min"],
-                    to=param["max"],
-                    variable=var,
-                    orient=tk.HORIZONTAL,
-                    length=200,
-                    command=lambda val, key=param_key: self.on_parameter_change(key, val)
-                )
-                scale.grid(row=row, column=1, padx=10, pady=2)
-                
+                # Textfeld statt Slider
+                var = tk.StringVar(value=f"{param['value']}")
+                entry = ttk.Entry(scrollable_frame, textvariable=var, width=16)
+                entry.grid(row=row, column=1, padx=10, pady=2, sticky="w")
+
+                # Live-Validierung
+                var.trace_add('write', lambda *_args, key=param_key: self.on_parameter_text_change(key))
+
                 # Wert-Anzeige
                 value_label = ttk.Label(scrollable_frame, text=f"{param['value']:.3f} {param['unit']}")
                 value_label.grid(row=row, column=2, padx=10, pady=2)
                 
                 # Beschreibung
-                desc_label = ttk.Label(scrollable_frame, text=param["description"], foreground="gray")
+                desc_label = ttk.Label(scrollable_frame, text=t(f"params.{param_key}.description"), foreground="gray")
                 desc_label.grid(row=row, column=3, sticky="w", padx=10, pady=2)
+
+                # Fehler-Label
+                error_label = ttk.Label(scrollable_frame, text="", foreground="red")
+                error_label.grid(row=row+1, column=1, columnspan=2, sticky="w", padx=10, pady=(0, 6))
                 
                 # Widgets speichern
                 self.param_widgets[param_key] = {
                     "var": var,
-                    "scale": scale,
-                    "value_label": value_label
+                    "entry": entry,
+                    "value_label": value_label,
+                    "error_label": error_label
                 }
                 
-                row += 1
+                row += 2
         
         # Control-Buttons
         button_frame = ttk.Frame(scrollable_frame)
         button_frame.grid(row=row, column=0, columnspan=4, pady=20)
         
-        ttk.Button(button_frame, text="Konfiguration laden", command=self.load_config).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Konfiguration speichern", command=self.save_config).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Standardwerte", command=self.reset_defaults).pack(side=tk.LEFT, padx=5)
-        ttk.Button(button_frame, text="Anwenden", command=self.apply_config).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text=t("buttons.load_config"), command=self.load_config).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text=t("buttons.save_config"), command=self.save_config).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text=t("buttons.defaults"), command=self.reset_defaults).pack(side=tk.LEFT, padx=5)
+        ttk.Button(button_frame, text=t("buttons.apply"), command=self.apply_config).pack(side=tk.LEFT, padx=5)
         
         # Scrollbaren Frame einrichten
         canvas.pack(side="left", fill="both", expand=True)
@@ -691,20 +631,29 @@ class BalanceControllerGUI:
         self.time_text.set(current_time)
         self.root.after(10, self.update_time)  # Update alle 10ms für Echtzeit-Gefühl
         
-    def on_parameter_change(self, param_key, value):
-        """Handler für Parameter-Änderungen"""
+    def on_parameter_text_change(self, param_key):
+        """Validiere Texteingabe und aktualisiere Parameter & Anzeige."""
+        text = self.param_widgets[param_key]["var"].get().strip()
+        error_label = self.param_widgets[param_key]["error_label"]
+        unit = self.parameters[param_key]["unit"]
+
+        if text == "" or text in {"-", ".", "-.", ","}:
+            # Zwischenzustände beim Tippen erlauben
+            error_label.config(text="")
+            return
+
         try:
-            float_value = float(value)
-            self.parameters[param_key]["value"] = float_value
-            
-            # Wert-Label aktualisieren
-            unit = self.parameters[param_key]["unit"]
-            self.param_widgets[param_key]["value_label"].config(text=f"{float_value:.3f} {unit}")
-            
-            self.status_text.set(f"Parameter {param_key} geändert: {float_value:.3f}")
-            
+            # Ersetze Komma durch Punkt für DE-Eingaben
+            value = float(text.replace(",", "."))
         except ValueError:
-            pass
+            error_label.config(text=t("errors.invalid_number"))
+            return
+
+        # Bereich wird nicht geprüft – nur Format
+        error_label.config(text="")
+        self.parameters[param_key]["value"] = value
+        self.param_widgets[param_key]["value_label"].config(text=f"{value:.3f} {unit}")
+        self.status_text.set(t("status.param_changed", key=param_key, value=f"{value:.3f}"))
             
     # Physik-Handler-Funktionen wurden entfernt
             
@@ -725,15 +674,15 @@ class BalanceControllerGUI:
                         if key in self.parameters:
                             self.parameters[key]["value"] = value
                             if key in self.param_widgets:
-                                self.param_widgets[key]["var"].set(value)
+                                self.param_widgets[key]["var"].set(str(value))
                                 unit = self.parameters[key]["unit"]
                                 self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
                 
                 # Physik-Parameter-Laden wurde entfernt
                 
-                self.status_text.set(f"Konfiguration aus {self.config_file} geladen")
+                self.status_text.set(t("status.config_loaded", file=self.config_file))
             else:
-                self.status_text.set(f"Konfigurationsdatei {self.config_file} nicht gefunden")
+                self.status_text.set(t("status.config_not_found", file=self.config_file))
                 
         except Exception as e:
             messagebox.showerror("Fehler", f"Fehler beim Laden der Konfiguration: {str(e)}")
@@ -775,10 +724,10 @@ class BalanceControllerGUI:
             with open(self.config_file, 'w') as f:
                 json.dump(config_data, f, indent=4)
                 
-            self.status_text.set(f"Konfiguration in {self.config_file} gespeichert")
+            self.status_text.set(t("status.config_saved", file=self.config_file))
             
         except Exception as e:
-            messagebox.showerror("Fehler", f"Fehler beim Speichern der Konfiguration: {str(e)}")
+            messagebox.showerror(t("errors.error"), t("errors.save_failed", err=str(e)))
             
     def reset_defaults(self):
         """Setze alle Parameter auf Standardwerte zurück"""
@@ -793,11 +742,11 @@ class BalanceControllerGUI:
             if key in self.parameters:
                 self.parameters[key]["value"] = value
                 if key in self.param_widgets:
-                    self.param_widgets[key]["var"].set(value)
+                    self.param_widgets[key]["var"].set(str(value))
                     unit = self.parameters[key]["unit"]
                     self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
         
-        self.status_text.set("Standardwerte wiederhergestellt")
+        self.status_text.set(t("status.defaults_restored"))
         
     def load_preset(self, preset_params):
         """Lade ein Preset"""
@@ -813,8 +762,19 @@ class BalanceControllerGUI:
         
     def apply_config(self):
         """Wende Konfiguration sofort an (speichern + neu laden)"""
+        # Vor dem Anwenden alle Felder validieren
+        invalid = []
+        for key in self.parameters.keys():
+            self.on_parameter_text_change(key)
+            if self.param_widgets[key]["error_label"].cget("text"):
+                invalid.append(key)
+
+        if invalid:
+            messagebox.showerror(t("errors.error"), t("errors.validation_failed"))
+            return
+
         self.save_config()
-        self.status_text.set("Konfiguration angewendet - Controller lädt automatisch neu")
+        self.status_text.set(t("status.config_applied"))
         
     def open_log_file(self):
         """Öffne eine Log-Datei zum Anzeigen"""

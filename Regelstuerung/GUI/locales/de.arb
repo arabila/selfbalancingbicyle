@@ -1,0 +1,54 @@
+{
+  "app.title": "Balance Controller GUI - Selbstbalancierendes Fahrrad",
+
+  "tabs.parameters": "Parameter",
+
+  "groups.angle_pid": "Angle PID Parameter",
+  "groups.speed_control": "Geschwindigkeitsregelung",
+  "groups.mechanical_limits": "Mechanische Grenzen",
+
+  "params.angle_Kp.name": "Angle PID - Kp",
+  "params.angle_Kp.description": "Proportional-Verstärkung für Roll-Winkel → Lenkwinkel",
+  "params.angle_Ki.name": "Angle PID - Ki",
+  "params.angle_Ki.description": "Integral-Verstärkung (meist 0 für Stabilität)",
+  "params.angle_Kd.name": "Angle PID - Kd",
+  "params.angle_Kd.description": "Differential-Verstärkung für Dämpfung",
+  "params.angle_output_min.name": "Min. Lenkwinkel",
+  "params.angle_output_min.description": "Minimaler Lenkwinkel in Radiant",
+  "params.angle_output_max.name": "Max. Lenkwinkel",
+  "params.angle_output_max.description": "Maximaler Lenkwinkel in Radiant",
+
+  "params.base_speed.name": "Basis-Geschwindigkeit",
+  "params.base_speed.description": "Standard-Fahrgeschwindigkeit",
+  "params.min_speed.name": "Min. Geschwindigkeit",
+  "params.min_speed.description": "Mindestgeschwindigkeit für Stabilität",
+  "params.max_speed.name": "Max. Geschwindigkeit",
+  "params.max_speed.description": "Maximale Fahrgeschwindigkeit",
+  "params.stability_reduction.name": "Stabilitätsfaktor",
+  "params.stability_reduction.description": "Geschwindigkeitsreduktion bei Instabilität (0=keine, 1=maximal)",
+
+  "params.max_handlebar_angle.name": "Max. Lenkwinkel",
+  "params.max_handlebar_angle.description": "Maximaler physischer Lenkwinkel",
+  "params.max_roll_angle.name": "Max. Roll-Winkel",
+  "params.max_roll_angle.description": "Maximaler Roll-Winkel für Plausibilitätsprüfung",
+
+  "buttons.load_config": "Konfiguration laden",
+  "buttons.save_config": "Konfiguration speichern",
+  "buttons.defaults": "Standardwerte",
+  "buttons.apply": "Anwenden",
+
+  "errors.invalid_number": "Ungültige Zahl",
+  "errors.out_of_range": "Wert außerhalb des gültigen Bereichs ({min} bis {max})",
+  "errors.error": "Fehler",
+  "errors.save_failed": "Fehler beim Speichern der Konfiguration: {err}",
+  "errors.validation_failed": "Bitte korrigieren Sie die markierten Eingaben.",
+
+  "status.param_changed": "Parameter {key} geändert: {value}",
+  "status.config_loaded": "Konfiguration aus {file} geladen",
+  "status.config_not_found": "Konfigurationsdatei {file} nicht gefunden",
+  "status.config_saved": "Konfiguration in {file} gespeichert",
+  "status.defaults_restored": "Standardwerte wiederhergestellt",
+  "status.config_applied": "Konfiguration angewendet - Controller lädt automatisch neu"
+}
+
+
