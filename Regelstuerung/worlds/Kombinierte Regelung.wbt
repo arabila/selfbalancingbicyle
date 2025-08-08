@@ -565,10 +565,6 @@ DEF BICYCLE Robot {
       height 320
       antiAliasing TRUE
     }
-    Display {
-      width 480
-      height 320
-    }
     InertialUnit {
       translation 0 0 0.32
       rotation 1 0 0 0
@@ -787,10 +783,6 @@ Supervisor {
           ]
         }
       ]
-    }
-    Display {
-      width 480
-      height 320
     }
     Emitter {
       name "command_tx"

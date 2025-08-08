@@ -345,8 +345,7 @@ class VisionController:
         self.status_receiver.enable(self.timestep)
         print("✓ Status Receiver initialisiert")
         
-        # Keyboard für Debug-Eingaben
-        self.robot.keyboard.enable(self.timestep)
+        # Keyboard-Eingaben werden nicht mehr verwendet
 
     def _update_camera_position(self):
         """Aktualisiert die Vision Controller Kamera-Position relativ zum Fahrrad"""
@@ -669,32 +668,11 @@ class VisionController:
             else:
                 overlay = frame.copy()
             
-            # Status-Text hinzufügen
-            cv2.putText(overlay, f"Error: {error:.3f}", (10, 30), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            cv2.putText(overlay, f"Steer: {steer_cmd:.3f}", (10, 60), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            cv2.putText(overlay, f"Speed: {speed_cmd:.3f}", (10, 90), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
-            
-            # Balance-Status anzeigen (falls verfügbar)
-            if self.last_balance_status:
-                roll = self.last_balance_status['roll_angle']
-                stability = self.last_balance_status['stability_factor']
-                cv2.putText(overlay, f"Roll: {roll:.2f}°", (10, 120), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
-                cv2.putText(overlay, f"Stability: {stability:.2f}", (10, 150), 
-                           cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 0), 2)
-            
-            # MPC-Status anzeigen
-            mpc_status = "MPC: ✓" if MPC_AVAILABLE else "MPC: Fallback"
-            cv2.putText(overlay, mpc_status, (10, 180), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
-            
-            # Masken-Info anzeigen
-            mask_info = f"Mask: {np.sum(mask > 0)} pixels" if mask is not None and mask.size > 0 else "Mask: None"
-            cv2.putText(overlay, mask_info, (10, 210), 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 0, 255), 2)
+            # Nur Error und Steer anzeigen
+            cv2.putText(overlay, f"Error: {error:.3f}", (10, 30),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            cv2.putText(overlay, f"Steer: {steer_cmd:.3f}", (10, 60),
+                        cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             
             # OpenCV-Anzeige (immer verfügbar)
             cv2.imshow("Vision Control - Fahrrad Kamera", overlay)
@@ -703,25 +681,7 @@ class VisionController:
         except Exception as e:
             print(f"Display-Update-Fehler: {e}")
     
-    def handle_keyboard_input(self):
-        """Verarbeitet Tastatureingaben für Debug/Kontrolle"""
-        key = self.robot.keyboard.getKey()
-        
-        if key == ord('V') or key == ord('v'):
-            self.vision_enabled = not self.vision_enabled
-            print(f"Vision {'aktiviert' if self.vision_enabled else 'deaktiviert'}")
-            
-        elif key == ord('R') or key == ord('r'):
-            # Reset MPC-Controller
-            self.mpc_controller.state = {'x': 0.0, 'y': 0.0, 'v': 2.0, 'yaw': 0.0}
-            self.mpc_controller.last_control = {'accel': 0.0, 'steer': 0.0}
-            print("Vision-MPC zurückgesetzt")
-            
-        elif key == 27:  # ESC
-            print("ESC gedrückt - beende Vision Controller")
-            return False
-            
-        return True
+    
     
     def print_status(self, error, steer_cmd, speed_cmd, p_term, i_term, d_term):
         """Gibt Status-Informationen aus"""
@@ -748,10 +708,6 @@ class VisionController:
 
             # Kamera-Position an Fahrrad anpassen
             self._update_camera_position()
-            
-            # Tastatureingaben verarbeiten
-            if not self.handle_keyboard_input():
-                break
             
             # Balance-Status empfangen
             self.receive_balance_status()
