@@ -464,6 +464,9 @@ class BalanceControllerGUI:
         self.canvas = FigureCanvasTkAgg(self.fig, plot_frame)
         self.canvas.get_tk_widget().pack(fill=tk.BOTH, expand=True)
         
+        # Legenden-Skalierung (50% der Standardgröße)
+        self.legend_scale = 0.5
+
         # Plot-Daten initialisieren (erweitert um Vision-Control-Daten)
         self.plot_data = {
             # Balance-Controller-Daten
@@ -484,6 +487,27 @@ class BalanceControllerGUI:
         
         self.live_plot_active = False
         self.current_data = None
+
+    def _compute_legend_fontsize(self) -> float:
+        """Berechnet die Legenden-Schriftgröße relativ zur aktuellen Default-Konfiguration."""
+        base = plt.rcParams.get('legend.fontsize', plt.rcParams.get('font.size', 10.0))
+        if isinstance(base, str):
+            size_map = {
+                'xx-small': 6.0,
+                'x-small': 8.0,
+                'small': 10.0,
+                'medium': 12.0,
+                'large': 14.0,
+                'x-large': 16.0,
+                'xx-large': 18.0,
+            }
+            base = size_map.get(base, 12.0)
+        try:
+            base_float = float(base)
+        except Exception:
+            base_float = 12.0
+        fs = max(6.0, base_float * float(getattr(self, 'legend_scale', 0.5)))
+        return fs
         
     def setup_preset_tab(self, parent):
         """Erstelle das Preset-Tab"""
@@ -853,56 +877,57 @@ class BalanceControllerGUI:
         self.ax1.clear()
         
         if show_all or self.plot_visibility["roll_angle"].get():
-            self.ax1.plot(df["timestamp"], df["roll_angle"] * 180/3.14159, label="Roll-Winkel", color="red", linewidth=2)
+            self.ax1.plot(df["timestamp"], df["roll_angle"] * 180/3.14159, label="Roll-Winkel", color="red", linewidth=1)
             
         if show_all or self.plot_visibility["steering_output"].get():
-            self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="⚖️ Balance-Steer", color="blue", linewidth=2, linestyle='-')
+            self.ax1.plot(df["timestamp"], df["steering_output"] * 180/3.14159, label="⚖️ Balance-Steer", color="blue", linewidth=1, linestyle='-')
         
         if "vision_steer_command" in df.columns and (show_all or self.plot_visibility["vision_steer_command"].get()):
             # Vision Steer Command in Grad umrechnen (vision_steer_command ist bereits in Rad * max_angle)
-            self.ax1.plot(df["timestamp"], df["vision_steer_command"] * 180/3.14159, label="🎮 Vision-Steer", color="cyan", linewidth=2, linestyle='--')
+            self.ax1.plot(df["timestamp"], df["vision_steer_command"] * 180/3.14159, label="🎮 Vision-Steer", color="cyan", linewidth=1, linestyle='--')
         
         if "final_steer" in df.columns and (show_all or self.plot_visibility["final_steer"].get()):
-            self.ax1.plot(df["timestamp"], df["final_steer"] * 180/3.14159, label="🎯 Final-Steer", color="darkgreen", linewidth=3, linestyle='-')
+            self.ax1.plot(df["timestamp"], df["final_steer"] * 180/3.14159, label="🎯 Final-Steer", color="darkgreen", linewidth=1, linestyle='-')
         
         if "actual_handlebar_angle" in df.columns and (show_all or self.plot_visibility["actual_handlebar_angle"].get()):
-            self.ax1.plot(df["timestamp"], df["actual_handlebar_angle"] * 180/3.14159, label="📏 Sensor-Winkel", color="purple", linewidth=2, linestyle='-.')
+            self.ax1.plot(df["timestamp"], df["actual_handlebar_angle"] * 180/3.14159, label="📏 Sensor-Winkel", color="purple", linewidth=1, linestyle='-.')
         
         # Vision-Error zu Plot 1 hinzufügen (falls verfügbar)
         if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):
             # Vision Error normalisiert auf ±30° für bessere Darstellung
-            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=2, linestyle=':')
+            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=1, linestyle=':')
         
         self.ax1.set_ylabel("Winkel [°] / Vision-Werte")
-        self.ax1.legend()
+        legend_fs = self._compute_legend_fontsize()
+        self.ax1.legend(fontsize=legend_fs)
         self.ax1.grid(True, alpha=0.3)
         
         # Plot 2: PID-Terme und Vision-Speed-Command
         self.ax2.clear()
         
         if show_all or self.plot_visibility["p_term"].get():
-            self.ax2.plot(df["timestamp"], df["p_term"], label="P-Term", color="green", linewidth=2)
+            self.ax2.plot(df["timestamp"], df["p_term"], label="P-Term", color="green", linewidth=1)
             
         if show_all or self.plot_visibility["i_term"].get():
-            self.ax2.plot(df["timestamp"], df["i_term"], label="I-Term", color="orange", linewidth=2)
+            self.ax2.plot(df["timestamp"], df["i_term"], label="I-Term", color="orange", linewidth=1)
             
         if show_all or self.plot_visibility["d_term"].get():
-            self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=2)
+            self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=1)
         
         # Geschwindigkeits-Daten hinzufügen
         if "target_speed" in df.columns and (show_all or self.plot_visibility["target_speed"].get()):
-            self.ax2.plot(df["timestamp"], df["target_speed"], label="🎯 Ziel-Speed", color="blue", linewidth=2, linestyle='--')
+            self.ax2.plot(df["timestamp"], df["target_speed"], label="🎯 Ziel-Speed", color="blue", linewidth=1, linestyle='--')
         
         if "actual_speed_kmh" in df.columns and (show_all or self.plot_visibility["actual_speed_kmh"].get()):
-            self.ax2.plot(df["timestamp"], df["actual_speed_kmh"], label="📊 Ist-Speed (km/h)", color="red", linewidth=3, linestyle='-')
+            self.ax2.plot(df["timestamp"], df["actual_speed_kmh"], label="📊 Ist-Speed (km/h)", color="red", linewidth=1, linestyle='-')
         
         # Vision Speed Command hinzufügen (falls verfügbar)
         if "vision_speed_command" in df.columns and (show_all or self.plot_visibility["vision_speed_command"].get()):
-            self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=2, linestyle=':')
+            self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=1, linestyle=':')
         
         self.ax2.set_xlabel("Zeit [s]")
         self.ax2.set_ylabel("PID-Terme / Geschwindigkeit / Vision-Speed")
-        self.ax2.legend()
+        self.ax2.legend(fontsize=legend_fs)
         self.ax2.grid(True, alpha=0.3)
         
         # Zoom-Titel hinzufügen wenn gezoomt
