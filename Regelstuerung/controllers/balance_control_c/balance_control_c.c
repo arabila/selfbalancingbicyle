@@ -434,8 +434,27 @@ static void load_and_apply_config(void) {
 }
 
 static inline double get_roll_rad_raw(void) {
-    // Versuche die Robot-Node-Orientierung (sollte sofort reagieren)
-    if (robot_node != NULL) {
+   
+    // Fallback: Frame-Node verwenden
+    if (frame_node != NULL) {
+        const double *orientation = wb_supervisor_node_get_orientation(frame_node);
+        if (orientation != NULL) {
+            double roll = atan2(orientation[7], orientation[8]);
+            
+            static int frame_debug_counter = 0;
+            if (++frame_debug_counter % 50 == 0) {
+                printf("DEBUG Frame Matrix: [%.3f %.3f %.3f] [%.3f %.3f %.3f] [%.3f %.3f %.3f] -> Roll: %.4f\n",
+                       orientation[0], orientation[1], orientation[2],
+                       orientation[3], orientation[4], orientation[5],
+                       orientation[6], orientation[7], orientation[8], roll);
+            }
+            
+            return roll;  // rad
+        }
+    }
+
+     // Versuche die Robot-Node-Orientierung (sollte sofort reagieren)
+     if (robot_node != NULL) {
         const double *orientation = wb_supervisor_node_get_orientation(robot_node);
         if (orientation != NULL) {
             // Roll-Winkel aus Rotationsmatrix extrahieren
@@ -454,23 +473,6 @@ static inline double get_roll_rad_raw(void) {
         }
     }
     
-    // Fallback: Frame-Node verwenden
-    if (frame_node != NULL) {
-        const double *orientation = wb_supervisor_node_get_orientation(frame_node);
-        if (orientation != NULL) {
-            double roll = atan2(orientation[7], orientation[8]);
-            
-            static int frame_debug_counter = 0;
-            if (++frame_debug_counter % 50 == 0) {
-                printf("DEBUG Frame Matrix: [%.3f %.3f %.3f] [%.3f %.3f %.3f] [%.3f %.3f %.3f] -> Roll: %.4f\n",
-                       orientation[0], orientation[1], orientation[2],
-                       orientation[3], orientation[4], orientation[5],
-                       orientation[6], orientation[7], orientation[8], roll);
-            }
-            
-            return roll;  // rad
-        }
-    }
     
     // Fallback: IMU-Sensor verwenden (falls verfügbar)
     if (imu_sensor != 0) {

@@ -694,11 +694,39 @@ class VisionController:
             print(f" | Balance: Roll={roll:5.1f}° Stab={stability:4.2f}")
         else:
             print(" | Balance: N/A")
+
+    def optimize_steer_cmd(self, steer_cmd, last_steer_cmd):
+        """Optimiert den Lenkbefehl"""
+
+        # Änderungsrate auf ±0.01 begrenzen
+        max_delta = 0.005
+        delta = steer_cmd - last_steer_cmd
+        if delta > max_delta:
+            steer_cmd = last_steer_cmd + max_delta
+        elif delta < -max_delta:
+            steer_cmd = last_steer_cmd - max_delta
+
+        if steer_cmd > 0.04:
+            steer_cmd = 0.04
+        elif steer_cmd < -0.04:
+            steer_cmd = -0.04
+    
+        return steer_cmd
+    
+        
+    
+    
+    
+
+    
+
+
     
     def run(self):
         """Hauptschleife des Vision-Controllers"""
         last_vision_time = 0.0
         vision_interval = 0.05  # 50ms → 20 Hz
+        last_steer_cmd = 0.0
         
         print("Vision Controller läuft...\n")
         
@@ -733,6 +761,10 @@ class VisionController:
                             # MPC-Regelung
                             dt = current_time - last_vision_time
                             steer_cmd, speed_cmd, p_term, i_term, d_term = self.vision_mpc_control(error, dt)
+
+                            steer_cmd = self.optimize_steer_cmd(steer_cmd, last_steer_cmd)
+
+                            last_steer_cmd = steer_cmd
                             
                             # Command senden
                             self.send_vision_command(steer_cmd, speed_cmd)

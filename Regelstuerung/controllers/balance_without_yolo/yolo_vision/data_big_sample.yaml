@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 4
+names: ['meadow', 'obstacle', 'street_main', 'street_side']
+
+roboflow:
+  workspace: yolovision
+  project: yolo_vision
+  version: 2
+  license: CC BY 4.0
+  url: https://universe.roboflow.com/yolovision/yolo_vision/dataset/2
