@@ -1,14 +1,14 @@
 # Fdb version 4
-["bibtex seminar_vorlage"] 1754307766.61817 "seminar_vorlage.aux" "seminar_vorlage.bbl" "seminar_vorlage" 1754307780.34871 0
+["bibtex seminar_vorlage"] 1754844962.48168 "seminar_vorlage.aux" "seminar_vorlage.bbl" "seminar_vorlage" 1754844963.68844 0
   "./refs.bib" 1754161812.89708 4382 e2cf93a0f9f010966bf0aa8c885872a8 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/bibtex/bst/base/plain.bst" 1741388039 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "seminar_vorlage.aux" 1754307780.14993 9054 fa224cf18b4fe0a6a5bc0e2f566f0276 "pdflatex"
+  "seminar_vorlage.aux" 1754844963.50534 9265 9c9556b69f0808b67e14c7c1ac2833ee "pdflatex"
   (generated)
   "seminar_vorlage.bbl"
   "seminar_vorlage.blg"
   (rewritten before read)
-["pdflatex"] 1754307779.16976 "/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" "seminar_vorlage.pdf" "seminar_vorlage" 1754307780.34887 0
-  "/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" 1754307778.99017 37041 d0e11e8b7863cbbdfc5a266bf834b774 ""
+["pdflatex"] 1754844962.54194 "/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" "seminar_vorlage.pdf" "seminar_vorlage" 1754844963.68855 0
+  "/Users/amine/Documents/selfbalancingbicyle/Masterthesis/seminar_vorlage.tex" 1754844961.14176 37253 75162628bfc12ee7ba90becb6e6e11ff ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc" 1741388039 2900 1537cc8184ad1792082cd229ecc269f4 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/fontname/texfonts.map" 1741388039 3524 cb3e574dea2d1052e39280babc910dc8 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/pdftex/updmap/pdftex.map" 1741388039 5466553 2748998d7db8078826afa1f272036265 ""
@@ -144,16 +144,17 @@
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/web2c/texmf.cnf" 1741388039 42151 79f67285bdd95beca4d137b380b4b9e5 ""
   "/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-var/web2c/pdftex/pdflatex.fmt" 1741388039 3346141 1288109d02d1c772df65535881471649 ""
   "figures/Fahrt1.png" 1753792769.81348 576429 477d8208486c84b831ff1b03c8da16fb ""
+  "figures/Kombimierter Regeler.png" 1754844870.12728 44402 7f2e7b9fdd18a3c7b04cc25111d9a426 ""
   "figures/bicycle.png" 1754224158.42877 113507 4d95e546878eac9c55e0af29b2a4acf1 ""
   "figures/webots_overview.png" 1753792769.81554 231577 fb13fafd243feacaca7ac007f43c6760 ""
   "header_hwr.eps" 1753792769.81651 132950 462b36c74c335fecbcef4640e7efe578 ""
-  "seminar_vorlage.aux" 1754307780.14993 9054 fa224cf18b4fe0a6a5bc0e2f566f0276 "pdflatex"
-  "seminar_vorlage.bbl" 1754307766.68887 2525 96edaea65b9cab2afe2f7743de363bfe "bibtex seminar_vorlage"
-  "seminar_vorlage.out" 1754307780.15155 8812 9a6862f250514228df47d4dcb42362cf "pdflatex"
-  "seminar_vorlage.tex" 1754307778.99017 37041 d0e11e8b7863cbbdfc5a266bf834b774 ""
-  "seminar_vorlage.toc" 1754307780.15176 4248 d08254578b0a1145b6313e4b1603c338 "pdflatex"
-  "seminar_vorlage.upa" 1754307779.60043 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
-  "seminar_vorlage.upb" 1754307780.15108 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "seminar_vorlage.aux" 1754844963.50534 9265 9c9556b69f0808b67e14c7c1ac2833ee "pdflatex"
+  "seminar_vorlage.bbl" 1754844962.53976 2525 96edaea65b9cab2afe2f7743de363bfe "bibtex seminar_vorlage"
+  "seminar_vorlage.out" 1754844963.50718 8812 9a6862f250514228df47d4dcb42362cf "pdflatex"
+  "seminar_vorlage.tex" 1754844961.14176 37253 75162628bfc12ee7ba90becb6e6e11ff ""
+  "seminar_vorlage.toc" 1754844963.50748 4248 139e26e7fd527e9166e7e15037607db2 "pdflatex"
+  "seminar_vorlage.upa" 1754844962.96296 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
+  "seminar_vorlage.upb" 1754844963.50672 0 d41d8cd98f00b204e9800998ecf8427e "pdflatex"
   (generated)
   "seminar_vorlage.aux"
   "seminar_vorlage.log"

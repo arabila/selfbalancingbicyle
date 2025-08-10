@@ -136,29 +136,21 @@ def hms(sec):
 
 
 def printStatus():
-    global maxV
+    """Zeigt nur den negierten Lenkwinkel (-hndB) und die Geschwindigkeit (bcyS) an.
+    Beibehaltung der Label-Position je nach Robot-Name wie zuvor.
+    """
     vpos = 0.93
-    # Get Velocity
-    velo = robotNode.getVelocity()
-    
-    # Velocity calulation:  Speed Module (x, y, z)
-    velocity = (velo[0]**2 + velo[1]**2 + velo[2]**2)**0.5
-    velocity = velocity * 3.6 # km/h
-    
-    if velocity > maxV:
-        maxV = (velocity + maxV) / 2
-
-    timer = int(robot.getTime())
-    strP = hms(timer)
-    
-    if robot.getName() == 'Little Bicycle 1':
-        vpos = 0.93
-        strP = f'Time: {strP:s}'
-        robot.setLabel(0, strP, 0, 0.97, 0.06, 0x000000, 0, 'Lucida Console')
-    elif robot.getName() == 'Little Bicycle 2':
+    if robot.getName() == 'Little Bicycle 2':
         vpos = 0.89
-    strP = f'Robot: {robot.getName():s}   Speed: {velocity:5.2f} km/h   Max {maxV:5.2f} km/h'
-    robot.setLabel(1, strP, 0, vpos, 0.06, 0x000000, 0, 'Lucida Console')
+
+    # Nur die gewünschten Werte ausgeben: -hndB, bcyS
+    try:
+        text = f"Steer: {-hndB:.5f}, Speed: {bcyS:.5f}, Error: {P:.5f}"
+    except Exception:
+        # Falls Variablen beim ersten Frame noch nicht gesetzt sind
+        text = "0.00000, 0.00000"
+
+    robot.setLabel(1, text, 0, vpos, 0.06, 0x000000, 0, 'Lucida Console')
         
 def send_vision_command(steer_cmd_rad, speed_cmd_units, vision_error_norm=0.0, p_term=0.0, i_term=0.0, d_term=0.0, mask_coverage=0.0):
     """Sendet Vision-Command an Balance-Controller (C) im kompatiblen Struct-Format.
@@ -187,7 +179,29 @@ def send_vision_command(steer_cmd_rad, speed_cmd_units, vision_error_norm=0.0, p
         return False
 
 
+def optimize_steer_cmd(steer_cmd, last_steer_cmd):
+    """Optimiert den Lenkbefehl"""
+
+    # Änderungsrate auf ±0.01 begrenzen
+    max_delta = 0.005
+    delta = steer_cmd - last_steer_cmd
+    if delta > max_delta:
+        steer_cmd = last_steer_cmd + max_delta
+    elif delta < -max_delta:
+        steer_cmd = last_steer_cmd - max_delta
+
+    if steer_cmd > 0.04:
+        steer_cmd = 0.04
+    elif steer_cmd < -0.04:
+        steer_cmd = -0.04
+    
+    return steer_cmd
+    
+        
+    
+    
 # Main loop:
+last_steer_cmd = 0.0
 while robot.step(timestep) != -1:
 
     # Keep camera mounted to the bicycle in world coordinates
@@ -202,16 +216,22 @@ while robot.step(timestep) != -1:
 
     hndB = hMax - abs(PID) # handlebar angle control
     hndB = hndB + PID
+    hndB = hndB /5
     if hndB > hMax: hndB = hMax # max handlebar angle
     elif hndB < -hMax: hndB = -hMax # min handlebar angle
     
+    print("Amine: Steer Command: ", hndB)
+
     bcyS = maxS # max speed
     bcyS = bcyS - abs(PID * 4) # speed control
     if bcyS < minS: bcyS = minS # min speed
 
+    hndB = optimize_steer_cmd(hndB, last_steer_cmd)
+    last_steer_cmd = hndB
+
     # Command senden (Vision-Fehler normiert mit Bildbreite falls verfügbar)
     vision_error_norm = float(P) / float(camera.getWidth()) if camera else 0.0
-    send_vision_command(hndB, bcyS, vision_error_norm, Kp * P, Ki * I, Kd * D, 0.0)
+    send_vision_command(-hndB, bcyS, vision_error_norm, Kp * P, Ki * I, Kd * D, 0.0)
     printStatus()
     
     pass

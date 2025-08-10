@@ -16,7 +16,7 @@ WEBOTS_LIB = -L$(WEBOTS_HOME_PATH)/lib/controller -lController
 
 # Quell- und Zieldateien
 TARGET = balance_control_c
-SOURCES = balance_control_c.c balance_pid.c balance_config.c balance_logging.c
+SOURCES = balance_control_c.c balance_pid.c speed_pid.c balance_config.c balance_logging.c
 OBJECTS = $(SOURCES:.c=.o)
 
 # Hauptziel
@@ -32,8 +32,9 @@ $(TARGET): $(OBJECTS)
 	$(CC) $(CFLAGS) $(WEBOTS_INCLUDE) -c $< -o $@
 
 # Spezifische Abhängigkeiten
-balance_control_c.o: balance_control_c.c balance_pid.h balance_config.h balance_logging.h
+balance_control_c.o: balance_control_c.c balance_pid.h speed_pid.h balance_config.h balance_logging.h
 balance_pid.o: balance_pid.c balance_pid.h
+speed_pid.o: speed_pid.c speed_pid.h balance_pid.h
 balance_config.o: balance_config.c balance_config.h
 balance_logging.o: balance_logging.c balance_logging.h
 

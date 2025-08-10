@@ -27,6 +27,7 @@
  #include <stdbool.h>
  
  #include "balance_pid.h"
+ #include "speed_pid.h"
  #include "balance_config.h"
  #include "balance_logging.h"
  
@@ -72,6 +73,7 @@ static double last_command_time = 0.0;
  
  // Controller-Zustand
  static pid_controller_t angle_pid;
+  static speed_pid_controller_t speed_ctrl;
  static balance_config_t config;
  static balance_logger_t logger;
  
@@ -92,8 +94,6 @@ static double simulation_start_time = 0.0;
 static void init_devices(int timestep);
 static void load_and_apply_config(void);
 static double get_roll_rad_raw(void);
-static void update_display(float roll_angle, float steering_output, float speed);
-// Keyboard-Input wurde entfernt
 static long long get_time_microseconds(void);
 static void print_status(float roll_angle, float steering_output, float speed);
 static int receive_vision_command(vision_command_t *command);
@@ -224,9 +224,16 @@ static double rear_wheel_kmh_from_omega(double omega);
                 // EINFACHE KOMBINATION: Statische Gewichtung
                 final_steer = vision_weight * vision_steer + balance_weight * steering_output;
                 
-                // Geschwindigkeit von Vision-Controller übernehmen
-                target_speed = config.speed_control.min_speed + // TODO: Nur balance speed!
-                              last_vision_command.speed_command * (config.speed_control.max_speed - config.speed_control.min_speed);
+                // Geschwindigkeit proportional zum Lenkbefehl reduzieren
+                // nutzt Speed-PID, Prozessvariable = |steer_command|
+                target_speed = speed_pid_compute(
+                    &speed_ctrl,
+                    config.speed_control.base_speed,
+                    config.speed_control.min_speed,
+                    config.speed_control.max_speed,
+                    last_vision_command.steer_command,
+                    current_time
+                );
                 
                 if (vision_cmd_received) {
                     printf("VISION: Vision=%.3f, Balance=%.3f → Final=%.3f (Weights: V=%.1f%%, B=%.1f%%)\n",
@@ -236,7 +243,14 @@ static double rear_wheel_kmh_from_omega(double omega);
             } else {
                 // Vision inaktiv → Nur Balance-Regelung
                 final_steer = steering_output;
-                target_speed = config.speed_control.base_speed;
+                target_speed = speed_pid_compute(
+                    &speed_ctrl,
+                    config.speed_control.base_speed,
+                    config.speed_control.min_speed,
+                    config.speed_control.max_speed,
+                    0.0f,
+                    current_time
+                );
                 
                 static double last_timeout_msg = 0.0;
                 if (last_command_time > 0.0 && (vision_time - last_timeout_msg) > 2.0) {
@@ -321,11 +335,6 @@ static double rear_wheel_kmh_from_omega(double omega);
                  physics_debug_counter = 0;
              }
          }
-
-         //--------------------------------
-         // 9. Display und Status-Updates
-         //--------------------------------
-         update_display(roll_angle, steering_output, target_speed);
          
          //--------------------------------
          // Status-Ausgabe alle 1000ms (1 Sekunde)
@@ -431,6 +440,19 @@ static void load_and_apply_config(void) {
          config.angle_pid.integral_min,
          config.angle_pid.integral_max
      );
+
+      // Speed-PID: Reduziert Geschwindigkeit proportional zu |steer_command|
+      // max_reduction: wir nehmen 70% der Spanne (base -> min) als obere Grenze
+      float max_reduction = (config.speed_control.base_speed - config.speed_control.min_speed) * 0.7f;
+      if (max_reduction < 0.0f) max_reduction = 0.0f;
+      speed_ctrl = speed_pid_init(
+          1.5f,   // Kp: aggressiv genug, um spürbar zu reagieren
+          0.3f,   // Ki: leichtes Nachführen
+          0.0f,   // Kd: hier meist nicht nötig
+          max_reduction,
+          -2.0f,  // integral_min
+          +2.0f   // integral_max
+      );
 }
 
 static inline double get_roll_rad_raw(void) {
@@ -490,32 +512,7 @@ static inline double get_roll_rad_raw(void) {
     printf("Warnung: Keine Orientierungsquelle verfügbar!\n");
     return 0.0;
   }
- static void update_display(float roll_angle, float steering_output, float speed) {
-     if (display_device == 0) return;
-     
-     // Display löschen
-     wb_display_set_alpha(display_device, 0.0);
-     wb_display_fill_rectangle(display_device, 0, 0, 
-                              wb_display_get_width(display_device), 
-                              wb_display_get_height(display_device));
-     wb_display_set_alpha(display_device, 1.0);
-     
-     // Status-Text
-     char status_text[256];
-     snprintf(status_text, sizeof(status_text), 
-              "Roll: %6.2f° | Steering: %6.2f° | Speed: %5.2f",
-              roll_angle, steering_output * 180.0 / M_PI, speed);
-     
-     wb_display_draw_text(display_device, status_text, 10, 10);
-     
-     // PID-Terme anzeigen
-     char pid_text[256];
-     snprintf(pid_text, sizeof(pid_text),
-              "P: %6.2f | I: %6.2f | D: %6.2f",
-              angle_pid.proportional_term, angle_pid.integral_term, angle_pid.derivative_term);
-     
-     wb_display_draw_text(display_device, pid_text, 10, 30);
- }
+
  
  // Keyboard-Input komplett entfernt
  

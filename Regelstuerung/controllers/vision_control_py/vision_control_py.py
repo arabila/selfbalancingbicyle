@@ -706,10 +706,10 @@ class VisionController:
         elif delta < -max_delta:
             steer_cmd = last_steer_cmd - max_delta
 
-        if steer_cmd > 0.04:
-            steer_cmd = 0.04
-        elif steer_cmd < -0.04:
-            steer_cmd = -0.04
+        if steer_cmd > 0.08:
+            steer_cmd = 0.08
+        elif steer_cmd < -0.08:
+            steer_cmd = -0.08
     
         return steer_cmd
     

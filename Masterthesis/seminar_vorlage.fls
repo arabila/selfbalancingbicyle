@@ -276,6 +276,11 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/jknappe
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/cm/cmtt9.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/cm/cmr9.tfm
+INPUT ./figures/Kombimierter Regeler.png
+INPUT ./figures/Kombimierter Regeler.png
+INPUT ./figures/Kombimierter Regeler.png
+INPUT ./figures/Kombimierter Regeler.png
+INPUT ./figures/Kombimierter Regeler.png
 INPUT ./seminar_vorlage.bbl
 INPUT ./seminar_vorlage.bbl
 INPUT seminar_vorlage.bbl

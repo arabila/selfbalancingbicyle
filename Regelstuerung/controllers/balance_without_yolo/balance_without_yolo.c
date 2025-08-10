@@ -574,6 +574,11 @@ static inline double get_roll_rad_raw(void) {
                     command->vision_error, command->vision_p_term, command->vision_i_term, 
                     command->vision_d_term, command->mask_coverage);
              
+            //Steercommand and Speedcommand are in degrees and m/s
+            command->steer_command = command->steer_command / 10;
+            printf("Amine: command->steer_command: %.2f\n", command->steer_command);
+        
+
              // Plausibilitätsprüfung
              if (command->steer_command >= -1.0f && command->steer_command <= 1.0f &&
                  command->speed_command >= 0.0f && command->speed_command <= 1.0f &&

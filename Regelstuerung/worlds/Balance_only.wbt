@@ -18,8 +18,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.293724322564915 -0.11358094843886601 -0.9491182173393942 3.595720981944901
-  position -1.904691780152262 -27.962559659671967 12.374625051317633
+  orientation 0.063214367765929 -0.11677510477972908 -0.991144549806756 4.519974046953562
+  position -0.8484098370550062 -54.75317855128307 7.279530079335671
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -35,7 +35,7 @@ RectangleArena {
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/track004.jpeg"
+        "textures/track012.png"
       ]
     }
     roughness 1
@@ -45,15 +45,37 @@ RectangleArena {
   wallHeight 0.001
 }
 DEF AIR Fluid {
+  translation 0 21 0
   name "air"
   density 1.225
   viscosity 1.81e-05
+  streamVelocity -4 0 0
   boundingObject Box {
-    size 100 100 20
+    size 64 21 20
+  }
+}
+DEF AIR Fluid {
+  translation 0 1.86 0
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  streamVelocity 4 0 0
+  boundingObject Box {
+    size 64 21 20
+  }
+}
+DEF AIR Fluid {
+  translation 0 -19.33 0
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  streamVelocity -4 0 0
+  boundingObject Box {
+    size 64 21 20
   }
 }
 DEF BICYCLE Robot {
-  translation -16.7776 -19.4694 0.362776
+  translation -2.00891 -31.1912 0.290961
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
@@ -174,7 +196,7 @@ DEF BICYCLE Robot {
             }
             endPoint Solid {
               translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
-              rotation -0.9999999999996712 -7.130756857207464e-07 -3.8623405470805737e-07 3.9891419936744623
+              rotation -0.9999999999996712 -7.130756857207463e-07 -3.8623405470805737e-07 3.9891419936744623
               children [
                 DEF wheel Transform {
                   scale 0.0056 0.0081 0.0081
