@@ -1,0 +1,783 @@
+#VRML_SIM R2025a utf8
+
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackground.proto"
+EXTERNPROTO "https://raw.githubusercontent.com/cyberbotics/webots/R2023b/projects/objects/backgrounds/protos/TexturedBackgroundLight.proto"
+EXTERNPROTO "../protos/UnevenTerrain.proto"
+
+WorldInfo {
+  basicTimeStep 10
+  contactProperties [
+    ContactProperties {
+      material1 "wheel"
+      material2 "ground"
+      coulombFriction [
+        0.8
+      ]
+      bounce 0.1
+    }
+  ]
+}
+Viewpoint {
+  orientation -0.7861027810214791 0.17285442458872013 -0.5934338763252388 6.185957301294092
+  position -13.09747212924487 -31.209639366183467 0.4004212743853146
+  follow "BICYCLE"
+}
+TexturedBackground {
+  skybox FALSE
+}
+TexturedBackgroundLight {
+}
+UnevenTerrain {
+  translation 0 0 -0.1
+  contactMaterial "ground"
+  size 64 64 3
+  xDimension 256
+  yDimension 256
+  appearance PBRAppearance {
+    baseColorMap ImageTexture {
+      url [
+        "textures/track012.png"
+      ]
+    }
+    roughness 1
+    metalness 0
+  }
+  randomSeed 0
+  flatBounds TRUE
+  perlinNOctaves 4
+}
+DEF AIR Fluid {
+  translation 0 21 0
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  streamVelocity -4 0 0
+  boundingObject Box {
+    size 64 21 20
+  }
+}
+DEF AIR Fluid {
+  translation 0 1.86 0
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  streamVelocity 4 0 0
+  boundingObject Box {
+    size 64 21 20
+  }
+}
+DEF AIR Fluid {
+  translation 0 -19.33 0
+  name "air"
+  density 1.225
+  viscosity 1.81e-05
+  streamVelocity -4 0 0
+  boundingObject Box {
+    size 64 21 20
+  }
+}
+DEF BICYCLE Robot {
+  translation -2.00827 -31.1876 0.471021
+  rotation 0.0022650050426297427 -0.019996001637142644 0.9997974943310691 3.141592653589793
+  children [
+    DEF frame Transform {
+      scale 0.0064 0.0064 0.0064
+      children [
+        CadShape {
+          url [
+            "obj/Little Bicycle V2 - Frame/frame.obj"
+          ]
+        }
+      ]
+    }
+    InertialUnit {
+      translation 0 0 0.32
+      rotation 1 0 0 0
+      name "imu"
+    }
+    DEF rear_wheel HingeJoint {
+      jointParameters HingeJointParameters {
+        anchor 0 0.5312 0
+        dampingConstant 0.8
+        staticFriction 0.1
+      }
+      device [
+        RotationalMotor {
+          name "motor::wheel"
+          maxVelocity 31.25
+          maxTorque 120
+        }
+        PositionSensor {
+          name "rear wheel sensor"
+        }
+      ]
+      endPoint Solid {
+        translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05
+        rotation -0.9999999999994074 4.0589810336105457e-07 1.010137366455216e-06 1.9514567889662362
+        children [
+          DEF wheel Transform {
+            scale 0.0056 0.0081 0.0081
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle - Rear Wheel/r_wheel.obj"
+                ]
+              }
+            ]
+          }
+        ]
+        contactMaterial "wheel"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
+        boundingObject Pose {
+          rotation 0 1 0 1.5708
+          children [
+            Cylinder {
+              height 0.08
+              radius 0.45
+              subdivision 72
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 2
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.122 0.122 0.245
+            0 0 0
+          ]
+        }
+      }
+    }
+    DEF Handlebars_and_Fork HingeJoint {
+      jointParameters HingeJointParameters {
+        axis 0 0 1
+        anchor 0 -0.52352 0.6528
+        dampingConstant 0.3
+        staticFriction 0.1
+      }
+      device [
+        RotationalMotor {
+          name "handlebars motor"
+          maxVelocity 150
+          maxTorque 25
+        }
+        PositionSensor {
+          name "handlebars sensor"
+        }
+      ]
+      endPoint Solid {
+        translation 0 -0.52352 0.6528
+        rotation 0 0 -0.9999999999999999 9.884312124119402e-08
+        children [
+          DEF fork Transform {
+            scale 0.0064 0.0064 0.0064
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle V2 - Handlebars and Fork/fork.obj"
+                ]
+              }
+            ]
+          }
+          DEF wheel HingeJoint {
+            jointParameters HingeJointParameters {
+              position 58.84271107812081
+              anchor 0 -0.2368 -0.6528
+              dampingConstant 0.8
+              staticFriction 0.1
+            }
+            endPoint Solid {
+              translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
+              rotation -0.9999999999996712 -7.130756857207463e-07 -3.8623405470805737e-07 3.9891419936744623
+              children [
+                DEF wheel Transform {
+                  scale 0.0056 0.0081 0.0081
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Front Wheel/f_wheel.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              contactMaterial "wheel"
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
+              boundingObject Pose {
+                rotation 0 1 0 1.5708
+                children [
+                  Cylinder {
+                    height 0.08
+                    radius 0.45
+                    subdivision 72
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 1.8
+                centerOfMass [
+                  0 0 0
+                ]
+                inertiaMatrix [
+                  0.11 0.11 0.223
+                  0 0 0
+                ]
+              }
+            }
+          }
+        ]
+        name "fork_solid"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
+        boundingObject Group {
+          children [
+            Pose {
+              translation 0.08 -0.1536 -0.416
+              rotation -1 0 0 0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.032 0.032 0.5952
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.08 -0.1536 -0.416
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.032 0.032 0.5952
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.08 -0.2368 -0.6528
+              rotation 0 1 0 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.032
+                    radius 0.064
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.08 -0.2368 -0.6528
+              rotation 0 1 0 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.032
+                    radius 0.064
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 -0.0512 -0.1408
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.064
+                    radius 0.08
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 0.0224 0.0544
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.48
+                    radius 0.016
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.3968 0.07744 0.34848
+              rotation 0.3796282240450922 0.8932428801060992 0.24083099602860586 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.256
+                    radius 0.0384
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.3968 0.07744 0.34848
+              rotation -0.06982912803181396 -0.968774640441371 0.2379066811083896 1.5708
+              children [
+                Shape {
+                  geometry Cylinder {
+                    height 0.256
+                    radius 0.0384
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0 0.0288 0.28224
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.192 0.032 0.032
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.12992 0.04224 0.31872
+              rotation -0.38665587086249564 0.9082106966770179 -0.1601579469430439 0.855791
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.12864 0.032 0.032
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.12992 0.04224 0.31872
+              rotation 0.38665587086249564 0.9082106966770179 -0.1601579469430439 -0.855795307
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.12864 0.032 0.032
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.2304 0.05568 0.35584
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.128 0.032 0.032
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation -0.2304 0.05568 0.35584
+              rotation 1 0 0 -0.3491
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.128 0.032 0.032
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 2.5
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.25 0.25 0.05
+            0 0 0
+          ]
+        }
+      }
+    }
+    DEF crank HingeJoint {
+      jointParameters HingeJointParameters {
+        position 30.400672892544396
+        dampingConstant 0.2
+        staticFriction 0.05
+      }
+      device [
+        RotationalMotor {
+          name "motor::crank"
+          maxVelocity 31.25
+          maxTorque 80
+        }
+      ]
+      endPoint Solid {
+        rotation 1 0 0 5.26793166382605
+        children [
+          DEF crank Transform {
+            scale 0.0064 0.0064 0.0064
+            children [
+              CadShape {
+                url [
+                  "obj/Little Bicycle - Crank/crank.obj"
+                ]
+              }
+            ]
+          }
+          DEF pedal HingeJoint {
+            jointParameters HingeJointParameters {
+              position -30.40025456626206
+              anchor -0.24 -0.192 0
+            }
+            endPoint Solid {
+              translation -0.24 -0.192 0
+              rotation -1 0 0 5.267513337543714
+              children [
+                DEF pedal Transform {
+                  scale 0.0064 0.0064 0.0064
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Pedal/pedal.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
+              boundingObject Pose {
+                children [
+                  Shape {
+                    geometry Box {
+                      size 0.128 0.128 0.0384
+                    }
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 0.32
+                centerOfMass [
+                  0 0 0
+                ]
+              }
+            }
+          }
+          DEF pedal HingeJoint {
+            jointParameters HingeJointParameters {
+              position -30.40025456626206
+              anchor 0.24 0.192 0
+            }
+            endPoint Solid {
+              translation 0.24 0.192 0
+              rotation -1 0 0 5.267513337543714
+              children [
+                DEF pedal Transform {
+                  scale 0.0064 0.0064 0.0064
+                  children [
+                    CadShape {
+                      url [
+                        "obj/Little Bicycle - Pedal/pedal.obj"
+                      ]
+                    }
+                  ]
+                }
+              ]
+              name "solid(1)"
+              immersionProperties [
+                ImmersionProperties {
+                  fluidName "air"
+                  referenceArea "xyz-projected area"
+                  dragForceCoefficients 1 1 1
+                  dragTorqueCoefficients 0.05 0.05 0.05
+                }
+              ]
+              boundingObject Pose {
+                children [
+                  Shape {
+                    geometry Box {
+                      size 0.128 0.128 0.0384
+                    }
+                  }
+                ]
+              }
+              physics Physics {
+                density -1
+                mass 0.32
+                centerOfMass [
+                  0 0 0
+                ]
+              }
+            }
+          }
+        ]
+        name "crank_solid"
+        immersionProperties [
+          ImmersionProperties {
+            fluidName "air"
+            referenceArea "xyz-projected area"
+            dragForceCoefficients 1 1 1
+            dragTorqueCoefficients 0.05 0.05 0.05
+          }
+        ]
+        boundingObject Group {
+          children [
+            Pose {
+              translation -0.15232 -0.096 0
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.032 0.256 0.064
+                  }
+                }
+              ]
+            }
+            Pose {
+              translation 0.15232 0.096 0
+              children [
+                Shape {
+                  geometry Box {
+                    size 0.032 0.256 0.064
+                  }
+                }
+              ]
+            }
+          ]
+        }
+        physics Physics {
+          density -1
+          mass 4
+          centerOfMass [
+            0 0 0
+          ]
+          inertiaMatrix [
+            0.2 0.2 0.04
+            0 0 0
+          ]
+        }
+      }
+    }
+    Camera {
+      translation 0.96 -1.1 0.95
+      rotation -0.25056306820553154 -0.25056206820525934 0.9351132545462786 -1.7378353071795867
+      fieldOfView 2
+      width 480
+      height 320
+      antiAliasing TRUE
+    }
+    Display {
+      width 480
+      height 320
+    }
+  ]
+  name "Little Bicycle V2"
+  immersionProperties [
+    ImmersionProperties {
+      fluidName "air"
+      referenceArea "xyz-projected area"
+      dragForceCoefficients 1 1 1
+      dragTorqueCoefficients 0.05 0.05 0.05
+    }
+  ]
+  boundingObject Group {
+    children [
+      Pose {
+        translation 0 -0.1664 0.58624
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Box {
+              size 0.064 0.704 0.064
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.10368 0.3584
+        rotation 1 0 0 -0.2793
+        children [
+          Shape {
+            geometry Box {
+              size 0.064 0.064 0.864
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.288 0.3584
+        rotation 1 0 0 0.6632
+        children [
+          Shape {
+            geometry Box {
+              size 0.064 0.064 0.864
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.08 0.33856 0.2432
+        rotation 1 0 0 0.6981
+        children [
+          Shape {
+            geometry Box {
+              size 0.032 0.032 0.64
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.08 0.33856 0.2432
+        rotation 1 0 0 0.6981
+        children [
+          Shape {
+            geometry Box {
+              size 0.032 0.032 0.704
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.08 0.2944 0
+        children [
+          Shape {
+            geometry Box {
+              size 0.032 0.512 0.032
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.08 0.2944 0
+        children [
+          Shape {
+            geometry Box {
+              size 0.032 0.512 0.032
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.288 0.78144
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.064
+              radius 0.15392
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.1152 0.78144
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.064
+              radius 0.096
+            }
+          }
+        ]
+      }
+      Pose {
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.256
+              radius 0.064
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 -0.5248 0.6528
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.224
+              radius 0.064
+            }
+          }
+        ]
+      }
+      Pose {
+        translation -0.08 0.5312 0
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.032
+              radius 0.064
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0.08 0.5312 0
+        rotation 0 1 0 1.5708
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.032
+              radius 0.064
+            }
+          }
+        ]
+      }
+      Pose {
+        translation 0 0.13568 0.47808
+        rotation 1 0 0 -0.3491
+        children [
+          Shape {
+            geometry Cylinder {
+              height 0.064
+              radius 0.08
+            }
+          }
+        ]
+      }
+    ]
+  }
+  physics Physics {
+    density -1
+    mass 14
+    centerOfMass [
+      0 0 0.32
+    ]
+    inertiaMatrix [
+      1.2 2 3
+      0 0 0
+    ]
+  }
+  controller "balance_control_c_onlyBalance"
+  supervisor TRUE
+}

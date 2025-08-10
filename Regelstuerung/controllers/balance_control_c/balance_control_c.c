@@ -446,9 +446,9 @@ static void load_and_apply_config(void) {
       float max_reduction = (config.speed_control.base_speed - config.speed_control.min_speed) * 0.7f;
       if (max_reduction < 0.0f) max_reduction = 0.0f;
       speed_ctrl = speed_pid_init(
-          1.5f,   // Kp: aggressiv genug, um spürbar zu reagieren
-          0.3f,   // Ki: leichtes Nachführen
-          0.0f,   // Kd: hier meist nicht nötig
+          3.5f,   // Kp: einfache P-Regelung
+          0.0f,   // Ki: aus
+          0.0f,   // Kd: aus
           max_reduction,
           -2.0f,  // integral_min
           +2.0f   // integral_max

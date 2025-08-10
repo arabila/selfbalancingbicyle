@@ -36,15 +36,13 @@ float speed_pid_compute(
     float steer_command,
     long long current_time_us
 ) {
-    // Prozessvariable ist die aktuelle "Lenkintensität" = |steer_command|
+    // Einfache P-Regelung: Reduktion = -Kp * |steer_command|
     float steer_intensity = fabsf(steer_command); // 0..1
+    float reduction = -ctrl->pid.Kp * steer_intensity;
+    if (reduction < -ctrl->max_reduction) reduction = -ctrl->max_reduction;
+    if (reduction > 0.0f) reduction = 0.0f;
 
-    // Setpoint = 0 bedeutet: keine Reduktion gewünscht; je größer Istwert,
-    // desto mehr negative PID-Ausgabe → Reduktion der Geschwindigkeit.
-    float reduction = pid_compute(&ctrl->pid, 0.0f, steer_intensity, current_time_us);
-
-    // reduction liegt in [-max_reduction, 0]; Zielgeschwindigkeit entsprechend senken
-    float target_speed = base_speed + reduction;
+    float target_speed = base_speed + reduction; // Reduktion ist negativ
 
     // Begrenzen auf [min_speed, max_speed]
     if (target_speed < min_speed) target_speed = min_speed;
