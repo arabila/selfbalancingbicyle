@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.4437080715915016 -0.07685486449431411 -0.8928697984634218 3.2789833640130266
-  position 101.74201635415548 -18.557440092852218 121.46975608371639
+  orientation 0.2481897859952324 -0.326633947609095 -0.9119825077253071 4.62755896123226
+  position 14.019149383437655 -58.87731607211997 27.455802276581228
   follow "rectangle arena"
 }
 TexturedBackground {
@@ -36,7 +36,7 @@ RectangleArena {
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/track010.jpeg"
+        "textures/Leichte kurve.png"
       ]
     }
     roughness 1
@@ -54,8 +54,8 @@ DEF AIR Fluid {
   }
 }
 DEF BICYCLE Robot {
-  translation 5.95515 -1.67782 0.415762
-  rotation 0.002145909024142069 -0.0015180793096493293 0.9999965452488672 -2.0945353071795862
+  translation 7.6272 -24.9792 0.398418
+  rotation 0.00226687092653716 -0.00020936208557247347 0.9999974087285026 3.14146
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064
