@@ -11,11 +11,9 @@
 #ifndef SPEED_PID_H
 #define SPEED_PID_H
 
-#include "balance_pid.h"
-
 typedef struct {
-    pid_controller_t pid;      // verwendet die generische PID-Implementierung
-    float max_reduction;       // maximal mögliche Geschwindigkeitsreduktion (rad/s)
+    float Kp;               // Proportionalfaktor für Reduktion
+    float max_reduction;    // maximal mögliche Geschwindigkeitsreduktion (rad/s)
 } speed_pid_controller_t;
 
 /**
@@ -31,11 +29,7 @@ typedef struct {
  */
 speed_pid_controller_t speed_pid_init(
     float Kp,
-    float Ki,
-    float Kd,
-    float max_reduction,
-    float integral_min,
-    float integral_max
+    float max_reduction
 );
 
 /**
@@ -55,8 +49,7 @@ float speed_pid_compute(
     float base_speed,
     float min_speed,
     float max_speed,
-    float steer_command,
-    long long current_time_us
+    float steer_command
 );
 
 #endif // SPEED_PID_H

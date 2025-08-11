@@ -44,7 +44,7 @@ except ImportError:
     MPC_AVAILABLE = False
     print("⚠ CVXPY nicht verfügbar - Fallback auf PID-Regelung")
 
-class VisionMPCController:
+class VisionMPCController: #Unser MPC Controller
     """Model Predictive Controller für Vision-basierte Fahrzeugkontrolle"""
     
     def __init__(self):
@@ -252,8 +252,10 @@ class VisionMPCController:
         self.mpc_d_term = steer * 5.0  # Differential-Äquivalent
         
         return steer, accel
+    
 
-class VisionController:
+
+class VisionController: #Unser Vision Controller -> MPC Controller wird hier verwendet
     def __init__(self):
         # Webots initialisieren
         self.robot = Supervisor()
@@ -302,6 +304,11 @@ class VisionController:
         self.step_counter = 0
         self.last_balance_status = None
         self.vision_enabled = True
+        
+        # Debug-Visualisierung: Box-Mittelpunkte und Zentren
+        self.debug_x_centers = []
+        self.debug_avg_x_center = None
+        self.debug_frame_center = None
         
         print("=== Vision Controller mit MPC gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
@@ -503,19 +510,24 @@ class VisionController:
         try:
             # YOLO-Vorhersage
             results = self.yolo_model.predict(
-                source=frame,
-                conf=0.5,
-                max_det=5,
-                show=False,
-                verbose=False
+                source=frame,   #Bild, das verarbeitet werden soll
+                conf=0.5,       #Konfidenz-Schwellenwert für Erkennung
+                max_det=3,      #Maximale Anzahl von Erkennungen
+                classes=[2],    #Nur Fahrbahn/Spur
+                show=False,     #Bildausgabe
+                verbose=True   #Ausgabe
             )
+            print(f"Yolo results: {results} End")
             
             if not results:
                 print("YOLO: Keine Ergebnisse")
                 return self._use_last_valid_values()
             
+
             r = results[0]
-            mask = np.zeros(frame.shape[:2], dtype=np.uint8)
+            mask = np.zeros(frame.shape[:2], dtype=np.uint8) #Maske erstellen 
+
+            print(f"r.boxes.cls: {r.boxes.cls}")
             
             # Debug: Zeige erkannte Klassen
             if r.boxes is not None and len(r.boxes.cls) > 0:
@@ -523,24 +535,25 @@ class VisionController:
                 if self.step_counter % 100 == 0:  # Nur alle 100 Steps
                     print(f"YOLO: Erkannte Klassen: {detected_classes}")
             
-            # Segmentierungsmasken verarbeiten
-            if r.masks is not None and r.masks.data is not None:
-                for seg in r.masks.data:
-                    seg = seg.cpu().numpy()
-                    seg_resized = cv2.resize(seg, (frame.shape[1], frame.shape[0]), 
-                                           interpolation=cv2.INTER_NEAREST)
-                    mask = np.maximum(mask, seg_resized.astype(np.uint8))
-                
-                if self.step_counter % 100 == 0:  # Debug-Info
-                    mask_pixels = np.sum(mask > 0)
-                    print(f"YOLO: Segmentierungsmaske mit {mask_pixels} Pixeln erstellt")
+            # Segmentierungsmasken verarbeiten (nur Klasse 2 = Straße)
+            if r.masks is not None and r.masks.data is not None and r.boxes is not None:
+                for seg, cls in zip(r.masks.data, r.boxes.cls):
+                    if int(cls) != 2:
+                        continue
+                    seg_np = seg.cpu().numpy()
+                    seg_resized = cv2.resize(seg_np, (frame.shape[1], frame.shape[0]), interpolation=cv2.INTER_NEAREST)
+                    seg_bin = (seg_resized > 0.5).astype(np.uint8)
+                    mask = np.maximum(mask, seg_bin)
+                if self.step_counter % 100 == 0:
+                    mask_pixels = int(np.sum(mask > 0))
+                    print(f"YOLO: Straßen-Maske (Klasse 2) mit {mask_pixels} Pixeln erstellt")
             else:
                 if self.step_counter % 100 == 0:
                     print("YOLO: Keine Segmentierungsmasken gefunden")
             
-            # Suche nach Straßen-Klasse (ID 2 = 'street_main')
+            #Berechnung des Fehlers aus der Straßen-Bounding-Box
             if r.boxes is not None and len(r.boxes.cls) > 0:
-                street_indices = [idx for idx, cls in enumerate(r.boxes.cls) if cls == 2]
+                street_indices = [idx for idx, cls in enumerate(r.boxes.cls) if cls == 2] #Suche nach Straßen-Klasse (ID 2 = 'street_main')
                 
                 if street_indices:
                     # Berechne Mittelpunkt der Straßen-Bounding-Boxes
@@ -553,6 +566,11 @@ class VisionController:
                     avg_x_center = sum(x_centers) / len(x_centers)
                     frame_center = frame.shape[1] / 2
                     error = (frame_center - avg_x_center) / frame.shape[1]  # Normiert
+                    
+                    # Debug-Visualisierungspunkte speichern
+                    self.debug_x_centers = x_centers.copy()
+                    self.debug_avg_x_center = float(avg_x_center)
+                    self.debug_frame_center = float(frame_center)
                     
                     if self.step_counter % 100 == 0:
                         print(f"YOLO: Straße erkannt - Mittelpunkt: {avg_x_center:.1f}, Error: {error:.3f}")
@@ -622,6 +640,11 @@ class VisionController:
                 # Gültige Werte speichern
                 self._store_valid_values(error, mask, self.vision_mask_coverage)
                 
+                # Debug-Visualisierungspunkte speichern
+                self.debug_x_centers = [float(center_x)]
+                self.debug_avg_x_center = float(center_x)
+                self.debug_frame_center = float(frame_center)
+                
                 return error, mask
             
             # Keine Konturen gefunden - verwende letzte gültige Werte
@@ -673,6 +696,36 @@ class VisionController:
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
             cv2.putText(overlay, f"Steer: {steer_cmd:.3f}", (10, 60),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+
+            # Box-Mittelpunkte, Durchschnitt und Bildmitte darstellen
+            h, w = overlay.shape[:2]
+            if self.debug_frame_center is not None:
+                x_fc = int(max(0, min(w - 1, round(self.debug_frame_center))))
+                cv2.line(overlay, (x_fc, 0), (x_fc, h - 1), (255, 255, 0), 1)
+                cv2.putText(overlay, "frame_center", (max(0, x_fc - 60), 15),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 255, 0), 1)
+
+            if self.debug_avg_x_center is not None:
+                x_avg = int(max(0, min(w - 1, round(self.debug_avg_x_center))))
+                cv2.line(overlay, (x_avg, 0), (x_avg, h - 1), (255, 0, 255), 1)
+                cv2.putText(overlay, "avg_center", (max(0, x_avg - 45), 30),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.4, (255, 0, 255), 1)
+
+            if self.debug_x_centers:
+                for xc in self.debug_x_centers:
+                    xi = int(max(0, min(w - 1, round(float(xc)))))
+                    cv2.line(overlay, (xi, 0), (xi, h - 1), (0, 255, 255), 1)
+                cv2.putText(overlay, f"{len(self.debug_x_centers)} boxes", (10, 90),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 255, 255), 2)
+
+            if self.debug_frame_center is not None and self.debug_avg_x_center is not None:
+                x_fc = int(max(0, min(w - 1, round(self.debug_frame_center))))
+                x_avg = int(max(0, min(w - 1, round(self.debug_avg_x_center))))
+                y_arrow = max(40, h - 25)
+                color = (0, 0, 255)
+                cv2.arrowedLine(overlay, (x_avg, y_arrow), (x_fc, y_arrow), color, 2, tipLength=0.15)
+                cv2.putText(overlay, f"err_px={x_fc - x_avg:+d}", (min(w - 120, max(0, (x_fc + x_avg)//2 - 60)), y_arrow - 5),
+                            cv2.FONT_HERSHEY_SIMPLEX, 0.5, color, 1)
             
             # OpenCV-Anzeige (immer verfügbar)
             cv2.imshow("Vision Control - Fahrrad Kamera", overlay)
@@ -680,8 +733,6 @@ class VisionController:
             
         except Exception as e:
             print(f"Display-Update-Fehler: {e}")
-    
-    
     
     def print_status(self, error, steer_cmd, speed_cmd, p_term, i_term, d_term):
         """Gibt Status-Informationen aus"""
@@ -713,12 +764,6 @@ class VisionController:
     
         return steer_cmd
     
-        
-    
-    
-    
-
-    
 
 
     
@@ -731,29 +776,36 @@ class VisionController:
         print("Vision Controller läuft...\n")
         
         while self.robot.step(self.timestep) != -1:
-            current_time = self.robot.getTime()
+            current_time = self.robot.getTime() #Aktuelle Zeit in der Simulation
             self.step_counter += 1
 
-            # Kamera-Position an Fahrrad anpassen
-            self._update_camera_position()
+            #---------------#Position der Kamera dem Fahrrad anpassen---------
+            self._update_camera_position() 
             
-            # Balance-Status empfangen
+            #---------------#Balance-Status empfangen-----------------
             self.receive_balance_status()
             
-            # Vision-Processing nur alle 50ms (20 Hz)
+            #---------------#Vision-Processing nur alle 50ms (20 Hz)-----
             if current_time - last_vision_time >= vision_interval:
                 if self.vision_enabled and self.camera:
                     try:
-                        # Kamerabild holen
-                        img_bytes = self.camera.getImage()
+                        
+                        img_bytes = self.camera.getImage() #Bild von der Kamera empfangen: https://cyberbotics.com/doc/reference/camera?tab-language=python
                         if img_bytes:
-                            width = self.camera.getWidth()
+                            # Bildgröße auslesen: Eingestellt in der Webots-Weltdatei
+                            width = self.camera.getWidth() 
                             height = self.camera.getHeight()
+
+                            # Bild in ein numpy-Array umwandeln
                             frame = np.frombuffer(img_bytes, dtype=np.uint8).reshape((height, width, 4))
+                            print(f"frame: {frame}")
+                
+                            # Bild in BGR umwandeln (RGB -> BGR)
                             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
+                            print(f"frame_bgr: {frame_bgr}")
                             
                             # Vision-Fehler berechnen
-                            if YOLO_AVAILABLE and self.yolo_model:
+                            if YOLO_AVAILABLE and self.yolo_model: #Prüft ob YOLO ob das Modell geladen wurde
                                 error, mask = self.get_vision_error_yolo(frame_bgr)
                             else:
                                 error, mask = self.get_vision_error_fallback(frame_bgr)

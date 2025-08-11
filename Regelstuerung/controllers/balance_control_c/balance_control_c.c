@@ -231,8 +231,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                     config.speed_control.base_speed,
                     config.speed_control.min_speed,
                     config.speed_control.max_speed,
-                    last_vision_command.steer_command,
-                    current_time
+                    last_vision_command.steer_command
                 );
                 
                 if (vision_cmd_received) {
@@ -248,8 +247,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                     config.speed_control.base_speed,
                     config.speed_control.min_speed,
                     config.speed_control.max_speed,
-                    0.0f,
-                    current_time
+                    0.0f
                 );
                 
                 static double last_timeout_msg = 0.0;
@@ -446,12 +444,8 @@ static void load_and_apply_config(void) {
       float max_reduction = (config.speed_control.base_speed - config.speed_control.min_speed) * 0.7f;
       if (max_reduction < 0.0f) max_reduction = 0.0f;
       speed_ctrl = speed_pid_init(
-          3.5f,   // Kp: einfache P-Regelung
-          0.0f,   // Ki: aus
-          0.0f,   // Kd: aus
-          max_reduction,
-          -2.0f,  // integral_min
-          +2.0f   // integral_max
+          1.0f,        // Kp der Geschwindigkeitsreduktion
+          max_reduction // maximale Reduktion
       );
 }
 

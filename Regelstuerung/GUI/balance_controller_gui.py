@@ -142,6 +142,8 @@ class BalanceControllerGUI:
         # Konfigurationsdatei
         self.config_file = "balance_config.json"
         self.monitoring_dir = "../Monitoring"
+        # Radradius (m) – für Umrechnung von rad/s → km/h (muss mit C-Controller übereinstimmen)
+        self.wheel_radius_m = 0.45
         
         # Parameter-Definitionen (mit Limits); Texte werden über i18n geladen
         self.parameters = {
@@ -332,7 +334,7 @@ class BalanceControllerGUI:
             ("steering_output", "⚖️ Balance-Steer"),
             ("final_steer", "🎯 Final-Steer"),
             ("actual_handlebar_angle", "📏 Sensor-Winkel"),
-            ("target_speed", "🎯 Ziel-Speed"),
+            ("target_speed", "🎯 Ziel-Speed (km/h)"),
             ("actual_speed_kmh", "📊 Ist-Speed (km/h)")
         ]
         
@@ -466,6 +468,9 @@ class BalanceControllerGUI:
         
         # Legenden-Skalierung (50% der Standardgröße)
         self.legend_scale = 0.5
+        # Kleinere Schriftgrößen für Achsenticks und -labels
+        self.tick_label_size = 8
+        self.axis_label_size = 9
 
         # Plot-Daten initialisieren (erweitert um Vision-Control-Daten)
         self.plot_data = {
@@ -875,6 +880,7 @@ class BalanceControllerGUI:
         
         # Plot 1: Roll-Winkel, Lenkwinkel und Vision-Daten
         self.ax1.clear()
+        self.ax1.tick_params(axis='both', labelsize=self.tick_label_size)
         
         if show_all or self.plot_visibility["roll_angle"].get():
             self.ax1.plot(df["timestamp"], df["roll_angle"] * 180/3.14159, label="Roll-Winkel", color="red", linewidth=1)
@@ -897,13 +903,14 @@ class BalanceControllerGUI:
             # Vision Error normalisiert auf ±30° für bessere Darstellung
             self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=1, linestyle=':')
         
-        self.ax1.set_ylabel("Winkel [°] / Vision-Werte")
+        self.ax1.set_ylabel("Winkel [°] / Vision-Werte", fontsize=self.axis_label_size)
         legend_fs = self._compute_legend_fontsize()
         self.ax1.legend(fontsize=legend_fs)
         self.ax1.grid(True, alpha=0.3)
         
         # Plot 2: PID-Terme und Vision-Speed-Command
         self.ax2.clear()
+        self.ax2.tick_params(axis='both', labelsize=self.tick_label_size)
         
         if show_all or self.plot_visibility["p_term"].get():
             self.ax2.plot(df["timestamp"], df["p_term"], label="P-Term", color="green", linewidth=1)
@@ -916,7 +923,12 @@ class BalanceControllerGUI:
         
         # Geschwindigkeits-Daten hinzufügen
         if "target_speed" in df.columns and (show_all or self.plot_visibility["target_speed"].get()):
-            self.ax2.plot(df["timestamp"], df["target_speed"], label="🎯 Ziel-Speed", color="blue", linewidth=1, linestyle='--')
+            # Zielgeschwindigkeit (rad/s) → km/h umrechnen: v = ω * R * 3.6
+            try:
+                target_speed_kmh = df["target_speed"] * float(self.wheel_radius_m) * 3.6
+            except Exception:
+                target_speed_kmh = df["target_speed"]
+            self.ax2.plot(df["timestamp"], target_speed_kmh, label="🎯 Ziel-Speed (km/h)", color="blue", linewidth=1, linestyle='--')
         
         if "actual_speed_kmh" in df.columns and (show_all or self.plot_visibility["actual_speed_kmh"].get()):
             self.ax2.plot(df["timestamp"], df["actual_speed_kmh"], label="📊 Ist-Speed (km/h)", color="red", linewidth=1, linestyle='-')
@@ -925,8 +937,8 @@ class BalanceControllerGUI:
         if "vision_speed_command" in df.columns and (show_all or self.plot_visibility["vision_speed_command"].get()):
             self.ax2.plot(df["timestamp"], df["vision_speed_command"], label="⚡ Vision Speed", color="magenta", linewidth=1, linestyle=':')
         
-        self.ax2.set_xlabel("Zeit [s]")
-        self.ax2.set_ylabel("PID-Terme / Geschwindigkeit / Vision-Speed")
+        self.ax2.set_xlabel("Zeit [s]", fontsize=self.axis_label_size)
+        self.ax2.set_ylabel("PID-Terme / Geschwindigkeit / Vision-Speed", fontsize=self.axis_label_size)
         self.ax2.legend(fontsize=legend_fs)
         self.ax2.grid(True, alpha=0.3)
         

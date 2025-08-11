@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.32404785443234946 0.39773541606801105 0.8583702737414646 1.7306395956325404
-  position -17.89628891667067 -46.00865922817232 27.764185049080858
+  orientation -0.21425207553882586 0.3153012646004175 0.9244896758042692 1.5659356595712748
+  position -19.20462929982612 -28.33145728305122 7.360324866535936
   follow "rectangle arena"
 }
 TexturedBackground {
@@ -776,8 +776,8 @@ Supervisor {
           children [
             Camera {
               fieldOfView 2
-              width 640
-              height 360
+              width 1920
+              height 1080
             }
           ]
         }

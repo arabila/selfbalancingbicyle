@@ -16,7 +16,7 @@ WEBOTS_LIB = -L$(WEBOTS_HOME_PATH)/lib/controller -lController
 
 # Quell- und Zieldateien
 TARGET = balance_control_c
-SOURCES = balance_control_c.c balance_pid.c speed_pid.c balance_config.c balance_logging.c
+SOURCES = balance_control_c.c balance_pid.c speed_pid.c balance_config.c balance_logging.c 
 OBJECTS = $(SOURCES:.c=.o)
 
 # Hauptziel
