@@ -20,6 +20,7 @@ import numpy as np
 import struct
 import time
 import math
+import json
 from controller import Supervisor
 
 # Setze MPS Fallback für YOLO
@@ -305,6 +306,14 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         self.last_balance_status = None
         self.vision_enabled = True
         
+        # Konfiguration (GUI) laden – Vision-Methode (yolo|fallback)
+        base_dir = os.path.dirname(__file__)
+        self.config_file_path = os.path.normpath(os.path.join(base_dir, "..", "..", "GUI", "balance_config.json"))
+        self.config_reload_interval = 10.0  # Sekunden; kann aus JSON überschrieben werden
+        self.vision_method = "fallback"  # Default; wird gleich überschrieben
+        self._last_config_load_ts = 0.0
+        self._load_vision_method_from_config(force=True)
+        
         # Debug-Visualisierung: Box-Mittelpunkte und Zentren
         self.debug_x_centers = []
         self.debug_avg_x_center = None
@@ -331,6 +340,35 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         print(f"Speed-Range: {self.min_speed:.1f} - {self.max_speed:.1f}")
         print("====================================\n")
     
+    def _load_vision_method_from_config(self, force: bool = False):
+        """Liest vision_control.method aus der GUI-Konfigurationsdatei ein und aktualisiert die Laufzeitwerte."""
+        now = time.time()
+        if not force and (now - getattr(self, "_last_config_load_ts", 0.0) < self.config_reload_interval):
+            return
+        try:
+            if os.path.exists(self.config_file_path):
+                with open(self.config_file_path, "r", encoding="utf-8") as f:
+                    cfg = json.load(f)
+                bc = cfg.get("balance_control", {})
+                system_cfg = bc.get("system", {})
+                if isinstance(system_cfg, dict):
+                    self.config_reload_interval = float(system_cfg.get("config_reload_interval", self.config_reload_interval))
+                vision_cfg = bc.get("vision_control", {})
+                method = vision_cfg.get("method", self.vision_method)
+                if method in {"yolo", "fallback"}:
+                    self.vision_method = method
+                # Zusätzliche Parameter laden
+                self.yolo_conf = float(vision_cfg.get("yolo_conf", 0.5))
+                self.yolo_show = bool(int(vision_cfg.get("yolo_show", 0)))
+                self.fallback_roi_top_frac = float(vision_cfg.get("fallback_roi_top_frac", getattr(self, 'fallback_roi_top_frac', 0.68)))
+                self.fallback_roi_height_frac = float(vision_cfg.get("fallback_roi_height_frac", getattr(self, 'fallback_roi_height_frac', 0.06)))
+                self.steer_max_delta = float(vision_cfg.get("steer_max_delta", 0.0025))
+                self.steer_max_cmd = float(vision_cfg.get("steer_max_cmd", 0.06))
+            self._last_config_load_ts = now
+        except Exception as e:
+            print(f"Config-Ladefehler: {e}")
+            self._last_config_load_ts = now
+
     def _init_devices(self):
         """Initialisiert alle Webots-Geräte"""
         # Vision Controller Kamera (folgt dem Fahrrad)
@@ -520,13 +558,17 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         
         try:
             # YOLO-Vorhersage
+            # Konfiguration ggf. aktualisieren (yolo_conf, yolo_show)
+            self._load_vision_method_from_config()
+            conf_thr = float(getattr(self, 'yolo_conf', 0.5))
+            show_flag = bool(getattr(self, 'yolo_show', False))
             results = self.yolo_model.predict(
-                source=frame,   #Bild, das verarbeitet werden soll
-                conf=0.5,       #Konfidenz-Schwellenwert für Erkennung
-                max_det=3,      #Maximale Anzahl von Erkennungen
-                classes=[2],    #Nur Fahrbahn/Spur
-                show=False,     #Bildausgabe
-                verbose=True   #Ausgabe
+                source=frame,   # Bild, das verarbeitet werden soll
+                conf=conf_thr,  # Konfidenz-Schwellenwert
+                max_det=3,      # Maximale Anzahl von Erkennungen
+                classes=[2],    # Nur Fahrbahn/Spur
+                show=show_flag, # Bildausgabe
+                verbose=False   # Ausgabe
             )
             print(f"Yolo results: {results} End")
             
@@ -788,7 +830,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             if self.debug_show_fallback_masks:
                 if self.last_fallback_hsv_mask is not None:
                     cv2.imshow("Fallback HSV Mask", self.last_fallback_hsv_mask)
-              
+                if self.last_fallback_contour_mask is not None:
+                    cv2.imshow("Fallback Contour Mask", self.last_fallback_contour_mask)
             cv2.waitKey(1)
             
         except Exception as e:
@@ -809,18 +852,20 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
     def optimize_steer_cmd(self, steer_cmd, last_steer_cmd):
         """Optimiert den Lenkbefehl"""
 
-        # Änderungsrate auf ±0.01 begrenzen
-        max_delta = 0.0025
+        # Konfiguration laden (steer_max_delta, steer_max_cmd)
+        self._load_vision_method_from_config()
+        max_delta = float(getattr(self, 'steer_max_delta', 0.0025))
+        max_steer_cmd = float(getattr(self, 'steer_max_cmd', 0.06))
         delta = steer_cmd - last_steer_cmd
         if delta > max_delta:
             steer_cmd = last_steer_cmd + max_delta
         elif delta < -max_delta:
             steer_cmd = last_steer_cmd - max_delta
 
-        if steer_cmd > 0.06:
-            steer_cmd = 0.06
-        elif steer_cmd < -0.06:
-            steer_cmd = -0.06
+        if steer_cmd > max_steer_cmd:
+            steer_cmd = max_steer_cmd
+        elif steer_cmd < -max_steer_cmd:
+            steer_cmd = -max_steer_cmd
     
         return steer_cmd
     
@@ -864,11 +909,12 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
                             print(f"frame_bgr: {frame_bgr}")
                             
-                            # Vision-Fehler berechnen
-                            if YOLO_AVAILABLE and self.yolo_model: #Prüft ob YOLO ob das Modell geladen wurde
-                                error, mask = self.get_vision_error_fallback(frame_bgr)
-                            else:
+                            # Vision-Fehler berechnen – Methode aus GUI-Konfiguration
+                            self._load_vision_method_from_config()
+                            if self.vision_method == "yolo" and YOLO_AVAILABLE and self.yolo_model:
                                 error, mask = self.get_vision_error_yolo(frame_bgr)
+                            else:
+                                error, mask = self.get_vision_error_fallback(frame_bgr)
                                 
                             
                             # MPC-Regelung

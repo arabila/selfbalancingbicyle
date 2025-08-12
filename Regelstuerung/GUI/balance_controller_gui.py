@@ -164,6 +164,22 @@ class BalanceControllerGUI:
             "max_handlebar_angle": {"value": 0.5, "min": 0.1, "max": 0.8, "unit": "rad"},
             "max_roll_angle": {"value": 45.0, "min": 10.0, "max": 90.0, "unit": "°"}
         }
+
+        # Vision-Controller-Einstellungen (GUI-Schalter)
+        # method ∈ {"yolo", "fallback"}
+        self.vision_settings = {
+            "method": "fallback",
+            # YOLO
+            "yolo_conf": 0.5,
+            "yolo_show": 0,
+            # Fallback ROI
+            "fallback_roi_top_frac": 0.68,
+            "fallback_roi_height_frac": 0.06,
+            # Steering Glättung
+            "steer_max_delta": 0.0025,
+            "steer_max_cmd": 0.06
+        }
+        self.vision_widgets = {}
         
         # Physik-Simulation wurde entfernt
         
@@ -230,6 +246,7 @@ class BalanceControllerGUI:
         
         row = 0
         for group_name, param_list in groups.items():
+            group_start_row = row
             # Gruppe-Header
             group_label = ttk.Label(scrollable_frame, text=group_name, font=("Arial", 12, "bold"))
             group_label.grid(row=row, column=0, columnspan=4, sticky="w", pady=(20, 10))
@@ -272,6 +289,76 @@ class BalanceControllerGUI:
                 }
                 
                 row += 2
+
+            # Nach der ersten Gruppe (Angle PID) rechts den Vision-Controller-Bereich platzieren
+            if group_name == t("groups.angle_pid"):
+                # Vision Controller Panel (rechts neben den Angle-Parametern)
+                vision_frame = ttk.LabelFrame(scrollable_frame, text="Vision Controller", padding=(10, 8))
+                vision_frame.grid(row=group_start_row, column=4, rowspan=(row - group_start_row),
+                                   sticky="nw", padx=(30, 10), pady=(20, 10))
+
+                ttk.Label(vision_frame, text="Erkennungsmethode:").grid(row=0, column=0, sticky="w")
+                self.vision_method_is_yolo = tk.BooleanVar(value=(self.vision_settings.get("method", "fallback") == "yolo"))
+                def on_toggle_method():
+                    self.vision_settings["method"] = "yolo" if self.vision_method_is_yolo.get() else "fallback"
+                    self.status_text.set(f"Vision-Methode: {self.vision_settings['method']}")
+                vision_toggle = ttk.Checkbutton(vision_frame, text="YOLO aktivieren (aus=Fallback)",
+                                                variable=self.vision_method_is_yolo, command=on_toggle_method)
+                vision_toggle.grid(row=1, column=0, sticky="w", pady=(4, 0))
+
+                # --- YOLO Parameter ---
+                ttk.Separator(vision_frame, orient="horizontal").grid(row=2, column=0, columnspan=3, sticky="ew", pady=6)
+                ttk.Label(vision_frame, text="YOLO:", font=("Arial", 10, "bold")).grid(row=3, column=0, sticky="w")
+
+                ttk.Label(vision_frame, text="conf (0..1):").grid(row=4, column=0, sticky="w")
+                yolo_conf_var = tk.StringVar(value=str(self.vision_settings["yolo_conf"]))
+                yolo_conf_entry = ttk.Entry(vision_frame, textvariable=yolo_conf_var, width=12)
+                yolo_conf_entry.grid(row=4, column=1, sticky="w", padx=6)
+                ttk.Label(vision_frame, text="Normal: 0.5", foreground="gray").grid(row=4, column=2, sticky="w")
+
+                self.vision_widgets["yolo_conf"] = {"var": yolo_conf_var, "entry": yolo_conf_entry}
+
+                yolo_show_var = tk.BooleanVar(value=bool(self.vision_settings["yolo_show"]))
+                yolo_show_cb = ttk.Checkbutton(vision_frame, text="show (Bildausgabe)", variable=yolo_show_var)
+                yolo_show_cb.grid(row=5, column=0, columnspan=2, sticky="w")
+                ttk.Label(vision_frame, text="Normal: False", foreground="gray").grid(row=5, column=2, sticky="w")
+                self.vision_widgets["yolo_show"] = {"var": yolo_show_var}
+
+                # --- Fallback Parameter ---
+                ttk.Separator(vision_frame, orient="horizontal").grid(row=6, column=0, columnspan=3, sticky="ew", pady=6)
+                ttk.Label(vision_frame, text="Fallback:", font=("Arial", 10, "bold")).grid(row=7, column=0, sticky="w")
+
+                ttk.Label(vision_frame, text="roi_top_frac:").grid(row=8, column=0, sticky="w")
+                roi_top_var = tk.StringVar(value=str(self.vision_settings["fallback_roi_top_frac"]))
+                roi_top_entry = ttk.Entry(vision_frame, textvariable=roi_top_var, width=12)
+                roi_top_entry.grid(row=8, column=1, sticky="w", padx=6)
+                ttk.Label(vision_frame, text="Normal: 0.68", foreground="gray").grid(row=8, column=2, sticky="w")
+                self.vision_widgets["fallback_roi_top_frac"] = {"var": roi_top_var, "entry": roi_top_entry}
+
+                ttk.Label(vision_frame, text="roi_height_frac:").grid(row=9, column=0, sticky="w")
+                roi_h_var = tk.StringVar(value=str(self.vision_settings["fallback_roi_height_frac"]))
+                roi_h_entry = ttk.Entry(vision_frame, textvariable=roi_h_var, width=12)
+                roi_h_entry.grid(row=9, column=1, sticky="w", padx=6)
+                ttk.Label(vision_frame, text="Normal: 0.06", foreground="gray").grid(row=9, column=2, sticky="w")
+                self.vision_widgets["fallback_roi_height_frac"] = {"var": roi_h_var, "entry": roi_h_entry}
+
+                # --- Steering Parameter ---
+                ttk.Separator(vision_frame, orient="horizontal").grid(row=10, column=0, columnspan=3, sticky="ew", pady=6)
+                ttk.Label(vision_frame, text="Steering:", font=("Arial", 10, "bold")).grid(row=11, column=0, sticky="w")
+
+                ttk.Label(vision_frame, text="max_delta:").grid(row=12, column=0, sticky="w")
+                sdelta_var = tk.StringVar(value=str(self.vision_settings["steer_max_delta"]))
+                sdelta_entry = ttk.Entry(vision_frame, textvariable=sdelta_var, width=12)
+                sdelta_entry.grid(row=12, column=1, sticky="w", padx=6)
+                ttk.Label(vision_frame, text="Normal: 0.0025", foreground="gray").grid(row=12, column=2, sticky="w")
+                self.vision_widgets["steer_max_delta"] = {"var": sdelta_var, "entry": sdelta_entry}
+
+                ttk.Label(vision_frame, text="max_steer_cmd:").grid(row=13, column=0, sticky="w")
+                smax_var = tk.StringVar(value=str(self.vision_settings["steer_max_cmd"]))
+                smax_entry = ttk.Entry(vision_frame, textvariable=smax_var, width=12)
+                smax_entry.grid(row=13, column=1, sticky="w", padx=6)
+                ttk.Label(vision_frame, text="Normal: 0.06", foreground="gray").grid(row=13, column=2, sticky="w")
+                self.vision_widgets["steer_max_cmd"] = {"var": smax_var, "entry": smax_entry}
         
         # Control-Buttons
         button_frame = ttk.Frame(scrollable_frame)
@@ -707,6 +794,32 @@ class BalanceControllerGUI:
                                 unit = self.parameters[key]["unit"]
                                 self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
                 
+                # Vision-Controller Einstellungen laden
+                vision_cfg = balance_config.get("vision_control", {})
+                if isinstance(vision_cfg, dict):
+                    # Methode
+                    method = vision_cfg.get("method", self.vision_settings["method"]) or self.vision_settings["method"]
+                    self.vision_settings["method"] = method if method in {"yolo", "fallback"} else "fallback"
+                    if hasattr(self, 'vision_method_is_yolo'):
+                        self.vision_method_is_yolo.set(self.vision_settings["method"] == "yolo")
+                    # Werte
+                    for key in [
+                        "yolo_conf",
+                        "yolo_show",
+                        "fallback_roi_top_frac",
+                        "fallback_roi_height_frac",
+                        "steer_max_delta",
+                        "steer_max_cmd"
+                    ]:
+                        if key in vision_cfg:
+                            self.vision_settings[key] = vision_cfg[key]
+                            if key in self.vision_widgets:
+                                var = self.vision_widgets[key]["var"]
+                                if isinstance(var, tk.BooleanVar):
+                                    var.set(bool(self.vision_settings[key]))
+                                else:
+                                    var.set(str(self.vision_settings[key]))
+
                 # Physik-Parameter-Laden wurde entfernt
                 
                 self.status_text.set(t("status.config_loaded", file=self.config_file))
@@ -745,6 +858,15 @@ class BalanceControllerGUI:
                         "enable_preview": 1,
                         "config_reload_interval": 10,
                         "filter_size": 5
+                    },
+                    "vision_control": {
+                        "method": self.vision_settings.get("method", "fallback"),
+                        "yolo_conf": self._get_float(self.vision_widgets.get("yolo_conf", {}).get("var"), self.vision_settings["yolo_conf"]),
+                        "yolo_show": int(self.vision_widgets.get("yolo_show", {}).get("var").get()) if self.vision_widgets.get("yolo_show") else int(self.vision_settings["yolo_show"]),
+                        "fallback_roi_top_frac": self._get_float(self.vision_widgets.get("fallback_roi_top_frac", {}).get("var"), self.vision_settings["fallback_roi_top_frac"]),
+                        "fallback_roi_height_frac": self._get_float(self.vision_widgets.get("fallback_roi_height_frac", {}).get("var"), self.vision_settings["fallback_roi_height_frac"]),
+                        "steer_max_delta": self._get_float(self.vision_widgets.get("steer_max_delta", {}).get("var"), self.vision_settings["steer_max_delta"]),
+                        "steer_max_cmd": self._get_float(self.vision_widgets.get("steer_max_cmd", {}).get("var"), self.vision_settings["steer_max_cmd"])
                     }
                 }
                 # Physik-Konfiguration wurde entfernt
@@ -757,6 +879,75 @@ class BalanceControllerGUI:
             
         except Exception as e:
             messagebox.showerror(t("errors.error"), t("errors.save_failed", err=str(e)))
+
+    def _get_float(self, var, default):
+        try:
+            if var is None:
+                return float(default)
+            txt = str(var.get()).strip().replace(",", ".")
+            return float(txt)
+        except Exception:
+            return float(default)
+    
+    def _normalize_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
+        """Normalisiert eingelesene CSV-Daten für die Plots.
+        
+        - Spaltennamen trimmen
+        - `time` → `timestamp` abbilden
+        - Zahlen (inkl. mit Komma) in float konvertieren
+        - fehlende `timestamp`-Werte entfernen und nach Zeit sortieren
+        """
+        try:
+            cleaned = df.copy()
+            cleaned.columns = [str(c).strip() for c in cleaned.columns]
+
+            if "timestamp" not in cleaned.columns and "time" in cleaned.columns:
+                cleaned = cleaned.rename(columns={"time": "timestamp"})
+
+            numeric_columns = [
+                "timestamp",
+                "roll_angle",
+                "steering_output",
+                "final_steer",
+                "actual_handlebar_angle",
+                "speed",
+                "p_term",
+                "i_term",
+                "d_term",
+                "target_speed",
+                "actual_speed_kmh",
+                "vision_error",
+                "vision_steer_command",
+                "vision_speed_command",
+                "actual_speed",
+            ]
+
+            for col in numeric_columns:
+                if col in cleaned.columns:
+                    series = cleaned[col]
+                    if series.dtype == object:
+                        series = series.astype(str).str.replace(",", ".", regex=False)
+                    cleaned[col] = pd.to_numeric(series, errors="coerce")
+
+            # Falls nur rad/s vorhanden ist, km/h berechnen
+            if "actual_speed_kmh" not in cleaned.columns and "actual_speed" in cleaned.columns:
+                try:
+                    cleaned["actual_speed_kmh"] = (
+                        pd.to_numeric(cleaned["actual_speed"], errors="coerce")
+                        * float(self.wheel_radius_m)
+                        * 3.6
+                    )
+                except Exception:
+                    pass
+
+            if "timestamp" in cleaned.columns:
+                cleaned = cleaned[cleaned["timestamp"].notna()]
+                if len(cleaned) > 0:
+                    cleaned = cleaned.sort_values("timestamp")
+
+            return cleaned
+        except Exception:
+            return df
             
     def reset_defaults(self):
         """Setze alle Parameter auf Standardwerte zurück"""
@@ -823,6 +1014,7 @@ class BalanceControllerGUI:
     def load_and_plot_data(self, filename):
         """Lade und plotte Daten aus Log-Datei"""
         df = pd.read_csv(filename)
+        df = self._normalize_dataframe(df)
         
         # Daten für Live-Update speichern
         self.current_data = df
@@ -852,9 +1044,10 @@ class BalanceControllerGUI:
         
         # Zoom anwenden wenn nicht der komplette Bereich (0-100%) gewählt ist
         if hasattr(self, 'zoom_start') and (self.zoom_start.get() != 0.0 or self.zoom_end.get() != 100.0):
-            min_time = df["timestamp"].min()
-            max_time = df["timestamp"].max()
-            time_range = max_time - min_time
+            ts_series = pd.to_numeric(df["timestamp"], errors="coerce")
+            min_time = ts_series.min()
+            max_time = ts_series.max()
+            time_range = float(max_time) - float(min_time)
             
             # Berechne Zoom-Grenzen
             start_percent = self.zoom_start.get() / 100.0
@@ -864,7 +1057,7 @@ class BalanceControllerGUI:
             zoom_end_time = min_time + (end_percent * time_range)
             
             # Filtere Daten im Zoom-Bereich
-            mask = (df["timestamp"] >= zoom_start_time) & (df["timestamp"] <= zoom_end_time)
+            mask = (ts_series >= zoom_start_time) & (ts_series <= zoom_end_time)
             df = df[mask]
             
             if len(df) == 0:
@@ -944,8 +1137,9 @@ class BalanceControllerGUI:
         
         # Zoom-Titel hinzufügen wenn gezoomt
         if hasattr(self, 'zoom_start') and (self.zoom_start.get() != 0.0 or self.zoom_end.get() != 100.0):
-            start_time = df["timestamp"].min() if len(df) > 0 else 0
-            end_time = df["timestamp"].max() if len(df) > 0 else 0
+            ts_series2 = pd.to_numeric(df["timestamp"], errors="coerce") if "timestamp" in df.columns else None
+            start_time = ts_series2.min() if ts_series2 is not None and len(df) > 0 else 0
+            end_time = ts_series2.max() if ts_series2 is not None and len(df) > 0 else 0
             self.ax1.set_title(f"Gezoomter Bereich: {start_time:.2f}s - {end_time:.2f}s", fontsize=10)
         else:
             self.ax1.set_title("")
@@ -1030,9 +1224,15 @@ class BalanceControllerGUI:
         if hasattr(self, 'current_data') and self.current_data is not None:
             df = self.current_data
             if len(df) > 0:
-                min_time = df["timestamp"].min()
-                max_time = df["timestamp"].max()
-                self.data_duration = max_time - min_time
+                if "timestamp" not in df.columns:
+                    return
+                ts_series = pd.to_numeric(df["timestamp"], errors="coerce")
+                min_time = ts_series.min()
+                max_time = ts_series.max()
+                try:
+                    self.data_duration = float(max_time) - float(min_time)
+                except Exception:
+                    self.data_duration = 10.0
                 
                 # Labels aktualisieren wenn auf Vollbereich (0-100%)
                 if self.zoom_start.get() == 0.0 and self.zoom_end.get() == 100.0:
@@ -1063,6 +1263,7 @@ class BalanceControllerGUI:
                         
                         # Lade alle verfügbaren Datenpunkte für vollständiges Monitoring
                         df = pd.read_csv(full_path)
+                        df = self._normalize_dataframe(df)
                         self.current_data = df
                         
                         # Thread-sicheres Update über Tkinter

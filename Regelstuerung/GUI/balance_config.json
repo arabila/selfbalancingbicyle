@@ -24,6 +24,15 @@
             "enable_preview": 1,
             "config_reload_interval": 10,
             "filter_size": 5
+        },
+        "vision_control": {
+            "method": "fallback",
+            "yolo_conf": 0.5,
+            "yolo_show": 0,
+            "fallback_roi_top_frac": 0.5,
+            "fallback_roi_height_frac": 0.06,
+            "steer_max_delta": 0.0025,
+            "steer_max_cmd": 0.06
         }
     }
 }
