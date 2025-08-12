@@ -309,6 +309,17 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         self.debug_x_centers = []
         self.debug_avg_x_center = None
         self.debug_frame_center = None
+
+        # Debug: Fallback-Maskenanzeige
+        self.debug_show_fallback_masks = True
+        self.last_fallback_hsv_mask = None
+        self.last_fallback_contour_mask = None
+
+        # Fallback-ROI-Parameter (anheben/absenken des Erkennungsbalkens)
+        # 0.0 = ganz oben, 1.0 = ganz unten
+        self.fallback_roi_top_frac = 0.4      # oberer Rand der ROI (höher erkennen → kleinerer Wert)
+        self.fallback_roi_height_frac = 0.02   # Höhe der ROI (vertikale Dicke des Balkens)
+        self.fallback_y_set_frac = 0.70        # Anzeige-/Messzeile innerhalb der ROI
         
         print("=== Vision Controller mit MPC gestartet ===")
         print(f"YOLO verfügbar: {YOLO_AVAILABLE}")
@@ -596,62 +607,105 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             return self._use_last_valid_values()
     
     def get_vision_error_fallback(self, frame):
-        """Fallback-Vision ohne YOLO (einfache Kantenerkennung)"""
+        """Fallback-Vision ohne YOLO basierend auf simple_mask.py (ROI + HSV + Morphologie + Konturen)."""
         try:
-            # Graustufenkonversion
-            gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-            
-            # Gaussscher Weichzeichner
-            blurred = cv2.GaussianBlur(gray, (5, 5), 0)
-            
-            # Canny-Kantenerkennung
-            edges = cv2.Canny(blurred, 50, 150)
-            
-            # Region of Interest (untere Hälfte des Bildes)
-            height, width = edges.shape
-            roi_mask = np.zeros_like(edges)
-            roi_mask[height//2:, :] = 255
-            edges = cv2.bitwise_and(edges, roi_mask)
-            
-            # Finde Konturen
-            contours, _ = cv2.findContours(edges, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-            
+            # Bildabmessungen
+            height, width = frame.shape[:2]
+
+            # Zielpunkt: exakt die Bildmitte (x)
+            x_set = int(width / 2)
+
+            # Parametrisierte, schmale Trapez-ROI höher/tiefer setzbar
+            top_frac = float(np.clip(getattr(self, 'fallback_roi_top_frac', 0.68), 0.0, 0.98)) #vertikale Position des oberen ROI-Rands
+            band_frac = float(np.clip(getattr(self, 'fallback_roi_height_frac', 0.06), 0.01, 0.3))
+            top_y = int(top_frac * height)
+            bot_y = min(height - 1, top_y + max(2, int(band_frac * height)))
+
+            # y-Setzpunkt innerhalb des Bildes, nahe der ROI
+            y_set_frac = float(np.clip(getattr(self, 'fallback_y_set_frac', 0.70), 0.0, 1.0)) #y-Position der Messlinie innerhalb des Bildes;
+            y_set = int(np.clip(y_set_frac * height, top_y, bot_y - 1))
+
+            # Trapezbreiten (oben schmaler als unten)
+            left_top = int(0.18 * width)
+            right_top = int(0.82 * width)
+            left_bot = int(0.14 * width)
+            right_bot = int(0.86 * width)
+
+            pts = np.array([[
+                [left_top, top_y],
+                [right_top, top_y],
+                [right_bot, bot_y],
+                [left_bot, bot_y]
+            ]], dtype=np.int32)
+
+            roi_mask = np.zeros((height, width), dtype=np.uint8)
+            cv2.fillPoly(roi_mask, pts, 255)
+            zone = cv2.bitwise_and(frame, frame, mask=roi_mask)
+
+            # HSV-Threshold für Straße (dunkelgrau) + weiße Markierungen
+            # - Graue Straße: niedrige Sättigung, mittlere Helligkeit
+            # - Weiße Markierungen: sehr niedrige Sättigung, hohe Helligkeit
+            hsv = cv2.cvtColor(zone, cv2.COLOR_BGR2HSV)
+            kernel = np.ones((5, 5), np.uint8)
+
+            road_lower = np.array([0, 0, 30])    # H egal, S niedrig, V mittel
+            road_upper = np.array([179, 60, 200])
+            white_lower = np.array([0, 0, 200])  # H egal, S sehr niedrig, V hoch
+            white_upper = np.array([179, 40, 255])
+
+            mask_road = cv2.inRange(hsv, road_lower, road_upper)
+            mask_white = cv2.inRange(hsv, white_lower, white_upper)
+            mask0 = cv2.bitwise_or(mask_road, mask_white)
+
+            mask0 = cv2.morphologyEx(mask0, cv2.MORPH_CLOSE, kernel)
+            mask0 = cv2.morphologyEx(mask0, cv2.MORPH_OPEN, kernel)
+
+            # Speichere HSV-Maske für Debug-Anzeige
+            self.last_fallback_hsv_mask = mask0.copy()
+
+            # Konturen finden in der gefilterten ROI
+            contours, _ = cv2.findContours(mask0, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+
             if contours:
-                # Größte Kontur als "Straße" interpretieren
                 largest_contour = max(contours, key=cv2.contourArea)
-                
-                # Berechne Bounding-Box-Mittelpunkt
+
+                # Mittelpunkt der Bounding-Box
                 x, y, w, h = cv2.boundingRect(largest_contour)
-                center_x = x + w // 2
-                
-                # Fehler relativ zur Bildmitte
-                frame_center = width / 2
-                error = (frame_center - center_x) / width
-                
-                # Einfache Maske erstellen
+                center_x = int(x + w / 2)
+
+                # Fehler normiert an Bildbreite (simple_mask gibt Pixel aus → hier normieren)
+                error = (x_set - center_x) / float(max(1, width))
+
+                # Binäre Maske der größten Kontur für Overlay und Coverage
                 mask = np.zeros((height, width), dtype=np.uint8)
                 cv2.drawContours(mask, [largest_contour], -1, 255, -1)
-                
-                # Mask-Coverage berechnen
-                total_pixels = mask.shape[0] * mask.shape[1]
-                mask_pixels = np.sum(mask > 0)
+
+                # Speichere Konturmaske für Debug-Anzeige
+                self.last_fallback_contour_mask = mask.copy()
+
+                # Maskenabdeckung berechnen
+                total_pixels = mask.size
+                mask_pixels = int(np.sum(mask > 0))
                 self.vision_mask_coverage = (mask_pixels / total_pixels) * 100.0 if total_pixels > 0 else 0.0
-                
-                # Gültige Werte speichern
+
+                # Werte speichern für Ausfallsicherheit
                 self._store_valid_values(error, mask, self.vision_mask_coverage)
-                
-                # Debug-Visualisierungspunkte speichern
+
+                # Debug-Werte für OpenCV-Overlay
                 self.debug_x_centers = [float(center_x)]
                 self.debug_avg_x_center = float(center_x)
-                self.debug_frame_center = float(frame_center)
-                
+                self.debug_frame_center = float(width / 2)
+
                 return error, mask
-            
-            # Keine Konturen gefunden - verwende letzte gültige Werte
+
+            # Keine gültige Kontur → letzte gültige Werte verwenden (mit Decay-Logik)
+            # Bei Misserfolg: Letzte Masken für Debug zurücksetzen
+            self.last_fallback_contour_mask = None
             return self._use_last_valid_values()
-            
+
         except Exception as e:
             print(f"Fallback-Vision-Fehler: {e}")
+            self.last_fallback_contour_mask = None
             return self._use_last_valid_values()
     
     def vision_mpc_control(self, error, dt):
@@ -729,6 +783,12 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             
             # OpenCV-Anzeige (immer verfügbar)
             cv2.imshow("Vision Control - Fahrrad Kamera", overlay)
+
+            # Zusätzliche Debug-Fenster für Fallback-Masken
+            if self.debug_show_fallback_masks:
+                if self.last_fallback_hsv_mask is not None:
+                    cv2.imshow("Fallback HSV Mask", self.last_fallback_hsv_mask)
+              
             cv2.waitKey(1)
             
         except Exception as e:
@@ -750,17 +810,17 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         """Optimiert den Lenkbefehl"""
 
         # Änderungsrate auf ±0.01 begrenzen
-        max_delta = 0.005
+        max_delta = 0.0025
         delta = steer_cmd - last_steer_cmd
         if delta > max_delta:
             steer_cmd = last_steer_cmd + max_delta
         elif delta < -max_delta:
             steer_cmd = last_steer_cmd - max_delta
 
-        if steer_cmd > 0.08:
-            steer_cmd = 0.08
-        elif steer_cmd < -0.08:
-            steer_cmd = -0.08
+        if steer_cmd > 0.06:
+            steer_cmd = 0.06
+        elif steer_cmd < -0.06:
+            steer_cmd = -0.06
     
         return steer_cmd
     
@@ -806,9 +866,10 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             
                             # Vision-Fehler berechnen
                             if YOLO_AVAILABLE and self.yolo_model: #Prüft ob YOLO ob das Modell geladen wurde
-                                error, mask = self.get_vision_error_yolo(frame_bgr)
-                            else:
                                 error, mask = self.get_vision_error_fallback(frame_bgr)
+                            else:
+                                error, mask = self.get_vision_error_yolo(frame_bgr)
+                                
                             
                             # MPC-Regelung
                             dt = current_time - last_vision_time

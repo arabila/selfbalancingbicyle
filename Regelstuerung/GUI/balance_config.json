@@ -10,9 +10,9 @@
             "angle_integral_max": 60.0
         },
         "speed_control": {
-            "base_speed": 8.0,
-            "min_speed": 7.0,
-            "max_speed": 9.0,
+            "base_speed": 6.0,
+            "min_speed": 4.0,
+            "max_speed": 8.0,
             "stability_reduction": 0.5
         },
         "mechanical_limits": {

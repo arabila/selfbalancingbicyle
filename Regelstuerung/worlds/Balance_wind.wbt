@@ -18,8 +18,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.063214367765929 -0.11677510477972908 -0.991144549806756 4.519974046953562
-  position -0.8484098370550062 -54.75317855128307 7.279530079335671
+  orientation 0.08537094601209691 -0.22591920966477572 -0.970398017455437 4.996527448386122
+  position -9.175412170306618 -51.251578949721676 7.359030677741362
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -137,7 +137,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.08
+              height 0.02
               radius 0.45
               subdivision 72
             }
@@ -222,7 +222,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.08
+                    height 0.02
                     radius 0.45
                     subdivision 72
                   }
