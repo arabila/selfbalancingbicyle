@@ -155,9 +155,10 @@ class BalanceControllerGUI:
             "angle_output_max": {"value": 0.3, "min": 0.0, "max": 1.57, "unit": "rad"},
 
             # Speed Control Parameter
-            "base_speed": {"value": 5.0, "min": 1.0, "max": 15.0, "unit": "rad/s"},
-            "min_speed": {"value": 3.0, "min": 0.5, "max": 10.0, "unit": "rad/s"},
-            "max_speed": {"value": 8.0, "min": 5.0, "max": 20.0, "unit": "rad/s"},
+            # Anzeige/ Eingabe in km/h; Umrechnung beim Speichern/Laden
+            "base_speed": {"value": 8.1, "min": 1.8, "max": 54.0, "unit": "km/h"},
+            "min_speed": {"value": 4.86, "min": 1.8, "max": 36.0, "unit": "km/h"},
+            "max_speed": {"value": 12.96, "min": 3.6, "max": 72.0, "unit": "km/h"},
             "stability_reduction": {"value": 0.5, "min": 0.0, "max": 1.0, "unit": ""},
 
             # Mechanical Limits
@@ -208,12 +209,7 @@ class BalanceControllerGUI:
         notebook.add(monitor_frame, text="Monitoring")
         self.setup_monitoring_tab(monitor_frame)
         
-        # Tab 3: Presets (Physik-Tab wurde entfernt)
-        preset_frame = ttk.Frame(notebook)
-        notebook.add(preset_frame, text="Presets")
-        self.setup_preset_tab(preset_frame)
-        
-        # Tab 4: Build & Compiler
+        # Build & Compiler
         build_frame = ttk.Frame(notebook)
         notebook.add(build_frame, text="Build & Compiler")
         self.setup_build_tab(build_frame)
@@ -601,56 +597,7 @@ class BalanceControllerGUI:
         fs = max(6.0, base_float * float(getattr(self, 'legend_scale', 0.5)))
         return fs
         
-    def setup_preset_tab(self, parent):
-        """Erstelle das Preset-Tab"""
-        
-        preset_frame = ttk.LabelFrame(parent, text="Vorkonfigurierte Einstellungen")
-        preset_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
-        
-        # Preset-Definitionen
-        presets = {
-            "Autobike Original": {
-                "description": "Original-Parameter aus der BachelorArbeit 2023",
-                "params": {
-                    "angle_Kp": 10.0, "angle_Ki": 0.0, "angle_Kd": 2.2,
-                    "base_speed": 5.0, "min_speed": 3.0, "max_speed": 8.0
-                }
-            },
-            "Konservativ": {
-                "description": "Sichere, langsame Einstellungen für Tests",
-                "params": {
-                    "angle_Kp": 5.0, "angle_Ki": 0.0, "angle_Kd": 1.5,
-                    "base_speed": 3.0, "min_speed": 2.0, "max_speed": 5.0
-                }
-            },
-            "Aggressiv": {
-                "description": "Schnelle, responsive Einstellungen",
-                "params": {
-                    "angle_Kp": 15.0, "angle_Ki": 0.5, "angle_Kd": 3.0,
-                    "base_speed": 7.0, "min_speed": 4.0, "max_speed": 12.0
-                }
-            }
-        }
-        
-        row = 0
-        for preset_name, preset_data in presets.items():
-            # Preset-Name
-            name_label = ttk.Label(preset_frame, text=preset_name, font=("Arial", 11, "bold"))
-            name_label.grid(row=row, column=0, sticky="w", padx=10, pady=(10, 5))
-            
-            # Beschreibung
-            desc_label = ttk.Label(preset_frame, text=preset_data["description"], foreground="gray")
-            desc_label.grid(row=row+1, column=0, sticky="w", padx=20, pady=(0, 5))
-            
-            # Laden-Button
-            load_btn = ttk.Button(
-                preset_frame, 
-                text="Laden",
-                command=lambda preset=preset_data["params"]: self.load_preset(preset)
-            )
-            load_btn.grid(row=row, column=1, padx=10, pady=5)
-            
-            row += 2
+    # Preset-Tab entfernt
         
     def setup_build_tab(self, parent):
         """Erstelle das Build & Compiler-Tab"""
@@ -788,11 +735,17 @@ class BalanceControllerGUI:
                     category_data = balance_config.get(category, {})
                     for key, value in category_data.items():
                         if key in self.parameters:
-                            self.parameters[key]["value"] = value
+                            # Speed-Werte kommen aus JSON in rad/s, GUI zeigt km/h
+                            if category == "speed_control" and key in {"base_speed", "min_speed", "max_speed"}:
+                                converted = self._radps_to_kmh(value)
+                                self.parameters[key]["value"] = converted
+                            else:
+                                self.parameters[key]["value"] = value
                             if key in self.param_widgets:
-                                self.param_widgets[key]["var"].set(str(value))
+                                shown_value = self.parameters[key]["value"]
+                                self.param_widgets[key]["var"].set(str(shown_value))
                                 unit = self.parameters[key]["unit"]
-                                self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
+                                self.param_widgets[key]["value_label"].config(text=f"{shown_value:.3f} {unit}")
                 
                 # Vision-Controller Einstellungen laden
                 vision_cfg = balance_config.get("vision_control", {})
@@ -844,9 +797,10 @@ class BalanceControllerGUI:
                         "angle_integral_max": 60.0
                     },
                     "speed_control": {
-                        "base_speed": self.parameters["base_speed"]["value"],
-                        "min_speed": self.parameters["min_speed"]["value"],
-                        "max_speed": self.parameters["max_speed"]["value"],
+                        # Speicherung in rad/s
+                        "base_speed": self._kmh_to_radps(self.parameters["base_speed"]["value"]),
+                        "min_speed": self._kmh_to_radps(self.parameters["min_speed"]["value"]),
+                        "max_speed": self._kmh_to_radps(self.parameters["max_speed"]["value"]),
                         "stability_reduction": self.parameters["stability_reduction"]["value"]
                     },
                     "mechanical_limits": {
@@ -888,6 +842,20 @@ class BalanceControllerGUI:
             return float(txt)
         except Exception:
             return float(default)
+
+    def _kmh_to_radps(self, speed_kmh: float) -> float:
+        """Konvertiert km/h in rad/s basierend auf dem Hinterrad-Radius."""
+        try:
+            return float(speed_kmh) / (float(self.wheel_radius_m) * 3.6)
+        except Exception:
+            return 0.0
+
+    def _radps_to_kmh(self, omega_radps: float) -> float:
+        """Konvertiert rad/s in km/h basierend auf dem Hinterrad-Radius."""
+        try:
+            return float(omega_radps) * float(self.wheel_radius_m) * 3.6
+        except Exception:
+            return 0.0
     
     def _normalize_dataframe(self, df: pd.DataFrame) -> pd.DataFrame:
         """Normalisiert eingelesene CSV-Daten für die Plots.
@@ -954,7 +922,11 @@ class BalanceControllerGUI:
         defaults = {
             "angle_Kp": 10.0, "angle_Ki": 0.0, "angle_Kd": 2.2,
             "angle_output_min": -0.3, "angle_output_max": 0.3,
-            "base_speed": 5.0, "min_speed": 3.0, "max_speed": 8.0, "stability_reduction": 0.5,
+            # Defaults jetzt in km/h (vorher rad/s: 5.0, 3.0, 8.0)
+            "base_speed": 5.0 * self.wheel_radius_m * 3.6,
+            "min_speed": 3.0 * self.wheel_radius_m * 3.6,
+            "max_speed": 8.0 * self.wheel_radius_m * 3.6,
+            "stability_reduction": 0.5,
             "max_handlebar_angle": 0.5, "max_roll_angle": 45.0
         }
         
@@ -968,17 +940,7 @@ class BalanceControllerGUI:
         
         self.status_text.set(t("status.defaults_restored"))
         
-    def load_preset(self, preset_params):
-        """Lade ein Preset"""
-        for key, value in preset_params.items():
-            if key in self.parameters:
-                self.parameters[key]["value"] = value
-                if key in self.param_widgets:
-                    self.param_widgets[key]["var"].set(value)
-                    unit = self.parameters[key]["unit"]
-                    self.param_widgets[key]["value_label"].config(text=f"{value:.3f} {unit}")
-        
-        self.status_text.set("Preset geladen")
+    # load_preset entfernt (Presets nicht mehr benötigt)
         
     def apply_config(self):
         """Wende Konfiguration sofort an (speichern + neu laden)"""
@@ -1114,7 +1076,7 @@ class BalanceControllerGUI:
         if show_all or self.plot_visibility["d_term"].get():
             self.ax2.plot(df["timestamp"], df["d_term"], label="D-Term", color="purple", linewidth=1)
         
-        # Geschwindigkeits-Daten hinzufügen
+        # Geschwindigkeits-Daten hinzufügen (Zielwerte kommen in rad/s → in km/h umrechnen)
         if "target_speed" in df.columns and (show_all or self.plot_visibility["target_speed"].get()):
             # Zielgeschwindigkeit (rad/s) → km/h umrechnen: v = ω * R * 3.6
             try:
