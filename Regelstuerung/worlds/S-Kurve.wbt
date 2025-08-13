@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.043038886905792856 -0.08309637821117158 -0.9956116944582843 4.635972350822006
-  position 2.4843183940866336 -81.0027787932235 5.564852725676005
+  orientation 0.29379302030182247 -0.44400817842710477 -0.8464882744089117 4.811999971000391
+  position -6.960796158254731 -91.24226335507421 49.36224216593735
   follow "Little Bicycle V2"
 }
 TexturedBackground {
@@ -31,12 +31,12 @@ TexturedBackgroundLight {
 RectangleArena {
   translation 0 0 -0.1
   contactMaterial "ground"
-  floorSize 64 90
-  floorTileSize 64 90
+  floorSize 64 100
+  floorTileSize 64 100
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/BreiteKurven.jpeg"
+        "textures/S-Kurve.png"
       ]
     }
     roughness 1
@@ -54,8 +54,8 @@ DEF AIR Fluid {
   }
 }
 DEF BICYCLE Robot {
-  translation 2.05435 -43.6435 0.416051
-  rotation -0.00495621860159439 6.544738153390864e-06 0.9999877178517441 3.141592653589793
+  translation 0.163781 -46.3266 0.397351
+  rotation 0.004957969187095203 0.0013214697833328353 -0.999986836042931 -2.6180053071795863
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064

@@ -222,7 +222,7 @@ static double rear_wheel_kmh_from_omega(double omega);
                 float vision_steer = last_vision_command.steer_command * config.mechanical_limits.max_handlebar_angle; //TODO: Wieso nochmal begrenzen?
                 
                 // EINFACHE KOMBINATION: Statische Gewichtung
-                final_steer = vision_weight * vision_steer + balance_weight * steering_output;
+                final_steer = vision_steer + balance_weight * steering_output;
                 
                 // Geschwindigkeit proportional zum Lenkbefehl reduzieren
                 // nutzt Speed-PID, Prozessvariable = |steer_command|

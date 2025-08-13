@@ -7,5 +7,5 @@ centralWidgetVisible: 1
 orthographicViewHeight: 1
 textFiles: -1
 consoles: Console:All:All
-renderingDevicePerspectives: Little Bicycle V2:camera;0;0.584934;0.099464;0.428254
-renderingDevicePerspectives: Vision Controller:camera;0;0.17668;0.0289079;0.453783
+renderingDevicePerspectives: Little Bicycle V2:camera;0;1;0;0
+renderingDevicePerspectives: Vision Controller:camera;0;1;0;0

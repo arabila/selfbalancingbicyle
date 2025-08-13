@@ -324,6 +324,15 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         self.last_fallback_hsv_mask = None
         self.last_fallback_contour_mask = None
 
+        # Quantisierung und Halte-Logik für Steer-Command
+        # 10 Bins im Bereich [-0.06, +0.06], Wechsel erst nach 0.5 s erlaubt
+        self.steer_quant_min = -0.06
+        self.steer_quant_max = 0.06
+        self.steer_quant_bins = 10
+        self.steer_bin_hold_s = 1.0
+        self._current_steer_bin_idx = None
+        self._last_steer_bin_change_ts = 0.0
+
         # Fallback-ROI-Parameter (anheben/absenken des Erkennungsbalkens)
         # 0.0 = ganz oben, 1.0 = ganz unten
         self.fallback_roi_top_frac = 0.4      # oberer Rand der ROI (höher erkennen → kleinerer Wert)
@@ -850,28 +859,108 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             print(" | Balance: N/A")
 
     def optimize_steer_cmd(self, steer_cmd, last_steer_cmd):
-        """Optimiert den Lenkbefehl"""
+        """Quantisiert und begrenzt den Lenkbefehl in 10 Bins innerhalb [-0.06, +0.06]
+        und hält den aktuellen Bin mindestens 0.5 s, bevor ein Wechsel erlaubt ist.
 
-        # Konfiguration laden (steer_max_delta, steer_max_cmd)
+        Hinweis: last_steer_cmd wird nicht mehr für Rate-Limiting verwendet, da
+        hier feste Bin-Mitten ausgegeben werden sollen.
+        """
+
+        # Konfiguration ggf. laden; Quantisierungsgrenzen sind fest auf [-0.06, +0.06]
         self._load_vision_method_from_config()
-        max_delta = float(getattr(self, 'steer_max_delta', 0.0025))
-        max_steer_cmd = float(getattr(self, 'steer_max_cmd', 0.06))
-        delta = steer_cmd - last_steer_cmd
-        if delta > max_delta:
-            steer_cmd = last_steer_cmd + max_delta
-        elif delta < -max_delta:
-            steer_cmd = last_steer_cmd - max_delta
+        max_cmd = float(self.steer_quant_max)
+        min_cmd = float(self.steer_quant_min)
 
-        if steer_cmd > max_steer_cmd:
-            steer_cmd = max_steer_cmd
-        elif steer_cmd < -max_steer_cmd:
-            steer_cmd = -max_steer_cmd
-    
-        return steer_cmd
+        # 1) Hart begrenzen auf [-max_cmd, +max_cmd]
+        raw = float(np.clip(steer_cmd, min_cmd, max_cmd))
+
+        # 2) In 10 gleich große Bins quantisieren (5 negativ, 5 positiv)
+        bins = int(self.steer_quant_bins)
+        step = (max_cmd - min_cmd) / float(bins)
+        # Numerische Robustheit
+        if step <= 0:
+            return raw
+
+        # Ziel-Index berechnen (0..bins-1), inkl. rechter Rand für max_cmd
+        rel = (raw - min_cmd) / step
+        target_idx = int(np.floor(rel))
+        if target_idx < 0:
+            target_idx = 0
+        if target_idx >= bins:
+            target_idx = bins - 1
+
+        # 3) Halte- und Schritt-Logik: mind. 0.5 s halten, pro Takt max. ein Nachbar-Schritt
+        now = self.robot.getTime()
+        if self._current_steer_bin_idx is None:
+            # Startbedingung: immer bei 0.0 beginnen und mindestens 0.5 s halten
+            if self._last_steer_bin_change_ts == 0.0:
+                self._last_steer_bin_change_ts = now
+                return 0.0
+            if (now - self._last_steer_bin_change_ts) >= float(self.steer_bin_hold_s):
+                # Erster erlaubter Schritt: genau ein Nachbar-Bin Richtung Ziel
+                if raw > 0.0:
+                    self._current_steer_bin_idx = 5  # erstes positives Bin (nahe 0)
+                    self._last_steer_bin_change_ts = now
+                elif raw < 0.0:
+                    self._current_steer_bin_idx = 4  # erstes negatives Bin (nahe 0)
+                    self._last_steer_bin_change_ts = now
+                else:
+                    return 0.0
+            else:
+                return 0.0
+        elif target_idx != self._current_steer_bin_idx:
+            if (now - self._last_steer_bin_change_ts) >= float(self.steer_bin_hold_s):
+                direction = 1 if target_idx > self._current_steer_bin_idx else -1
+                self._current_steer_bin_idx += direction
+                # Sicherheit innerhalb [0, bins-1]
+                if self._current_steer_bin_idx < 0:
+                    self._current_steer_bin_idx = 0
+                if self._current_steer_bin_idx >= bins:
+                    self._current_steer_bin_idx = bins - 1
+                self._last_steer_bin_change_ts = now
+            # sonst: halten ohne Änderung
+
+        # 4) Feste Ausgabe: Bin-Mitte des aktuellen Bins
+        bin_center = min_cmd + (self._current_steer_bin_idx + 0.5) * step
+
+        # 5) Sicherheits-Clamp (numerisch)
+        bin_center = float(np.clip(bin_center, min_cmd, max_cmd))
+
+        return bin_center
     
 
 
     
+    def update_screen_labels(self, error, steer_cmd):
+        """Zeigt Speed, Error, Steer und Roll-Winkel als On-Screen-Label an (wie in printStatus())."""
+        try:
+            # Geschwindigkeit aus der Fahrrad-Node berechnen (m/s → km/h)
+            speed_kmh = 0.0
+            if self.bicycle:
+                velo = self.bicycle.getVelocity()
+                if velo and len(velo) >= 3:
+                    vx, vy, vz = float(velo[0]), float(velo[1]), float(velo[2])
+                    speed_kmh = (vx * vx + vy * vy + vz * vz) ** 0.5 * 3.6
+
+            # Roll-Winkel aus Balance-Status (in Grad)
+            roll_deg = 0.0
+            if self.last_balance_status and 'roll_angle' in self.last_balance_status:
+                roll_deg = float(self.last_balance_status['roll_angle'])
+
+            # Label-Text und Position
+            vpos = 0.93
+            text = (
+                f"Speed: {speed_kmh:5.2f} km/h   "
+                f"Vision_Error: {error:6.3f}   "
+                f"Vision_Steer: {steer_cmd:6.3f}   "
+                f"Roll: {roll_deg:6.3f}°"
+            )
+
+            # On-Screen-Label zeichnen (ID 1, links oben)
+            self.robot.setLabel(1, text, 0, vpos, 0.06, 0x000000, 0, 'Lucida Console')
+        except Exception as e:
+            print(f"Label-Update-Fehler: {e}")
+
     def run(self):
         """Hauptschleife des Vision-Controllers"""
         last_vision_time = 0.0
@@ -923,6 +1012,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
 
                             steer_cmd = self.optimize_steer_cmd(steer_cmd, last_steer_cmd)
 
+                        
+
                             last_steer_cmd = steer_cmd
                             
                             # Command senden
@@ -930,6 +1021,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             
                             # Display aktualisieren
                             self.update_display(frame_bgr, mask, error, steer_cmd, speed_cmd)
+                            # On-Screen-Label (wie printStatus) aktualisieren
+                            self.update_screen_labels(error, steer_cmd)
                             
                             # Status ausgeben (alle 2 Sekunden)
                             if self.step_counter % (int(2.0 / vision_interval)) == 0:
