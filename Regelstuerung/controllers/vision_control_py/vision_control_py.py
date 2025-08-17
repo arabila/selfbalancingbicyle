@@ -76,7 +76,11 @@ class VisionMPCController: #Unser MPC Controller
         self.DU_TH = 0.1   # Konvergenz-Schwellwert
         
         # Zustandsspeicher
-        self.state = {'x': 0.0, 'y': 0.0, 'v': 2.0, 'yaw': 0.0}
+        # x, y → die Position des Fahrzeugs in der Ebene
+        #v → die Geschwindigkeit des Fahrzeugs in der Ebene
+        #yaw → der Gierwinkel, also die Orientierung des Fahrzeugs in der Ebene 
+        self.state = {'x': 0.0, 'y': 0.0, 'v': 2.0, 'yaw': 0.0} 
+        
         self.last_control = {'accel': 0.0, 'steer': 0.0}
         self.reference_path = []
         
@@ -84,6 +88,9 @@ class VisionMPCController: #Unser MPC Controller
         self.mpc_p_term = 0.0
         self.mpc_i_term = 0.0
         self.mpc_d_term = 0.0
+        
+        # Speicher für vorherigen Referenzpfad (xbar)
+        self.xbar_prev = None
         
         print("✓ Vision MPC Controller initialisiert")
     
@@ -119,19 +126,50 @@ class VisionMPCController: #Unser MPC Controller
         
         return A, B, C
     
-    def update_state(self, state, accel, steer):
-        """Aktualisiert Fahrzeugzustand"""
+    def update_state(self, state, accel, steer, bicycle_node=None):
+        """Aktualisiert Fahrzeugzustand - x, y, yaw werden aus Webots abgefragt"""
         # Begrenzungen anwenden
         if steer > self.MAX_STEER:
             steer = self.MAX_STEER
         elif steer < -self.MAX_STEER:
             steer = -self.MAX_STEER
         
-        # Bicycle model
         new_state = state.copy()
-        new_state['x'] += new_state['v'] * math.cos(new_state['yaw']) * self.DT
-        new_state['y'] += new_state['v'] * math.sin(new_state['yaw']) * self.DT
-        new_state['yaw'] += new_state['v'] / self.WB * math.tan(steer) * self.DT
+        
+        # x, y, yaw aus Webots-Simulation abrufen
+        if bicycle_node:
+            try:
+                # Position (x, y) aus translation field
+                bike_pos = bicycle_node.getPosition()
+                new_state['x'] = bike_pos[0]  # x-Koordinate
+                new_state['y'] = bike_pos[1]  # y-Koordinate (negiert für korrekte Orientierung)
+                
+                # Yaw aus rotation field (4. Komponente ist der Winkel)
+                bike_rotation = bicycle_node.getField('rotation').getSFRotation()
+                new_state['yaw'] = bike_rotation[3]  # Rotationswinkel
+                
+                # Debug-Output (alle 100 Steps)
+                if hasattr(self, '_debug_counter'):
+                    self._debug_counter += 1
+                else:
+                    self._debug_counter = 0
+                
+                if self._debug_counter % 100 == 0:
+                    print(f"DEBUG: Webots-Position - x={new_state['x']:.3f}, y={new_state['y']:.3f}, yaw={new_state['yaw']:.3f}")
+                
+            except Exception as e:
+                print(f"Fehler beim Abrufen der Fahrradposition: {e}")
+                # Fallback auf berechnete Werte
+                new_state['x'] += new_state['v'] * math.cos(new_state['yaw']) * self.DT
+                new_state['y'] += new_state['v'] * math.sin(new_state['yaw']) * self.DT
+                new_state['yaw'] += new_state['v'] / self.WB * math.tan(steer) * self.DT
+        else:
+            # Fallback auf berechnete Werte wenn keine Fahrrad-Node verfügbar
+            new_state['x'] += new_state['v'] * math.cos(new_state['yaw']) * self.DT
+            new_state['y'] += new_state['v'] * math.sin(new_state['yaw']) * self.DT
+            new_state['yaw'] += new_state['v'] / self.WB * math.tan(steer) * self.DT
+        
+        # Geschwindigkeit weiterhin berechnen (wie gewünscht)
         new_state['v'] += accel * self.DT
         
         # Geschwindigkeitsbegrenzungen
@@ -146,9 +184,11 @@ class VisionMPCController: #Unser MPC Controller
         """Generiert Referenzpfad aus Vision-Fehler"""
         # Einfache Referenztrajectorie: Geradeaus mit Korrektur
         ref_path = []
+        print("ref_path: ", ref_path)
         
-        # Aktueller Zustand als Startpunkt
+        #Vorheriger Zustand als Startpunkt
         x, y, v, yaw = current_state['x'], current_state['y'], current_state['v'], current_state['yaw']
+        print("x, y, v, yaw: ", x, y, v, yaw)
         
         # Ziel-Orientierung basierend auf Vision-Fehler
         target_yaw = yaw - vision_error * 0.5  # Proportionale Korrektur
@@ -164,18 +204,19 @@ class VisionMPCController: #Unser MPC Controller
             ref_v = v  # Konstante Geschwindigkeit
             
             ref_path.append([ref_x, ref_y, ref_v, ref_yaw])
+            print("ref_path: ", ref_path)
+            print("np.array(ref_path).T: ", np.array(ref_path).T)
         
         return np.array(ref_path).T
     
     def linear_mpc_control(self, xref, xbar, x0):
         """Löst MPC-Optimierungsproblem"""
-        if not MPC_AVAILABLE:
-            # Fallback auf einfache Regelung
-            return self._simple_control_fallback(xref, x0)
-        
         try:
             x = cvxpy.Variable((self.NX, self.T + 1))
             u = cvxpy.Variable((self.NU, self.T))
+
+            print("x: ", x.shape)
+            print("u: ", u.shape)
             
             cost = 0.0
             constraints = []
@@ -219,30 +260,33 @@ class VisionMPCController: #Unser MPC Controller
             print(f"MPC-Fehler: {e}")
             return self._simple_control_fallback(xref, x0)
     
-    def _simple_control_fallback(self, xref, x0):
-        """Einfache Regelung als Fallback"""
-        # Einfache P-Regelung
-        y_error = xref[1, 1] - x0[1] if xref.shape[1] > 1 else 0.0
-        yaw_error = xref[3, 1] - x0[3] if xref.shape[1] > 1 else 0.0
-        
-        steer = np.clip(yaw_error * 2.0 + y_error * 0.5, -self.MAX_STEER, self.MAX_STEER)
-        accel = 0.0  # Konstante Geschwindigkeit
-        
-        return accel, steer
-    
-    def control(self, vision_error, dt):
+    def control(self, vision_error, dt, bicycle_node=None):
         """Hauptfunktion des MPC-Controllers"""
         # Referenzpfad generieren
         xref = self.generate_reference_path(vision_error, self.state)
         
+        # xbar aus vorherigem Zeitschritt verwenden (50ms Verzögerung)
+        if self.xbar_prev is not None and 1 == 1: 
+            xbar = self.xbar_prev
+        else:
+            # Beim ersten Aufruf: xbar = xref
+            xbar = xref
+        
         # Aktueller Zustand
         x0 = np.array([self.state['x'], self.state['y'], self.state['v'], self.state['yaw']])
-        
+       
+        print("x0: ", x0)
+        print("xref: ", xref)
+        print("xbar (previous): ", xbar.shape if hasattr(xbar, 'shape') else type(xbar))
+    
         # MPC-Regelung
-        accel, steer = self.linear_mpc_control(xref, xref, x0)
+        accel, steer = self.linear_mpc_control(xref, xbar, x0)
         
-        # Zustand aktualisieren
-        self.state = self.update_state(self.state, accel, steer)
+        # Aktuelles xref für nächsten Zeitschritt speichern
+        self.xbar_prev = xref.copy()
+        
+        # Zustand aktualisieren mit Webots-Daten
+        self.state = self.update_state(self.state, accel, steer, bicycle_node)
         
         # Kontrolle speichern
         self.last_control = {'accel': accel, 'steer': steer}
@@ -281,6 +325,9 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         
         # MPC-Controller initialisieren
         self.mpc_controller = VisionMPCController()
+        
+        # Initialen Zustand aus Webots-Simulation setzen
+        self._initialize_mpc_state_from_webots()
         
         # Steuerungsparameter
         self.max_steer = 0.4      # Maximaler Lenkbefehl (-1.0 bis +1.0)
@@ -329,7 +376,7 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         self.steer_quant_min = -0.06
         self.steer_quant_max = 0.06
         self.steer_quant_bins = 10
-        self.steer_bin_hold_s = 1.0
+        self.steer_bin_hold_s = 0.5
         self._current_steer_bin_idx = None
         self._last_steer_bin_change_ts = 0.0
 
@@ -377,6 +424,26 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         except Exception as e:
             print(f"Config-Ladefehler: {e}")
             self._last_config_load_ts = now
+
+    def _initialize_mpc_state_from_webots(self):
+        """Initialisiert den MPC-Zustand mit aktuellen Werten aus der Webots-Simulation"""
+        if self.bicycle:
+            try:
+                # Position (x, y) aus translation field
+                bike_pos = self.bicycle.getPosition()
+                self.mpc_controller.state['x'] = bike_pos[0]  # x-Koordinate
+                self.mpc_controller.state['y'] = -bike_pos[1]  # y-Koordinate (negiert)
+                
+                # Yaw aus rotation field (4. Komponente ist der Winkel)
+                bike_rotation = self.bicycle.getField('rotation').getSFRotation()
+                self.mpc_controller.state['yaw'] = bike_rotation[3]  # Rotationswinkel
+                
+                print(f"✓ MPC-Zustand initialisiert: x={self.mpc_controller.state['x']:.3f}, y={self.mpc_controller.state['y']:.3f}, yaw={self.mpc_controller.state['yaw']:.3f}")
+                
+            except Exception as e:
+                print(f"⚠ Fehler beim Initialisieren des MPC-Zustands: {e}")
+        else:
+            print("⚠ Fahrrad-Node nicht verfügbar für MPC-Initialisierung")
 
     def _init_devices(self):
         """Initialisiert alle Webots-Geräte"""
@@ -761,8 +828,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
     
     def vision_mpc_control(self, error, dt):
         """MPC-Controller für Vision-basierte Lenkung"""
-        # MPC-Regelung durchführen
-        steer_rad, accel = self.mpc_controller.control(error, dt)
+        # MPC-Regelung durchführen mit Fahrrad-Node für Position/Orientierung
+        steer_rad, accel = self.mpc_controller.control(error, dt, self.bicycle)
         
         # Lenkwinkel normalisieren auf [-1, 1] für IPC
         steer_cmd = np.clip(steer_rad / self.mpc_controller.MAX_STEER, -1.0, 1.0)
@@ -1005,7 +1072,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             else:
                                 error, mask = self.get_vision_error_fallback(frame_bgr)
                                 
-                            
+                             
+                            print("error: ", error)
                             # MPC-Regelung
                             dt = current_time - last_vision_time
                             steer_cmd, speed_cmd, p_term, i_term, d_term = self.vision_mpc_control(error, dt)
@@ -1015,6 +1083,7 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                         
 
                             last_steer_cmd = steer_cmd
+                           
                             
                             # Command senden
                             self.send_vision_command(steer_cmd, speed_cmd)
@@ -1051,3 +1120,4 @@ def main():
 
 if __name__ == "__main__":
     main() 
+

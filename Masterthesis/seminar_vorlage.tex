@@ -279,14 +279,10 @@
 
         
     
-  \section{Einleitung der angewandten Regelungstechnik}
-    \subsection{Fahrdynamische Modelle nach Schramm / Hiller / Bardini}
-      \subsubsection{Einspurmodell (Fahrrad): Lateral-, Roll- und Yaw-Dynamik}
-      \subsubsection{Zweispurmodell (Referenz PKW): Radlasttransfer, Lateral-/Yaw-Dynamik}
-      \subsubsection{Gültigkeitsbereiche und Modellvergleich}
+  \section{Grundlagen}
     \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
     \subsection{MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}
-
+    \subsection{YOLO-Grundlagen und Segmentierung}
 
 %--------------------------------------------------
 % Webots-Simulationsumgebung
@@ -396,7 +392,7 @@
   der Knotenstruktur der Weltdatei beschrieben und deren Parameter hinsichtlich ihres Einflusses auf die Dynamik (Lenkung, 
   Rad–Boden-Kontakt, Eigendämpfung) erläutert.
 
-  \subsubsection{Hinterrad (\texttt{DEF rear\_wheel})}
+  %\subsubsection{Hinterrad (\texttt{DEF rear\_wheel})}
   Der Knoten \texttt{rear\_wheel} ist Teil des Gesamtfahrrads und definiert das angetriebene Hinterrad (\texttt{HingeJoint}).
   Die \texttt{HingeJointParameters} beschreiben das Lager des Hinterrads. Der \emph{anchor} \verb|0 0.5312 0| gibt die Position 
   der Radachse im Elternkoordinatensystem an. Die \emph{dampingConstant} \verb|0.8| ist die viskose Dämpfung des Lagers: höher 
@@ -500,6 +496,9 @@
 \section{Kombinierte Regelung}
   \subsection{Portierung des Balance-PID (Zander)}
   \subsection{Portierung des Fahrtrichtungs-MPC (Giray)}
+  \subsection{Strategien der Spurführung}
+    \subsubsection{YOLO-Segmentierung (YOLOv8) + MPC}
+    \subsubsection{Fallback-Strategie (Kanten/ROI) + MPC}
   \newpage
   \subsection{Supervisions-/Koppelkaskade}
   \begin{figure}[h]
@@ -509,7 +508,7 @@
     \label{fig:supervision_cascade}
   \end{figure}
   
-  \subsection{Failsafe-Strategien}
+
 
 %--------------------------------------------------
 % Ergebnisse

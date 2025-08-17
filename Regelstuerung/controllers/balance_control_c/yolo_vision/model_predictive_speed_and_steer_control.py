@@ -63,6 +63,7 @@ class State:
         self.x = x
         self.y = y
         self.yaw = yaw
+
         self.v = v
         self.predelta = None
 

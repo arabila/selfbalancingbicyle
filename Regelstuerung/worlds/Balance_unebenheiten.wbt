@@ -18,9 +18,9 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.07547391859237208 -0.17349430097448032 -0.981938600494801 4.827455283484956
-  position -2.6611926843501976 -63.92997474972499 21.754061576709482
-  follow "BICYCLE"
+  orientation -0.060805490693645936 0.1351688459420323 0.9889550421471162 1.5928008263888584
+  position -0.5587878611262647 -31.575009155345793 2.8521125209025007
+  follow "Little Bicycle V2"
 }
 TexturedBackground {
   skybox FALSE
@@ -47,8 +47,8 @@ UnevenTerrain {
   perlinNOctaves 0
 }
 DEF BICYCLE Robot {
-  translation -3.983565217626056 31.141108793903747 0.39622452114876217
-  rotation -0.0014226069612986213 0.004403588125570608 0.999989292243199 -3.1283031707522473
+  translation -0.450873 -23.9479 0.570591
+  rotation -0.0014226104157258749 0.00440359128685044 0.9999892922243636 -3.1283053071795863
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064
@@ -83,8 +83,8 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation -7.222542048879179e-07 0.5311925664556338 -7.0436007795413635e-06
-        rotation 0.9999999999725919 -4.858061498239037e-06 5.587077734622272e-06 0.24413270931092962
+        translation -7.222542048879179e-07 0.5311925664556338 -7.043600779570013e-06
+        rotation 0.9999999999725918 -4.858061498239032e-06 5.587077734622266e-06 0.24413270931092962
         children [
           DEF wheel Transform {
             scale 0.0056 0.0081 0.0081
@@ -110,7 +110,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.02
+              height 0.06
               radius 0.45
               subdivision 72
             }
@@ -127,8 +127,6 @@ DEF BICYCLE Robot {
             0 0 0
           ]
         }
-        linearVelocity -0.038873505923266334 2.698070855868488 -0.02659304059615994
-        angularVelocity -5.996083899466487 -0.08652189864651474 -0.014245481645507376
       }
     }
     DEF Handlebars_and_Fork HingeJoint {
@@ -171,8 +169,8 @@ DEF BICYCLE Robot {
               staticFriction 0.1
             }
             endPoint Solid {
-              translation -1.2654270094003554e-06 -0.23680248511669813 -0.6527996601888064
-              rotation -0.9999999999997039 -6.182326593326241e-07 -4.584262904939272e-07 3.7058624833309586
+              translation -1.2654270094003597e-06 -0.23680248511669813 -0.6527996601888064
+              rotation -0.9999999999997047 -6.172269935031987e-07 -4.576805782629398e-07 3.7058624833309586
               children [
                 DEF wheel Transform {
                   scale 0.0056 0.0081 0.0081
@@ -198,7 +196,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.02
+                    height 0.06
                     radius 0.45
                     subdivision 72
                   }
@@ -215,8 +213,6 @@ DEF BICYCLE Robot {
                   0 0 0
                 ]
               }
-              linearVelocity -0.047794472087574924 2.698012116548177 -0.02246974652927595
-              angularVelocity -5.995721025237037 -0.10612084800838484 0.011120556871352376
             }
           }
         ]
@@ -393,8 +389,6 @@ DEF BICYCLE Robot {
             0 0 0
           ]
         }
-        linearVelocity -0.045761476044891794 2.695968144835554 -0.02318051827863731
-        angularVelocity 0.0032026438382286295 -0.006542106832815157 0.027334407333879863
       }
     }
     DEF crank HingeJoint {
@@ -467,8 +461,6 @@ DEF BICYCLE Robot {
                   0 0 0
                 ]
               }
-              linearVelocity -0.02322505752426009 1.5780194818360695 -0.3242836168655555
-              angularVelocity -0.001752287494870921 -0.006862021656764224 0.0023463368628436595
             }
           }
           DEF pedal HingeJoint {
@@ -516,8 +508,6 @@ DEF BICYCLE Robot {
                   0 0 0
                 ]
               }
-              linearVelocity -0.05699985206969658 3.818204301631841 0.27457843065983195
-              angularVelocity -0.0017522874948709243 -0.006862021656764171 0.002346336862843666
             }
           }
         ]
@@ -565,8 +555,6 @@ DEF BICYCLE Robot {
             0 0 0
           ]
         }
-        linearVelocity -0.04011246226602019 2.6981118829625648 -0.024852636576228933
-        angularVelocity -5.996159697950873 -0.08652096907187391 -0.014244631361426707
       }
     }
     Camera {
@@ -764,6 +752,4 @@ DEF BICYCLE Robot {
   }
   controller "balance_control_c_onlyBalance"
   supervisor TRUE
-  linearVelocity -0.04228356334994557 2.697061634629565 -0.024850388280787464
-  angularVelocity 0.0032751035139467564 -0.006763572539616415 0.0023855462406197634
 }

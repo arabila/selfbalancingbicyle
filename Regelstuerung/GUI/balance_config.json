@@ -1,7 +1,7 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 2.0,
+            "angle_Kp": 3.0,
             "angle_Ki": 0.2,
             "angle_Kd": 0.5,
             "angle_output_min": -0.3,
@@ -29,7 +29,7 @@
             "method": "fallback",
             "yolo_conf": 0.5,
             "yolo_show": 0,
-            "fallback_roi_top_frac": 0.5,
+            "fallback_roi_top_frac": 0.3,
             "fallback_roi_height_frac": 0.06,
             "steer_max_delta": 0.0025,
             "steer_max_cmd": 0.06

@@ -14,17 +14,10 @@ Dieses Szenario nutzt das `UnevenTerrain`-PROTO, um eine Strecke mit Höhenprofi
 ### Bildliche Skizze (Top-Down/Profil vereinfacht)
 [ Rand (flach) ]  ->  [ Mitte (Hügel/Uneben) ]  ->  [ Rand (flach) ]
 
-### Relevante physikalische Parameter
-- Aerodynamik (am Fahrrad/Teilen): `dragForceCoefficients 1 1 1`, `dragTorqueCoefficients 0.05 0.05 0.05`
-- Fahrrad: Gesamtmasse 14 kg, Schwerpunkt z ≈ 0.32 m
 
-### Anpassung der Schwierigkeit
-- Mehr Unebenheit/rauer: `perlinNOctaves` auf 2–4 erhöhen (fügt Perlin-Rauschen hinzu)
-- Höhere Amplitude: `size`-Z-Komponente erhöhen (z. B. `size 64 64 2` ≈ 2 m Höhe)
-- Ränder nicht abflachen: `flatBounds FALSE`
-- Reproduzierbar: `randomSeed` > 0 setzen (z. B. `randomSeed 42`)
 
-### Nutzung
-- Öffne `Regelstuerung/worlds/Balance_unebenheiten.wbt` in Webots und simuliere.
-- Das Fahrrad durchläuft flache Randzonen und die unebene Mittelzone; der Regler zeigt die Stabilität auf wechselndem Untergrund.
+
+
+
+
 

@@ -328,7 +328,7 @@ class BalanceControllerGUI:
                 roi_top_var = tk.StringVar(value=str(self.vision_settings["fallback_roi_top_frac"]))
                 roi_top_entry = ttk.Entry(vision_frame, textvariable=roi_top_var, width=12)
                 roi_top_entry.grid(row=8, column=1, sticky="w", padx=6)
-                ttk.Label(vision_frame, text="Normal: 0.68", foreground="gray").grid(row=8, column=2, sticky="w")
+                ttk.Label(vision_frame, text="Normal: 0.3", foreground="gray").grid(row=8, column=2, sticky="w")
                 self.vision_widgets["fallback_roi_top_frac"] = {"var": roi_top_var, "entry": roi_top_entry}
 
                 ttk.Label(vision_frame, text="roi_height_frac:").grid(row=9, column=0, sticky="w")

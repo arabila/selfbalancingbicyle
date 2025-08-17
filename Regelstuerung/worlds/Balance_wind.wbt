@@ -18,8 +18,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.08537094601209691 -0.22591920966477572 -0.970398017455437 4.996527448386122
-  position -9.175412170306618 -51.251578949721676 7.359030677741362
+  orientation 0.06742991349054357 -0.15109028567373467 -0.9862174873432773 4.751341344602649
+  position -2.9084746865902598 -39.160483863153296 2.806413965059723
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -49,7 +49,7 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity -4 0 0
+  streamVelocity -0.5 0 0
   boundingObject Box {
     size 64 21 20
   }
@@ -59,7 +59,7 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity 4 0 0
+  streamVelocity 0.5 0 0
   boundingObject Box {
     size 64 21 20
   }
@@ -69,13 +69,13 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity -4 0 0
+  streamVelocity -0.5 0 0
   boundingObject Box {
     size 64 21 20
   }
 }
 DEF BICYCLE Robot {
-  translation -2.00891 -31.1912 0.290961
+  translation -2.00891 -31.1712 0.290969
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
