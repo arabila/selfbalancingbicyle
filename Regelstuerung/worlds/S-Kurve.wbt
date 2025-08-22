@@ -14,13 +14,13 @@ WorldInfo {
       coulombFriction [
         0.8
       ]
-      bounce 0.1
+      bounce 0.3
     }
   ]
 }
 Viewpoint {
-  orientation 0.5459053528812439 -0.4684026123151764 -0.6946843444845457 4.134053684418301
-  position 2.8541422848888156 -47.52244830863911 7.66805776444338
+  orientation -0.2768020563359228 0.3892797701330424 0.8785453216387703 1.5137054430990253
+  position 0.4193931624178562 -67.78271889198706 17.68059122210485
   follow "Little Bicycle V2"
 }
 TexturedBackground {
@@ -54,8 +54,8 @@ DEF AIR Fluid {
   }
 }
 DEF BICYCLE Robot {
-  translation 0.163781 -46.3266 0.397351
-  rotation 0.004957969187095203 0.0013214697833328353 -0.999986836042931 -2.6180053071795863
+  translation 2.34802 -43.7299 0.378952
+  rotation -0.004957959187342656 -0.0013214697833983532 0.9999868360925098 2.61801
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064
@@ -77,7 +77,6 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::wheel"
-          maxVelocity 31.25
           maxTorque 120
         }
         PositionSensor {
@@ -85,11 +84,11 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation -7.222542048879181e-07 0.5312096943464374 -3.299930444176994e-06
+        translation -7.222542048879181e-07 0.5312096943464374 -3.299930444176878e-06
         rotation 0.999999999999512 -9.732079895549683e-07 -1.694976557766811e-07 2.299161108916181
         children [
           DEF wheel Transform {
-            scale 0.0056 0.0081 0.0081
+            scale 0.004 0.0081 0.0081
             children [
               CadShape {
                 url [
@@ -112,7 +111,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.08
+              height 0.06
               radius 0.45
               subdivision 72
             }
@@ -125,7 +124,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.122 0.122 0.245
+            0.1 0.1 0.2
             0 0 0
           ]
         }
@@ -142,7 +141,6 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "handlebars motor"
-          maxVelocity 150
           maxTorque 25
         }
         PositionSensor {
@@ -171,11 +169,11 @@ DEF BICYCLE Robot {
               staticFriction 0.1
             }
             endPoint Solid {
-              translation -1.2654270094003588e-06 -0.23679834584822576 -0.6528018854862923
+              translation -1.2654270094003605e-06 -0.23679834584822576 -0.6528018854862923
               rotation -0.9999999999992338 3.4288246797420686e-07 -1.1894376499017372e-06 1.2790348542134884
               children [
                 DEF wheel Transform {
-                  scale 0.0056 0.0081 0.0081
+                  scale 0.004 0.0081 0.0081
                   children [
                     CadShape {
                       url [
@@ -198,7 +196,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.08
+                    height 0.06
                     radius 0.45
                     subdivision 72
                   }
@@ -206,12 +204,12 @@ DEF BICYCLE Robot {
               }
               physics Physics {
                 density -1
-                mass 1.8
+                mass 2
                 centerOfMass [
                   0 0 0
                 ]
                 inertiaMatrix [
-                  0.11 0.11 0.223
+                  0.1 0.1 0.2
                   0 0 0
                 ]
               }
@@ -387,7 +385,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.25 0.25 0.05
+            0.06 0.07 0.12
             0 0 0
           ]
         }
@@ -402,7 +400,6 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::crank"
-          maxVelocity 31.25
           maxTorque 80
         }
       ]
@@ -553,7 +550,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.2 0.2 0.04
+            0.015 0.0236 0.038
             0 0 0
           ]
         }
@@ -756,10 +753,10 @@ DEF BICYCLE Robot {
     density -1
     mass 4
     centerOfMass [
-      0 0 0.32
+      0 -0.1 0.32
     ]
     inertiaMatrix [
-      1.2 2 3
+      0.08 0.05 0.07
       0 0 0
     ]
   }

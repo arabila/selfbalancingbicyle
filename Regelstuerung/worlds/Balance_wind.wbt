@@ -102,7 +102,6 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::wheel"
-          maxVelocity 31.25
           maxTorque 120
         }
         PositionSensor {
@@ -150,7 +149,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.122 0.122 0.245
+            0.1 0.1 0.2
             0 0 0
           ]
         }
@@ -235,7 +234,7 @@ DEF BICYCLE Robot {
                   0 0 0
                 ]
                 inertiaMatrix [
-                  0.11 0.11 0.223
+                  0.1 0.1 0.2
                   0 0 0
                 ]
               }
@@ -411,7 +410,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.25 0.25 0.05
+            0.06 0.07 0.12
             0 0 0
           ]
         }
@@ -577,7 +576,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.2 0.2 0.04
+            0.015 0.0236 0.038
             0 0 0
           ]
         }
@@ -767,12 +766,12 @@ DEF BICYCLE Robot {
   }
   physics Physics {
     density -1
-    mass 14
+    mass 4
     centerOfMass [
-      0 0 0.32
+      0 -0.1 0.32
     ]
     inertiaMatrix [
-      1.2 2 3
+      0.08 0.05 0.07
       0 0 0
     ]
   }

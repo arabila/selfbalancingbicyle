@@ -159,7 +159,6 @@ class BalanceControllerGUI:
             "base_speed": {"value": 8.1, "min": 1.8, "max": 54.0, "unit": "km/h"},
             "min_speed": {"value": 4.86, "min": 1.8, "max": 36.0, "unit": "km/h"},
             "max_speed": {"value": 12.96, "min": 3.6, "max": 72.0, "unit": "km/h"},
-            "stability_reduction": {"value": 0.5, "min": 0.0, "max": 1.0, "unit": ""},
 
             # Mechanical Limits
             "max_handlebar_angle": {"value": 0.5, "min": 0.1, "max": 0.8, "unit": "rad"},
@@ -236,7 +235,7 @@ class BalanceControllerGUI:
         # Parameter-Gruppen (Texte via i18n)
         groups = {
             t("groups.angle_pid"): ["angle_Kp", "angle_Ki", "angle_Kd", "angle_output_min", "angle_output_max"],
-            t("groups.speed_control"): ["base_speed", "min_speed", "max_speed", "stability_reduction"],
+            t("groups.speed_control"): ["base_speed", "min_speed", "max_speed"],
             t("groups.mechanical_limits"): ["max_handlebar_angle", "max_roll_angle"]
         }
         
@@ -800,8 +799,7 @@ class BalanceControllerGUI:
                         # Speicherung in rad/s
                         "base_speed": self._kmh_to_radps(self.parameters["base_speed"]["value"]),
                         "min_speed": self._kmh_to_radps(self.parameters["min_speed"]["value"]),
-                        "max_speed": self._kmh_to_radps(self.parameters["max_speed"]["value"]),
-                        "stability_reduction": self.parameters["stability_reduction"]["value"]
+                        "max_speed": self._kmh_to_radps(self.parameters["max_speed"]["value"])
                     },
                     "mechanical_limits": {
                         "max_handlebar_angle": self.parameters["max_handlebar_angle"]["value"],
@@ -926,7 +924,6 @@ class BalanceControllerGUI:
             "base_speed": 5.0 * self.wheel_radius_m * 3.6,
             "min_speed": 3.0 * self.wheel_radius_m * 3.6,
             "max_speed": 8.0 * self.wheel_radius_m * 3.6,
-            "stability_reduction": 0.5,
             "max_handlebar_angle": 0.5, "max_roll_angle": 45.0
         }
         

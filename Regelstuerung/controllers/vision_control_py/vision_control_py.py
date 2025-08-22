@@ -38,7 +38,7 @@ except ImportError:
 
 # MPC-Imports
 try:
-    import cvxpy
+    import cvxpy # Für MPC-Regelung -> Optimierungsproblem
     MPC_AVAILABLE = True
     print("✓ CVXPY verfügbar - MPC-Regelung aktiv")
 except ImportError:
@@ -846,7 +846,7 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         # MPC-Terme für IPC-Übertragung speichern
         self.vision_error = error
         
-        return steer_cmd, speed_cmd, self.mpc_controller.mpc_p_term, self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term
+        return steer_cmd, speed_cmd
     
     def update_display(self, frame, mask, error, steer_cmd, speed_cmd):
         """Aktualisiert das Display mit Vision-Overlay"""
@@ -1076,7 +1076,7 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             print("error: ", error)
                             # MPC-Regelung
                             dt = current_time - last_vision_time
-                            steer_cmd, speed_cmd, p_term, i_term, d_term = self.vision_mpc_control(error, dt)
+                            steer_cmd, speed_cmd = self.vision_mpc_control(error, dt)
 
                             steer_cmd = self.optimize_steer_cmd(steer_cmd, last_steer_cmd)
 

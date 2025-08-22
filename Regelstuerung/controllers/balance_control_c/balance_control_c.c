@@ -182,6 +182,7 @@ static double rear_wheel_kmh_from_omega(double omega);
         
         if (control_enabled) {
             steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
+            printf("Amine: steering_output: %.2f\n", steering_output);
         }
          
          //--------------------------------
@@ -191,12 +192,14 @@ static double rear_wheel_kmh_from_omega(double omega);
              steering_output = config.mechanical_limits.max_handlebar_angle;
          else if (steering_output < -config.mechanical_limits.max_handlebar_angle)
              steering_output = -config.mechanical_limits.max_handlebar_angle;
+        printf("Amine: steering_output after limit: %.2f\n", steering_output);
          
          //--------------------------------
          // 4. Vision-Commands empfangen und verarbeiten
          //--------------------------------
          vision_command_t vision_cmd;
          int vision_cmd_received = receive_vision_command(&vision_cmd);
+         printf("Amine: vision_cmd_received: %d\n", vision_cmd_received);
          
         // ========================================
         // 5. VEREINFACHTE ZWEI-EBENEN-REGELUNG 
@@ -345,7 +348,6 @@ static double rear_wheel_kmh_from_omega(double omega);
      
      // Cleanup
      balance_logging_close(&logger);
-     // Physik-System wurde entfernt
      wb_robot_cleanup();
      
      return 0;

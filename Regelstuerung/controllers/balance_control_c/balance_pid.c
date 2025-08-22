@@ -7,6 +7,8 @@
 
 #include "balance_pid.h"
 #include <string.h>
+#include <stdio.h>
+
 
 pid_controller_t pid_init(float Kp, float Ki, float Kd, 
                          float output_min, float output_max,
@@ -53,19 +55,11 @@ float pid_compute(pid_controller_t *pid, float setpoint,
     // P-Term (Proportional)
     pid->proportional_term = pid->Kp * error;
     
-    // I-Term (Integral) mit Anti-Windup
+    // I-Term (Integral)
     int prev_index = (pid->history_counter + HISTORY_LEN - 1) % HISTORY_LEN;
-    float dt = (pid->time_history[pid->history_counter] - pid->time_history[prev_index]) / 1000000.0; // Mikrosekunden zu Sekunden
-    
+    float dt = (pid->time_history[pid->history_counter] - pid->time_history[prev_index]) / 1000000.0; // 0.02 s = 20 ms
     if (dt > 0.0 && dt < 1.0) {  // Plausibilitätsprüfung für dt
-        pid->integral_term += pid->Ki * error * dt;
-        
-        // Anti-Windup: Integral-Term begrenzen
-        if (pid->integral_term < pid->integral_min) {
-            pid->integral_term = pid->integral_min;
-        } else if (pid->integral_term > pid->integral_max) {
-            pid->integral_term = pid->integral_max;
-        }
+        pid->integral_term += pid->Ki * error * dt; 
     }
     
     // D-Term (Differential) mit gleitendem Durchschnitt
@@ -83,13 +77,6 @@ float pid_compute(pid_controller_t *pid, float setpoint,
     
     // Gesamtausgabe berechnen
     float output = pid->proportional_term + pid->integral_term + pid->derivative_term;
-    
-    // Ausgabe begrenzen
-    if (output < pid->output_min) {
-        output = pid->output_min;
-    } else if (output > pid->output_max) {
-        output = pid->output_max;
-    }
     
     // History-Counter aktualisieren (zirkulärer Puffer)
     pid->history_counter = (pid->history_counter + 1) % HISTORY_LEN;
