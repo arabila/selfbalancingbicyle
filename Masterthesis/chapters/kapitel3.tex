@@ -401,6 +401,7 @@
   Allerdings muss die Ansteuerungselektronik die Impulse auswerten (Interrupts zählen etc.), 
   was in der realen Implementierung zusätzlichen Programmieraufwand bedeutet.
 
+  
 
   \textbf{Rolle im Regelkreis:} Die Positionssensoren werden vor allem zur \textbf{Überwachung und für abgeleitete Regelungsgrößen} genutzt. 
   Der \textbf{Lenkwinkelsensor} gibt dem Balance-Controller Feedback, welchen Lenkeinschlag der Motor aktuell realisiert – 
@@ -414,7 +415,15 @@
   dass der Ist-Winkel dem Soll-Winkel folgt (siehe Abschnitt \textit{Aktuatoren}). 
   Ein separater Positionsregelkreis ist im Code also nicht implementiert – 
   im realen System würde hier ein unterlagerter Motor-PID am Encoder hängen, 
-  aber in der Simulation übernimmt dies der Motorendpunkt. Der \textbf{Raddrehwinkelsensor} am Hinterrad wird primär genutzt, um die \textbf{Fahrgeschwindigkeit} zu ermitteln. 
+  aber in der Simulation übernimmt dies der Motorendpunkt. 
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Sensor.png}
+    \caption{Sensor- und Aktuator-API in Webots.}
+    \label{fig:sensor_api}
+  \end{figure}
+
+  Der \textbf{Raddrehwinkelsensor} am Hinterrad wird primär genutzt, um die \textbf{Fahrgeschwindigkeit} zu ermitteln. 
   Im Controller-Code wird aus der zeitlichen Differenz des Radwinkels $\Delta \theta / \Delta t$ 
   die Winkelgeschwindigkeit $\omega$ berechnet und in km/h umgerechnet. 
   Diese Information kann für verschiedene Zwecke dienen: 
@@ -702,8 +711,7 @@
   würden sofort im Verhalten sichtbar und könnten iterativ justiert werden, 
   bevor der Algorithmus auf einen realen Prototyp übertragen wird.
 
-
-
+  
   \subsection{Controller}
 
 

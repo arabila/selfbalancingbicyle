@@ -10,7 +10,7 @@
 
 #include <stdio.h>
 
-// Erweiterte Datenstruktur für einen Logeintrag (inkl. Vision-Control-Daten)
+// Erweiterte Datenstruktur für einen Logeintrag (inkl. Vision-Control-Daten und Position)
 typedef struct {
     // Balance-Controller-Daten
     double timestamp;           // Zeitstempel in Sekunden
@@ -25,6 +25,14 @@ typedef struct {
     float d_term;              // D-Term des Balance-PID-Controllers
     float error;               // Aktueller Balance-Regelfehler
     float stability_factor;    // Stabilitätsfaktor (0.0 = stabil, 1.0 = instabil)
+    
+    // Position und Orientierung (für Pfad-Visualisierung)
+    float pos_x;               // X-Position in Weltkoordinaten [m]
+    float pos_y;               // Y-Position in Weltkoordinaten [m] 
+    float pos_z;               // Z-Position in Weltkoordinaten [m]
+    float yaw;                 // Yaw-Winkel (Gierwinkel) in Radiant
+    float pitch;               // Pitch-Winkel (Nickwinkel) in Radiant
+    float roll_world;          // Roll-Winkel aus Weltkoordinaten in Radiant
     
     // Vision-Controller-Daten
     float vision_error;        // Vision-Fehler (Abweichung von erkannter Straße)

@@ -29,24 +29,24 @@
 \contentsline {subsection}{\numberline {4.2}Portierung des Fahrtrichtungs-MPC (Giray)}{34}{subsection.4.2}%
 \contentsline {subsection}{\numberline {4.3}Strategien der Spurführung}{37}{subsection.4.3}%
 \contentsline {subsubsection}{\numberline {4.3.1}YOLO-Segmentierung (YOLOv8) + MPC}{37}{subsubsection.4.3.1}%
-\contentsline {paragraph}{MPC-Regelung.}{39}{section*.17}%
-\contentsline {paragraph}{Limitierungen.}{40}{section*.19}%
+\contentsline {paragraph}{MPC-Regelung.}{39}{section*.18}%
+\contentsline {paragraph}{Limitierungen.}{40}{section*.20}%
 \contentsline {subsubsection}{\numberline {4.3.2}Fallback-Strategie (Kanten/ROI) + MPC}{41}{subsubsection.4.3.2}%
-\contentsline {paragraph}{Vorgehen.}{41}{section*.21}%
-\contentsline {paragraph}{MPC und Steuerung:}{42}{section*.22}%
-\contentsline {paragraph}{Limitierungen:}{42}{section*.23}%
+\contentsline {paragraph}{Vorgehen.}{41}{section*.22}%
+\contentsline {paragraph}{MPC und Steuerung:}{42}{section*.23}%
+\contentsline {paragraph}{Limitierungen:}{42}{section*.24}%
 \contentsline {subsection}{\numberline {4.4}Gesamtregelung}{43}{subsection.4.4}%
 \contentsline {section}{\numberline {5}Ergebnisse}{44}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Fahrrad Datenblatt}{44}{subsection.5.1}%
 \contentsline {subsection}{\numberline {5.2}Teststrecken}{46}{subsection.5.2}%
 \contentsline {subsubsection}{\numberline {5.2.1}Kurvenfahrt}{46}{subsubsection.5.2.1}%
 \contentsline {subsubsection}{\numberline {5.2.2}S-Kurve}{48}{subsubsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{51}{subsubsection.5.2.3}%
-\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{51}{subsubsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{51}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{51}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{51}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Grenzen der Arbeit}{52}{section.6}%
-\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{53}{section.7}%
-\contentsline {section}{\numberline {8}Fazit}{54}{section.8}%
-\contentsline {section}{\numberline {9}Literaturverzeichnis}{55}{section.9}%
+\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{49}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{49}{subsubsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{49}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{49}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{49}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Grenzen der Arbeit}{50}{section.6}%
+\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{51}{section.7}%
+\contentsline {section}{\numberline {8}Fazit}{52}{section.8}%
+\contentsline {section}{\numberline {9}Literaturverzeichnis}{53}{section.9}%

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  28 AUG 2025 18:13
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  29 AUG 2025 12:42
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -928,37 +928,53 @@ Package pdftex.def Info: figures/querfehler.png  used on input line 363.
 
 
 [22 <./figures/querfehler.png>]
+<figures/Sensor.png, id=521, 1321.93875pt x 337.26pt>
+File: figures/Sensor.png Graphic file (type png)
+<use figures/Sensor.png>
+Package pdftex.def Info: figures/Sensor.png  used on input line 421.
+(pdftex.def)             Requested size: 469.75499pt x 119.84392pt.
 
-[23]
-Overfull \hbox (0.46405pt too wide) in paragraph at lines 453--461
+Overfull \hbox (8.65846pt too wide) in paragraph at lines 426--442
+\T1/lmr/m/n/10.95 dern den Vision-Lenkbefehl als Stell-gröÿe nutzt (d.h. bei starkem Lenken wird die Sollgeschwindigkeit
+ []
+
+
+Overfull \hbox (6.52333pt too wide) in paragraph at lines 426--442
+\T1/lmr/m/n/10.95 ten) wäre eben-falls denkbar ^^U hi-erzu würde der Rad-Encoder den Ist-Wert für einen Geschwindigkeits-
+ []
+
+
+
+[23 <./figures/Sensor.png>]
+Overfull \hbox (0.46405pt too wide) in paragraph at lines 462--470
 \T1/lmr/m/n/10.95 Bei \T1/lmr/bx/n/10.95 bürsten-be-hafteten DC-Motoren\T1/lmr/m/n/10.95 , wie sie in vie-len Robotikan-wen-dun-gen Ver-wen-dung finden,
  []
 
 
-Overfull \hbox (6.53902pt too wide) in paragraph at lines 468--481
+Overfull \hbox (6.53902pt too wide) in paragraph at lines 477--490
 \T1/lmr/m/n/10.95 Physikalisch be-deutet dies, dass bei Ab-we-ichung zwis-chen Soll- und Ist-Winkel ein proportional-
  []
 
 
 
 [24]
-<figures/rotational_motor.png, id=529, 432.61626pt x 266.9975pt>
+<figures/rotational_motor.png, id=532, 432.61626pt x 266.9975pt>
 File: figures/rotational_motor.png Graphic file (type png)
 <use figures/rotational_motor.png>
-Package pdftex.def Info: figures/rotational_motor.png  used on input line 501.
+Package pdftex.def Info: figures/rotational_motor.png  used on input line 510.
 (pdftex.def)             Requested size: 281.85585pt x 173.95778pt.
 
-Overfull \hbox (29.15538pt too wide) in paragraph at lines 508--525
+Overfull \hbox (29.15538pt too wide) in paragraph at lines 517--534
 \T1/lmr/m/n/10.95 ein-ma-lig \T1/lmtt/m/n/10.95 wb_motor_set_position(handlebars_motor, 0.0) \T1/lmr/m/n/10.95 aufgerufen, um die Start-Sollposition
  []
 
 
-Overfull \hbox (116.85878pt too wide) in paragraph at lines 526--543
+Overfull \hbox (116.85878pt too wide) in paragraph at lines 535--552
 \T1/lmr/m/n/10.95 Antrieb-smo-tor des Hin-ter-rads wird so be-trieben: im Ini-tial-isierungscode wird \T1/lmtt/m/n/10.95 wb_motor_set_position(wheel_motor,
  []
 
 
-Overfull \hbox (24.18466pt too wide) in paragraph at lines 526--543
+Overfull \hbox (24.18466pt too wide) in paragraph at lines 535--552
 \T1/lmtt/m/n/10.95 maxVelocity \T1/lmr/m/n/10.95 lim-i-tiert. In S-Kurven-Simulationen wurde typ-is-cher-weise eine Grundgeschwindigkeit
  []
 
@@ -973,74 +989,74 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 )
 
 [27]
-<figures/controller_synchronization.png, id=550, 481.8pt x 903.375pt>
+<figures/controller_synchronization.png, id=553, 481.8pt x 903.375pt>
 File: figures/controller_synchronization.png Graphic file (type png)
 <use figures/controller_synchronization.png>
-Package pdftex.def Info: figures/controller_synchronization.png  used on input line 724.
+Package pdftex.def Info: figures/controller_synchronization.png  used on input line 732.
 (pdftex.def)             Requested size: 234.87749pt x 440.39699pt.
 
 
 [28]
-Overfull \hbox (9.11702pt too wide) in paragraph at lines 730--736
+Overfull \hbox (9.11702pt too wide) in paragraph at lines 738--744
 \T1/lmr/m/n/10.95 (\T1/lmtt/m/n/10.95 wb_robot_step[]\T1/lmr/m/n/10.95 Aufruf) wer-den zunächst gesam-
  []
 
 
-Underfull \hbox (badness 1622) in paragraph at lines 730--736
+Underfull \hbox (badness 1622) in paragraph at lines 738--744
 \T1/lmr/m/n/10.95 u-la-tor den näch-sten Physikschritt und ak-
  []
 
 
-Underfull \hbox (badness 1472) in paragraph at lines 730--736
+Underfull \hbox (badness 1472) in paragraph at lines 738--744
 \T1/lmr/m/n/10.95 folgt. Dies garantiert Kon-sis-tenz, er-laubt
  []
 
 
-Overfull \hbox (30.83553pt too wide) in paragraph at lines 737--741
+Overfull \hbox (30.83553pt too wide) in paragraph at lines 745--749
 []\T1/lmr/m/n/10.95 Beispielsweise kann bei einer Weltzeit-schrittauflösung
  []
 
 
-Underfull \hbox (badness 6625) in paragraph at lines 742--746
+Underfull \hbox (badness 6625) in paragraph at lines 750--754
 \T1/lmr/m/n/10.95 ak-tiviert. Entsprechende Meth-o-den ex-
  []
 
 
-Overfull \hbox (62.68149pt too wide) in paragraph at lines 742--746
+Overfull \hbox (62.68149pt too wide) in paragraph at lines 750--754
 \T1/lmr/m/n/10.95 istieren in Python (\T1/lmtt/m/n/10.95 robot.getDevice()\T1/lmr/m/n/10.95 , \T1/lmtt/m/n/10.95 device.enable()\T1/lmr/m/n/10.95 ).
  []
 
 
-Underfull \hbox (badness 3690) in paragraph at lines 742--746
+Underfull \hbox (badness 3690) in paragraph at lines 750--754
 \T1/lmr/m/n/10.95 Ein Sen-sor liefert erst ab dem näch-sten
  []
 
 
-Overfull \hbox (14.2888pt too wide) in paragraph at lines 747--753
+Overfull \hbox (14.2888pt too wide) in paragraph at lines 755--761
 []\T1/lmr/m/n/10.95 Aktuatorbefehle (z.B. \T1/lmtt/m/n/10.95 wb_motor_set_position()
  []
 
 
 
 [29 <./figures/controller_synchronization.png>]
-Overfull \hbox (12.7328pt too wide) in paragraph at lines 786--792
+Overfull \hbox (12.7328pt too wide) in paragraph at lines 794--800
 \T1/lmr/m/n/10.95 Kanal 1). Zu-dem überwacht der Vision[]Controller den emp-fan-genen Fahrzeugzu-s-tand (\T1/lmtt/m/n/10.95 Receiver
  []
 
 
 
 [30]
-Overfull \hbox (0.62653pt too wide) in paragraph at lines 815--819
+Overfull \hbox (0.62653pt too wide) in paragraph at lines 823--827
 \T1/lmr/m/n/10.95 di-rekte Ein-stel-lung der Regelungspa-ram-e-ter während der Sim-u-la-tion. Über Slider und Eingabefelder
  []
 
-<figures/GUI_2.png, id=602, 1442.38875pt x 902.37125pt>
+<figures/GUI_2.png, id=605, 1442.38875pt x 902.37125pt>
 File: figures/GUI_2.png Graphic file (type png)
 <use figures/GUI_2.png>
-Package pdftex.def Info: figures/GUI_2.png  used on input line 845.
+Package pdftex.def Info: figures/GUI_2.png  used on input line 853.
 (pdftex.def)             Requested size: 469.75499pt x 293.87302pt.
 
-Overfull \hbox (16.04497pt too wide) in paragraph at lines 835--848
+Overfull \hbox (16.04497pt too wide) in paragraph at lines 843--856
 \T1/lmr/m/n/10.95 hal-ten ^^V mit Zeit-stem-pel und den rel-e-van-ten Mess- und Steuer-gröÿen (u.a. Winkel, Geschwindigkeiten,
  []
 
@@ -1052,7 +1068,7 @@ Overfull \hbox (16.04497pt too wide) in paragraph at lines 835--848
 \openout2 = `chapters/kapitel4.aux'.
 
  (./chapters/kapitel4.tex
-<figures/Kombimierter Regeler.png, id=615, 804.00375pt x 380.42125pt>
+<figures/Kombimierter Regeler.png, id=618, 804.00375pt x 380.42125pt>
 File: figures/Kombimierter Regeler.png Graphic file (type png)
 <use figures/Kombimierter Regeler.png>
 Package pdftex.def Info: figures/Kombimierter Regeler.png  used on input line 29.
@@ -1102,7 +1118,7 @@ Overfull \hbox (13.0397pt too wide) in paragraph at lines 167--174
 
 
 [37]
-<figures/Yolo_Snapshot.png, id=661, 644.4075pt x 356.33125pt>
+<figures/Yolo_Snapshot.png, id=664, 644.4075pt x 356.33125pt>
 File: figures/Yolo_Snapshot.png Graphic file (type png)
 <use figures/Yolo_Snapshot.png>
 Package pdftex.def Info: figures/Yolo_Snapshot.png  used on input line 219.
@@ -1110,7 +1126,7 @@ Package pdftex.def Info: figures/Yolo_Snapshot.png  used on input line 219.
 
 
 [38 <./figures/Yolo_Snapshot.png>]
-<figures/MPC.drawio.png, id=681, 522.95375pt x 587.19376pt>
+<figures/MPC.drawio.png, id=684, 522.95375pt x 587.19376pt>
 File: figures/MPC.drawio.png Graphic file (type png)
 <use figures/MPC.drawio.png>
 Package pdftex.def Info: figures/MPC.drawio.png  used on input line 267.
@@ -1125,7 +1141,7 @@ Overfull \hbox (3.01244pt too wide) in paragraph at lines 273--279
 
 
 [40 <./figures/MPC.drawio.png>]
-<figures/Fallback_snapshot.png, id=694, 1281.78876pt x 359.3425pt>
+<figures/Fallback_snapshot.png, id=697, 1281.78876pt x 359.3425pt>
 File: figures/Fallback_snapshot.png Graphic file (type png)
 <use figures/Fallback_snapshot.png>
 Package pdftex.def Info: figures/Fallback_snapshot.png  used on input line 292.
@@ -1140,7 +1156,7 @@ Overfull \hbox (7.22272pt too wide) in paragraph at lines 336--337
 
 
 [42]
-<figures/Gesamtregler.png, id=726, 522.95375pt x 587.19376pt>
+<figures/Gesamtregler.png, id=729, 522.95375pt x 587.19376pt>
 File: figures/Gesamtregler.png Graphic file (type png)
 <use figures/Gesamtregler.png>
 Package pdftex.def Info: figures/Gesamtregler.png  used on input line 344.
@@ -1165,7 +1181,7 @@ Overfull \hbox (6.6715pt too wide) in paragraph at lines 28--32
 \T1/lmr/m/n/10.95 Trak-tion; ein geringer Rück-pral-lko-ef-fizient von 0,1 be-grenzt die Sprun-ge-las-tiz-ität des Reifenkon-
  []
 
-<figures/Datenblatt.png, id=734, 844.15375pt x 522.95375pt>
+<figures/Datenblatt.png, id=737, 844.15375pt x 522.95375pt>
 File: figures/Datenblatt.png Graphic file (type png)
 <use figures/Datenblatt.png>
 Package pdftex.def Info: figures/Datenblatt.png  used on input line 36.
@@ -1177,7 +1193,7 @@ Package pdftex.def Info: figures/Datenblatt.png  used on input line 36.
 
 
 ]
-<figures/Kurve.jpeg, id=739, 4015.0pt x 4015.0pt>
+<figures/Kurve.jpeg, id=742, 4015.0pt x 4015.0pt>
 File: figures/Kurve.jpeg Graphic file (type jpg)
 <use figures/Kurve.jpeg>
 Package pdftex.def Info: figures/Kurve.jpeg  used on input line 55.
@@ -1185,7 +1201,7 @@ Package pdftex.def Info: figures/Kurve.jpeg  used on input line 55.
 
 
 [45 <./figures/Datenblatt.png>]
-<figures/Kurve/Daten_Yolo.png, id=746, 1395.2125pt x 765.86125pt>
+<figures/Kurve/Daten_Yolo.png, id=749, 1395.2125pt x 765.86125pt>
 File: figures/Kurve/Daten_Yolo.png Graphic file (type png)
 <use figures/Kurve/Daten_Yolo.png>
 Package pdftex.def Info: figures/Kurve/Daten_Yolo.png  used on input line 62.
@@ -1193,17 +1209,17 @@ Package pdftex.def Info: figures/Kurve/Daten_Yolo.png  used on input line 62.
 
 
 [46 <./figures/Kurve.jpeg>]
-<figures/Kurve/Error_Yolo.png, id=752, 1378.14874pt x 392.46625pt>
+<figures/Kurve/Error_Yolo.png, id=755, 1378.14874pt x 392.46625pt>
 File: figures/Kurve/Error_Yolo.png Graphic file (type png)
 <use figures/Kurve/Error_Yolo.png>
 Package pdftex.def Info: figures/Kurve/Error_Yolo.png  used on input line 69.
 (pdftex.def)             Requested size: 375.80542pt x 107.02127pt.
-<figures/Kurve/Daten_Fallback.png, id=753, 1406.25375pt x 763.85374pt>
+<figures/Kurve/Daten_Fallback.png, id=756, 1406.25375pt x 763.85374pt>
 File: figures/Kurve/Daten_Fallback.png Graphic file (type png)
 <use figures/Kurve/Daten_Fallback.png>
 Package pdftex.def Info: figures/Kurve/Daten_Fallback.png  used on input line 76.
 (pdftex.def)             Requested size: 375.80542pt x 204.12196pt.
-<figures/Kurve/Error_Fallback.png, id=754, 1373.13pt x 396.48125pt>
+<figures/Kurve/Error_Fallback.png, id=757, 1373.13pt x 396.48125pt>
 File: figures/Kurve/Error_Fallback.png Graphic file (type png)
 <use figures/Kurve/Error_Fallback.png>
 Package pdftex.def Info: figures/Kurve/Error_Fallback.png  used on input line 83.
@@ -1211,57 +1227,50 @@ Package pdftex.def Info: figures/Kurve/Error_Fallback.png  used on input line 83
 
 
 [47 <./figures/Kurve/Daten_Yolo.png> <./figures/Kurve/Error_Yolo.png> <./figures/Kurve/Daten_Fallback.png>]
-<figures/S-Kurve.png, id=765, 1541.76pt x 1027.84pt>
+<figures/S-Kurve.png, id=768, 1535.7375pt x 490.83376pt>
 File: figures/S-Kurve.png Graphic file (type png)
 <use figures/S-Kurve.png>
 Package pdftex.def Info: figures/S-Kurve.png  used on input line 97.
-(pdftex.def)             Requested size: 375.80542pt x 250.52911pt.
-<figures/S-Kurve/Yolo_Daten.png, id=766, 1367.1075pt x 748.7975pt>
-File: figures/S-Kurve/Yolo_Daten.png Graphic file (type png)
-<use figures/S-Kurve/Yolo_Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Yolo_Daten.png  used on input line 104.
-(pdftex.def)             Requested size: 375.80542pt x 205.83424pt.
+(pdftex.def)             Requested size: 375.80542pt x 120.10927pt.
+<figures/S-Kurve/Fallback-Daten.png, id=769, 1306.8825pt x 341.275pt>
+File: figures/S-Kurve/Fallback-Daten.png Graphic file (type png)
+<use figures/S-Kurve/Fallback-Daten.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback-Daten.png  used on input line 104.
+(pdftex.def)             Requested size: 375.80542pt x 98.13402pt.
+<figures/S-Kurve/Fallback-Error.png, id=770, 1306.8825pt x 342.27875pt>
+File: figures/S-Kurve/Fallback-Error.png Graphic file (type png)
+<use figures/S-Kurve/Fallback-Error.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback-Error.png  used on input line 111.
+(pdftex.def)             Requested size: 375.80542pt x 98.42264pt.
+File: figures/S-Kurve/Fallback-Daten.png Graphic file (type png)
+<use figures/S-Kurve/Fallback-Daten.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback-Daten.png  used on input line 118.
+(pdftex.def)             Requested size: 375.80542pt x 98.13402pt.
 
 
-[48 <./figures/Kurve/Error_Fallback.png> <./figures/S-Kurve.png>]
-<figures/S-Kurve/Yolo_Error.png, id=774, 1392.20125pt x 774.895pt>
-File: figures/S-Kurve/Yolo_Error.png Graphic file (type png)
-<use figures/S-Kurve/Yolo_Error.png>
-Package pdftex.def Info: figures/S-Kurve/Yolo_Error.png  used on input line 111.
-(pdftex.def)             Requested size: 375.80542pt x 209.16533pt.
-<figures/S-Kurve/Fallback_Daten.png, id=775, 1379.1525pt x 761.84625pt>
-File: figures/S-Kurve/Fallback_Daten.png Graphic file (type png)
-<use figures/S-Kurve/Fallback_Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback_Daten.png  used on input line 118.
-(pdftex.def)             Requested size: 375.80542pt x 207.59608pt.
-
-
-[49 <./figures/S-Kurve/Yolo_Daten.png> <./figures/S-Kurve/Yolo_Error.png>]
-<figures/S-Kurve/Fallback_Error.png, id=785, 1379.1525pt x 393.47pt>
-File: figures/S-Kurve/Fallback_Error.png Graphic file (type png)
-<use figures/S-Kurve/Fallback_Error.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback_Error.png  used on input line 125.
-(pdftex.def)             Requested size: 375.80542pt x 107.21693pt.
-<figures/Huegel.png, id=786, 1116.17pt x 887.315pt>
+[48 <./figures/Kurve/Error_Fallback.png> <./figures/S-Kurve.png> <./figures/S-Kurve/Fallback-Daten.png> <./figures/S-Kurve/Fallback-Error.png>]
+File: figures/S-Kurve/Fallback-Error.png Graphic file (type png)
+<use figures/S-Kurve/Fallback-Error.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback-Error.png  used on input line 125.
+(pdftex.def)             Requested size: 375.80542pt x 98.42264pt.
+<figures/Huegel.png, id=782, 1116.17pt x 887.315pt>
 File: figures/Huegel.png Graphic file (type png)
 <use figures/Huegel.png>
 Package pdftex.def Info: figures/Huegel.png  used on input line 153.
 (pdftex.def)             Requested size: 225.48038pt x 179.24704pt.
-<figures/Tunnel.png, id=787, 1114.1625pt x 891.33pt>
+<figures/Tunnel.png, id=783, 1114.1625pt x 891.33pt>
 File: figures/Tunnel.png Graphic file (type png)
 <use figures/Tunnel.png>
 Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
 (pdftex.def)             Requested size: 225.48038pt x 180.38454pt.
 
 
-[50 <./figures/S-Kurve/Fallback_Daten.png> <./figures/S-Kurve/Fallback_Error.png>]
-
-[51 <./figures/Huegel.png> <./figures/Tunnel.png>])
+[49 <./figures/Huegel.png> <./figures/Tunnel.png>])
 \openout2 = `chapters/kapitel6.aux'.
 
  (./chapters/kapitel6.tex)
 
-[52
+[50
 
 
 
@@ -1270,7 +1279,7 @@ Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
 
  (./chapters/kapitel7.tex)
 
-[53
+[51
 
 
 
@@ -1279,13 +1288,13 @@ Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
 
  (./chapters/kapitel8.tex)
 
-[54
+[52
 
 
 
 ]
 
-[55
+[53
 
 
 ] (./seminar_vorlage.bbl
@@ -1300,11 +1309,11 @@ Underfull \hbox (badness 1609) in paragraph at lines 72--76
 
 
 
-[56]
+[54]
 
-[57])
+[55])
 
-[58] (./seminar_vorlage.aux (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
+[56] (./seminar_vorlage.aux (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
 \openout3 = `seminar_vorlage.upb'.
 
  (./seminar_vorlage.upa))
@@ -1320,18 +1329,18 @@ Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
 (rerunfilecheck)             Checksum: A5A7EBA4AE6E0EB1CD62BD0518286984;8627.
  ) 
 Here is how much of TeX's memory you used:
- 26060 strings out of 473190
- 527613 string characters out of 5704335
- 1229157 words of memory out of 5000000
- 48578 multiletter control sequences out of 15000+600000
+ 26053 strings out of 473190
+ 527290 string characters out of 5704335
+ 1229281 words of memory out of 5000000
+ 48572 multiletter control sequences out of 15000+600000
  631501 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  86i,8n,131p,1387b,2762s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on seminar_vorlage.pdf (58 pages, 13116686 bytes).
+Output written on seminar_vorlage.pdf (56 pages, 11520934 bytes).
 PDF statistics:
- 1006 PDF objects out of 1200 (max. 8388607)
- 846 compressed objects within 9 object streams
- 304 named destinations out of 1000 (max. 500000)
- 493 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 997 PDF objects out of 1000 (max. 8388607)
+ 841 compressed objects within 9 object streams
+ 303 named destinations out of 1000 (max. 500000)
+ 488 words of extra memory for PDF output out of 10000 (max. 10000000)
 

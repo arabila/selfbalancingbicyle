@@ -1,7 +1,7 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 2.0,
+            "angle_Kp": 5.0,
             "angle_Ki": 0.1,
             "angle_Kd": 0.2,
             "angle_output_min": -0.3,
@@ -10,9 +10,9 @@
             "angle_integral_max": 60.0
         },
         "speed_control": {
-            "base_speed": 6.172839506172839,
+            "base_speed": 4.320987654320987,
             "min_speed": 3.0864197530864197,
-            "max_speed": 7.4074074074074066
+            "max_speed": 4.320987654320987
         },
         "mechanical_limits": {
             "max_handlebar_angle": 1.5,

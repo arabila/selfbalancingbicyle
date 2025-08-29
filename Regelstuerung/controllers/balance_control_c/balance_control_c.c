@@ -299,9 +299,18 @@ static double rear_wheel_kmh_from_omega(double omega);
         send_balance_status(&status);
         
         //--------------------------------
-        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten)
+        // 8. Erweiterte Logging-Daten (inklusive Physik-Informationen + Vision-Daten + Position)
         //--------------------------------
         if (config.system.enable_logging) {
+            // Position und Orientierung aus Webots-Supervisor abrufen
+            const double *position = wb_supervisor_node_get_position(robot_node);
+            const double *orientation = wb_supervisor_node_get_orientation(robot_node);
+            
+            // Euler-Winkel aus Rotationsmatrix berechnen
+            float yaw = (float)atan2(orientation[3], orientation[0]);
+            float pitch = (float)asin(-orientation[6]);
+            float roll_world = (float)atan2(orientation[7], orientation[8]);
+            
             balance_log_data_t log_data = {
                 // Balance-Controller-Daten
                 .timestamp = wb_robot_get_time(),
@@ -316,6 +325,14 @@ static double rear_wheel_kmh_from_omega(double omega);
                 .d_term = angle_pid.derivative_term,
                 .error = angle_pid.error_history[angle_pid.history_counter],
                 .stability_factor = stability_factor,
+                
+                // Position und Orientierung (für Pfad-Visualisierung)
+                .pos_x = (float)position[0],
+                .pos_y = (float)position[1], 
+                .pos_z = (float)position[2],
+                .yaw = yaw,
+                .pitch = pitch,
+                .roll_world = roll_world,
                 
                 // Vision-Controller-Daten (vereinfacht)
                 .vision_error = vision_active ? last_vision_command.vision_error : 0.0f,

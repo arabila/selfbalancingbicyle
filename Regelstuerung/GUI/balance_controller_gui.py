@@ -18,6 +18,7 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 import pandas as pd
 import locale
+from path_visualizer import PathVisualizer, PathMonitor
 
 # Einfache i18n-Unterstützung über .arb-Dateien (DE/EN)
 try:
@@ -188,6 +189,10 @@ class BalanceControllerGUI:
         self.effects_widgets = {}
         self.status_vars = {}
         
+        # Path Visualizer initialisieren
+        self.path_visualizer = PathVisualizer("S-Kurve")  # TODO: Dynamisch basierend auf aktueller Welt
+        self.path_monitor = PathMonitor(self.path_visualizer, self.monitoring_dir)
+        
         self.setup_gui()
         self.load_config()
         
@@ -207,6 +212,11 @@ class BalanceControllerGUI:
         monitor_frame = ttk.Frame(notebook)
         notebook.add(monitor_frame, text="Monitoring")
         self.setup_monitoring_tab(monitor_frame)
+        
+        # Tab 3: Fahrtstrecke (Path Visualization)
+        path_frame = ttk.Frame(notebook)
+        notebook.add(path_frame, text="Fahrtstrecke")
+        self.setup_path_tab(path_frame)
         
         # Build & Compiler
         build_frame = ttk.Frame(notebook)
@@ -597,6 +607,152 @@ class BalanceControllerGUI:
         return fs
         
     # Preset-Tab entfernt
+        
+    def setup_path_tab(self, parent):
+        """Erstelle das Fahrtstrecken-Visualisierungs-Tab"""
+        
+        # Hauptcontainer
+        main_frame = ttk.Frame(parent)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+        
+        # ALLE BUTTONS OBEN - Gesamte Kontrollleiste
+        control_frame = ttk.Frame(main_frame)
+        control_frame.pack(fill=tk.X, pady=(0, 10))
+        
+        # Live-Monitoring Buttons (links)
+        live_buttons_frame = ttk.Frame(control_frame)
+        live_buttons_frame.pack(side=tk.LEFT)
+        
+        ttk.Button(live_buttons_frame, text="🎯 Monitoring Starten", 
+                  command=self.start_path_monitoring).pack(side=tk.LEFT, padx=5)
+        ttk.Button(live_buttons_frame, text="⏹ Monitoring Stoppen", 
+                  command=self.stop_path_monitoring).pack(side=tk.LEFT, padx=5)
+        ttk.Button(live_buttons_frame, text="🗑 Pfad Löschen", 
+                  command=self.clear_current_path).pack(side=tk.LEFT, padx=5)
+        ttk.Button(live_buttons_frame, text="💾 Pfad Speichern", 
+                  command=self.save_current_path).pack(side=tk.LEFT, padx=5)
+        
+        # Separator
+        ttk.Separator(control_frame, orient='vertical').pack(side=tk.LEFT, fill=tk.Y, padx=10)
+        
+        # Galerie-Buttons (mitte)
+        gallery_buttons_frame = ttk.Frame(control_frame)
+        gallery_buttons_frame.pack(side=tk.LEFT)
+        
+        ttk.Button(gallery_buttons_frame, text="🔄 Galerie Aktualisieren", 
+                  command=self.refresh_path_gallery).pack(side=tk.LEFT, padx=5)
+        ttk.Button(gallery_buttons_frame, text="📁 Galerie Öffnen", 
+                  command=self.open_gallery_folder).pack(side=tk.LEFT, padx=5)
+        ttk.Button(gallery_buttons_frame, text="🗑 Auswahl Löschen", 
+                  command=self.delete_selected_runs).pack(side=tk.LEFT, padx=5)
+        
+        # Separator
+        ttk.Separator(control_frame, orient='vertical').pack(side=tk.LEFT, fill=tk.Y, padx=10)
+        
+        # Karten-Auswahl (mitte-rechts)
+        map_frame = ttk.Frame(control_frame)
+        map_frame.pack(side=tk.LEFT)
+        
+        ttk.Label(map_frame, text="Karte:").pack(side=tk.LEFT)
+        self.map_var = tk.StringVar(value="S-Kurve")
+        map_combo = ttk.Combobox(map_frame, textvariable=self.map_var, 
+                                values=list(self.path_visualizer.get_available_maps().keys()),
+                                state="readonly", width=20)
+        map_combo.pack(side=tk.LEFT, padx=5)
+        map_combo.bind("<<ComboboxSelected>>", self.on_map_changed)
+        
+        # Status-Anzeige (rechts)
+        status_frame = ttk.Frame(control_frame)
+        status_frame.pack(side=tk.RIGHT, padx=10)
+        
+        ttk.Label(status_frame, text="Status:").pack(side=tk.LEFT)
+        self.path_status_text = tk.StringVar(value="Bereit")
+        ttk.Label(status_frame, textvariable=self.path_status_text, 
+                 font=("Arial", 10, "bold"), foreground="green").pack(side=tk.LEFT, padx=5)
+        
+        # Paned Window für Live-View und Galerie (OHNE Button-Bereiche)
+        paned = ttk.PanedWindow(main_frame, orient=tk.VERTICAL)
+        paned.pack(fill=tk.BOTH, expand=True)
+        
+        # Oberer Bereich: Live Pfad-Visualisierung (nur Plot)
+        live_frame = ttk.LabelFrame(paned, text="Live Pfad-Visualisierung")
+        paned.add(live_frame, weight=2)
+        
+        # Live-Plot-Bereich (direkt ohne Button-Bereich)
+        plot_frame = ttk.Frame(live_frame)
+        plot_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        
+        # Path Visualizer Live-Plot einrichten
+        self.path_canvas = self.path_visualizer.setup_live_plot(plot_frame)
+        
+        # Unterer Bereich: Galerie gespeicherter Fahrten (nur Liste)
+        gallery_frame = ttk.LabelFrame(paned, text="Galerie gespeicherter Fahrten")
+        paned.add(gallery_frame, weight=1)
+        
+        # Galerie-Liste (direkt ohne Button-Bereich)
+        gallery_list_frame = ttk.Frame(gallery_frame)
+        gallery_list_frame.pack(fill=tk.BOTH, expand=True, padx=10, pady=5)
+        
+        # Treeview für Galerie-Einträge
+        columns = ("Datum", "Dauer", "Punkte", "Welt", "Datei")
+        self.gallery_tree = ttk.Treeview(gallery_list_frame, columns=columns, show="headings", height=8)
+        
+        for col in columns:
+            self.gallery_tree.heading(col, text=col)
+            if col == "Datum":
+                self.gallery_tree.column(col, width=150)
+            elif col == "Dauer":
+                self.gallery_tree.column(col, width=80)
+            elif col == "Punkte":
+                self.gallery_tree.column(col, width=80)
+            elif col == "Welt":
+                self.gallery_tree.column(col, width=120)
+            else:
+                self.gallery_tree.column(col, width=200)
+        
+        # Scrollbar für Galerie
+        gallery_scrollbar = ttk.Scrollbar(gallery_list_frame, orient="vertical", 
+                                         command=self.gallery_tree.yview)
+        self.gallery_tree.configure(yscrollcommand=gallery_scrollbar.set)
+        
+        self.gallery_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        gallery_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        
+        # Doppelklick-Handler für Galerie-Einträge
+        self.gallery_tree.bind("<Double-1>", self.on_gallery_item_double_click)
+        
+        # Galerie initial laden
+        self.refresh_path_gallery()
+        
+        # Timer für Live-Updates
+        self.path_update_timer = None
+        self.start_path_update_timer()
+        
+        # Doppelklick-Handler für Galerie-Einträge
+        self.gallery_tree.bind("<Double-1>", self.on_gallery_item_double_click)
+        
+        # Galerie initial laden
+        self.refresh_path_gallery()
+        
+                # Timer für Live-Updates
+        self.path_update_timer = None
+        self.start_path_update_timer()
+    
+    def on_map_changed(self, event=None):
+        """Handler für Karten-Wechsel - aktualisiert Karte und Startposition"""
+        try:
+            new_map = self.map_var.get()
+            
+            # Karte wechseln
+            if self.path_visualizer.switch_map(new_map):
+                self.path_status_text.set(f"Karte gewechselt zu: {new_map}")
+                print(f"✓ Benutzer-Wechsel zu Karte: {new_map}")
+            else:
+                self.path_status_text.set(f"Fehler beim Karten-Wechsel")
+                
+        except Exception as e:
+            self.path_status_text.set(f"Fehler beim Karten-Wechsel: {str(e)}")
+            print(f"❌ Fehler beim Karten-Wechsel: {e}")
         
     def setup_build_tab(self, parent):
         """Erstelle das Build & Compiler-Tab"""
@@ -1451,6 +1607,219 @@ class BalanceControllerGUI:
             # Prüfe alle 5 Sekunden den Build-Status
             self.check_build_status()
             self.root.after(5000, self.build_monitor_loop)  # 5 Sekunden statt 30s
+    
+    # ===== PATH VISUALIZATION METHODS =====
+    
+    def start_path_monitoring(self):
+        """Startet die Pfad-Überwachung"""
+        try:
+            # Neueste CSV-Datei im Monitoring-Verzeichnis finden
+            csv_files = [f for f in os.listdir(self.monitoring_dir) if f.endswith('.csv')]
+            if not csv_files:
+                self.path_status_text.set("Keine CSV-Dateien gefunden")
+                return
+            
+            # Neueste Datei wählen
+            latest_csv = sorted(csv_files)[-1]
+            csv_path = os.path.join(self.monitoring_dir, latest_csv)
+            
+            # Monitoring starten
+            self.path_monitor.start_monitoring(csv_path)
+            self.path_status_text.set(f"Monitoring: {latest_csv}")
+            
+            print(f"✓ Pfad-Monitoring gestartet: {latest_csv}")
+            
+        except Exception as e:
+            self.path_status_text.set(f"Fehler: {str(e)}")
+            print(f"❌ Fehler beim Starten des Pfad-Monitorings: {e}")
+    
+    def stop_path_monitoring(self):
+        """Stoppt die Pfad-Überwachung"""
+        try:
+            self.path_monitor.stop_monitoring()
+            self.path_status_text.set("Monitoring gestoppt")
+            print("✓ Pfad-Monitoring gestoppt")
+            
+        except Exception as e:
+            self.path_status_text.set(f"Fehler: {str(e)}")
+            print(f"❌ Fehler beim Stoppen des Pfad-Monitorings: {e}")
+    
+    def clear_current_path(self):
+        """Löscht den aktuellen Pfad"""
+        try:
+            self.path_visualizer.clear_path()
+            self.path_status_text.set("Pfad gelöscht")
+            print("✓ Aktueller Pfad gelöscht")
+            
+        except Exception as e:
+            self.path_status_text.set(f"Fehler: {str(e)}")
+            print(f"❌ Fehler beim Löschen des Pfades: {e}")
+    
+    def save_current_path(self):
+        """Speichert den aktuellen Pfad"""
+        try:
+            if not self.path_visualizer.path_points:
+                self.path_status_text.set("Kein Pfad zum Speichern")
+                return
+            
+            # Pfad exportieren
+            image_path, metadata_path = self.path_monitor.finalize_run()
+            
+            if image_path:
+                self.path_status_text.set("Pfad gespeichert")
+                self.refresh_path_gallery()  # Galerie aktualisieren
+                print(f"✓ Pfad gespeichert: {os.path.basename(image_path)}")
+            else:
+                self.path_status_text.set("Speichern fehlgeschlagen")
+                
+        except Exception as e:
+            self.path_status_text.set(f"Fehler: {str(e)}")
+            print(f"❌ Fehler beim Speichern des Pfades: {e}")
+    
+    def refresh_path_gallery(self):
+        """Aktualisiert die Galerie gespeicherter Fahrten"""
+        try:
+            # Bestehende Einträge löschen
+            for item in self.gallery_tree.get_children():
+                self.gallery_tree.delete(item)
+            
+            # Neue Einträge laden
+            runs = self.path_visualizer.get_gallery_runs()
+            
+            for run in runs:
+                # Datum formatieren
+                date_str = run["created"].strftime("%d.%m.%Y %H:%M")
+                
+                # Dauer formatieren
+                duration = run.get("duration_seconds", 0)
+                duration_str = f"{duration:.1f}s" if duration > 0 else "N/A"
+                
+                # Punkte
+                points = run.get("total_points", "N/A")
+                
+                # Welt
+                world = run.get("world_name", "Unbekannt")
+                
+                # Dateiname
+                filename = run.get("filename", "N/A")
+                
+                # Eintrag hinzufügen
+                self.gallery_tree.insert("", "end", values=(
+                    date_str, duration_str, points, world, filename
+                ), tags=(run["image_path"],))  # Image-Pfad als Tag speichern
+            
+            print(f"✓ Galerie aktualisiert: {len(runs)} Einträge")
+            
+        except Exception as e:
+            print(f"❌ Fehler beim Aktualisieren der Galerie: {e}")
+    
+    def open_gallery_folder(self):
+        """Öffnet den Galerie-Ordner im Datei-Explorer"""
+        try:
+            import subprocess
+            import platform
+            
+            gallery_path = self.path_visualizer.gallery_dir
+            
+            if platform.system() == "Darwin":  # macOS
+                subprocess.run(["open", gallery_path])
+            elif platform.system() == "Windows":
+                subprocess.run(["explorer", gallery_path])
+            else:  # Linux
+                subprocess.run(["xdg-open", gallery_path])
+            
+            print(f"✓ Galerie-Ordner geöffnet: {gallery_path}")
+            
+        except Exception as e:
+            print(f"❌ Fehler beim Öffnen des Galerie-Ordners: {e}")
+    
+    def delete_selected_runs(self):
+        """Löscht die ausgewählten Galerie-Einträge"""
+        try:
+            selected_items = self.gallery_tree.selection()
+            if not selected_items:
+                return
+            
+            # Bestätigung
+            from tkinter import messagebox
+            if not messagebox.askyesno("Löschen bestätigen", 
+                                     f"Möchten Sie {len(selected_items)} Einträge wirklich löschen?"):
+                return
+            
+            # Dateien löschen
+            deleted_count = 0
+            for item in selected_items:
+                tags = self.gallery_tree.item(item)["tags"]
+                if tags:
+                    image_path = tags[0]
+                    try:
+                        # Bild-Datei löschen
+                        if os.path.exists(image_path):
+                            os.remove(image_path)
+                        
+                        # Zugehörige Metadaten-Datei löschen
+                        base_name = os.path.basename(image_path).replace('path_', '').replace('.png', '')
+                        metadata_path = os.path.join(os.path.dirname(image_path), f"metadata_{base_name}.json")
+                        if os.path.exists(metadata_path):
+                            os.remove(metadata_path)
+                        
+                        deleted_count += 1
+                        
+                    except Exception as e:
+                        print(f"⚠ Fehler beim Löschen von {image_path}: {e}")
+            
+            # Galerie aktualisieren
+            self.refresh_path_gallery()
+            print(f"✓ {deleted_count} Galerie-Einträge gelöscht")
+            
+        except Exception as e:
+            print(f"❌ Fehler beim Löschen der Galerie-Einträge: {e}")
+    
+    def on_gallery_item_double_click(self, event):
+        """Handler für Doppelklick auf Galerie-Eintrag"""
+        try:
+            selected_item = self.gallery_tree.selection()[0]
+            tags = self.gallery_tree.item(selected_item)["tags"]
+            
+            if tags:
+                image_path = tags[0]
+                
+                # Bild im Standard-Viewer öffnen
+                import subprocess
+                import platform
+                
+                if platform.system() == "Darwin":  # macOS
+                    subprocess.run(["open", image_path])
+                elif platform.system() == "Windows":
+                    subprocess.run(["start", image_path], shell=True)
+                else:  # Linux
+                    subprocess.run(["xdg-open", image_path])
+                
+                print(f"✓ Bild geöffnet: {os.path.basename(image_path)}")
+                
+        except (IndexError, Exception) as e:
+            print(f"❌ Fehler beim Öffnen des Bildes: {e}")
+    
+    def start_path_update_timer(self):
+        """Startet den Timer für Live-Path-Updates"""
+        if self.path_update_timer:
+            self.root.after_cancel(self.path_update_timer)
+        
+        def update_path():
+            try:
+                # Neue Punkte aus CSV-Monitor abrufen
+                new_points_count = self.path_monitor.update_from_csv()
+                
+                # Timer für nächstes Update setzen
+                self.path_update_timer = self.root.after(1000, update_path)  # Alle 1 Sekunde
+                
+            except Exception as e:
+                print(f"⚠ Fehler beim Path-Update: {e}")
+                # Timer trotzdem weiterlaufen lassen
+                self.path_update_timer = self.root.after(1000, update_path)
+        
+        # Ersten Update starten
+        self.path_update_timer = self.root.after(1000, update_path)
 
 def main():
     root = tk.Tk()

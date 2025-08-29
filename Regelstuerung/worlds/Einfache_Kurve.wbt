@@ -19,8 +19,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.002687114690965593 -0.041184234480630424 -0.9991479561330654 3.778599591163556
-  position 2.684244649795158 -30.414889012884824 0.3380246103646121
+  orientation 0.10739757119957528 -0.2820684426536848 -0.9533641252739464 5.062348256695599
+  position -19.660876117586895 -24.98529336027744 2.2539680549573005
   follow "Little Bicycle V2"
 }
 TexturedBackground {
@@ -36,7 +36,7 @@ RectangleArena {
   floorAppearance PBRAppearance {
     baseColorMap ImageTexture {
       url [
-        "textures/track012.png"
+        "textures/Leichte_Kurven_Fahrt.jpeg"
       ]
     }
     roughness 1
@@ -45,16 +45,8 @@ RectangleArena {
   wallThickness 0.001
   wallHeight 0.001
 }
-DEF AIR Fluid {
-  name "air"
-  density 1.225
-  viscosity 1.81e-05
-  boundingObject Box {
-    size 100 100 20
-  }
-}
 DEF BICYCLE Robot {
-  translation -0.360927 -27.6462 0.364751
+  translation -17.4925 -18.6332 0.35986
   rotation -0.0013687368980307246 -0.00011482480731350512 0.9999990566868389 3.1373353733828835
   children [
     DEF frame Transform {
@@ -85,8 +77,8 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation -6.888021104600739e-07 0.5312006106345493 1.6080301681931086e-05
-        rotation 0.999999999998783 -1.5317467950631663e-06 -2.9635023884773227e-07 -2.7907148526445114
+        translation -2.1788174748849087e-06 0.531193991636363 0.00011115833496270672
+        rotation 0.9999999999937303 -1.0379753714155336e-07 3.539602644722272e-06 3.4924704545135543
         children [
           DEF wheel Transform {
             scale 0.004 0.0081 0.0081
@@ -112,7 +104,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.02
+              height 0.07
               radius 0.45
               subdivision 72
             }
@@ -171,8 +163,8 @@ DEF BICYCLE Robot {
               staticFriction 0.1
             }
             endPoint Solid {
-              translation -1.3265586247257488e-06 -0.23679620726714035 -0.652798613497641
-              rotation -0.9999999999962663 1.3696051463281086e-06 -2.364639069423281e-06 0.926850710974474
+              translation -1.3265586247257488e-06 -0.2367962072671404 -0.652798613497641
+              rotation -0.9999999999962663 1.3696051463281097e-06 -2.364639069423282e-06 0.926850710974474
               children [
                 DEF wheel Transform {
                   scale 0.004 0.0081 0.0081
@@ -198,7 +190,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.02
+                    height 0.07
                     radius 0.45
                     subdivision 72
                   }
