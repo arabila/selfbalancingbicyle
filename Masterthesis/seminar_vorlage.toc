@@ -38,15 +38,15 @@
 \contentsline {subsection}{\numberline {4.4}Gesamtregelung}{43}{subsection.4.4}%
 \contentsline {section}{\numberline {5}Ergebnisse}{44}{section.5}%
 \contentsline {subsection}{\numberline {5.1}Fahrrad Datenblatt}{44}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Teststrecken}{46}{subsection.5.2}%
-\contentsline {subsubsection}{\numberline {5.2.1}Kurvenfahrt}{46}{subsubsection.5.2.1}%
-\contentsline {subsubsection}{\numberline {5.2.2}S-Kurve}{48}{subsubsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{49}{subsubsection.5.2.3}%
-\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{49}{subsubsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{49}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{49}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{49}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Grenzen der Arbeit}{50}{section.6}%
-\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{51}{section.7}%
-\contentsline {section}{\numberline {8}Fazit}{52}{section.8}%
-\contentsline {section}{\numberline {9}Literaturverzeichnis}{53}{section.9}%
+\contentsline {subsection}{\numberline {5.2}Teststrecken}{45}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Kurvenfahrt}{45}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}S-Kurve}{47}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{48}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{48}{subsubsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{48}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{48}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{48}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Grenzen der Arbeit}{49}{section.6}%
+\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{50}{section.7}%
+\contentsline {section}{\numberline {8}Fazit}{51}{section.8}%
+\contentsline {section}{\numberline {9}Literaturverzeichnis}{52}{section.9}%

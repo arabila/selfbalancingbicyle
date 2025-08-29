@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  29 AUG 2025 12:42
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  29 AUG 2025 19:45
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -616,7 +616,41 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 
 LaTeX Warning: Label `fig:fallback' multiply defined.
 
-) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux))
+) (./chapters/kapitel5.aux
+
+LaTeX Warning: Label `fig:kurve-yolo-daten' multiply defined.
+
+
+LaTeX Warning: Label `fig:error-fallback-kurve' multiply defined.
+
+
+LaTeX Warning: Label `fig:error-fallback-kurve' multiply defined.
+
+
+LaTeX Warning: Label `fig:fallback-strecke-s-kurve' multiply defined.
+
+
+LaTeX Warning: Label `fig:fallback-strecke-s-kurve' multiply defined.
+
+
+LaTeX Warning: Label `fig:fallback-strecke-s-kurve' multiply defined.
+
+
+LaTeX Warning: Label `fig:huegel' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:huegel' multiply defined.
+
+
+LaTeX Warning: Label `fig:tunnel' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:tunnel' multiply defined.
+
+
+LaTeX Warning: Label `fig:huegel-tunnel' multiply defined.
+
+) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux))
 \openout1 = `seminar_vorlage.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 86.
@@ -1126,11 +1160,11 @@ Package pdftex.def Info: figures/Yolo_Snapshot.png  used on input line 219.
 
 
 [38 <./figures/Yolo_Snapshot.png>]
-<figures/MPC.drawio.png, id=684, 522.95375pt x 587.19376pt>
-File: figures/MPC.drawio.png Graphic file (type png)
-<use figures/MPC.drawio.png>
-Package pdftex.def Info: figures/MPC.drawio.png  used on input line 267.
-(pdftex.def)             Requested size: 469.75499pt x 527.47496pt.
+<figures/mpc.png, id=684, 779.91376pt x 778.91pt>
+File: figures/mpc.png Graphic file (type png)
+<use figures/mpc.png>
+Package pdftex.def Info: figures/mpc.png  used on input line 267.
+(pdftex.def)             Requested size: 469.75499pt x 469.14427pt.
 
 
 [39]
@@ -1140,7 +1174,7 @@ Overfull \hbox (3.01244pt too wide) in paragraph at lines 273--279
 
 
 
-[40 <./figures/MPC.drawio.png>]
+[40 <./figures/mpc.png>]
 <figures/Fallback_snapshot.png, id=697, 1281.78876pt x 359.3425pt>
 File: figures/Fallback_snapshot.png Graphic file (type png)
 <use figures/Fallback_snapshot.png>
@@ -1149,7 +1183,7 @@ Package pdftex.def Info: figures/Fallback_snapshot.png  used on input line 292.
 
 
 [41 <./figures/Fallback_snapshot.png>]
-Overfull \hbox (7.22272pt too wide) in paragraph at lines 336--337
+Overfull \hbox (7.22272pt too wide) in paragraph at lines 337--338
 \T1/lmr/m/n/10.95 (Normierung, Glät-tung und Über-gabe an den Balance-Controller) sind iden-tisch zur YOLO-Strategie.
  []
 
@@ -1159,7 +1193,7 @@ Overfull \hbox (7.22272pt too wide) in paragraph at lines 336--337
 <figures/Gesamtregler.png, id=729, 522.95375pt x 587.19376pt>
 File: figures/Gesamtregler.png Graphic file (type png)
 <use figures/Gesamtregler.png>
-Package pdftex.def Info: figures/Gesamtregler.png  used on input line 344.
+Package pdftex.def Info: figures/Gesamtregler.png  used on input line 345.
 (pdftex.def)             Requested size: 469.75499pt x 527.47496pt.
 )
 
@@ -1167,24 +1201,10 @@ Package pdftex.def Info: figures/Gesamtregler.png  used on input line 344.
 \openout2 = `chapters/kapitel5.aux'.
 
  (./chapters/kapitel5.tex
-Overfull \hbox (23.11758pt too wide) in paragraph at lines 24--27
-\T1/lmr/m/n/10.95 Durch die rotierende Masse entsteht ein kleiner gy-roskopis-cher Stabilisierungs-Effekt (Trägheitsmo-
- []
-
-
-Overfull \hbox (8.28915pt too wide) in paragraph at lines 28--32
-[]\T1/lmr/bx/n/10.95 Reibungsparameter: \T1/lmr/m/n/10.95 Die Radnaben be-sitzen eine viskose Lagerdämp-fung (\T1/lmtt/m/n/10.95 dampingConstant
- []
-
-
-Overfull \hbox (6.6715pt too wide) in paragraph at lines 28--32
-\T1/lmr/m/n/10.95 Trak-tion; ein geringer Rück-pral-lko-ef-fizient von 0,1 be-grenzt die Sprun-ge-las-tiz-ität des Reifenkon-
- []
-
 <figures/Datenblatt.png, id=737, 844.15375pt x 522.95375pt>
 File: figures/Datenblatt.png Graphic file (type png)
 <use figures/Datenblatt.png>
-Package pdftex.def Info: figures/Datenblatt.png  used on input line 36.
+Package pdftex.def Info: figures/Datenblatt.png  used on input line 13.
 (pdftex.def)             Requested size: 469.75499pt x 291.01678pt.
 
 
@@ -1192,85 +1212,118 @@ Package pdftex.def Info: figures/Datenblatt.png  used on input line 36.
 
 
 
-]
-<figures/Kurve.jpeg, id=742, 4015.0pt x 4015.0pt>
-File: figures/Kurve.jpeg Graphic file (type jpg)
-<use figures/Kurve.jpeg>
-Package pdftex.def Info: figures/Kurve.jpeg  used on input line 55.
-(pdftex.def)             Requested size: 375.80542pt x 375.7927pt.
+ <./figures/Datenblatt.png>]
+Overfull \hbox (23.11758pt too wide) in paragraph at lines 30--33
+\T1/lmr/m/n/10.95 Durch die rotierende Masse entsteht ein kleiner gy-roskopis-cher Stabilisierungs-Effekt (Trägheitsmo-
+ []
 
 
-[45 <./figures/Datenblatt.png>]
-<figures/Kurve/Daten_Yolo.png, id=749, 1395.2125pt x 765.86125pt>
-File: figures/Kurve/Daten_Yolo.png Graphic file (type png)
-<use figures/Kurve/Daten_Yolo.png>
-Package pdftex.def Info: figures/Kurve/Daten_Yolo.png  used on input line 62.
-(pdftex.def)             Requested size: 375.80542pt x 206.28279pt.
+Overfull \hbox (8.28915pt too wide) in paragraph at lines 34--38
+[]\T1/lmr/bx/n/10.95 Reibungsparameter: \T1/lmr/m/n/10.95 Die Radnaben be-sitzen eine viskose Lagerdämp-fung (\T1/lmtt/m/n/10.95 dampingConstant
+ []
 
 
-[46 <./figures/Kurve.jpeg>]
-<figures/Kurve/Error_Yolo.png, id=755, 1378.14874pt x 392.46625pt>
-File: figures/Kurve/Error_Yolo.png Graphic file (type png)
-<use figures/Kurve/Error_Yolo.png>
-Package pdftex.def Info: figures/Kurve/Error_Yolo.png  used on input line 69.
-(pdftex.def)             Requested size: 375.80542pt x 107.02127pt.
-<figures/Kurve/Daten_Fallback.png, id=756, 1406.25375pt x 763.85374pt>
-File: figures/Kurve/Daten_Fallback.png Graphic file (type png)
-<use figures/Kurve/Daten_Fallback.png>
-Package pdftex.def Info: figures/Kurve/Daten_Fallback.png  used on input line 76.
-(pdftex.def)             Requested size: 375.80542pt x 204.12196pt.
-<figures/Kurve/Error_Fallback.png, id=757, 1373.13pt x 396.48125pt>
-File: figures/Kurve/Error_Fallback.png Graphic file (type png)
-<use figures/Kurve/Error_Fallback.png>
-Package pdftex.def Info: figures/Kurve/Error_Fallback.png  used on input line 83.
-(pdftex.def)             Requested size: 375.80542pt x 108.50937pt.
+Overfull \hbox (6.6715pt too wide) in paragraph at lines 34--38
+\T1/lmr/m/n/10.95 Trak-tion; ein geringer Rück-pral-lko-ef-fizient von 0,1 be-grenzt die Sprun-ge-las-tiz-ität des Reifenkon-
+ []
+
+<figures/Kurve/Yolo_Stecke.png, id=744, 651.43375pt x 648.4225pt>
+File: figures/Kurve/Yolo_Stecke.png Graphic file (type png)
+<use figures/Kurve/Yolo_Stecke.png>
+Package pdftex.def Info: figures/Kurve/Yolo_Stecke.png  used on input line 55.
+(pdftex.def)             Requested size: 225.48038pt x 224.43817pt.
+<figures/Kurve/Fallback_Strecke.png, id=745, 565.11125pt x 564.1075pt>
+File: figures/Kurve/Fallback_Strecke.png Graphic file (type png)
+<use figures/Kurve/Fallback_Strecke.png>
+Package pdftex.def Info: figures/Kurve/Fallback_Strecke.png  used on input line 59.
+(pdftex.def)             Requested size: 225.48038pt x 225.0795pt.
+<figures/Kurve/Yolo_Daten.png, id=746, 2364.835pt x 395.4775pt>
+File: figures/Kurve/Yolo_Daten.png Graphic file (type png)
+<use figures/Kurve/Yolo_Daten.png>
+Package pdftex.def Info: figures/Kurve/Yolo_Daten.png  used on input line 71.
+(pdftex.def)             Requested size: 469.75499pt x 78.55702pt.
+<figures/Kurve/Yolo_Daten_2.png, id=747, 2365.83875pt x 406.51875pt>
+File: figures/Kurve/Yolo_Daten_2.png Graphic file (type png)
+<use figures/Kurve/Yolo_Daten_2.png>
+Package pdftex.def Info: figures/Kurve/Yolo_Daten_2.png  used on input line 78.
+(pdftex.def)             Requested size: 469.75499pt x 80.71301pt.
 
 
-[47 <./figures/Kurve/Daten_Yolo.png> <./figures/Kurve/Error_Yolo.png> <./figures/Kurve/Daten_Fallback.png>]
-<figures/S-Kurve.png, id=768, 1535.7375pt x 490.83376pt>
-File: figures/S-Kurve.png Graphic file (type png)
-<use figures/S-Kurve.png>
-Package pdftex.def Info: figures/S-Kurve.png  used on input line 97.
-(pdftex.def)             Requested size: 375.80542pt x 120.10927pt.
-<figures/S-Kurve/Fallback-Daten.png, id=769, 1306.8825pt x 341.275pt>
-File: figures/S-Kurve/Fallback-Daten.png Graphic file (type png)
-<use figures/S-Kurve/Fallback-Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback-Daten.png  used on input line 104.
-(pdftex.def)             Requested size: 375.80542pt x 98.13402pt.
-<figures/S-Kurve/Fallback-Error.png, id=770, 1306.8825pt x 342.27875pt>
-File: figures/S-Kurve/Fallback-Error.png Graphic file (type png)
-<use figures/S-Kurve/Fallback-Error.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback-Error.png  used on input line 111.
-(pdftex.def)             Requested size: 375.80542pt x 98.42264pt.
-File: figures/S-Kurve/Fallback-Daten.png Graphic file (type png)
-<use figures/S-Kurve/Fallback-Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback-Daten.png  used on input line 118.
-(pdftex.def)             Requested size: 375.80542pt x 98.13402pt.
+[45 <./figures/Kurve/Yolo_Stecke.png> <./figures/Kurve/Fallback_Strecke.png> <./figures/Kurve/Yolo_Daten.png>]
+<figures/Kurve/Yolo_Error.png, id=757, 2354.7975pt x 411.5375pt>
+File: figures/Kurve/Yolo_Error.png Graphic file (type png)
+<use figures/Kurve/Yolo_Error.png>
+Package pdftex.def Info: figures/Kurve/Yolo_Error.png  used on input line 85.
+(pdftex.def)             Requested size: 469.75499pt x 82.09253pt.
+<figures/Kurve/Fallback_Daten.png, id=758, 2374.8725pt x 399.4925pt>
+File: figures/Kurve/Fallback_Daten.png Graphic file (type png)
+<use figures/Kurve/Fallback_Daten.png>
+Package pdftex.def Info: figures/Kurve/Fallback_Daten.png  used on input line 93.
+(pdftex.def)             Requested size: 469.75499pt x 79.01929pt.
+<figures/Kurve/Fallback_Daten_2.png, id=759, 2360.82pt x 398.48875pt>
+File: figures/Kurve/Fallback_Daten_2.png Graphic file (type png)
+<use figures/Kurve/Fallback_Daten_2.png>
+Package pdftex.def Info: figures/Kurve/Fallback_Daten_2.png  used on input line 100.
+(pdftex.def)             Requested size: 469.75499pt x 79.28894pt.
+<figures/Kurve/Fallback_Error.png, id=760, 2362.8275pt x 402.50375pt>
+File: figures/Kurve/Fallback_Error.png Graphic file (type png)
+<use figures/Kurve/Fallback_Error.png>
+Package pdftex.def Info: figures/Kurve/Fallback_Error.png  used on input line 107.
+(pdftex.def)             Requested size: 469.75499pt x 80.02026pt.
+<figures/S-Kurve/Yolo_Strecke.png, id=761, 646.415pt x 183.68625pt>
+File: figures/S-Kurve/Yolo_Strecke.png Graphic file (type png)
+<use figures/S-Kurve/Yolo_Strecke.png>
+Package pdftex.def Info: figures/S-Kurve/Yolo_Strecke.png  used on input line 127.
+(pdftex.def)             Requested size: 469.75499pt x 133.48721pt.
 
 
-[48 <./figures/Kurve/Error_Fallback.png> <./figures/S-Kurve.png> <./figures/S-Kurve/Fallback-Daten.png> <./figures/S-Kurve/Fallback-Error.png>]
-File: figures/S-Kurve/Fallback-Error.png Graphic file (type png)
-<use figures/S-Kurve/Fallback-Error.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback-Error.png  used on input line 125.
-(pdftex.def)             Requested size: 375.80542pt x 98.42264pt.
-<figures/Huegel.png, id=782, 1116.17pt x 887.315pt>
+[46 <./figures/Kurve/Yolo_Daten_2.png> <./figures/Kurve/Yolo_Error.png> <./figures/Kurve/Fallback_Daten.png> <./figures/Kurve/Fallback_Daten_2.png> <./figures/Kurve/Fallback_Error.png>]
+<figures/S-Kurve/Fallback_Strecke.png, id=776, 645.41125pt x 169.63374pt>
+File: figures/S-Kurve/Fallback_Strecke.png Graphic file (type png)
+<use figures/S-Kurve/Fallback_Strecke.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback_Strecke.png  used on input line 134.
+(pdftex.def)             Requested size: 469.75499pt x 123.46404pt.
+<figures/S-Kurve/Yolo_Daten.png, id=777, 2361.82375pt x 401.5pt>
+File: figures/S-Kurve/Yolo_Daten.png Graphic file (type png)
+<use figures/S-Kurve/Yolo_Daten.png>
+Package pdftex.def Info: figures/S-Kurve/Yolo_Daten.png  used on input line 142.
+(pdftex.def)             Requested size: 469.75499pt x 79.85135pt.
+<figures/S-Kurve/Yolo_Error.png, id=778, 2382.9025pt x 399.4925pt>
+File: figures/S-Kurve/Yolo_Error.png Graphic file (type png)
+<use figures/S-Kurve/Yolo_Error.png>
+Package pdftex.def Info: figures/S-Kurve/Yolo_Error.png  used on input line 149.
+(pdftex.def)             Requested size: 469.75499pt x 78.75107pt.
+<figures/S-Kurve/Fallback_Daten.png, id=779, 2349.77875pt x 405.515pt>
+File: figures/S-Kurve/Fallback_Daten.png Graphic file (type png)
+<use figures/S-Kurve/Fallback_Daten.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback_Daten.png  used on input line 158.
+(pdftex.def)             Requested size: 469.75499pt x 81.06442pt.
+
+
+[47 <./figures/S-Kurve/Yolo_Strecke.png> <./figures/S-Kurve/Fallback_Strecke.png> <./figures/S-Kurve/Yolo_Daten.png> <./figures/S-Kurve/Yolo_Error.png>]
+<figures/S-Kurve/Fallback_Error.png, id=792, 2363.83125pt x 403.5075pt>
+File: figures/S-Kurve/Fallback_Error.png Graphic file (type png)
+<use figures/S-Kurve/Fallback_Error.png>
+Package pdftex.def Info: figures/S-Kurve/Fallback_Error.png  used on input line 165.
+(pdftex.def)             Requested size: 469.75499pt x 80.18288pt.
+<figures/Huegel.png, id=793, 1116.17pt x 887.315pt>
 File: figures/Huegel.png Graphic file (type png)
 <use figures/Huegel.png>
-Package pdftex.def Info: figures/Huegel.png  used on input line 153.
+Package pdftex.def Info: figures/Huegel.png  used on input line 198.
 (pdftex.def)             Requested size: 225.48038pt x 179.24704pt.
-<figures/Tunnel.png, id=783, 1114.1625pt x 891.33pt>
+<figures/Tunnel.png, id=794, 1114.1625pt x 891.33pt>
 File: figures/Tunnel.png Graphic file (type png)
 <use figures/Tunnel.png>
-Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
+Package pdftex.def Info: figures/Tunnel.png  used on input line 202.
 (pdftex.def)             Requested size: 225.48038pt x 180.38454pt.
 
 
-[49 <./figures/Huegel.png> <./figures/Tunnel.png>])
+[48 <./figures/S-Kurve/Fallback_Daten.png> <./figures/S-Kurve/Fallback_Error.png> <./figures/Huegel.png> <./figures/Tunnel.png>])
 \openout2 = `chapters/kapitel6.aux'.
 
  (./chapters/kapitel6.tex)
 
-[50
+[49
 
 
 
@@ -1279,7 +1332,7 @@ Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
 
  (./chapters/kapitel7.tex)
 
-[51
+[50
 
 
 
@@ -1288,13 +1341,13 @@ Package pdftex.def Info: figures/Tunnel.png  used on input line 157.
 
  (./chapters/kapitel8.tex)
 
-[52
+[51
 
 
 
 ]
 
-[53
+[52
 
 
 ] (./seminar_vorlage.bbl
@@ -1309,11 +1362,11 @@ Underfull \hbox (badness 1609) in paragraph at lines 72--76
 
 
 
-[54]
+[53]
 
-[55])
+[54])
 
-[56] (./seminar_vorlage.aux (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
+[55] (./seminar_vorlage.aux (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
 \openout3 = `seminar_vorlage.upb'.
 
  (./seminar_vorlage.upa))
@@ -1329,18 +1382,18 @@ Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
 (rerunfilecheck)             Checksum: A5A7EBA4AE6E0EB1CD62BD0518286984;8627.
  ) 
 Here is how much of TeX's memory you used:
- 26053 strings out of 473190
- 527290 string characters out of 5704335
- 1229281 words of memory out of 5000000
- 48572 multiletter control sequences out of 15000+600000
+ 26093 strings out of 473190
+ 529017 string characters out of 5704335
+ 1229091 words of memory out of 5000000
+ 48610 multiletter control sequences out of 15000+600000
  631501 words of font info for 87 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 86i,8n,131p,1387b,2762s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 86i,8n,131p,1387b,1426s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt9.pfb>
-Output written on seminar_vorlage.pdf (56 pages, 11520934 bytes).
+Output written on seminar_vorlage.pdf (55 pages, 9580027 bytes).
 PDF statistics:
- 997 PDF objects out of 1000 (max. 8388607)
+ 1010 PDF objects out of 1200 (max. 8388607)
  841 compressed objects within 9 object streams
- 303 named destinations out of 1000 (max. 500000)
- 488 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 305 named destinations out of 1000 (max. 500000)
+ 518 words of extra memory for PDF output out of 10000 (max. 10000000)
 

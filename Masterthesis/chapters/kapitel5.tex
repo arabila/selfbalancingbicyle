@@ -8,7 +8,13 @@
   sodass Parameterstudien und Kalibrierungen unter identischen Bedingungen erfolgen. Damit dient die Simulation als sichere Vorstufe für reale Fahrversuche und 
   als Referenz für die im Anschluss dokumentierten physikalischen Eigenschaften und Regelungsparameter.
 
-
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Datenblatt.png}  
+    \caption{Datenblatt}
+    \label{fig:datenblatt}
+  \end{figure}
+  
   \begin{itemize}
     \item \textbf{Masse und Schwerpunkt:} Der Rahmen des simulierten Fahrrads wiegt 3{,}5\,kg; zusammen mit den Rädern beträgt die Gesamtmasse ca. 5{,}1\,kg. 
     Der Schwerpunkt liegt etwa 5\,cm über dem Boden\gh, was ein stabiles Balanceverhalten begünstigt.
@@ -31,12 +37,6 @@
     Sprungelastizität des Reifenkontakts.
   \end{itemize}
 
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/Datenblatt.png}  
-    \caption{Datenblatt}
-    \label{fig:datenblatt}
-  \end{figure}
   
 
 
@@ -49,41 +49,70 @@
 
   \subsubsection{Kurvenfahrt}
 
-
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Kurve.jpeg}  
-    \caption{Kurvenfahrt}
-    \label{fig:kurvenfahrt}
+    \begin{subfigure}[t]{0.48\textwidth}
+      \includegraphics[width=\linewidth]{figures/Kurve/Yolo_Stecke.png}
+    \caption{YOLO Kurve}\label{fig:huegel}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+      \includegraphics[width=\linewidth]{figures/Kurve/Fallback_Strecke.png}
+      \caption{Fallback Kurve}\label{fig:tunnel}
+    \end{subfigure}
+    \caption{Kurvenfahrt}\label{fig:huegel-tunnel}
   \end{figure}
+  
+
+
+
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Kurve/Daten_Yolo.png}  
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Yolo_Daten.png}  
     \caption{Kurve - YOLO Daten}
     \label{fig:kurve-yolo-daten}
   \end{figure}
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Kurve/Error_Yolo.png}  
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Yolo_Daten_2.png}  
+    \caption{Kurve - YOLO Daten}
+    \label{fig:kurve-yolo-daten}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Yolo_Error.png}  
     \caption{Error YOLO Kurve}
     \label{fig:error-yolo-kurve}
   \end{figure}
 
+
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Kurve/Daten_Fallback.png}  
-    \caption{Daten Fallback Kurve}
-    \label{fig:daten-fallback-kurve}
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Fallback_Daten.png}  
+    \caption{Error Fallback Kurve}
+    \label{fig:error-fallback-kurve}
   \end{figure}
 
   \begin{figure}[H]
     \centering
-    \includegraphics[width=0.8\textwidth]{figures/Kurve/Error_Fallback.png}  
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Fallback_Daten_2.png}  
     \caption{Error Fallback Kurve}
     \label{fig:error-fallback-kurve}
   \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Kurve/Fallback_Error.png}  
+    \caption{Error Fallback Kurve}
+    \label{fig:error-fallback-kurve}
+  \end{figure}
+
+
+
+
+
 
 
 
@@ -92,41 +121,57 @@
 
   \subsubsection{S-Kurve}
 
+
     \begin{figure}[H]
       \centering
-      \includegraphics[width=0.8\textwidth]{figures/S-Kurve.png}  
-      \caption{S-Kurve}
-      \label{fig:s-kurve}
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Strecke.png}  
+      \caption{Fallback Strecke S-Kurve}
+      \label{fig:fallback-strecke-s-kurve}
     \end{figure}
-  
+
     \begin{figure}[H]
       \centering
-      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback-Daten.png}  
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Strecke.png}  
+      \caption{Fallback Strecke S-Kurve}
+      \label{fig:fallback-strecke-s-kurve}
+    \end{figure}
+
+   
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Daten.png}  
       \caption{YOLO Daten S-Kurve}
       \label{fig:yolo-daten-s-kurve}
     \end{figure}
   
     \begin{figure}[H]
       \centering
-      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback-Error.png}  
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Error.png}  
       \caption{Error YOLO S-Kurve}
       \label{fig:yolo-error-s-kurve}
     \end{figure}
 
+    
+
     \begin{figure}[H]
       \centering
-      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback-Daten.png}  
-      \caption{Fallback Daten S-Kurve}
-      \label{fig:fallback-daten-s-kurve}
-    \end{figure}
-  
-    \begin{figure}[H]
-      \centering
-      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback-Error.png}  
-      \caption{Fallback Error S-Kurve}
-      \label{fig:fallback-error-s-kurve}
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Daten.png}  
+      \caption{Fallback Strecke S-Kurve}
+      \label{fig:fallback-strecke-s-kurve}
     \end{figure}
 
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Error.png}  
+      \caption{Fallback Strecke S-Kurve}
+      \label{fig:fallback-strecke-s-kurve}
+    \end{figure}
+
+    
+
+   
+
+   
 
 
 

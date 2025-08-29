@@ -264,7 +264,7 @@ mit dem stabilisierenden Lenkoutput des Balance-PID-Reglers kombiniert (standard
 
 \begin{figure}[H]
   \centering
-  \includegraphics[width=1.0\textwidth]{figures/MPC.drawio.png}
+  \includegraphics[width=1.0\textwidth]{figures/mpc.png}
   \caption{MPC-Strategie.}
   \label{fig:fallback}
 \end{figure}
@@ -308,6 +308,7 @@ Konturenerkennung in der bereinigten Binärmaske. Der folgende Codeausszug veran
 und Markierungen erstellt, vereinigt und daraus Konturen extrahiert. Die größte gefundene Kontur wird als Straßenbereich angenommen, und aus 
 ihr wird der Querfehler bestimmt.
 
+\newpage
 
 
 \begin{lstlisting}[style=wbt_c,caption={Fallback-Modell Error Berechnung},label={lst:fallback_error_calculation}]
