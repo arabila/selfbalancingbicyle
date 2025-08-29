@@ -1,43 +1,52 @@
 \babel@toc {english}{}\relax 
-\contentsline {section}{\numberline {1}Abstract}{4}{section.1}%
-\contentsline {section}{\numberline {2}Einleitung}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Problemstellung}{5}{subsection.2.1}%
-\contentsline {subsection}{\numberline {2.2}Bisherige Arbeiten}{5}{subsection.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.1}Anna Ranz (2021) – Hardware-Grundlagen}{5}{subsubsection.2.2.1}%
-\contentsline {subsubsection}{\numberline {2.2.2}Amine Karabila (2022) – Erste funktionierende Regelung}{5}{subsubsection.2.2.2}%
-\contentsline {subsubsection}{\numberline {2.2.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{6}{subsubsection.2.2.3}%
-\contentsline {subsubsection}{\numberline {2.2.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{7}{subsubsection.2.2.4}%
-\contentsline {section}{\numberline {3}Grundlagen}{9}{section.3}%
-\contentsline {subsection}{\numberline {3.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{9}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{9}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}YOLO-Grundlagen und Segmentierung}{9}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Webots-Simulationsumgebung}{10}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Überblick}{10}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Struktur der Simulationsumgebung}{11}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Das Fahrradmodell}{13}{subsection.4.3}%
-\contentsline {paragraph}{Physik (\texttt {Physics})}{13}{section*.5}%
-\contentsline {subsection}{\numberline {4.4}Sensoren}{14}{subsection.4.4}%
-\contentsline {paragraph}{Konfiguration in der \texttt {.wbt}-Datei}{14}{section*.7}%
-\contentsline {subsection}{\numberline {4.5}Aktuatoren}{15}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Controller}{15}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Angebundene GUI}{15}{subsection.4.7}%
-\contentsline {section}{\numberline {5}Kombinierte Regelung}{15}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{15}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{15}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{15}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8) + MPC}{15}{subsubsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (Kanten/ROI) + MPC}{15}{subsubsection.5.3.2}%
-\contentsline {subsection}{\numberline {5.4}Supervisions-/Koppelkaskade}{16}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Ergebnisse}{16}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Teststrecken}{16}{subsection.6.1}%
-\contentsline {subsubsection}{\numberline {6.1.1}Gerade Strecke mit Störimpuls}{16}{subsubsection.6.1.1}%
-\contentsline {subsubsection}{\numberline {6.1.2}Slalom-Kurs}{16}{subsubsection.6.1.2}%
-\contentsline {subsubsection}{\numberline {6.1.3}S-Kurve mit Steigung}{16}{subsubsection.6.1.3}%
-\contentsline {subsubsection}{\numberline {6.1.4}Kreisfahrt}{16}{subsubsection.6.1.4}%
-\contentsline {subsection}{\numberline {6.2}Balance-Stabilität}{16}{subsection.6.2}%
-\contentsline {subsection}{\numberline {6.3}Spurtreue \& Querabweichung}{16}{subsection.6.3}%
-\contentsline {subsection}{\numberline {6.4}Rechenzeit \& Echtzeitfähigkeit}{16}{subsection.6.4}%
-\contentsline {section}{\numberline {7}Grenzen der Arbeit}{17}{section.7}%
-\contentsline {section}{\numberline {8}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{17}{section.8}%
-\contentsline {section}{\numberline {9}Fazit}{17}{section.9}%
-\contentsline {section}{\numberline {10}Literaturverzeichnis}{17}{section.10}%
+\contentsline {section}{\numberline {1}Einleitung}{4}{section.1}%
+\contentsline {subsection}{\numberline {1.1}Problemstellung}{4}{subsection.1.1}%
+\contentsline {paragraph}{Abgrenzung.}{4}{section*.2}%
+\contentsline {subsection}{\numberline {1.2}Stand der Technik}{4}{subsection.1.2}%
+\contentsline {subsection}{\numberline {1.3}Bisherige Arbeiten}{6}{subsection.1.3}%
+\contentsline {subsubsection}{\numberline {1.3.1}Anna Ranz (2021) – Hardware-Grundlagen}{6}{subsubsection.1.3.1}%
+\contentsline {subsubsection}{\numberline {1.3.2}Amine Karabila (2022) – Erste funktionierende Regelung}{7}{subsubsection.1.3.2}%
+\contentsline {subsubsection}{\numberline {1.3.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{8}{subsubsection.1.3.3}%
+\contentsline {subsubsection}{\numberline {1.3.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{8}{subsubsection.1.3.4}%
+\contentsline {section}{\numberline {2}Grundlagen}{10}{section.2}%
+\contentsline {subsection}{\numberline {2.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{10}{subsection.2.1}%
+\contentsline {subsection}{\numberline {2.2}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{11}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}YOLO-Grundlagen und Segmentierung}{12}{subsection.2.3}%
+\contentsline {section}{\numberline {3}Webots-Simulationsumgebung}{14}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Überblick}{14}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Struktur der Simulationsumgebung}{15}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Das Fahrradmodell}{17}{subsection.3.3}%
+\contentsline {paragraph}{Physik (\texttt {Physics})}{17}{section*.7}%
+\contentsline {subsection}{\numberline {3.4}Sensoren}{18}{subsection.3.4}%
+\contentsline {subsubsection}{\numberline {3.4.1}Inertialmesseinheit (IMU)}{18}{subsubsection.3.4.1}%
+\contentsline {subsubsection}{\numberline {3.4.2}Kamera (Videosensor)}{20}{subsubsection.3.4.2}%
+\contentsline {subsubsection}{\numberline {3.4.3}Motorsensoren (Inkrementalgeber)}{22}{subsubsection.3.4.3}%
+\contentsline {subsection}{\numberline {3.5}Aktuatoren}{24}{subsection.3.5}%
+\contentsline {subsection}{\numberline {3.6}Controller}{28}{subsection.3.6}%
+\contentsline {subsection}{\numberline {3.7}Angebundene GUI}{31}{subsection.3.7}%
+\contentsline {section}{\numberline {4}Kombinierte Regelung}{33}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Portierung des Balance-PID (Zander)}{33}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Portierung des Fahrtrichtungs-MPC (Giray)}{34}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Strategien der Spurführung}{37}{subsection.4.3}%
+\contentsline {subsubsection}{\numberline {4.3.1}YOLO-Segmentierung (YOLOv8) + MPC}{37}{subsubsection.4.3.1}%
+\contentsline {paragraph}{MPC-Regelung.}{39}{section*.17}%
+\contentsline {paragraph}{Limitierungen.}{40}{section*.19}%
+\contentsline {subsubsection}{\numberline {4.3.2}Fallback-Strategie (Kanten/ROI) + MPC}{41}{subsubsection.4.3.2}%
+\contentsline {paragraph}{Vorgehen.}{41}{section*.21}%
+\contentsline {paragraph}{MPC und Steuerung:}{42}{section*.22}%
+\contentsline {paragraph}{Limitierungen:}{42}{section*.23}%
+\contentsline {subsection}{\numberline {4.4}Gesamtregelung}{43}{subsection.4.4}%
+\contentsline {section}{\numberline {5}Ergebnisse}{44}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Fahrrad Datenblatt}{44}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Teststrecken}{46}{subsection.5.2}%
+\contentsline {subsubsection}{\numberline {5.2.1}Kurvenfahrt}{46}{subsubsection.5.2.1}%
+\contentsline {subsubsection}{\numberline {5.2.2}S-Kurve}{48}{subsubsection.5.2.2}%
+\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{51}{subsubsection.5.2.3}%
+\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{51}{subsubsection.5.2.4}%
+\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{51}{subsection.5.3}%
+\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{51}{subsection.5.4}%
+\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{51}{subsection.5.5}%
+\contentsline {section}{\numberline {6}Grenzen der Arbeit}{52}{section.6}%
+\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{53}{section.7}%
+\contentsline {section}{\numberline {8}Fazit}{54}{section.8}%
+\contentsline {section}{\numberline {9}Literaturverzeichnis}{55}{section.9}%

@@ -1,0 +1,170 @@
+\section{Ergebnisse}
+\subsection{Fahrrad Datenblatt}
+
+  Die folgenden Abschnitte beschreiben eine in Webots aufgebaute Simulation als digitalen Zwilling des realen Testfahrrads. Ziel ist, Masse-, Trägheits- und 
+  Reibungsparameter sowie Sensor-/Aktorschnittstellen so realitätsnah zu spiegeln, dass das Fahrverhalten und die Reglerkopplung mit dem Prototyp übereinstimmen. 
+  Auf Basis der ODE-Physik in Webots und der Controller-API (C/Python) wird die in der Hardware verwendete Architektur nachgebildet: eine schnelle innere 
+  Balance-Schleife und eine langsamere, vision-gestützte MPC-Spurführung. Eine Supervisor-Instanz ermöglicht reproduzierbare Versuchsreihen, Resets und Logging, 
+  sodass Parameterstudien und Kalibrierungen unter identischen Bedingungen erfolgen. Damit dient die Simulation als sichere Vorstufe für reale Fahrversuche und 
+  als Referenz für die im Anschluss dokumentierten physikalischen Eigenschaften und Regelungsparameter.
+
+
+  \begin{itemize}
+    \item \textbf{Masse und Schwerpunkt:} Der Rahmen des simulierten Fahrrads wiegt 3{,}5\,kg; zusammen mit den Rädern beträgt die Gesamtmasse ca. 5{,}1\,kg. 
+    Der Schwerpunkt liegt etwa 5\,cm über dem Boden\gh, was ein stabiles Balanceverhalten begünstigt.
+    
+    \item \textbf{Trägheitssensor:} Im Webots--Modell ist der Trägheitssensor als Array in der Form
+    \[
+      [\,I_{xx}\; I_{xy}\; I_{xz}\; I_{xy}\; I_{yy}\; I_{yz}\; I_{xz}\; I_{yz}\; I_{zz}\,]
+    \]
+    angegeben. Für den Fahrradrahmen ergibt sich ein annähernd diagonal dominanter Trägheitstensor mit
+    \(I_{xx}\approx I_{yy}=0{,}1\) und \(I_{zz}=0{,}05\,\mathrm{kg\,m^{2}}\)\gh. Der kleinere Wert um die Hochachse (Yaw-Trägheit) erleichtert schnelle 
+    Lenkbewegungen; die Off-Diagonaleinträge sind Null, was bedeutet, dass die Hauptträgheitsachsen mit den Achsen des Modells ausgerichtet sind.
+    
+    \item \textbf{Räder:} Die beiden Räder haben einen Radius von 5{,}5\,cm und jeweils etwa 0{,}8\,kg Masse\gh. Durch die rotierende Masse entsteht ein 
+    kleiner gyroskopischer Stabilisierungs-Effekt (Trägheitsmoment pro Rad ca. \(1\times10^{-3}\,\mathrm{kg\,m^{2}}\)), der zur Gesamtstabilität beiträgt, 
+    aber aufgrund des geringen Werts nur begrenzten Einfluss hat\gh.
+    
+    \item \textbf{Reibungsparameter:} Die Radnaben besitzen eine viskose Lagerdämpfung (\texttt{dampingConstant} = 0{,}1) sowie Haftreibung (\texttt{staticFriction} = 0{,}1)\gh. 
+    Diese Parameter simulieren Lagerveluste und verhindern z.\,B. ein freies Schwingen oder Durchrutschen der Räder im Stillstand. Zwischen Reifen und 
+    Untergrund sorgt ein Coulomb-Reibungskoeffizient von etwa 0{,}8 für gute Traktion\gh; ein geringer Rückprallkoeffizient von 0{,}1 begrenzt die 
+    Sprungelastizität des Reifenkontakts.
+  \end{itemize}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Datenblatt.png}  
+    \caption{Datenblatt}
+    \label{fig:datenblatt}
+  \end{figure}
+  
+
+
+
+
+
+\subsection{Teststrecken}
+%------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
+
+  \subsubsection{Kurvenfahrt}
+
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Kurve.jpeg}  
+    \caption{Kurvenfahrt}
+    \label{fig:kurvenfahrt}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Kurve/Daten_Yolo.png}  
+    \caption{Kurve - YOLO Daten}
+    \label{fig:kurve-yolo-daten}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Kurve/Error_Yolo.png}  
+    \caption{Error YOLO Kurve}
+    \label{fig:error-yolo-kurve}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Kurve/Daten_Fallback.png}  
+    \caption{Daten Fallback Kurve}
+    \label{fig:daten-fallback-kurve}
+  \end{figure}
+
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/Kurve/Error_Fallback.png}  
+    \caption{Error Fallback Kurve}
+    \label{fig:error-fallback-kurve}
+  \end{figure}
+
+
+
+  %------------------------------------------------------------------------------------------------
+  %------------------------------------------------------------------------------------------------
+
+  \subsubsection{S-Kurve}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figures/S-Kurve.png}  
+      \caption{S-Kurve}
+      \label{fig:s-kurve}
+    \end{figure}
+  
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Yolo_Daten.png}  
+      \caption{YOLO Daten S-Kurve}
+      \label{fig:yolo-daten-s-kurve}
+    \end{figure}
+  
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Yolo_Error.png}  
+      \caption{Error YOLO S-Kurve}
+      \label{fig:yolo-error-s-kurve}
+    \end{figure}
+
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback_Daten.png}  
+      \caption{Fallback Daten S-Kurve}
+      \label{fig:fallback-daten-s-kurve}
+    \end{figure}
+  
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=0.8\textwidth]{figures/S-Kurve/Fallback_Error.png}  
+      \caption{Fallback Error S-Kurve}
+      \label{fig:fallback-error-s-kurve}
+    \end{figure}
+
+
+
+
+    %------------------------------------------------------------------------------------------------
+    %------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+  \subsubsection{Gerade Strecke mit Seitenwind}
+
+
+
+
+  %------------------------------------------------------------------------------------------------
+  %------------------------------------------------------------------------------------------------
+  \subsubsection{Gerande Stecke mit Höhenunterschied}
+
+  \begin{figure}[H]
+    \centering
+    \begin{subfigure}[t]{0.48\textwidth}
+      \includegraphics[width=\linewidth]{figures/Huegel.png}
+      \caption{Hügel}\label{fig:huegel}
+    \end{subfigure}\hfill
+    \begin{subfigure}[t]{0.48\textwidth}
+      \includegraphics[width=\linewidth]{figures/Tunnel.png}
+      \caption{Tunnel}\label{fig:tunnel}
+    \end{subfigure}
+    \caption{Hügel und Tunnel nebeneinander.}\label{fig:huegel-tunnel}
+  \end{figure}
+  
+
+  %------------------------------------------------------------------------------------------------
+  %------------------------------------------------------------------------------------------------
+
+\subsection{Balance-Stabilität}
+\subsection{Spurtreue \& Querabweichung}
+\subsection{Rechenzeit \& Echtzeitfähigkeit}
+\newpage

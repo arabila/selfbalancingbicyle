@@ -2,45 +2,54 @@ This is BibTeX, Version 0.99d (TeX Live 2025/Homebrew)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: seminar_vorlage.aux
 The style file: plain.bst
+A level-1 auxiliary file: chapters/Einleitung.aux
+A level-1 auxiliary file: chapters/kapitel1.aux
+A level-1 auxiliary file: chapters/kapitel2.aux
+A level-1 auxiliary file: chapters/kapitel3.aux
+A level-1 auxiliary file: chapters/kapitel4.aux
+A level-1 auxiliary file: chapters/kapitel5.aux
+A level-1 auxiliary file: chapters/kapitel6.aux
+A level-1 auxiliary file: chapters/kapitel7.aux
+A level-1 auxiliary file: chapters/kapitel8.aux
 Database file #1: refs.bib
-You've used 14 entries,
+You've used 40 entries,
             2118 wiz_defined-function locations,
-            568 strings with 5849 characters,
-and the built_in function-call counts, 3439 in all, are:
-= -- 332
-> -- 157
-< -- 0
-+ -- 64
-- -- 50
-* -- 170
-:= -- 617
-add.period$ -- 42
-call.type$ -- 14
-change.case$ -- 67
+            705 strings with 10032 characters,
+and the built_in function-call counts, 11443 in all, are:
+= -- 1129
+> -- 493
+< -- 6
++ -- 199
+- -- 158
+* -- 618
+:= -- 1896
+add.period$ -- 126
+call.type$ -- 40
+change.case$ -- 196
 chr.to.int$ -- 0
-cite$ -- 14
-duplicate$ -- 117
-empty$ -- 293
-format.name$ -- 50
-if$ -- 710
+cite$ -- 40
+duplicate$ -- 407
+empty$ -- 989
+format.name$ -- 158
+if$ -- 2442
 int.to.chr$ -- 0
-int.to.str$ -- 14
-missing$ -- 3
-newline$ -- 73
-num.names$ -- 28
-pop$ -- 94
+int.to.str$ -- 40
+missing$ -- 15
+newline$ -- 209
+num.names$ -- 80
+pop$ -- 285
 preamble$ -- 1
-purify$ -- 53
+purify$ -- 156
 quote$ -- 0
-skip$ -- 94
+skip$ -- 345
 stack$ -- 0
-substring$ -- 120
-swap$ -- 11
-text.length$ -- 0
+substring$ -- 574
+swap$ -- 88
+text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 56
+type$ -- 160
 warning$ -- 0
-while$ -- 32
-width$ -- 16
-write$ -- 147
+while$ -- 113
+width$ -- 42
+write$ -- 432

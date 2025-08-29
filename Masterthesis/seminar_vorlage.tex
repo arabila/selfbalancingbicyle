@@ -1,25 +1,42 @@
-  \documentclass[11pt]{article}
+\documentclass[11pt]{article}
 
   %--------------------------------------------------
   % Pakete
   %--------------------------------------------------
   \usepackage{epsfig}
-
+  \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
+  \usepackage{csquotes}
   \usepackage{wrapfig}
   \usepackage{graphics}
   \usepackage{graphicx}
   \usepackage{amsmath}              %% für \text{} Befehl
   %\usepackage[german]{babel}
   \usepackage[ngerman,english,shorthands=off]{babel}
-  \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
   \usepackage{url}
   \newcommand{\urlBiBTeX}[1]{\url{#1}}
   \usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
   \usepackage{multicol} % für mehrere Spalten
   \usepackage{cite}
   \usepackage{pdfcomment}
+  \usepackage{amssymb}   % Symbole wie ℝ
+  \usepackage{siunitx}   % saubere Darstellung physikalischer Einheiten
   % Code-Listings
+  \usepackage{subcaption}
+  \usepackage{float}
   \usepackage{listings}
+  
+  % Define custom commands
+  \newcommand{\gh}{} % Placeholder for citations
+
+  % Schrift & Trennungen
+  \usepackage[T1]{fontenc}
+  \usepackage{lmodern}
+
+  % Farben (MUSS VOR hyperref & listings kommen!)
+  \usepackage[dvipsnames]{xcolor}
+
+
+
   \lstdefinestyle{wbt}{
     basicstyle=\ttfamily\footnotesize,
     breaklines=true,
@@ -29,6 +46,23 @@
     frame=single,
     numbers=left,
     numbersep=6pt
+  }
+
+  % Stil für C-Code definieren
+  \lstdefinestyle{wbt_c}{
+    language=C,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    stringstyle=\color{green!50!black},
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    captionpos=b
   }
 \bibliographystyle{plain}
 
@@ -73,478 +107,49 @@
 \tableofcontents
 \newpage
 
+
 %--------------------------------------------------
 % Kapitelstruktur
 %--------------------------------------------------
 
-\section{Abstract}
-  Diese Masterarbeit beschäftigt sich mit der Entwicklung einer kombinierten Regelungsstrategie für ein autonom fahrendes,
-  selbstbalancierendes Fahrrad, basierend auf den Ergebnissen dreier vorangegangener Forschungsarbeiten. Ziel dieser Arbeit 
-  ist die erfolgreiche Integration einer PID-Balanceregelung mit einer MPC-basierten Fahrtrichtungsregelung, die mithilfe 
-  eines YOLO-Modells zur visuellen Spurdetektion ergänzt wird. Zur Validierung und Optimierung der kombinierten Regelung 
-  wurde die Simulationsumgebung Webots verwendet, wodurch die Robustheit und Funktionalität der entwickelten Regelungsalgorithmen
-  realitätsnah überprüft werden konnten. Im Rahmen der Arbeit wurde eine zweistufige Regelungsarchitektur umgesetzt, welche die präzise 
-  Balancierung des Fahrrads mittels eines PID-Reglers und die zuverlässige Spurverfolgung sowie Navigation mithilfe eines MPC-Reglers sicherstellt. 
-  Die gewonnenen Simulationsergebnisse bestätigen die Machbarkeit und Effizienz des entwickelten Ansatzes und legen damit eine solide Grundlage für die zukünftige
-  Implementierung der Regelung in einem realen autonomen Fahrrad.
-\newpage
+  \include{chapters/Einleitung}
 %--------------------------------------------------
 % Einleitung
 %--------------------------------------------------
-
-\section{Einleitung}
-  \subsection{Problemstellung}
-  \subsection{Bisherige Arbeiten}
-    \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
-
-      Die Bachelorarbeit von Anna Ranz bildete den Startpunkt des Projekts. Ihr Ziel
-      war die Konstruktion eines lauff\"ahigen Prototyps, mit dem grundlegende
-      physikalische Eigenschaften eines selbstbalancierenden Fahrrads untersucht
-      werden konnten. Kern der Hardware ist ein BeagleBone\,Black, der den
-      Lenkmotor mittels MD49-Controller (EMG49) \"uber UART und die
-      Inertialmess\-einheit BNO055 \"uber I\textsuperscript{2}C ansteuert. Ranz
-      implementierte erste PID-Regelkreise, validierte die Sensorik in separaten
-      Testprogrammen und analysierte die Dynamik des Gesamtsystems in Bezug auf
-      Massentr\"agheit, Raddynamik und Lenkkinematik. Die umfangreiche
-      Dokumentation enth\"alt Schaltpl\"ane, 3D-Modelle und Messaufnahmen und
-      bildet damit die hardwareseitige Grundlage f\"ur alle sp\"ateren Arbeiten
-      \cite{ranz2021bachelor}.
-
-      \subsubsection{Amine Karabila (2022) – Erste funktionierende Regelung}
-
-        Amine Karabila schloss 2022 unmittelbar an den Hardware-Prototyp von Ranz an und 
-        überführte das System von einzelnen Stellversuchen zu einem geschlossenen, 
-        echtzeitfähigen Regelkreis. Kern­bestandteil ist eine dreistufige P-Regelung 
-        auf dem BeagleBone Black, die den Rollwinkel der BNO055-IMU \cite{bno055} und 
-        die Lenkerstellung des MD49-Encoders \cite{md49} auswertet, während ein hinterer 
-        Nabenmotor die Vortriebsdrehzahl konstant hält \cite{karabila2022}. 
-        Ein erstes Hindernis war die Strombegrenzung des MD49, die den EMG49-Lenkmotor 
-        zu langsam ansprechen ließ. Karabila ersetzte deshalb den Leistungsteil durch eine 
-        BTS7960-H-Brücke \cite{bts7960} und verwendete den MD49 nur noch zur hochauflösenden 
-        Wegmessung. Nicht-blockierende UART-Aufrufe verkürzten die Encoder­abfrage von rund $4\,\mathrm{ms}$ 
-        auf knapp $1\,\mathrm{ms}$, sodass die Gesamttransportzeit des Reglers auf etwa $2\,\mathrm{ms}$ sank. 
-        Die erste Regel­version koppelte die Motorgeschwindigkeit über einen gestreckten $\tanh$-Verlauf an 
-        die Verweildauer des Rollwinkels in einer „habitablen Zone“. Außerhalb des Labors erwies sich 
-        dieses Verfahren als zu träge: Der Lenker schlug regelmäßig an die Endanschläge, und Stützräder 
-        mussten das Fahrrad vor dem Kippen bewahren. Die finale Lösung verknüpfte dagegen den gemessenen 
-        Rollwinkel direkt mit einem geschwindigkeits­abhängigen Soll-Encoderwert. Dadurch pendelte der 
-        Lenker nur noch mit etwa acht Ticks Amplitude um die Nullposition; ein integrierter Dämpfungsanteil 
-        reduzierte die Motordrehzahl automatisch, sobald sich das System seiner Soll-Lage näherte. 
-        Validiert wurde der Regler im Hof des Informatikgebäudes ($\approx 9.5\times26.5\,\text{m}$, fünf 
-        Prozent Steigung). Bei Sollgeschwindigkeiten von $6$–$10\,\mathrm{km/h}$ blieb das Fahrrad während 
-        aller aussagekräftigen Fahrten aufrecht; Tip-Over-Events traten nicht auf. Die erfolgreichste 
-        Versuchsfahrt bei $10\,\mathrm{km/h}$ zeigte Spitzen von unter acht Encoder-Ticks und eine 
-        Querabweichung, die optisch kaum wahrnehmbar war. Abbildung~\ref{fig:karabila_fahrt} dokumentiert 
-        diese Fahrt und bietet sich als Platzhalter für Fotos der Versuchsstrecke an. Damit bewies Karabilas 
-        Arbeit erstmals die Realisierbarkeit einer selbst­balancierenden Regelung und schuf die Grundlage für 
-        die PID-Optimierungen von Zander sowie die MPC-Navigation von Giray.
-        
-        \begin{figure}[h]
-          \centering
-          \includegraphics[width=0.8\textwidth]{figures/Fahrt1.png}
-          \caption{Erfolgreiche Versuchsfahrt von Karabila (2022) bei $10\,\mathrm{km/h}$.}
-          \label{fig:karabila_fahrt}
-        \end{figure}
-        \pdfcomment{Bachelorarbeit verschiedene Grafiken der Fahrten anzeigens}
-            
-
-        
-    \subsubsection{Jonah Zander (2023) – Optimierte PID-Balanceregelung}
-
-    Jonah Zander knüpfte 2023 an die vorherigen Arbeiten an und widmete sich der Verbesserung der 
-    Balance\-regelung des autonomen Fahrrads. Seine Bachelorarbeit 
-    \emph{„Entwurf einer Steuerung für ein selbstbalancierendes Fahrrad“} formulierte als Kernziel, 
-    dass das Fahrrad mindestens 60~Sekunden auf ebener Strecke selbstständig aufrecht fahren kann, 
-    ohne dass die Stützräder den Boden berühren \cite{zander2023}. Eingeleitet 
-    wurde diese Problemstellung mit dem Hinweis auf die allgemeinen Herausforderungen beim Entwurf 
-    eingebetteter Regelungssysteme – insbesondere das zuverlässige und rechtzeitige Auslesen verschiedener 
-    Sensoren (IMU, Encoder) und das Ansteuern der Aktoren (Lenk- und Antriebsmotor) unter Echtzeitbedingungen \cite{zander2023}. 
-    Auch alternative Ansätze wie die Balanceregelung mittels Control-Moment-Gyroskopen wurden untersucht, beispielsweise in \cite{park2020}, 
-    jedoch mit deutlich komplexerer Hardware. Zander betonte hierbei die Komplexität, 
-    ein robustes Zusammenspiel dieser Komponenten sicherzustellen, und verwies auf die vorhandene 
-    Grundlage durch Ranz’ Hardware-Prototyp und Karabilas erste Regelungslösung \cite{zander2023}. 
-    Diese Vorarbeiten lieferten die Basis, auf der seine optimierte PID-Balanceregelung aufbaute \cite{ranz2021bachelor, karabila2022}. 
-
-    Für die Umsetzung entwickelte Zander eine modular aufgebaute Software in~C, die auf dem 
-    BeagleBone~Black unter Debian-Linux als Multi-Thread-System läuft. Zeitkritische Aufgaben 
-    verlagerte er in die \textit{Programmable Realtime Units} (PRUs) des Mikrocontrollers, um 
-    Sensorwerte ohne Verzögerung auszulesen. Insbesondere die Erfassung der Fahr- und Lenkwinkel 
-    wurde teils auf die PRUs ausgelagert, wodurch Lesezyklen im zweistelligen kHz-Bereich möglich 
-    wurden. Die Balance-Regelung selbst realisierte Zander mit einem klassisch ausgelegten PID-Regler, 
-    dessen Parameter auf Basis umfangreicher Tests und Logdaten schrittweise optimiert wurden. 
-    Damit verbesserte er die zuvor von Karabila genutzte dreistufige P-Regelung grundlegend, 
-    insbesondere durch Einführung eines Integral- und Dämpfungsanteils, um dauerhaftes aufrechtes 
-    Fahren zu ermöglichen. Ergänzend implementierte die Software umfangreiche Logging-Funktionen,
-     mit denen Sensor- und Aktordaten während der Fahrt aufgezeichnet und anschließend grafisch 
-     ausgewertet werden konnten. 
-
-    Neben der eigentlichen Regelungslogik verstärkte Zander auch die Betriebssicherheit des Gesamtsystems. 
-    So wurde die Hardware um mehrere Sicherheitsmechanismen erweitert:
-    Zwei Notausschalter ermöglichen das Abschalten von Lenkung bzw. Gesamtstrom, und eine \emph{Reißleine} kappt
-     beim Abreißen (z.\,B. durch den Eingriff einer betreuenden Person) sofort die Versorgung des 
-     Lenkungsmotors \cite{zander2023}. Dadurch wird verhindert, dass ein Softwarefehler 
-     zu unkontrolliertem Lenkereinschlag und mechanischer Beschädigung führt. Auch ein Fail-Safe für den 
-     Fernsteuer-Empfänger wurde integriert, der bei Signalverlust das Programm automatisch stoppt \cite{zander2023}. 
-
-    In experimentellen Fahrtests demonstrierte Zander schließlich den Erfolg seines Ansatzes. 
-    Das Fahrrad blieb über einen Zeitraum von mehr als 60~Sekunden stabil in Balance, ohne dass 
-    die Stützräder den Boden berührten \cite{zander2023}. Die Zielvorgabe einer 
-    mindestens einminütigen aufrechten Fahrt wurde damit erfüllt und sogar überschritten. Während 
-    der Testfahrt fuhr das System mit konstanter Geschwindigkeit auf ebenem Untergrund und bewältigte 
-    erstmals auch gesteuerte Richtungsänderungen: Über eingehende Signale einer Fernbedienung ließ sich 
-    das Fahrrad sicher nach links/rechts steuern, ohne die Balance zu verlieren \cite{zander2023}. 
-    Zander erzielte damit den bis dahin längsten autonom balancierten Fahrbetrieb des Prototyps und schuf die Grundlage, 
-    auf der weiterführende Regelungsansätze aufsetzen 
-    können \cite{zander2023}. 
-    Seine Arbeit markiert somit einen wichtigen Meilenstein – mit einer ausgereiften Balance-Regelung, 
-    die eine zuverlässige Plattform für höhere Regelungsschichten bietet. Entsprechend wird die von Zander
-    entwickelte PID-Regelung in der vorliegenden Masterarbeit unmittelbar weiterverwendet: Sie wurde für die 
-    Webots-Simulation portiert und bildet als unterste Ebene des zweistufigen Reglers ein zentrales Fundament 
-    des Gesamtsystems. \pdfcomment{Selber aufbau wie bei yasin}
-
-
-
-
-    \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
-    Nach der Entwicklung der grundlegenden Balance-Steuerung in der Bachelorarbeit von Zander \cite{zander2023}, 
-    die das selbstbalancierende Fahrrad erstmals über mindestens 60\,s autonom stabil fahren ließ, richtete sich 
-    der Fokus der folgenden Arbeiten auf die Erweiterung um autonome Navigationsfähigkeiten. Mehrere Vorarbeiten 
-    hatten bereits die Hardware-Plattform und Basissoftware geschaffen \cite{ranz2021bachelor,karabila2022,zander2023}. 
-    Darauf aufbauend adressierte die Masterarbeit von Ghidaei \cite{Ghidaei2024} die noch offene Problemstellung,
-    das Fahrrad mithilfe einer kamerabasierten Umgebungserfassung und geeigneter Regelung autonom fahren zu lassen.
-
-    \textbf{Problemstellung.} Das selbstbalancierende Fahrrad verfügte zwar über Aktuatoren (Lenkmotor, Antrieb) 
-    und Sensoren (etwa IMU und Encoder) sowie eine funktionierende Balance-Regelung \cite{zander2023}, jedoch fehlten 
-    bis dato eine visuelle Orientierung im Raum und eine automatische Steuerungslogik für die Fahrtrichtung. Ghidaei 
-    formulierte daher als Ziel, eine \emph{Computer-Vision}-Pipeline auf einem eingebetteten System zu integrieren, 
-    welche dem Fahrrad eine Wahrnehmung der Umgebung und Trajektorienplanung ermöglicht \cite{Ghidaei2024}. 
-    Insbesondere sollten Objekte bzw. Fahrbahnelemente in der Kamerasicht erkannt und daraus eine Soll-Fahrspur 
-    abgeleitet werden. Gleichzeitig war ein Regler zu entwickeln, der das Fahrrad entlang dieser vorgegebenen 
-    Trajektorie steuert, ohne die aufrechte Balance zu verlieren. Diese Aufgabenstellung ist anspruchsvoll, da 
-    die zuverlässige Objekterkennung in Echtzeit auf eingebetteter Hardware limitierte Rechenressourcen erfordert 
-    und die Regelung eines selbstbalancierenden, nichtlinear instabilen Systems komplex ist.
-
-    \textbf{Vorgehen und zentrale Beiträge.} Ghidaeis Lösungsansatz besteht aus einer zweistufig verarbeiteten 
-    Pipeline aus Bildverarbeitung und Regelungstechnik. Als erster Schritt wird ein KI-basiertes Verfahren zur 
-    Objekterkennung im Videobild eingesetzt. Hier evaluierte Ghidaei verschiedene aktuelle Modelle der \emph{Computer Vision}, 
-    unter anderem das \emph{“Segment Anything”}-Modell FastSAM \cite{Zhao2023} und die YOLOv8-Architektur \cite{Ultralytics2023}, 
-    hinsichtlich ihrer Eignung für den eingebetteten Einsatz. Aufgrund seiner hohen Erkennungsgenauigkeit und Effizienz fiel 
-    die Wahl auf ein \emph{Ultralytics YOLOv8}-Netzwerk in der \emph{Segmentation}-Variante \cite{Ultralytics2023}. 
-    Dieses Convolutional Neural Network wurde mit einem angepassten Datensatz trainiert, um relevante Objekte der 
-    Fahrumgebung (wie z.\,B. Fahrbahnbegrenzungen oder Hindernisse) zu segmentieren. Die Inferenz konnte durch Optimierung 
-    mit NVIDIA \emph{TensorRT} auf dem eingesetzten NVIDIA Jetson~Nano Board beschleunigt werden, sodass die Bildauswertung 
-    in Echtzeit (Zyklusdauer $\approx$100\,ms) erfolgt \cite{Ghidaei2024}. Anhand der segmentierten Bilddaten werden anschließend 
-    durch Extraktion von Stützpunkten und Spline-Interpolation kontinuierliche Referenztrajektorien berechnet, welche die 
-    gewünschte Fahrlinie des Fahrrads repräsentieren \cite{Ghidaei2024}. 
-
-    Als zweiter Schritt implementierte Ghidaei einen geeigneten Fahrregler, um der berechneten Trajektorie zu folgen. Hierbei 
-    kam ein \emph{Model Predictive Controller} (MPC) zum Einsatz, der auf einem Einspur-Fahrdynamikmodell des Fahrrads basiert 
-    \cite{Hunziker2019}. Ein MPC optimiert iterativ die Stellgrößen (Lenkwinkel, ggf. Beschleunigung) über einen endlichen 
-    Zeithorizont, um Abweichungen von der Soll-Trajektorie zu minimieren, und hat sich in der Fahrzeugführung als effektiver 
-    Ansatz bewährt \cite{Hunziker2019}. In Ghidaeis Architektur wird der MPC in jedem Zyklus mit der aktuellen Zustandsschätzung 
-    gefüttert und liefert Lenkbefehle, die das Fahrrad entlang der Referenzspur halten \cite{Ghidaei2024}. Da für die 
-    Jetson-Plattform keine MATLAB-basierte MPC-Toolbox verfügbar war, wurden das Einspurmodell, die Trajektorien-Interpolation 
-    und zunächst auch der Regler in Python implementiert, bevor ein Open-Source-MPC-Modul integriert werden konnte
-     \cite{Ghidaei2024}. Die gesamte Pipeline – von der Kamerabild-Auswertung bis zur Berechnung der Stellgrößen – läuft 
-     dabei auf dem Jetson Nano und erfüllte die Echtzeitanforderungen des Systems (Verarbeitung alle 100\,ms) \cite{Ghidaei2024}. 
-
-    \textbf{Ergebnisse und Ausblick.} Die Masterarbeit demonstrierte, dass eine monokamera-basierte autonome Steuerung des selbstbalancierenden 
-    Fahrrads prinzipiell umsetzbar ist. Das entwickelte System erkannte Fahrbahnkanten und einfache Hindernisse und konnte in 
-    Simulationen eine vorgegebene Strecke abfahren \cite{Ghidaei2024}. Gleichzeitig zeigten sich Grenzen und offene 
-    Herausforderungen, die einen Ausblick auf weitere Forschungsschritte geben. So war die implementierte Pipeline 
-    zwar in der Lage, Hindernisse zu detektieren, besaß jedoch noch keine Strategie zu deren Umfahrung – zukünftige 
-    Arbeiten könnten hier ansetzen, indem sie die Trajektorienplanung um kollisionsvermeidende Manöver erweitern. Des Weiteren 
-    ließen sich die Umgebungswahrnehmung und Regelungspräzision durch Tiefeninformationen verbessern. Ghidaei schlägt vor, 
-    entweder einen stereoskopischen Kamerasensor zu integrieren oder mittels Monokamera-Methoden einen Tiefengradienten zu 
-    ermitteln, um die Distanz zu erkannten Objekten abzuschätzen \cite{Ghidaei2024}. Solche Daten könnten genutzt werden, 
-    um die berechnete Referenzkurve für den MPC-Regler mit Entfernungsinformationen zu gewichten und damit die Regelgüte zu 
-    erhöhen. Auch aus technischer Sicht sind Optimierungen möglich: Neuere KI-Modelle und Hardware-Plattformen versprechen 
-    höhere Performance. Beispielsweise erschienen 2024 beschleunigte Segmentierungsansätze, die eine um den Faktor~6 gesteigerte 
-    Verarbeitungs­geschwindigkeit bieten, sowie weiterentwickelte YOLO-Modelle \cite{Zhao2023,Ultralytics2023}. Leistungsfähigere 
-    Edge-AI-Hardware (etwa der aktuelle Raspberry~Pi~5 mit KI-Beschleunigung) könnte die Echtzeitfähigkeit weiter verbessern. 
-    Schließlich wurde in Ghidaeis Arbeit die kamerabedingte Beeinträchtigung durch Neigungen des Fahrrads (Rotation um die Rollachse) 
-    nicht gelöst; hier wird als hardwareseitige Maßnahme ein \emph{Gimbal} zur Stabilisierung der Kamera während der Fahrt 
-    vorgeschlagen \cite{Ghidaei2024}. 
-
-    \textbf{Einordnung für die aktuelle Arbeit.} Die Regelungsansätze aus den Arbeiten von Zander und Ghidaei werden in der 
-    vorliegenden Masterarbeit zusammengeführt. Konkret wird die von Zander entwickelte Balanceregelung (innere Schleife) 
-    mit dem von Ghidaei entworfenen MPC-basierten Spurhalte-Regler (äußere Schleife) in einer zweistufigen Simulationsarchitektur 
-    kombiniert. Diese Integration ermöglicht es, das Zusammenwirken von Balancehaltung und autonomen Lenkmanövern zunächst 
-    virtuell zu erproben und abzustimmen, bevor es in realen Fahrversuchen umgesetzt wird. Damit knüpft die aktuelle Arbeit 
-    direkt an den Stand der Technik an und erweitert ihn um die gleichzeitige Betrachtung beider Regelungsebenen für das 
-    selbstbalancierende Fahrrad.
-
-              
-
-
-        
-    
-  \section{Grundlagen}
-    \subsection{PID-Regelung – Prinzip und Eignung für das Balance-Problem}
-    \subsection{MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}
-    \subsection{YOLO-Grundlagen und Segmentierung}
-
+  \include{chapters/kapitel1}
+%--------------------------------------------------
+% Grundlagen
+%--------------------------------------------------
+  \include{chapters/kapitel2}
 %--------------------------------------------------
 % Webots-Simulationsumgebung
 %--------------------------------------------------
-\newpage
-\section{Webots-Simulationsumgebung}
-
-  \subsection{Überblick}
-
-  Webots ist ein frei verfügbares, plattformunabhängiges Robotiksimulations­programm, das seit 1998 von Cyberbotics 
-  kontinuierlich weiterentwickelt wird. Es kombiniert eine moderne Qt-Oberfläche mit dem auf ODE basierenden Physik-Kernel 
-  und einer OpenGL-basierten Rendering-Engine und ermöglicht so fotorealistische 3D-Szenarien inklusive deterministischer 
-  Dynamiksimulation \cite{cyberbotics2025}. Die Software stellt eine hierarchische Szenenstruktur bereit: \textit{World-Dateien} 
-  (\texttt{*.wbt}) enthalten Knoten für Roboter, Objekte und Umweltparameter; jeder Roboter wiederum kapselt Sensor- und Aktuatorknoten, 
-  die über Controller-Prozesse in C/C++, Python, Java, MATLAB oder via ROS-Bridge angesteuert werden können \cite{gupta2023}.  
-  Ein spezieller \textit{Supervisor-API} erlaubt Eingriffe auf Welt-Ebene (z.\,B. Reset, Logging, Auto-Evaluation) und bildet damit 
-  die Grundlage für reproduzierbare Experimente und Wettbewerbe. Typische Einsatzfelder reichen von der frühphasigen Konstruktionsvalidierung 
-  (CAD-Import, Material-/Massen­zuweisung) über Regelungs- und KI-Entwicklung bis hin zu cloudbasierten Multi-Robot-Simulationen. Studien zeigen 
-  zudem, dass Webots dank der offenen Schnittstellen zunehmend als Digital-Twin-Plattform für neuartige Robotertypen – etwa weiche Greifer – genutzt 
-  wird, ohne dass Spezial­hardware erforderlich ist \cite{hadi2024softgripper}.  
-  \vspace{0.5cm}
-  
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=0.8\textwidth]{figures/webots_overview.png}
-    \caption{Übersicht der Webots-Simulationsumgebung.}
-    \label{fig:webots_overview}
-  \end{figure}
- 
-
-  \newpage
-
-
-  \subsection{Struktur der Simulationsumgebung}
-  Die verwendete Simulationsumgebung basiert auf Webots und damit auf einer hierarchisch organisierten Szenenbeschreibung 
-  im VRML-Format. Eine \texttt{.wbt}-Datei kapselt sämtliche Entitäten der virtuellen Welt – von globalen 
-  Parametern (Zeitauflösung, Kontaktmodelle) über Umgebungsobjekte (Boden, Hintergrund, Lichtquellen) bis 
-  hin zu Robotern mitsamt deren Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025,gupta2023}. Jeder Knoten (Node) kann wiederum 
-  Unterknoten besitzen, sodass sich komplexe Systeme modular aus standardisierten Bausteinen zusammensetzen 
-  lassen. Für die vorliegende Arbeit ist diese Hierarchie entscheidend, weil sie erlaubt, (i) das physikalische 
-  Verhalten des Fahrrads getrennt von (ii) der Szenengeometrie und (iii) den übergeordneten Reglerprozessen 
-  zu modellieren. Änderungen an einem Teilbereich – etwa an den Reibungsparametern der Reifen oder an der 
-  Position einer Kamera – bleiben somit lokal und beeinträchtigen die übrigen Komponenten nicht.
-  
-  Ausgangspunkt der Welt ist eine rechteckige Bodenarena mit texturierter Fahrbahnoberfläche, die als Referenzstrecke 
-  für die visuelle Spurführung dient. Globale Kontakt- und Reibungsparameter sind hier definiert, um das Zusammenspiel 
-  zwischen Reifen und Untergrund konsistent zu halten. Ein fester Zeitschritt im Millisekundenbereich stellt sicher, 
-  dass sowohl die Balancebewegungen des Fahrrads als auch die Bildverarbeitungsschleifen deterministisch und in Echtzeit 
-  simuliert werden können \cite{cyberbotics2025}. Die Kameraperspektive des Betrachters (Viewpoint) folgt dem Fahrrad aus erhöhter Position, 
-  was die visuelle Analyse der Fahrmanöver während der Versuche erleichtert.
-  
-  Das zentrale Element der Szene ist der Roboterknoten \emph{BICYCLE}, der das selbstbalancierende Fahrrad repräsentiert. 
-  Sein Geometriemodell wurde aus CAD-Daten übernommen und mit vereinfachten Kollisionsvolumina (Boxen und Zylinder) hinterlegt, 
-  um die Physiksimulation effizient zu halten. Die Massen- und Trägheitsparameter der Baugruppen (Rahmen, Räder, Gabel) sind 
-  explizit angegeben, sodass die Dynamik – insbesondere Roll- und Nickbewegungen – realitätsnah nachgebildet wird. Bewegliche 
-  Komponenten sind über Hinge-Joints angebunden: Das Hinterrad wird über einen Rotationsmotor für den Vortrieb angesteuert, 
-  die Lenkbewegung des Vorderrads erfolgt über ein zweites Gelenk mit eigenem Servomotor. Ergänzend existiert ein Kurbel-/Pedal-Gelenk, 
-  das in erster Linie der geometrischen Vollständigkeit und nicht der Antriebserzeugung dient. Zur Zustandserfassung sind 
-  Sensorschnittstellen integriert: Eine Inertialmesseinheit (IMU) liefert dem Balance-Regler fortlaufend Orientierung und 
-  Rollwinkel \cite{bno055}; eine am Fahrrad montierte Kamera kann genutzt werden, um on-board visuelle Informationen 
-  auszuwerten. Ein Display-Modul steht optional für Debug- oder Visualisierungszwecke zur Verfügung. Die Kommunikation 
-  zwischen Fahrrad und übergeordnetem Regler erfolgt über ein Paar aus \texttt{Emitter} und \texttt{Receiver}, die einen 
-  leichten, paketbasierten Nachrichtenaustausch innerhalb von Webots ermöglichen.
-  
-  Übergeordnet ist ein \emph{Supervisor}-Knoten angelegt. Dieser spezielle Robotertyp besitzt in Webots weitreichende 
-  Eingriffsmöglichkeiten auf Welt-Ebene (z.\,B. Position-Reset, Logging, automatisierte Auswertung) und dient hier als 
-  externe Beobachter- und Steuerinstanz. Der Supervisor trägt eine statisch in der Szene platzierte Kamera, die die Fahrbahn 
-  aus einer globalen Perspektive erfasst. Auf Basis dieser Bilder führt der Python-basierte Vision-Controller eine 
-  Spurdetektion (YOLO) durch und berechnet über ein modellprädiktives Regelungsverfahren (MPC) Lenksollwerte bzw.\ Trajektorien. 
-  Diese Kommandos werden per Funkkanal (Emitter) an den Balance-Controller des Fahrrads übertragen, der sie in konkrete 
-  Motorbefehle umsetzt. Umgekehrt sendet das Fahrrad Statusdaten zurück, die der Supervisor für Evaluations- und Loggingzwecke 
-  speichert. Dieses Zusammenspiel zweier Controller-Prozesse – ein echtzeitnaher PID-Regler in C auf Roboterseite und ein 
-  bildverarbeitungsgetriebener MPC-Regler in Python auf Supervisorebene – bildet die Kernstruktur der kombinierten Regelung.
-  
-  Die gewählte Struktur der Simulationsumgebung verfolgt zwei Ziele: Erstens ermöglicht sie reproduzierbare und sichere 
-  Experimente in verschiedensten Fahrszenarien (Geradeausfahrt mit Störimpuls, Slalomkurse, Kurvenfahrten mit Steigung), 
-  ohne das reale Hardware-Risiko des Umkippens oder der Beschädigung einzugehen. Zweitens gestattet die klare Trennung von 
-  physikalischem Modell, Sensorebene und Reglerlogik eine gezielte Variation einzelner Parameter (z.\,B. Reibung, Zeitschritt, 
-  Bildauflösung), um deren Einfluss auf die Gesamtperformance systematisch zu untersuchen. Webots fungiert damit als flexibles 
-  Testbett, in dem sowohl Balance- als auch Spurführungsalgorithmen iterativ entwickelt, validiert und optimiert werden können, 
-  bevor sie auf den realen Prototyp übertragen werden.
-  \pdfcomment{Bild der Struktur der Simulationsumgebung anzeigens}
-
-
-
-
-
-  \newpage
-
-
-
-  \subsection{Das Fahrradmodell}
-  \begin{wrapfigure}{r}{0.42\textwidth} % r=rechts, l=links
-    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
-    \centering
-    \includegraphics[width=\linewidth]{figures/bicycle.png}
-    \caption{Das Fahrradmodell in Webots.}
-    \label{fig:bicycle}
-  \end{wrapfigure}
-
-  Das folgende Kapitel führt in das in Webots implementierte Fahrradmodell ein, wie es in der \texttt{.wbt}-Datei spezifiziert ist. 
-  Das Modell ist als kinematischer Baum aus starren Körpern (\texttt{Solid}) aufgebaut, die über eindimensionale Drehgelenke 
-  (\texttt{HingeJoint}) verbunden sind. Die sichtbare Geometrie (\texttt{CadShape}) ist vom physikrelevanten Kollisionsmodell 
-  (\texttt{boundingObject} mit einfachen Primitiven) getrennt; Masse, Schwerpunkt und Trägheit sind im \texttt{Physics}-Block definiert. 
-  An ausgewählten Gelenken wirken \texttt{RotationalMotor}-Aktuatoren, während Dämpfung und Haftreibung über 
-  \texttt{HingeJointParameters} festgelegt sind. In den nachfolgenden Unterabschnitten werden die Baugruppen des Fahrrads entlang 
-  der Knotenstruktur der Weltdatei beschrieben und deren Parameter hinsichtlich ihres Einflusses auf die Dynamik (Lenkung, 
-  Rad–Boden-Kontakt, Eigendämpfung) erläutert.
-
-  %\subsubsection{Hinterrad (\texttt{DEF rear\_wheel})}
-  Der Knoten \texttt{rear\_wheel} ist Teil des Gesamtfahrrads und definiert das angetriebene Hinterrad (\texttt{HingeJoint}).
-  Die \texttt{HingeJointParameters} beschreiben das Lager des Hinterrads. Der \emph{anchor} \verb|0 0.5312 0| gibt die Position 
-  der Radachse im Elternkoordinatensystem an. Die \emph{dampingConstant} \verb|0.8| ist die viskose Dämpfung des Lagers: höher 
-  bedeutet mehr Beruhigung gegen Schwingungen, aber eine trägere Rotation. Die \emph{staticFriction} \verb|0.1| ist die Haftreibung 
-  im Lager: sie verhindert kleines Flattern nahe Stillstand, erhöht jedoch das zum Anfahren nötige Drehmoment.
-  Das \texttt{endPoint Solid} ist der vom Gelenk bewegte starre Körper auf der Kind-Seite des \texttt{HingeJoint}. 
-  Er rotiert um den am Gelenk definierten Anker/Achse und bildet damit das eigentliche Bauteil (hier: das Hinterrad), 
-  das durch die Bewegung betroffen ist. In der Hierarchie gilt: Elternteil → Gelenk → \texttt{endPoint Solid}; alles, was hier angehängt ist, bewegt sich mit.
-  Das \texttt{boundingObject} definiert die kollisions- und kontaktrelevante Geometrie des Hinterrads, unabhängig vom sichtbaren Mesh. 
-  Es bestimmt, wo das Rad den Boden „berührt“, wo Kräfte eingeleitet werden und wie Kollisionen erkannt werden. Im Modell ist es ein einfacher Zylinder, 
-  der per \texttt{Pose}-Rotation (entspricht Drehung um die \(y\)-Achse um \(90^\circ\)) in die Radebene gedreht wird; so bildet er die Kontaktfläche des Reifens ab. Zusammen mit dem 
-  \texttt{contactMaterial} (z.\,B.\ \texttt{"wheel"}) entstehen daraus die Reib- und Rückpralleigenschaften im Kontakt mit dem Untergrund. 
-  Größe und Ausrichtung des \texttt{boundingObject} sollten zur realen Radgeometrie passen, da es die Kontaktlage und damit das 
-  Fahrverhalten maßgeblich beeinflusst.
-  \paragraph{Physik (\texttt{Physics})}
-  Der \texttt{Physics}-Block definiert die Masseneigenschaften des Hinterrads. \texttt{density -1} bedeutet: Masse und Trägheit werden 
-  \emph{nicht} aus dem \texttt{boundingObject} berechnet, sondern mit \texttt{mass}, \texttt{centerOfMass} und \texttt{inertiaMatrix} 
-  explizit vorgegeben. \texttt{mass 2} setzt die Gesamtmasse (kg), \texttt{centerOfMass [0 0 0]} positioniert den Schwerpunkt im Solid-Frame (hier an der Nabe), 
-  und \texttt{inertiaMatrix [0.122 0.122 0.245 0 0 0]} legt die Rotations-Trägheiten (kg·m\(^2\)) fest; größere Werte bedeuten trägere Reaktion auf 
-  Dreh- bzw.\ Kippbewegungen. Die Off-Diagonale \verb|0 0 0| zeigt an, dass Hauptachsen und Solid-Achsen ausgerichtet sind. Für automatische Berechnung 
-  könnte statt \verb|density -1| eine positive Dichte verwendet werden (dann kommen Masse/Trägheit aus Volumen×Dichte des \texttt{boundingObject}).
-
-
-
-  \begin{lstlisting}[style=wbt,caption={Hinterrad—Kinematik, Kontakt und Physik (Auszug)},label={lst:rear_wheel}]
-  DEF rear_wheel HingeJoint {
-    jointParameters HingeJointParameters {
-      anchor 0 0.5312 0
-      dampingConstant 0.1
-      staticFriction 0.8
-    }
-    device [..] # RotationalMotor (siehe Kaptitel 4.5 Aktuatoren)
-    endPoint Solid {
-      children [
-        Transform {...}  # visuelles Mesh (ohne Physik)
-      ]
-      contactMaterial "wheel"
-      boundingObject Pose {
-        rotation 0 1 0 1.5708
-        children [ Cylinder { height 0.05  radius 0.352  subdivision 72 } ]
-      }
-      physics Physics {
-        density -1, mass 2, centerOfMass [ 0 0 0 ], 
-        inertiaMatrix [ 0.122  0.122  0.245   0 0 0 ]
-      }
-    }
-  }
-  \end{lstlisting}
-
-
-
-
-  \subsection{Sensoren}
-  Das System nutzt zwei primäre Sensorquellen:
-  \begin{itemize}
-    \item \textbf{Inertialmesseinheit (IMU, Gerät „imu“)} am Fahrrad für die Rollwinkelmessung.
-    \item \textbf{Kamera (Gerät „camera“)} am Vision-Controller zur Spur-/Straßenerkennung.
-  \end{itemize}
-  Die IMU treibt die innere, schnelle Stabilisierung (Balance), die Kamera die äußere, langsamere Pfadführung (Vision). Beide werden in einer einfachen, statischen Fusion zusammengeführt.
-  %--------------------------------------------------
-
- %==========================
-  % IMU: Implementierung (Webots & Code)
-  %==========================
-  \subsubsection*{IMU: Implementierung (Webots \& Code)}
-  \paragraph{Konfiguration in der \texttt{.wbt}-Datei}
-%--------------------------------------------------
-  \textbf{Kamera: Vision-basierte Spurführung}
-  Die Kamera liefert Bildframes, die zur \emph{Spur-/Straßenerkennung} verarbeitet werden:
-  \begin{enumerate}
-    \item \textbf{Merkmalsextraktion:} YOLO-Segmentierung (falls verfügbar) oder ein Fallback (Kanten/ROI) bestimmt den lateralen Fehler \(e\) relativ zur Bildmitte.
-    \item \textbf{Vision-PID:} Ein separater PID-Regler bildet daraus einen normierten Lenkbefehl \(u_{\text{vis}}\in[-1,1]\) sowie eine Geschwindigkeits-\emph{Empfehlung} \(u_v\in[0,1]\) (bei großem Fehler wird Geschwindigkeit reduziert).
-    \item \textbf{Zeitbasis:} Die Verarbeitung läuft bewusst langsamer (\(\approx20\,\mathrm{Hz}\)) als die Balance-Regelung.
-  \end{enumerate}
-
-  \textbf{Sensordatenfusion und Einbindung in die Gesamtrege\-lung}
-  Die Fusion erfolgt im Balance-Controller:
-  \begin{align}
-    \theta_{\text{vis}} &= u_{\text{vis}}\cdot \theta_{\max},\\
-    \theta_{\text{final}} &= w_v\cdot(-\theta_{\text{vis}}) + w_b\cdot \theta_{\text{bal}},\qquad
-    w_v,w_b\in[0,1],\; w_v+w_b=1,\\
-    v_{\text{target}} &= v_{\min} + u_v\,(v_{\max}-v_{\min}).
-  \end{align}
-  Dabei sind \(w_v\) und \(w_b\) konfigurierbare Gewichte. \(\theta_{\text{final}}\) und \(v_{\text{target}}\) werden jeweils auf zulässige Bereiche begrenzt. Bei Vision-Timeout bzw.\ ungültigem Kommando läuft ausschließlich die Balance-Regelung (\(\theta_{\text{final}}=\theta_{\text{bal}}\), \(v_{\text{target}}=v_{\text{base}}\)).
-
-
-
-  \textbf{Kommunikation und Status}
-  Der Vision-Controller sendet periodisch \(\{u_{\text{vis}},u_v\}\) sowie Diagnosewerte (z.\,B.\ Fehler, PID-Terme, Maskenabdeckung) an den Balance-Controller. Umgekehrt publiziert der Balance-Controller an den Vision-Controller u.\,a.\ den aktuellen Rollwinkel, den angewandten Lenkwinkel und einen Stabilitätsindikator. Die Statusdaten dienen Visualisierung/Debug und fließen nicht in die Balance-PID-Schleife ein.
-
-  
-
-
-  \subsection{Aktuatoren}
-  \subsection{Controller}
-  \subsection{Angebundene GUI}
-
+  \include{chapters/kapitel3}
 %--------------------------------------------------
 % Kombinierte Regelung
 %--------------------------------------------------
-\section{Kombinierte Regelung}
-  \subsection{Portierung des Balance-PID (Zander)}
-  \subsection{Portierung des Fahrtrichtungs-MPC (Giray)}
-  \subsection{Strategien der Spurführung}
-    \subsubsection{YOLO-Segmentierung (YOLOv8) + MPC}
-    \subsubsection{Fallback-Strategie (Kanten/ROI) + MPC}
-  \newpage
-  \subsection{Supervisions-/Koppelkaskade}
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/Kombimierter Regeler.png}
-    \caption{Kombimierter Regeler.}
-    \label{fig:supervision_cascade}
-  \end{figure}
-  
-
-
+  \include{chapters/kapitel4}
 %--------------------------------------------------
 % Ergebnisse
 %--------------------------------------------------
-\section{Ergebnisse}
-  \subsection{Teststrecken}
-    \subsubsection{Gerade Strecke mit Störimpuls}
-    \subsubsection{Slalom-Kurs}
-    \subsubsection{S-Kurve mit Steigung}
-    \subsubsection{Kreisfahrt}
-  \subsection{Balance-Stabilität}
-  \subsection{Spurtreue \& Querabweichung}
-  \subsection{Rechenzeit \& Echtzeitfähigkeit}
-\newpage
-
+  \include{chapters/kapitel5}
 %--------------------------------------------------
 % Grenzen der Arbeit
 %--------------------------------------------------
-\section{Grenzen der Arbeit}
-
+  \include{chapters/kapitel6}
 %--------------------------------------------------
 % Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)
 %--------------------------------------------------
-\section{Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}
-
+  \include{chapters/kapitel7}
 %--------------------------------------------------
 % Fazit
 %--------------------------------------------------
-\section{Fazit}
-
+  \include{chapters/kapitel8}
 %--------------------------------------------------
 % Literaturverzeichnis
 %--------------------------------------------------
 \section{Literaturverzeichnis}
 % Hier später \bibliographystyle und \bibliography einfügen
-
 %--------------------------------------------------
 % Anhang (Parametertabellen, Screenshots, Release-Link)
 %--------------------------------------------------

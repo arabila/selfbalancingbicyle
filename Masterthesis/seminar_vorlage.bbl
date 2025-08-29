@@ -1,24 +1,89 @@
 \begin{thebibliography}{10}
 
+\bibitem{andreo2009}
+D.~Andreo, V.~Cerone, D.~Dzung, and D.~Regruto.
+\newblock Experimental results on lpv stabilization of a riderless bicycle.
+\newblock In {\em Proc. American Control Conference (ACC)}, pages 3124--3129, 2009.
+
+\bibitem{aphiratsakun2013}
+N.~Aphiratsakun and K.~Techakittiroj.
+\newblock Autonomous au bicycle: self balancing and tracking control (ausb 2).
+\newblock In {\em Proc. IEEE Int. Conf. on Robotics and Biomimetics (ROBIO)}, pages 480--485, 2013.
+
 \bibitem{bno055}
 {Bosch Sensortec}.
 \newblock Bno055 intelligent 9-axis absolute orientation sensor.
 \newblock \url{https://www.bosch-sensortec.com}, 2020.
+
+\bibitem{concurrent_rt_inverted_pendulum}
+{Concurrent Real-Time}.
+\newblock Inverted pendulum, 2024.
 
 \bibitem{cyberbotics2025}
 Cyberbotics.
 \newblock Webots -- open source robot simulator.
 \newblock \url{https://cyberbotics.com}, 2025.
 
+\bibitem{cyberbotics_controller_programming}
+{Cyberbotics Ltd.}
+\newblock Controller programming.
+\newblock \url{https://cyberbotics.com/doc/guide/controller-programming}, 2025.
+\newblock Zugriff am 27.08.2025.
+
+\bibitem{cyberbotics_emitter}
+{Cyberbotics Ltd.}
+\newblock Emitter.
+\newblock \url{https://cyberbotics.com/doc/reference/emitter}, 2025.
+\newblock Zugriff am 27.08.2025.
+
+\bibitem{cyberbotics_receiver}
+{Cyberbotics Ltd.}
+\newblock Receiver.
+\newblock \url{https://cyberbotics.com/doc/reference/receiver}, 2025.
+\newblock Zugriff am 27.08.2025.
+
+\bibitem{deng2018}
+Wenda Deng, Simon Moore, Jonathan Bush, Michael Mabey, and Wei Zhang.
+\newblock Towards automated bicycles: achieving self-balance using steering control.
+\newblock In {\em ASME Dynamic Systems and Control Conference (DSCC)}, volume~2, pages 1--9, 2018.
+
 \bibitem{md49}
 {Devantech Ltd.}
 \newblock Md49 dual motor driver datasheet.
 \newblock \url{https://www.robot-electronics.co.uk}, 2019.
 
+\bibitem{do_mpc_basics}
+{do-mpc development team}.
+\newblock Basics of model predictive control, 2024.
+\newblock Accessed 23 August 2025.
+
 \bibitem{Ghidaei2024}
 Yassin Ghidaei.
 \newblock Video- und sensorgest\"utztes autonomes fahren f\"ur ein selbstbalancierendes fahrrad.
 \newblock Master's thesis, Goethe-Universit\"at Frankfurt am Main, 2024.
+
+\bibitem{yolo_vision_regelung}
+Yassin Ghidaei and Amine Karabila.
+\newblock Yolo-based vision control for self-balancing bicycle.
+\newblock Internal project documentation, 2024.
+\newblock Vision controller implementation using YOLO for path detection and MPC for trajectory planning.
+
+\bibitem{vision_mpc_readme}
+Yasin Giray, Amine Karabila, Jonah Zander, et~al.
+\newblock Vision controller readme for selfbalancing bicycle.
+\newblock \url{https://github.com/arabila/selfbalancingbicyle/tree/master/Regelstuerung/controllers/vision_control_py/README.md}, 2023.
+\newblock Describes the MPC-based vision controller and its integration with the balance controller.
+
+\bibitem{githubWebots}
+{GitHub contributors}.
+\newblock Webots simulation framework.
+\newblock \url{https://github.com/cyberbotics/webots}, 2025.
+\newblock Zugriff am 24.08.2025.
+
+\bibitem{guo2010}
+Li~Guo, Qing Liao, Shuai Wei, and Yong Huang.
+\newblock A kind of bicycle robot dynamic modeling and nonlinear control.
+\newblock In {\em Proc. 2010 IEEE International Conference on Information and Automation (ICIA)}, pages 1613--1617, 2010.
 
 \bibitem{gupta2023}
 R.~Gupta and S.~Lee.
@@ -29,6 +94,11 @@ R.~Gupta and S.~Lee.
 M.~et~al. Hadi.
 \newblock Soft‐gripper simulation in webots.
 \newblock {\em Soft Robotics}, 11(2):123--135, 2024.
+
+\bibitem{apmonitor_pid}
+John Hedengren et~al.
+\newblock Proportional integral derivative (pid).
+\newblock \url{https://apmonitor.com/pdc/index.php/Main/ProportionalIntegralDerivative}, 2024.
 
 \bibitem{Hunziker2019}
 Alex Hunziker.
@@ -45,10 +115,41 @@ Glenn Jocher, Ayush Chaurasia, and Jing Qiu.
 \newblock Yolo by ultralytics.
 \newblock \url{https://github.com/ultralytics/ultralytics}, 2023.
 
+\bibitem{kanjanawanishkul2015}
+K.~Kanjanawanishkul.
+\newblock Lqr and mpc controller design and comparison for a stationary self-balancing bicycle robot with a reaction wheel.
+\newblock {\em Kybernetika}, 54(1):173--191, 2015.
+
 \bibitem{karabila2022}
 Amine Karabila.
 \newblock Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance.
 \newblock Master's thesis, Goethe-Universität Frankfurt, 2022.
+
+\bibitem{lam2011}
+P.~Y. Lam and T.~K. Sin.
+\newblock Gyroscopic stabilization of a self-balancing robot bicycle.
+\newblock {\em International Journal of Automation Technology}, 5(6):916--923, 2011.
+
+\bibitem{li2024webikes}
+Wenjia Li, Paris Francis, Robert McClosky, and Alexander Brown.
+\newblock {WeBikes}: a configurable, open-source add-on for simulating single-track vehicle dynamics in the {Webots} robot simulation software.
+\newblock {\em Advances in Transportation Studies}, Special Issue Vol.~4:73--88, 2024.
+
+\bibitem{cyberbotics_inertialunit}
+Cyberbotics Ltd.
+\newblock Inertialunit.
+\newblock \url{https://cyberbotics.com/doc/reference/inertialunit}, 2025.
+\newblock Geräte-Referenz, Zugriff: 24.08.2025.
+
+\bibitem{michel2004}
+Olivier Michel.
+\newblock {Cyberbotics Ltd. Webots}: Professional mobile robot simulation.
+\newblock {\em International Journal of Advanced Robotic Systems}, 1(1):39--42, 2004.
+
+\bibitem{openmmlab_yolov8}
+OpenMMLab and Ultralytics.
+\newblock Dive into yolov8: How does this state-of-the-art model work?, 2023.
+\newblock Accessed 23 August 2025.
 
 \bibitem{park2020}
 Sang-Hyun Park and Seung-Yun Yi.
@@ -60,6 +161,36 @@ Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
 \newblock Master's thesis, HWR Berlin, 2021.
 
+\bibitem{shafiekhani2015}
+A.~Shafiekhani, M.~J. Mahjoob, and M.~Akraminia.
+\newblock Design and implementation of an adaptive critic-based neuro-fuzzy controller on an unmanned bicycle.
+\newblock {\em Mechatronics}, 28:115--123, 2015.
+
+\bibitem{tamaldin2017}
+N.~Tamaldin et~al.
+\newblock {Design of a Self-balancing Bicycle}.
+\newblock In {\em Proceedings of Mechanical Engineering Research Day 2017}, pages 160--161, 2017.
+
+\bibitem{wikipedia_mpc}
+{Wikipedia contributors}.
+\newblock Model predictive control, 2024.
+\newblock Accessed 23 August 2025.
+
+\bibitem{image_segmentation_wikipedia}
+{Wikipedia contributors}.
+\newblock Image segmentation, 2025.
+\newblock Accessed 23 August 2025.
+
+\bibitem{yolo_wikipedia}
+{Wikipedia contributors}.
+\newblock You only look once, 2025.
+\newblock Accessed 23 August 2025.
+
+\bibitem{xiong2024}
+Jiaming Xiong, Ruihan Yu, and Caishan Liu.
+\newblock Steering control and stability analysis for an autonomous bicycle: Part ii—experiments and a modified linear control law.
+\newblock {\em Nonlinear Dynamics}, 112(4):3107--3132, 2024.
+
 \bibitem{zander2023}
 Jonah Zander.
 \newblock {Entwurf einer Steuerung f{\"u}r ein selbstbalancierendes Fahrrad}.
@@ -69,5 +200,10 @@ Jonah Zander.
 Xu~Zhao, Wenchao Ding, Yongqi An, Yinglong Du, Tao Yu, Min Li, Ming Tang, and Jinqiao Wang.
 \newblock Fast segment anything.
 \newblock arXiv:2306.12156 [cs.CV], 2023.
+
+\bibitem{astrom2005}
+Karl~J. Åström, Richard~E. Klein, and Anders Lennartsson.
+\newblock Bicycle dynamics and control: adapted bicycles for education and research.
+\newblock {\em IEEE Control Systems Magazine}, 25(4):26--47, 2005.
 
 \end{thebibliography}
