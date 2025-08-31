@@ -14,14 +14,14 @@ WorldInfo {
       coulombFriction [
         0.8
       ]
-      bounce 0.3
+      bounce 0.1
     }
   ]
 }
 Viewpoint {
-  orientation 0.10739757119957528 -0.2820684426536848 -0.9533641252739464 5.062348256695599
-  position -19.660876117586895 -24.98529336027744 2.2539680549573005
-  follow "Little Bicycle V2"
+  orientation -0.1732694003267564 0.2070324594102095 0.962868254571188 1.7996907229673489
+  position -14.860706705712346 -28.047465349740097 5.524351701358292
+  follow "rectangle arena"
 }
 TexturedBackground {
   skybox FALSE
@@ -46,8 +46,8 @@ RectangleArena {
   wallHeight 0.001
 }
 DEF BICYCLE Robot {
-  translation -17.4925 -18.6332 0.35986
-  rotation -0.0013687368980307246 -0.00011482480731350512 0.9999990566868389 3.1373353733828835
+  translation -17.7147 -19.2574 0.367101
+  rotation 0.0022654709332126815 -0.00020923508618995415 0.9999974119277156 3.14145
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064
@@ -61,7 +61,6 @@ DEF BICYCLE Robot {
     }
     DEF rear_wheel HingeJoint {
       jointParameters HingeJointParameters {
-        position 5.443927243500925
         anchor 0 0.5312 0
         dampingConstant 0.8
         staticFriction 0.1
@@ -77,11 +76,11 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        translation -2.1788174748849087e-06 0.531193991636363 0.00011115833496270672
-        rotation 0.9999999999937303 -1.0379753714155336e-07 3.539602644722272e-06 3.4924704545135543
+        translation -7.222542048879179e-07 0.5311986351468947 1.0149239862453717e-05
+        rotation -0.9999999999994074 4.0589810336105457e-07 1.010137366455216e-06 1.9514567889662362
         children [
           DEF wheel Transform {
-            scale 0.004 0.0081 0.0081
+            scale 0.0056 0.0081 0.0081
             children [
               CadShape {
                 url [
@@ -104,7 +103,7 @@ DEF BICYCLE Robot {
           rotation 0 1 0 1.5708
           children [
             Cylinder {
-              height 0.07
+              height 0.08
               radius 0.45
               subdivision 72
             }
@@ -117,7 +116,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.1 0.1 0.2
+            0.122 0.122 0.245
             0 0 0
           ]
         }
@@ -125,7 +124,6 @@ DEF BICYCLE Robot {
     }
     DEF Handlebars_and_Fork HingeJoint {
       jointParameters HingeJointParameters {
-        position 0.003767044045164071
         axis 0 0 1
         anchor 0 -0.52352 0.6528
         dampingConstant 0.3
@@ -143,7 +141,7 @@ DEF BICYCLE Robot {
       ]
       endPoint Solid {
         translation 0 -0.52352 0.6528
-        rotation 0 0 1 0.003766945202011577
+        rotation 0 0 -0.9999999999999999 9.884312124119402e-08
         children [
           DEF fork Transform {
             scale 0.0064 0.0064 0.0064
@@ -157,17 +155,17 @@ DEF BICYCLE Robot {
           }
           DEF wheel HingeJoint {
             jointParameters HingeJointParameters {
-              position 61.905002360825485
+              position 58.84271107812081
               anchor 0 -0.2368 -0.6528
               dampingConstant 0.8
               staticFriction 0.1
             }
             endPoint Solid {
-              translation -1.3265586247257488e-06 -0.2367962072671404 -0.652798613497641
-              rotation -0.9999999999962663 1.3696051463281097e-06 -2.364639069423282e-06 0.926850710974474
+              translation -1.2654270094003552e-06 -0.2368022910905392 -0.6527989791274361
+              rotation -0.9999999999996712 -7.130756857207463e-07 -3.8623405470805737e-07 3.9891419936744623
               children [
                 DEF wheel Transform {
-                  scale 0.004 0.0081 0.0081
+                  scale 0.0056 0.0081 0.0081
                   children [
                     CadShape {
                       url [
@@ -190,7 +188,7 @@ DEF BICYCLE Robot {
                 rotation 0 1 0 1.5708
                 children [
                   Cylinder {
-                    height 0.07
+                    height 0.08
                     radius 0.45
                     subdivision 72
                   }
@@ -198,12 +196,12 @@ DEF BICYCLE Robot {
               }
               physics Physics {
                 density -1
-                mass 2
+                mass 1.8
                 centerOfMass [
                   0 0 0
                 ]
                 inertiaMatrix [
-                  0.1 0.1 0.2
+                  0.11 0.11 0.223
                   0 0 0
                 ]
               }
@@ -379,7 +377,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.06 0.07 0.12
+            0.25 0.25 0.05
             0 0 0
           ]
         }
@@ -387,7 +385,7 @@ DEF BICYCLE Robot {
     }
     DEF crank HingeJoint {
       jointParameters HingeJointParameters {
-        position 36.143275569297934
+        position 30.400672892544396
         dampingConstant 0.2
         staticFriction 0.05
       }
@@ -399,7 +397,7 @@ DEF BICYCLE Robot {
         }
       ]
       endPoint Solid {
-        rotation -1 0 0 1.5558362737795848
+        rotation 1 0 0 5.26793166382605
         children [
           DEF crank Transform {
             scale 0.0064 0.0064 0.0064
@@ -413,12 +411,12 @@ DEF BICYCLE Robot {
           }
           DEF pedal HingeJoint {
             jointParameters HingeJointParameters {
-              position -36.143035625191175
+              position -30.40025456626206
               anchor -0.24 -0.192 0
             }
             endPoint Solid {
               translation -0.24 -0.192 0
-              rotation 1 0 0 1.5560762178863443
+              rotation -1 0 0 5.267513337543714
               children [
                 DEF pedal Transform {
                   scale 0.0064 0.0064 0.0064
@@ -459,12 +457,12 @@ DEF BICYCLE Robot {
           }
           DEF pedal HingeJoint {
             jointParameters HingeJointParameters {
-              position -36.1430356251912
+              position -30.40025456626206
               anchor 0.24 0.192 0
             }
             endPoint Solid {
               translation 0.24 0.192 0
-              rotation 0.9999999999999999 0 0 1.556076217886316
+              rotation -1 0 0 5.267513337543714
               children [
                 DEF pedal Transform {
                   scale 0.0064 0.0064 0.0064
@@ -545,7 +543,7 @@ DEF BICYCLE Robot {
             0 0 0
           ]
           inertiaMatrix [
-            0.015 0.0236 0.038
+            0.2 0.2 0.04
             0 0 0
           ]
         }
@@ -746,12 +744,12 @@ DEF BICYCLE Robot {
   }
   physics Physics {
     density -1
-    mass 4
+    mass 14
     centerOfMass [
-      0 -0.1 0.32
+      0 0 0.32
     ]
     inertiaMatrix [
-      0.08 0.05 0.07
+      1.2 2 3
       0 0 0
     ]
   }
@@ -761,8 +759,8 @@ DEF BICYCLE Robot {
 Supervisor {
   children [
     DEF VISION_CAMERA_TRANSFORM Pose {
-      translation -17.55468784866765 -19.04424441350922 0.34959669274504235
-      rotation -0.0014100798668183997 -0.00011480050257735656 0.9999989992473062 3.1373170993287602
+      translation -3.709465509677524 -6.351110825230749 -0.04517476285409254
+      rotation 0.002261921745702991 -0.00022403723935638146 0.9999974167553293 3.141443442788721
       children [
         Pose {
           translation 0 -0.8 1.3

@@ -502,47 +502,67 @@ INPUT ./figures/Datenblatt.png
 INPUT ./figures/Datenblatt.png
 INPUT ./figures/Datenblatt.png
 INPUT ./figures/Datenblatt.png
-INPUT ./figures/Kurve/Yolo_Stecke.png
-INPUT ./figures/Kurve/Yolo_Stecke.png
-INPUT ./figures/Kurve/Yolo_Stecke.png
-INPUT ./figures/Kurve/Yolo_Stecke.png
-INPUT ./figures/Kurve/Yolo_Stecke.png
+INPUT ./figures/Kurve.jpeg
+INPUT ./figures/Kurve.jpeg
+INPUT ./figures/Kurve.jpeg
+INPUT ./figures/Kurve.jpeg
+INPUT ./figures/Kurve.jpeg
+INPUT ./figures/Kurve/Test P und PID/P/Daten.png
+INPUT ./figures/Kurve/Test P und PID/P/Daten.png
+INPUT ./figures/Kurve/Test P und PID/P/Daten.png
+INPUT ./figures/Kurve/Test P und PID/P/Daten.png
+INPUT ./figures/Kurve/Test P und PID/P/Daten.png
+INPUT ./figures/Kurve/Test P und PID/P/Error.png
+INPUT ./figures/Kurve/Test P und PID/P/Error.png
+INPUT ./figures/Kurve/Test P und PID/P/Error.png
+INPUT ./figures/Kurve/Test P und PID/P/Error.png
+INPUT ./figures/Kurve/Test P und PID/P/Error.png
+INPUT ./figures/Kurve/Test P und PID/P/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/P/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/P/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/P/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/P/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
-INPUT ./figures/Kurve/Fallback_Strecke.png
-INPUT ./figures/Kurve/Fallback_Strecke.png
-INPUT ./figures/Kurve/Fallback_Strecke.png
-INPUT ./figures/Kurve/Fallback_Strecke.png
-INPUT ./figures/Kurve/Fallback_Strecke.png
-INPUT ./figures/Kurve/Yolo_Daten.png
-INPUT ./figures/Kurve/Yolo_Daten.png
-INPUT ./figures/Kurve/Yolo_Daten.png
-INPUT ./figures/Kurve/Yolo_Daten.png
-INPUT ./figures/Kurve/Yolo_Daten.png
-INPUT ./figures/Kurve/Yolo_Daten_2.png
-INPUT ./figures/Kurve/Yolo_Daten_2.png
-INPUT ./figures/Kurve/Yolo_Daten_2.png
-INPUT ./figures/Kurve/Yolo_Daten_2.png
-INPUT ./figures/Kurve/Yolo_Daten_2.png
-INPUT ./figures/Kurve/Yolo_Error.png
-INPUT ./figures/Kurve/Yolo_Error.png
-INPUT ./figures/Kurve/Yolo_Error.png
-INPUT ./figures/Kurve/Yolo_Error.png
-INPUT ./figures/Kurve/Yolo_Error.png
-INPUT ./figures/Kurve/Fallback_Daten.png
-INPUT ./figures/Kurve/Fallback_Daten.png
-INPUT ./figures/Kurve/Fallback_Daten.png
-INPUT ./figures/Kurve/Fallback_Daten.png
-INPUT ./figures/Kurve/Fallback_Daten.png
-INPUT ./figures/Kurve/Fallback_Daten_2.png
-INPUT ./figures/Kurve/Fallback_Daten_2.png
-INPUT ./figures/Kurve/Fallback_Daten_2.png
-INPUT ./figures/Kurve/Fallback_Daten_2.png
-INPUT ./figures/Kurve/Fallback_Daten_2.png
-INPUT ./figures/Kurve/Fallback_Error.png
-INPUT ./figures/Kurve/Fallback_Error.png
-INPUT ./figures/Kurve/Fallback_Error.png
-INPUT ./figures/Kurve/Fallback_Error.png
-INPUT ./figures/Kurve/Fallback_Error.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
+INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
+INPUT ./figures/Kurve/Test P und PID/PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/PID/Daten.png
+INPUT ./figures/Kurve/Test P und PID/PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/PID/Error.png
+INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
 INPUT ./figures/S-Kurve/Yolo_Strecke.png
 INPUT ./figures/S-Kurve/Yolo_Strecke.png
 INPUT ./figures/S-Kurve/Yolo_Strecke.png

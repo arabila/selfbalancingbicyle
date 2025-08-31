@@ -1,0 +1,2 @@
+timestamp,roll_angle,steering_output,final_steer,target_speed,actual_speed_kmh,actual_handlebar_angle,p_term,i_term,d_term,error,stability_factor,pos_x,pos_y,pos_z,yaw,pitch,roll_world,vision_error,vision_steer_command,vision_speed_command,vision_p_term,vision_i_term,vision_d_term,vision_active,vision_mask_coverage
+# Log beendet. Einträge: 0
