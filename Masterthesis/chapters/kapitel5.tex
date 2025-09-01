@@ -171,10 +171,10 @@
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/PID/Daten.png}
     \caption{Kurvenfahrt mit PID\mbox{-}Regler und ROI\mbox{-}Fallback\mbox{-}Erkennung}
-    \label{fig:kurvenfahrt-pid-strecke-roi}
+    \label{fig:kurvenfahrt-pid-roi}
   \end{figure}
   
-  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-strecke-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung: sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Kurzzeitige Anregungen (z.\,B.\ zwischen Sekunde~20 und~25) führen zwar zu einer temporären Erhöhung der Stellgrößen, werden jedoch vom PID\mbox{-}Regler sauber kompensiert. Der anfängliche Anstieg des \emph{Final\mbox{-}Steer} ist auf das Einfädeln in die Spur zurückzuführen; nach kurzer Transiente regelt sich das System auf einen kleinen stationären Fehler ein.
+  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung: sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Kurzzeitige Anregungen (z.\,B.\ zwischen Sekunde~20 und~25) führen zwar zu einer temporären Erhöhung der Stellgrößen, werden jedoch vom PID\mbox{-}Regler sauber kompensiert. Der anfängliche Anstieg des \emph{Final\mbox{-}Steer} ist auf das Einfädeln in die Spur zurückzuführen; nach kurzer Transiente regelt sich das System auf einen kleinen stationären Fehler ein.
   
   \begin{figure}[H]
     \centering
@@ -210,78 +210,279 @@
   %------------------------------------------------------------------------------------------------
 
   \subsubsection{S-Kurve}
-
-
-    \begin{figure}[H]
-      \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Strecke.png}  
-      \caption{Fallback Strecke S-Kurve}
-      \label{fig:fallback-strecke-s-kurve}
-    \end{figure}
-
-    \begin{figure}[H]
-      \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Strecke.png}  
-      \caption{Fallback Strecke S-Kurve}
-      \label{fig:fallback-strecke-s-kurve}
-    \end{figure}
-
    
+
+    \label{subsubsec:results-s-curve}
+    
     \begin{figure}[H]
       \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Daten.png}  
-      \caption{YOLO Daten S-Kurve}
-      \label{fig:yolo-daten-s-kurve}
+      \includegraphics[width=\textwidth]{figures/S-Kurve.png}
+      \caption{S\,-Kurve}
+      \label{fig:skurve}
     \end{figure}
+    
+    Die Versuchsstrecke besteht aus einer etwa 100\,m langen S\,-Kurve mit einer Fahrbahnbreite von rund 5{,}5\,m. Das Szenario 
+    dient der Bewertung der Kopplung aus innerer Balance-Regelung (PID) und äußerer Spurführungsregelung (visionbasierter MPC) 
+    unter schnellem Krümmungswechsel. Für den Balance-PID wurden in diesem Versuch $K_p=2.0$, $K_i=0.05$ und $K_d=0.2$ verwendet; 
+    im Vergleich zu anderen Strecken erwies sich hier eine reduzierte Gewichtung von Integral- und Derivativanteil als ausreichend, 
+    da die Balance an den Kurveneingängen sonst zu stark angeregt wird. Die innere Schleife arbeitet mit 2\,ms Abtastzeit, die Vision-/MPC-Schleife mit 50\,ms (20\,Hz).
+    
+    \paragraph{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung}
+    Wie bereits in den vorhergehenden Abschnitten gezeigt, ist die YOLOv8\,-Segmentierung die zentrale Wahrnehmungskomponente 
+    der äußeren Schleife. In der S\,-Kurve zeigt sich jedoch, dass die Segmentierung beim ersten starken Krümmungswechsel 
+    zeitweise unzuverlässig ist. \autoref{fig:skurve-yolo} illustriert, dass das System die Fahrbahn bereits nach der 
+    ersten Kurve partiell verliert; der MPC erhält damit nur intermittierend valide Referenzen. Formal lässt sich die Lenkvorgabe als
+    \[
+    u_{\mathrm{steer}}(t)=u_{\mathrm{bal}}(t)+g_{\mathrm{vis}}(t)\,u_{\mathrm{mpc}}(t)
+    \]
+    schreiben, wobei $u_{\mathrm{bal}}$ der schnelle Balance-Anteil, $u_{\mathrm{mpc}}$ die Vision-/MPC-Vorgabe 
+    und $g_{\mathrm{vis}}\!\in[0,1]$ ein Qualitätsgewicht ist. Fällt die Segmentierung aus, wird effektiv $g_{\mathrm{vis}}\!\approx 0$ 
+    und die Fahrtrichtung wird nur noch durch den Balance-Regler gehalten.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\textwidth]{figures/S-Kurve/YOLO/Strecke.png}
+      \caption{S\,-Kurve mit YOLO\,-Regler}
+      \label{fig:skurve-yolo}
+    \end{figure}
+    
+    Die Zeitverläufe in \autoref{fig:skurve-yolo-daten} zeigen zu Versuchsbeginn eine unnötig starke 
+    Rechts\-ab\-bie\-gung mit anschließender Gegenlenkung nach links (um ca.\,15\,s). Diese Sequenz 
+    ist kein Folgeeffekt der Balance, sondern ein Artefakt der unstetigen Spurreferenz: das Segmentierungsmodell 
+    liefert kurzzeitig inkonsistente Mittellinien, die der MPC korrektiv verfolgt. Zwischen etwa 25\,s und 40\,s 
+    fällt die Spurdetektion stellenweise aus; ab $\sim$30\,s ist $u_{\mathrm{mpc}}$ mehrfach Null, sodass im \texttt{final\_steer} 
+    praktisch nur $u_{\mathrm{bal}}$ wirksam bleibt. Erst ab ca.\,45\,s wird die Spur wieder sicher akquiriert und der MPC fordert 
+    erneut ein Rechtsab\-bie\-gen an.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\textwidth]{figures/S-Kurve/YOLO/Daten.png}
+      \caption{S\,-Kurve: ausgewählte Zeitreihen (Rollwinkel, Balance-Soll, \texttt{final\_steer})}
+      \label{fig:skurve-yolo-daten}
+    \end{figure}
+    
+    Der Fehlerplot in \autoref{fig:skurve-yolo-error} bestätigt diese Diagnose: Der visionbasierte Querfehler $\tilde e_y$ ist im 
+    Intervall 25\,s–40\,s „nahe Null“ \emph{nicht} aufgrund guter Spurhaltung, sondern weil kein verwertbares Signal vorliegt 
+    (Maskenfragmentierung bzw.\ Konfidenz\,{<}\,Schwellwert). Außerhalb der Aussetzer ist die Spurhaltung erkennbar hochfrequent und weist große 
+    Spitzen auf. Diese schnellen Lenkänderungen regen den Balance-Regler an (Kopplung zwischen Lenkdynamik und Rollwinkel), was die Rolldämpfung 
+    belastet und die Reserven gegenüber Störungen reduziert.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\textwidth]{figures/S-Kurve/YOLO/Error.png}
+      \caption{S\,-Kurve: visionbasierter Querfehler $\tilde e_y$}
+      \label{fig:skurve-yolo-error}
+    \end{figure}
+    
+    
+    \emph{Fazit:} Über beide Strecken hinweg (S\,-Kurve, Kurvenfahrt) zeigt die YOLO\,-basierte Spurführung die gleiche Schwäche: In stark gekrümmten 
+      Abschnitten liefert die Segmentierung intermittierend oder verspätet valide Spurmessungen. In der S\,-Kurve äußert sich dies als 
+      unnötige Anfangskorrektur (Rechts$\rightarrow$Links, $\sim$15\,s) sowie als scheinbar „guter“ Querfehler nahe Null zwischen 25–40\,s, 
+      der tatsächlich auf Aussetzer der Spurerkennung zurückgeht (vgl.\ \autoref{fig:skurve-yolo}, \autoref{fig:skurve-yolo-daten}, 
+      \autoref{fig:skurve-yolo-error}). In der Kurvenfahrt tritt das gleiche Muster ausgeprägter auf: sprunghafter Querfehleranstieg 
+      ab $\sim$31\,s und nachfolgendes Kippen trotz PID\,-Dämpfung, ausgelöst durch inkonsistente bzw.\ fehlerhafte Trajektorienvorgaben 
+      (\autoref{fig:kurvenfahrt-pid-yolo}, \autoref{fig:kurvenfahrt-pid-error-yolo}, \autoref{fig:kurvenfahrt-pid-strecke-yolo}).
+
+      Regelungstechnisch führt die unstete Spurreferenz zu hochfrequenten Lenksignalen, die den Balancekreis anregen und die Rolldämpfung 
+      reduzieren. Demgegenüber zeigt der ROI\,-Fallback in beiden Szenarien eine deutlich ruhigere Dynamik: Die Trajektorien bleiben mittig, 
+      Aussetzer entfallen, und der Querfehler weist die erwartete S\,-Kurven\,-Signatur ohne impulsartige Ausreißer auf (\autoref{fig:skurve-roi}, 
+      \autoref{fig:skurve-roi-daten}, \autoref{fig:skurve-roi-error}).
+
   
-    \begin{figure}[H]
-      \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Yolo_Error.png}  
-      \caption{Error YOLO S-Kurve}
-      \label{fig:yolo-error-s-kurve}
-    \end{figure}
 
+
+    \textbf{Einsatz des erweiterten Balance\,-PID\,-Reglers mit ROI\,-Fallback\,-Erkennung}
     
+    \autoref{fig:skurve-roi} zeigt gegenüber der YOLO\,-Variante eine deutlich stabilere Spurhaltung über die gesamte S\,-Kurve. 
+    Die Trajektorie bleibt näher an der Spurmitte, unnötige großamplitudige Korrekturen entfallen weitgehend. Lediglich zu Beginn 
+    ist – analog zur YOLO\,-Fahrt – ein kurzer Rechts\,$\rightarrow$\,Links-Korrekturzug zu erkennen, der als Einschwingvorgang der 
+    äußeren Regelung zu werten ist. Danach verläuft die Fahrt konsistent und ohne Abreißen der Spurinformation.
 
     \begin{figure}[H]
       \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Daten.png}  
-      \caption{Fallback Strecke S-Kurve}
-      \label{fig:fallback-strecke-s-kurve}
+      \includegraphics[width=\textwidth]{figures/S-Kurve/Fallback/Strecke.png}
+      \caption{S-Kurve mit ROI-Regler}
+      \label{fig:skurve-roi}
     \end{figure}
+
+    Die Zeitreihen in \autoref{fig:skurve-roi-daten} belegen dies während des Richtungswechsels zwischen ca.\,25–35\,s: Der 
+    Lenkbedarf steigt erwartungsgemäß am Krümmungsmaximum an, zugleich bleibt der \texttt{final\_steer} frei von hochfrequenten 
+    Spitzen. Um etwa 35\,s ist ein temporär größeres Pendeln des Rollwinkels sichtbar, das jedoch begrenzt bleibt und nach Passieren 
+    des zweiten Kurvenbogens rasch abklingt (wiederhergestellte Dämpfung, keine Aufschaukelung). Insgesamt resultiert eine klarere 
+    Kopplung zwischen Lenkbefehl und Fahrzeuglage ohne die bei YOLO beobachteten Artefakte.
 
     \begin{figure}[H]
       \centering
-      \includegraphics[width=1.0\textwidth]{figures/S-Kurve/Fallback_Error.png}  
-      \caption{Fallback Strecke S-Kurve}
-      \label{fig:fallback-strecke-s-kurve}
+      \includegraphics[width=\textwidth]{figures/S-Kurve/Fallback/Daten.png}
+      \caption{S-Kurve mit ROI-Regler Daten}
+      \label{fig:skurve-roi-daten}
     \end{figure}
 
-    
+    Der Querfehlerverlauf in \autoref{fig:skurve-roi-error} ist deutlich glatter und zeigt die erwartete S\,-Kurven-Signatur mit
+     wohldefiniertem Vorzeichenwechsel in den beiden Bögen. Im Gegensatz zur YOLO\,-Fahrt treten keine Null-Plateaus durch Signalaussetzer 
+     und kaum impulsartige Ausreißer auf; die Varianz des Fehlers ist reduziert, und das Anfangsbias entspricht der kurzfristigen Suche
+     nach der Spurmitte. Das ruhigere Fehlersignal führt zu geringerer Anregung des Balancekreises und damit zu einer robusteren 
+     Gesamtfahrt.
 
-   
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=\textwidth]{figures/S-Kurve/Fallback/Error.png}
+      \caption{S-Kurve mit ROI-Regler Error}
+      \label{fig:skurve-roi-error}
+    \end{figure}
 
-   
 
+    \emph{Fazit:} Mit ROI-Fallback verbessert sich die Spurtreue über die gesamte Strecke, die Zahl und Amplitude unnötiger Korrekturen 
+    sinkt, Aussetzer der Spurinformation werden vermieden und die Balance bleibt trotz Krümmungswechseln gut beherrschbar. Die Resultate 
+    deuten auf eine höhere Robustheit der Regelkette in kurvigen Abschnitten hin.
+  
+  
 
 
     %------------------------------------------------------------------------------------------------
     %------------------------------------------------------------------------------------------------
 
 
+    \newpage
+
+
+    \subsubsection{Gerade Strecke mit Seitenwind}
+
+
+    Die Versuchsumgebung ist eine $64\,\text{m} \times 64\,\text{m}$ große Karte mit einer $9{,}3\,\text{m}$ breiten, geraden Fahrbahn. Entlang der Geraden 
+    sind drei etwa $20\,\text{m}$ lange Segmente definiert (vgl.~\autoref{fig:gerade-strecke-mit-seitenwind}), die als Windkanäle mit seitlichem Anströmfeld 
+    modelliert sind. Die Windrichtung wechselt zwischen den Segmenten (rechts $\rightarrow$ links $\rightarrow$ rechts). Die Fahrgeschwindigkeit wird konstant
+    auf $7\,\text{km/h}$ geregelt, die Reifenbreite beträgt $2\,\text{cm}$ (im Gegensatz zu $6\,\text{cm}$ bei der kombinierten Regelung). Die Kopplung zum Strömungsfeld 
+    erfolgt über die in \textit{Webots} aktivierten aerodynamischen Drag-/Lift-Modelle; die Seitenwinde werden durch drei \texttt{Fluid}-Volumina mit Luftparametern
+     $\rho=1{,}225\,\mathrm{kg\,m^{-3}}$ und $\mu=1{,}81\times10^{-5}\,\mathrm{Pa\,s}$ realisiert, jeweils mit einer achsenparallelen \texttt{boundingObject}-Box 
+     von $64\times21\times20\,\mathrm{m}$ und den Translationen $(0,21,0)$, $(0,1{,}86,0)$ und $(0,-19{,}33,0)$. Das Anströmfeld ist stationär und homogen; pro 
+     Segment wird \texttt{streamVelocity} als $(-v_w,0,0)$, $(+v_w,0,0)$ bzw.\ $(-v_w,0,0)$ gesetzt, wobei in den Auswertungen $v_w\in\{0{,}5,1{,}0\}\,\mathrm{m/s}$ verwendet
+     wird (Stresstests bis $2\,\mathrm{m/s}$ sind möglich). Geregelt wird in der inneren Schleife die Fahrzeugbalance (PID, Abtastzeit $\approx 2\,\text{ms}$); die 
+     äußere Spurführung (YOLO/ROI, $\approx 50\,\text{ms}$) hält die Mittellinie und wirkt hier primär als langsame Vorsteuerung. Sofern nicht anders angegeben, 
+     verwenden wir die Balance-PID-Parameter $K_p = 2{,}0$, $K_i = 0{,}05$ und $K_d = 0{,}2$ (Baseline).
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Strecke.png}
+      \caption{Versuchsaufbau: Gerade Strecke mit drei seitlichen Windkanälen (rote Drahtgitterboxen). 
+      Die Fahrbahnmitte dient als Referenz für die Spurführung.}
+      \label{fig:gerade-strecke-mit-seitenwind}
+    \end{figure}
+    
+    \paragraph{Fall A: Seitenwind $0{,}5\,\text{m/s}$ (Baseline-Regler)}
+    Bei moderatem Seitenwind ($0{,}5\,\text{m/s}$) zeigt die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke} eine seitliche Auslenkung in Windrichtung
+    und anschließend eine Rückkehr zur Ausgangsspur, nachdem das Fahrzeug den dritten Windkanal passiert hat. 
+    Die maximale laterale Abweichung beträgt dabei bis zu etwa $3\,\text{m}$, bleibt jedoch ohne Instabilität.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Strecke_1.png}
+      \caption{Trajektorie bei $0{,}5\,\text{m/s}$ Seitenwind: Blaue Linie = Fahrzeugspur; 
+      Start (grün) und Endpunkt (rot). Die Auslenkung in den ersten beiden Windsegmenten wird nach dem dritten Segment wieder abgebaut.}
+      \label{fig:gerade-strecke-mit-seitenwind-strecke}
+    \end{figure}
+    
+    Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten} verdeutlichen den Zusammenhang zwischen Rollwinkel und Lenkkommandos:
+    Zu Beginn ist eine deutliche Rechtsneigung (positiver Rollwinkel) erkennbar, die der Regler mit gegenläufigen Balance- und Lenkimpulsen kompensiert.
+    Die Signale bleiben beschränkt, der stationäre Versatz wird durch den Integralanteil weitgehend eliminiert.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten.png}
+      \caption{Zeitreihen bei $0{,}5\,\text{m/s}$ Seitenwind: Rollwinkel, Balance-Steer und finales Lenkkommando. 
+      Die Richtung der Seitenböe spiegelt sich in der Vorzeichenfolge des Rollwinkels wider; 
+      der D-Anteil dämpft die schnelle Nick-/Roll-Dynamik.}
+      \label{fig:gerade-strecke-mit-seitenwind-daten}
+    \end{figure}
+    
+    \paragraph{Fall B: Seitenwind $1{,}0\,\text{m/s}$ (Baseline-Regler)}
+    Erhöhen wir die Windstärke auf $1{,}0\,\text{m/s}$, vergrößert sich die laterale Abweichung deutlich
+    (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). 
+    Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten1} zeigen,
+    dass der Rollwinkel nach etwa $7\,\text{s}$ divergiert; das Fahrzeug kippt um.
+    Interpretation: Die Störmomente aus Seitenwind übersteigen mit den Baseline-Gains die stellbare Gegenwirkung,
+    der Regler läuft in Sättigungen (Lenkraten- und Amplitudenlimit), während der I-Anteil die anhaltende Störung nicht schnell genug kompensiert.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Strecke_2.png}
+      \caption{Trajektorie bei $1{,}0\,\text{m/s}$ Seitenwind (Baseline-Gains): 
+      starke Abdrift nach rechts mit vorzeitigem Abbruch infolge Umkippens.}
+      \label{fig:gerade-strecke-mit-seitenwind-strecke2}
+    \end{figure}
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten_2.png}
+      \caption{Zeitverlauf bei $1{,}0\,\text{m/s}$ (Baseline-Gains): 
+      ansteigende Rollauslenkung und instabiles Verhalten nach $\approx 7\,\text{s}$.}
+      \label{fig:gerade-strecke-mit-seitenwind-daten1}
+    \end{figure}
+    
+    \paragraph{Fall C: Gain-Erhöhung für die Balance-Regelung}
+    Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften erhöhen wir die Balance-Gains auf 
+    $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$. 
+    Der größere P-Anteil erhöht die Querstabilität (``Steifigkeit'' gegenüber Winkelfehlern), 
+    der höhere D-Anteil liefert zusätzliche Dämpfung und verhindert Phasennachlauf, 
+    und der verstärkte I-Anteil reduziert den stationären Versatz durch die windinduzierte Momentenbilanz.
+    
+    Die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke3} bleibt nun über die gesamte Strecke beherrscht;
+    die laterale Abweichung wächst nicht mehr unbeschränkt an. 
+    Gleichzeitig zeigen die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten2} ein stärkeres, aber kontrolliertes Schwingen des finalen Lenkkommandos:
+    Die erhöhte Verstärkung erkauft Stabilität durch höhere Stellaktivität, bleibt aber innerhalb der Aktuatorgrenzen.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Strecke_3.png}
+      \caption{Trajektorie bei $1{,}0\,\text{m/s}$ Seitenwind mit erhöhten Balance-Gains: 
+      stabilisierte Fahrt ohne Umkippen; die Abdrift wird begrenzt und anschließend abgebaut.}
+      \label{fig:gerade-strecke-mit-seitenwind-strecke3}
+    \end{figure}
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten_3.png}
+      \caption{Zeitreihen bei $1{,}0\,\text{m/s}$ mit erhöhten Gains: 
+      gedämpfter Rollwinkelverlauf; höhere, aber tolerierbare Lenkaktivität (keine Sättigung, keine Divergenz).}
+      \label{fig:gerade-strecke-mit-seitenwind-daten2}
+    \end{figure}
+    
+    \paragraph{Einordnung und Grenzen}
+    Die Ergebnisse bestätigen die in dieser Arbeit gewählte Zwei-Ebenen-Architektur:
+    Die schnelle Balance-Regelung muss Seitenwindstörungen primär aufnehmen; die langsamere Spurführung korrigiert den verbleibenden Versatz.
+    Für moderate Böen ($\approx 0{,}5\,\text{m/s}$) genügt die Baseline-Parametrierung; 
+    bei stärkeren Böen ($\approx 1{,}0\,\text{m/s}$) ist eine Erhöhung von $K_p$, $K_i$ und $K_d$ erforderlich, 
+    um Umkippen zu vermeiden. Allerdings steigen dabei Stellaufwand und Oszillationstendenzen.
+    
+    Ab einer gewissen Windstärke liefern reine PID-Anpassungen abnehmenden Zusatznutzen.
+    Sinnvolle Erweiterungen sind (i) Anti-Windup und Lenkratenbegrenzung mit prädiktiver Phasenreserve,
+    (ii) eine Störgrößen-Vorsteuerung (z.\,B. auf Basis eines Windschätzers oder der Querbeschleunigung),
+    (iii) Gain-Scheduling über Geschwindigkeit und geschätzte Windlast sowie 
+    (iv) physikalische Anpassungen (größere Reifenbreite, tieferer Schwerpunkt, höhere Rotationsenergie der Räder).
+    Diese Maßnahmen adressieren die beobachtete Kopplung von Roll- und Querfehler und erhöhen die Robustheit über das reine Tuning hinaus.
 
 
 
 
-  \subsubsection{Gerade Strecke mit Seitenwind}
+
+
+  
+
+
 
 
 
 
   %------------------------------------------------------------------------------------------------
   %------------------------------------------------------------------------------------------------
-  \subsubsection{Gerande Stecke mit Höhenunterschied}
-
+  \newpage
+  \subsubsection{Gerade Strecke mit Höhenunterschied}
+  
+  In diesem Abschnitt bewerten wir die Stabilität der Balanceregelung auf einer geraden Teststrecke mit definiertem Höhenprofil. Untersucht werden zwei archetypische 
+  Szenarien: das Überfahren eines Hügels sowie das Durchfahren einer Senke (``Tunnel''), vgl.\ \autoref{fig:huegel-tunnel}. Soweit nicht anders angegeben, verwenden
+  wir die Baseline-Parameter der Balance-PID-Regelung aus Kapitel~5.2.3. Die Höhendifferenz \(M\) wird schrittweise variiert (\(0{,}5\,\text{m}\), \(1\,\text{m}\), \(2\,\text{m}\)), 
+  um den Einfluss auf Roll- und Spurverhalten systematisch zu untersuchen.
+  
   \begin{figure}[H]
     \centering
     \begin{subfigure}[t]{0.48\textwidth}
@@ -292,14 +493,183 @@
       \includegraphics[width=\linewidth]{figures/Tunnel.png}
       \caption{Tunnel}\label{fig:tunnel}
     \end{subfigure}
-    \caption{Hügel und Tunnel nebeneinander.}\label{fig:huegel-tunnel}
+    \caption{Höhenprofile der Teststrecke: Hügel (a) und Senke/Tunnel (b).}
+    \label{fig:huegel-tunnel}
   \end{figure}
   
+  \paragraph{Fall A: Senke, \(M=1{,}0\,\text{m}\)}
+  
+  Die Trajektorie in \autoref{fig:tunnel-strecke-1} zeigt über weite Teile eine nahezu ideale Spurhaltung; geringe laterale Abweichungen treten erst beim 
+  Ausfahren aus der Senke auf. Die Zeitreihen in \autoref{fig:tunnel-daten-1} bestätigen dieses Bild: Der Rollwinkel bleibt klein und wird vom Balance-Regler 
+  zuverlässig kompensiert. Bei \(t\approx 2{,}5\,\text{s}\) ist eine kurzzeitige Amplitudenerhöhung sichtbar, die rasch ausklingt. Da die tiefste Stelle des 
+  Profils mittig liegt und die Ränder auf der Referenzhöhe (Nullhöhe) verlaufen, wirken die seitlichen Anteile der Hangabtriebskraft symmetrisch, was die beobachtete Stabilität der Talfahrt erklärt.
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-1/Strecke.png}
+    \caption{Trajektorie durch die Senke (Fall~A, \(M=1{,}0\,\text{m}\)).}
+    \label{fig:tunnel-strecke-1}
+  \end{figure}
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-1/Daten.png}
+    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~A, \(M=1{,}0\,\text{m}\)).}
+    \label{fig:tunnel-daten-1}
+  \end{figure}
+  
+  \paragraph{Fall B: Senke, \(M=2{,}0\,\text{m}\) (Baseline-Gewichte)}
+  
+  Wird die Höhendifferenz auf \(M=2{,}0\,\text{m}\) erhöht, verschlechtert sich das Verhalten mit den Baseline-Gewichten deutlich. \autoref{fig:tunnel-strecke-2}
+   dokumentiert eine wachsende Querabweichung im letzten Drittel der Strecke. In den Zeitreihen (\autoref{fig:tunnel-daten-2}) steigt die Schwingungsamplitude des 
+   Rollwinkels progressiv an—ein Muster, das auf Unterdämpfung bei stärkerer Störmomenterregung durch Längsneigung und Krümmungswechsel hinweist.
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-2/Strecke.png}
+    \caption{Trajektorie durch die Senke (Fall~B, \(M=2{,}0\,\text{m}\), Baseline-Gewichte).}
+    \label{fig:tunnel-strecke-2}
+  \end{figure}
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-2/Daten.png}
+    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~B, \(M=2{,}0\,\text{m}\), Baseline-Gewichte).}
+    \label{fig:tunnel-daten-2}
+  \end{figure}
+  
+  \paragraph{Fall C: Senke, \(M=2{,}0\,\text{m}\) mit angepassten Balance-PID-Gewichten}
+  
+  Zur Wiederherstellung der Querstabilität wurden die Balance-Gains gezielt erhöht: \(K_p=3{,}5\), \(K_i=0{,}2\), \(K_d=0{,}4\). Die resultierende Trajektorie 
+  (\autoref{fig:tunnel-strecke-pid}) bleibt spurtreu; die Zeitreihen in \autoref{fig:tunnel-daten-pid} zeigen gedämpfte Rollschwingungen mit rascher Rückkehr 
+  in den stationären Bereich. Die Anpassung adressiert die dominanten Effekte bei großem \(M\): (i) stärkere proportionale Rückführung (\(K_p\)) zur Reduktion
+   des Querfehlers und (ii) erhöhte Dämpfung (\(K_d\)) zur Phasenführung gegen die durch den Krümmungswechsel angeregten Eigenschwingungen. Der Integrationsanteil
+  bleibt moderat und dient primär der Eliminierung kleiner stationärer Abweichungen (Anti-Windup aktiv).
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-2PID/Strecke.png}
+    \caption{Trajektorie mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text{m}\)).}
+    \label{fig:tunnel-strecke-pid}
+  \end{figure}
+  
+  \begin{figure}[H]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Höhe/-2PID/Daten.png}
+    \caption{Zeitverläufe mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text{m}\)).}
+    \label{fig:tunnel-daten-pid}
+  \end{figure}
 
+    
+  \paragraph{Zusammenfassung und Ableitungen}
+  
+  Die Ergebnisse zeigen, dass mit zunehmender Höhendifferenz \(M\) die erforderlichen Balance-Gains systematisch ansteigen, um Querstabilität und Dämpfung sicherzustellen. 
+  In der hier verwendeten Konfiguration (Reifenbreite \(2\,\text{cm}\), Streckenlänge \(64\,\text{m}\) mit Tiefpunkt bei \(s=32\,\text{m}\)) liegt die praktikable Grenze 
+  im Fall~B bei \(M\approx 2\,\text{m}\); ohne Retuning treten darüber Instabilität bzw.\ Umkippen auf. Perspektivisch bietet sich eine steigungsadaptive Gain-Schedulierung 
+  entlang des Höhenprofils an, um manuelles Retuning zu vermeiden und die Robustheit gegenüber starken Längsneigungen weiter zu erhöhen.
+
+
+
+  \paragraph{Fall D: Hügel, \(M=2{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{figures/Höhe/+2/Strecke.png}
+  \caption{Trajektorie durch den Hügel (Fall~D, \(M=2{,}0\,\text{m}\)).}
+  \label{fig:tunnel-strecke-pid-2}
+\end{figure}
+
+Wir betrachten nun die Auffahrt auf einen Hügel mit einer maximalen Höhe von \(+2\,\text{m}\).
+Der Zwischenfall mit \(+1\,\text{m}\) zeigt qualitativ das gleiche Verhalten und wird daher ausgelassen.
+Ziel ist die Beurteilung der Stabilität bei umgekehrtem Höhenprofil im Vergleich zur Senke.
+
+Die Trajektorie in \autoref{fig:tunnel-strecke-pid-2} bleibt über weite Strecken spurtreu.
+Geringe laterale Abweichungen treten vor allem im Bereich des Scheitelpunkts auf.
+Dort ändert sich die Steigung am stärksten und die Balance Regelung muss zusätzliche Störmomente kompensieren.
+Die Zeitreihen in \autoref{fig:tunnel-daten-pid-2} stützen diese Beobachtung.
+Rollwinkel und Balancelenkwinkel überlagern sich weitgehend und zeigen kleine gedämpfte Schwingungen.
+Kurz vor dem Scheitelpunkt ist eine moderate Amplitudenzunahme sichtbar.
+Nach der Überfahrt klingen die Schwingungen rasch ab und der Verlauf nähert sich wieder dem stationären Bereich.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{figures/Höhe/+2/Daten.png}
+  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~D, \(M=2{,}0\,\text{m}\)).}
+  \label{fig:tunnel-daten-pid-2}
+\end{figure}
+
+
+\paragraph{Fall E: Hügel, \(M=4{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
+
+Mit den Parametern \(K_p = 4{,}5\), \(K_i = 0{,}2\) und \(K_d = 0{,}4\) lässt sich eine Hügelhöhe von etwa \(4\,\text{m}\) beherrschen.
+Als Gütekriterium diente das sichere Vermeiden eines Umkippens.
+Spurtreue wurde nicht erzwungen.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{figures/Höhe/+4 /Strecke.png}
+  \caption{Trajektorie durch den Hügel (Fall~E, \(M=4{,}0\,\text{m}\)).}
+  \label{fig:tunnel-strecke-pid-4}
+\end{figure}
+
+Die Trajektorie in \autoref{fig:tunnel-strecke-pid-4} zeigt eine zentrale Annäherung an den Hügel.
+Nach rund \(20\,\text{m}\) setzt eine deutliche Ausweichbewegung ein.
+Bis zu diesem Punkt wurde bereits ein Höhengewinn von knapp \(2\,\text{m}\) erreicht.
+Die Regelung priorisiert in dieser Phase die Aufrechterhaltung der Balance gegenüber der Spurhaltung.
+Dadurch kann eine laterale Abdrift entstehen und der Scheitel wird mit seitlichem Versatz umfahren.
+Nach dem Scheitel stabilisiert sich die Fahrt in der anschließenden Abfahrt wieder und der Verlauf nähert sich einer geraden Spur.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=1.0\textwidth]{figures/Höhe/+4 /Daten.png}
+  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~E, \(M=4{,}0\,\text{m}\)).}
+  \label{fig:tunnel-daten-pid-4}
+\end{figure}
+
+Die Zeitreihen in \autoref{fig:tunnel-daten-pid-4} verdeutlichen die Dynamik.
+Zu Beginn treten stärkere Schwingungen auf, die im Bereich des steilen Anstiegs zunehmen.
+Kurz nach dem Scheitel gehen die Amplituden spürbar zurück und der Verlauf wird ruhiger.
+Dieses Muster ist konsistent mit den zusätzlichen Störmomenten durch die größere Längsneigung und den ausgeprägten Krümmungswechsel.
+Die gewählten Verstärkungen erhöhen die proportionale Rückführung und die Dämpfung.
+Der Integrationsanteil bleibt moderat und dient vor allem der Beseitigung kleiner stationärer Abweichungen.
+In Summe wird Balance erreicht, während die Spurhaltung bei \(M=4\,\text{m}\) nur eingeschränkt gewährleistet ist.
+
+
+\paragraph{Zusammenfassung und Ableitungen}
+
+Die Experimente mit Senken und Hügeln zeigen übereinstimmend, dass mit wachsender Höhendifferenz \(M\) die erforderlichen Balance Gains ansteigen, 
+damit Querstabilität und Dämpfung erhalten bleiben. Die Teststrecke besitzt eine Länge von \(64\,\text{m}\) und ein zentrales Extremum bei \(s=32\,\text{m}\). 
+In dieser Konfiguration beträgt die Reifenbreite \(2\,\text{cm}\).
+
+\textbf{Senken.} Bei \(M=1{,}0\,\text{m}\) bleibt das System mit Baseline Parametern stabil und spurtreu. Beim Übergang aus der Senke treten nur kleine 
+transiente Abweichungen auf, die rasch abklingen. Bei \(M=2{,}0\,\text{m}\) führt das Baseline Tuning zu wachsender Rollschwingung und lateraler Drift. 
+Ein Retuning mit \(K_p=3{,}5\), \(K_i=0{,}2\) und \(K_d=0{,}4\) stellt die Querstabilität wieder her. Die Talfahrt erweist sich als robust, weil die tiefste 
+Stelle mittig liegt und die seitlichen Anteile der Hangabtriebskraft symmetrisch wirken.
+
+\textbf{Hügel.} Für \(M=2{,}0\,\text{m}\) zeigt die Auffahrt mit angepassten Gewichten ein stabiles Verhalten. Bei \(M=4{,}0\,\text{m}\) bleibt das Fahrrad 
+mit \(K_p=4{,}5\), \(K_i=0{,}2\) und \(K_d=0{,}4\) aufrecht, weicht jedoch seitlich aus und umgeht den Scheitelpunkt. Die stärkste Beanspruchung entsteht 
+im Anstieg nahe dem Scheitel, wo sich Steigung und Krümmungswechsel überlagern. Nach dem Scheitel beruhigt sich das System, und die Abfahrt verläuft deutlich ruhiger als der Anstieg.
+
+\textbf{Gemeinsame Schlussfolgerungen.}
+\begin{itemize}
+  \item Die erforderlichen Gains wachsen mit \(M\). Der proportionale Anteil reduziert den Querfehler. Der derivative Anteil erhöht die Dämpfung und 
+  verbessert die Phasenlage. Der integrale Anteil bleibt moderat und beseitigt kleine stationäre Abweichungen unter aktivem Anti Windup.
+  \item Die kritischen Bereiche liegen an den Extrema des Höhenprofils. Dort ändern sich Neigung und Krümmung am stärksten, was transiente Rollmomente 
+  verstärkt und Spurabweichungen auslösen kann.
+  \item In der vorliegenden Konfiguration liegt für Senken die praktikable Grenze ohne Retuning bei etwa \(M=2\,\text{m}\). Größere Werte erfordern 
+  angepasste Gains. Hügel mit \(M=4\,\text{m}\) sind mit erhöhten Gewichten beherrschbar, jedoch mit Einbußen in der Spurhaltung.
+\end{itemize}
+
+\textbf{Implikationen für die Regelung.} Eine steigungsadaptive Gain Schedulierung entlang der Strecke ist sinnvoll. Dabei können Vorsteueranteile 
+aus der geschätzten Neigung und ihrer Änderung genutzt werden. Empfehlenswert sind zudem Begrenzungen der Lenkraten und Amplituden sowie eine konsequente 
+Anti Windup Behandlung. Damit lässt sich das Retuning reduzieren, und die Robustheit gegenüber starken Längsneigungen steigt.
+
+  
+  
   %------------------------------------------------------------------------------------------------
   %------------------------------------------------------------------------------------------------
 
-\subsection{Balance-Stabilität}
-\subsection{Spurtreue \& Querabweichung}
+ 
+
 \subsection{Rechenzeit \& Echtzeitfähigkeit}
 \newpage

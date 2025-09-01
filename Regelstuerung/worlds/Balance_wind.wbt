@@ -18,8 +18,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation 0.06742991349054357 -0.15109028567373467 -0.9862174873432773 4.751341344602649
-  position -2.9084746865902598 -39.160483863153296 2.806413965059723
+  orientation 0.14959749680991136 -0.11381986917943278 -0.9821739287560963 3.9771382653797573
+  position 16.183142862749904 -51.18037089067433 9.710491061294015
   follow "BICYCLE"
 }
 TexturedBackground {
@@ -49,7 +49,7 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity -0.5 0 0
+  streamVelocity -2 0 0
   boundingObject Box {
     size 64 21 20
   }
@@ -59,7 +59,7 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity 0.5 0 0
+  streamVelocity 2 0 0
   boundingObject Box {
     size 64 21 20
   }
@@ -69,13 +69,13 @@ DEF AIR Fluid {
   name "air"
   density 1.225
   viscosity 1.81e-05
-  streamVelocity -0.5 0 0
+  streamVelocity -2 0 0
   boundingObject Box {
     size 64 21 20
   }
 }
 DEF BICYCLE Robot {
-  translation -2.00891 -31.1712 0.290969
+  translation -2.00861 -31.1712 0.350969
   rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
   children [
     DEF frame Transform {
@@ -425,7 +425,6 @@ DEF BICYCLE Robot {
       device [
         RotationalMotor {
           name "motor::crank"
-          maxVelocity 31.25
           maxTorque 80
         }
       ]

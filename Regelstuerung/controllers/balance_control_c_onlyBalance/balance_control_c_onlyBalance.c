@@ -202,7 +202,32 @@ static double rear_wheel_kmh_from_omega(double omega);
         float stability_factor = fabs(steering_output) / config.mechanical_limits.max_handlebar_angle;
         
         //--------------------------------
-        // 8. Balance-Logging-Daten
+        // 8. Position und Orientierung für Pfadvisualisierung erfassen
+        //--------------------------------
+        float pos_x = 0.0f, pos_y = 0.0f, pos_z = 0.0f;
+        float yaw = 0.0f, pitch = 0.0f, roll_world = 0.0f;
+        
+        if (robot_node != NULL) {
+            // Position erfassen
+            const double *position = wb_supervisor_node_get_position(robot_node);
+            if (position != NULL) {
+                pos_x = (float)position[0];
+                pos_y = (float)position[1];
+                pos_z = (float)position[2];
+            }
+            
+            // Orientierung erfassen (für yaw, pitch, roll_world)
+            const double *orientation = wb_supervisor_node_get_orientation(robot_node);
+            if (orientation != NULL) {
+                // Euler-Winkel aus Rotationsmatrix extrahieren
+                yaw = (float)atan2(orientation[3], orientation[0]);
+                pitch = (float)atan2(-orientation[6], sqrt(orientation[7]*orientation[7] + orientation[8]*orientation[8]));
+                roll_world = (float)atan2(orientation[7], orientation[8]);
+            }
+        }
+        
+        //--------------------------------
+        // 9. Balance-Logging-Daten
         //--------------------------------
         if (config.system.enable_logging) {
             balance_log_data_t log_data = {
@@ -220,6 +245,14 @@ static double rear_wheel_kmh_from_omega(double omega);
                 .error = angle_pid.error_history[angle_pid.history_counter],
                 .stability_factor = stability_factor,
                 
+                // Position und Orientierung (für Pfad-Visualisierung)
+                .pos_x = pos_x,
+                .pos_y = pos_y,
+                .pos_z = pos_z,
+                .yaw = yaw,
+                .pitch = pitch,
+                .roll_world = roll_world,
+                
                 // Vision-Controller-Daten (leer für Balance-Only)
                 .vision_error = 0.0f,
                 .vision_steer_command = 0.0f,
@@ -234,7 +267,7 @@ static double rear_wheel_kmh_from_omega(double omega);
          }
 
          //--------------------------------
-         // 9. Display und Status-Updates
+         // 10. Display und Status-Updates
          //--------------------------------
          update_display(roll_angle, steering_output, target_speed);
          

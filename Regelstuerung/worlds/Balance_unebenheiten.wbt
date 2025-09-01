@@ -18,8 +18,8 @@ WorldInfo {
   ]
 }
 Viewpoint {
-  orientation -0.11653194176410005 0.22282914687653693 0.9678674898202558 1.4591121251864263
-  position -6.681306616659352 -71.77079161569209 14.500197994805509
+  orientation 0.15527955247499872 0.35687693940175746 0.9211553130207732 0.3601997666637303
+  position -11.554219639182762 -32.50320836893525 1.280941160344368
   follow "Little Bicycle V2"
 }
 TexturedBackground {
@@ -30,7 +30,7 @@ TexturedBackgroundLight {
 UnevenTerrain {
   translation 0 0 -0.1
   contactMaterial "ground"
-  size 64 64 0
+  size 64 64 4
   xDimension 128
   yDimension 128
   appearance PBRAppearance {
@@ -47,8 +47,8 @@ UnevenTerrain {
   perlinNOctaves 0
 }
 DEF BICYCLE Robot {
-  translation -2.00841 -31.1712 0.390969
-  rotation 0.0022654579487756074 -0.00020923791275967243 0.9999974119565402 3.1414438733326446
+  translation -2.11781 -31.1658 0.576466
+  rotation 0.002264997050232893 -0.0199970006748213 0.9997974743678709 3.14144
   children [
     DEF frame Transform {
       scale 0.0064 0.0064 0.0064

@@ -44,12 +44,22 @@
 \contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers}{47}{section*.32}%
 \contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung}{48}{section*.37}%
 \contentsline {subsubsection}{\numberline {5.2.2}S-Kurve}{50}{subsubsection.5.2.2}%
-\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{51}{subsubsection.5.2.3}%
-\contentsline {subsubsection}{\numberline {5.2.4}Gerande Stecke mit Höhenunterschied}{51}{subsubsection.5.2.4}%
-\contentsline {subsection}{\numberline {5.3}Balance-Stabilität}{51}{subsection.5.3}%
-\contentsline {subsection}{\numberline {5.4}Spurtreue \& Querabweichung}{51}{subsection.5.4}%
-\contentsline {subsection}{\numberline {5.5}Rechenzeit \& Echtzeitfähigkeit}{51}{subsection.5.5}%
-\contentsline {section}{\numberline {6}Grenzen der Arbeit}{52}{section.6}%
-\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{53}{section.7}%
-\contentsline {section}{\numberline {8}Fazit}{54}{section.8}%
-\contentsline {section}{\numberline {9}Literaturverzeichnis}{55}{section.9}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung}{50}{section*.42}%
+\contentsline {subsubsection}{\numberline {5.2.3}Gerade Strecke mit Seitenwind}{54}{subsubsection.5.2.3}%
+\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler)}{54}{section*.50}%
+\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler)}{55}{section*.53}%
+\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung}{56}{section*.56}%
+\contentsline {paragraph}{Einordnung und Grenzen}{57}{section*.59}%
+\contentsline {subsubsection}{\numberline {5.2.4}Gerade Strecke mit Höhenunterschied}{58}{subsubsection.5.2.4}%
+\contentsline {paragraph}{Fall A: Senke, \(M=1{,}0\,\text {m}\)}{58}{section*.61}%
+\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte)}{59}{section*.64}%
+\contentsline {paragraph}{Fall C: Senke, \(M=2{,}0\,\text {m}\) mit angepassten Balance-PID-Gewichten}{59}{section*.67}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen}{60}{section*.70}%
+\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{61}{figure.caption.72}%
+\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{61}{section*.74}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen}{62}{section*.77}%
+\contentsline {subsection}{\numberline {5.3}Rechenzeit \& Echtzeitfähigkeit}{63}{subsection.5.3}%
+\contentsline {section}{\numberline {6}Grenzen der Arbeit}{64}{section.6}%
+\contentsline {section}{\numberline {7}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{65}{section.7}%
+\contentsline {section}{\numberline {8}Fazit}{66}{section.8}%
+\contentsline {section}{\numberline {9}Literaturverzeichnis}{67}{section.9}%

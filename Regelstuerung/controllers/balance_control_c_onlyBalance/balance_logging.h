@@ -26,6 +26,14 @@ typedef struct {
     float error;               // Aktueller Balance-Regelfehler
     float stability_factor;    // Stabilitätsfaktor (0.0 = stabil, 1.0 = instabil)
     
+    // Position und Orientierung (für Pfad-Visualisierung)
+    float pos_x;               // X-Position in Weltkoordinaten
+    float pos_y;               // Y-Position in Weltkoordinaten
+    float pos_z;               // Z-Position in Weltkoordinaten
+    float yaw;                 // Yaw-Winkel (Gierwinkel) in Radiant
+    float pitch;               // Pitch-Winkel (Nickwinkel) in Radiant
+    float roll_world;          // Roll-Winkel in Weltkoordinaten in Radiant
+    
     // Vision-Controller-Daten
     float vision_error;        // Vision-Fehler (Abweichung von erkannter Straße)
     float vision_steer_command; // Lenkbefehl vom Vision-System (-1.0 bis +1.0)
