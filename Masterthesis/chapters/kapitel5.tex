@@ -567,11 +567,11 @@
   In der hier verwendeten Konfiguration (Reifenbreite \(2\,\text{cm}\), Streckenlänge \(64\,\text{m}\) mit Tiefpunkt bei \(s=32\,\text{m}\)) liegt die praktikable Grenze 
   im Fall~B bei \(M\approx 2\,\text{m}\); ohne Retuning treten darüber Instabilität bzw.\ Umkippen auf. Perspektivisch bietet sich eine steigungsadaptive Gain-Schedulierung 
   entlang des Höhenprofils an, um manuelles Retuning zu vermeiden und die Robustheit gegenüber starken Längsneigungen weiter zu erhöhen.
+\newpage
 
 
-
-  \paragraph{Fall D: Hügel, \(M=2{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
-
+\paragraph{Fall D: Hügel, \(M=2{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
+\clearpage
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/Höhe/+2/Strecke.png}
@@ -663,7 +663,7 @@ im Anstieg nahe dem Scheitel, wo sich Steigung und Krümmungswechsel überlagern
 \textbf{Implikationen für die Regelung.} Eine steigungsadaptive Gain Schedulierung entlang der Strecke ist sinnvoll. Dabei können Vorsteueranteile 
 aus der geschätzten Neigung und ihrer Änderung genutzt werden. Empfehlenswert sind zudem Begrenzungen der Lenkraten und Amplituden sowie eine konsequente 
 Anti Windup Behandlung. Damit lässt sich das Retuning reduzieren, und die Robustheit gegenüber starken Längsneigungen steigt.
-
+\pdfcomment{Daher neben roll und yaw nun auch pitch in zukunft einzubauen}
   
   
   %------------------------------------------------------------------------------------------------
