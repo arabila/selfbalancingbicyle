@@ -671,5 +671,67 @@ Anti Windup Behandlung. Damit lässt sich das Retuning reduzieren, und die Robus
 
  
 
-\subsection{Rechenzeit \& Echtzeitfähigkeit}
+
+\subsection{Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}
+\label{sec:rechenzeit-echtzeit}
+
+\paragraph{Motivation}
+Dieses Teilkapitel ordnet die in den vorangehenden Abschnitten dargestellten Fahrversuche (Kurvenfahrt, S\,-Kurve, Senken-/Hügelfahrten) 
+hinsichtlich Rechenzeit und Echtzeitfähigkeit ein. Im Fokus steht die Frage, welche zeitlichen Anforderungen die Simulation in Webots an den 
+Code stellt und wie sich diese Anforderungen vom realen Prototyp unterscheiden.
+
+
+\paragraph{Rechenzeit in Webots: virtuelle Zeit statt harter Echtzeit}
+Webots trennt streng zwischen \emph{virtueller Zeit} (Simulationszeit) und \emph{Realzeit}. Die Schrittweite der Physik wird durch den 
+\texttt{WorldInfo.basicTimeStep} vorgegeben (hier: \(T_s = 2\,\mathrm{ms}\), entsprechend \(f_s \approx 500\,\mathrm{Hz}\)). Jeder Aufruf 
+von \texttt{wb\_robot\_step(duration)} lässt genau die angegebene \emph{virtuelle} Zeit vergehen; die tatsächlich benötigte \emph{Rechenzeit} 
+kann jedoch größer oder kleiner als \(\texttt{duration}\) sein.\footnote{Vgl. Webots Reference Manual: \emph{Robot} – Synchronisation und \texttt{wb\_robot\_step}.}
+Damit gilt:
+\begin{itemize}
+  \item Ist die Berechnung schneller als echtzeitfähig, läuft die Simulation schneller als Realzeit.
+  \item Ist die Berechnung langsamer, \emph{verlangsamt} Webots die Ausführung (Speedometer \(<1\)); die Physikschritte bleiben konsistent, 
+  die Simulationsuhr schreitet lediglich langsamer fort.\footnote{Vgl. Webots User Guide: \emph{The User Interface} – „Speedometer and Virtual Time“.}
+\end{itemize}
+Für unsere Konfiguration bedeutet das: Der schnelle Balance-Controller (C, \(500\,\mathrm{Hz}\)) und die langsamere Visionschleife 
+(Python, \(\approx20\,\mathrm{Hz}\)) müssen in Webots \emph{nicht} harte Deadlines erfüllen, solange die Synchronisation aktiv ist 
+(\texttt{synchronization = TRUE}). Die Simulationsdynamik bleibt deterministisch; nur die Ausführungsdauer in Realzeit steigt bei hoher Rechenlast.
+
+\paragraph{Implikationen für die hier durchgeführten Versuche}
+Die in Kap.\,5 dargestellten Szenarien (u.\,a.\ Kurve/S\,-Kurve mit YOLO sowie ROI-Fallback, Senken/Hügel mit ansteigenden Balance-Gains) 
+profitieren von dieser Entkopplung:
+\begin{enumerate}
+  \item \textbf{Parametervariationen ohne Echtzeitdruck:} Gain-Sweeps, Hysterese-Tests und Filterstudien (EMA/Spline-Glättung) können mit 
+  identischer virtueller Zeitskala reproduziert werden, auch wenn einzelne Schritte in Realzeit länger dauern.
+  \item \textbf{Stabilitätsaussagen bleiben gültig:} Das Kippverhalten, Querfehler-Verlauf und die Dämpfungseigenschaften ergeben sich aus
+   der Physik im festen \(T_s\); eine temporär langsamere Ausführung verzerrt diese Aussagen nicht.
+  \item \textbf{Architekturpriorität:} Für die Simulation ist eine \emph{klare, modulare Code-Architektur} (Trennung Balance vs.\ Vision,
+   wohldefinierte Schnittstellen, Logging) wichtiger als die Optimierung auf harte Echtzeitgrenzen.
+\end{enumerate}
+
+\paragraph{Warum harte Echtzeit erst auf dem Realfahrrad kritisch wird}
+Die früheren Arbeiten am realen Fahrrad (u.\,a.\ Ranz 2021, Zander 2023, Yasin 2024) beschreiben eine kaskadierte PID-Architektur mit typischen Zykluszeiten 
+von \(5\,\mathrm{ms}\) (Balance), \(1\,\mathrm{ms}\) (Lenkpositionsregelung) und \(150\,\mathrm{ms}\) (Geschwindigkeit). Die Implementierung nutzt auf dem 
+BeagleBone Black u.\,a.\ PRUs für deterministische PWM/GPIO-Signale und einen Watchdog für Deadline-Überwachung. Hier gilt:
+\begin{itemize}
+  \item \textbf{Harte Deadlines:} Wird die \(5\,\mathrm{ms}\)-Balanceperiode verfehlt, akkumuliert sich der Rollfehler; das System kann innerhalb weniger hundert Millisekunden instabil werden.
+  \item \textbf{E/A-Latenzen sind real:} IMU, Encoder und Motoransteuerung verursachen nicht verschiebbare Verzögerungen und Jitter, die in der Regelung 
+  kompensiert werden müssen (Anti-Windup, Derivat-Anteil, Begrenzungen).
+  \item \textbf{Kein „Zeitdilatations“-Sicherheitsnetz:} Im Gegensatz zu Webots lässt sich die Realzeit nicht „verlangsamen“; das Betriebssystem und die Elektronik laufen unverändert weiter.
+\end{itemize}
+Folglich ist auf dem realen System eine \emph{echtzeitfähige} Umsetzung (deterministische Scheduling-Strategie, Interrupt-nahe E/A, Worst-Case-Betrachtungen) zwingend; in der Simulation dagegen nicht.
+
+\paragraph{Konsequenzen für diese Arbeit und Folgeprojekte}
+Aus den obigen Punkten leiten sich zwei zentrale Empfehlungen ab:
+\begin{enumerate}
+  \item \textbf{Für Webots-Studien (diese Arbeit):} Beibehalten eines kleinen \(\,T_s=2\,\mathrm{ms}\) für die Physik, saubere Synchronisation (\texttt{wb\_robot\_step}), 
+  konsistente Logging-Zeitskalen. Rechenzeitoptimierung ist optional und zielt v.\,a.\ auf Durchsatz (mehr Szenarien/Parameter pro Zeiteinheit).
+  \item \textbf{Für den Transfer aufs reale Fahrrad:} Frühzeitige Vorbereitung einer echtzeitfähigen Architektur (PRU/ISR-basierte Ansteuerung, Pufferung von Sensordaten, 
+  feste Task-Zyklen, Watchdog, Timing-Telemetry). Die in Webots gefundenen Parameter/Strukturen bleiben nutzbar, müssen jedoch unter harten Zeitrestriktionen validiert werden.
+\end{enumerate}
+
+\paragraph{Kurzfazit}
+In Webots bestimmt die virtuelle Zeit (\(T_s\)) die physikalische Auflösung; Überschreitungen der Rechenzeit führen lediglich zu einer langsameren Ausführung in Realzeit, 
+nicht zu dynamischen Artefakten. Daher ist für die Simulation keine strikte Echtzeitfähigkeit des Codes nötig. Auf dem realen Fahrrad hingegen sind harte Deadlines konstitutiv 
+für die Stabilität; hier entscheidet Echtzeitfähigkeit unmittelbar über das Regelungsvermögen und die Sicherheit des Systems.
+
 \newpage

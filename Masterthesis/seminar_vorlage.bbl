@@ -5,11 +5,6 @@ D.~Andreo, V.~Cerone, D.~Dzung, and D.~Regruto.
 \newblock Experimental results on lpv stabilization of a riderless bicycle.
 \newblock In {\em Proc. American Control Conference (ACC)}, pages 3124--3129, 2009.
 
-\bibitem{aphiratsakun2013}
-N.~Aphiratsakun and K.~Techakittiroj.
-\newblock Autonomous au bicycle: self balancing and tracking control (ausb 2).
-\newblock In {\em Proc. IEEE Int. Conf. on Robotics and Biomimetics (ROBIO)}, pages 480--485, 2013.
-
 \bibitem{bno055}
 {Bosch Sensortec}.
 \newblock Bno055 intelligent 9-axis absolute orientation sensor.
@@ -41,11 +36,6 @@ Cyberbotics.
 \newblock Receiver.
 \newblock \url{https://cyberbotics.com/doc/reference/receiver}, 2025.
 \newblock Zugriff am 27.08.2025.
-
-\bibitem{deng2018}
-Wenda Deng, Simon Moore, Jonathan Bush, Michael Mabey, and Wei Zhang.
-\newblock Towards automated bicycles: achieving self-balance using steering control.
-\newblock In {\em ASME Dynamic Systems and Control Conference (DSCC)}, volume~2, pages 1--9, 2018.
 
 \bibitem{md49}
 {Devantech Ltd.}
@@ -79,11 +69,6 @@ Yasin Giray, Amine Karabila, Jonah Zander, et~al.
 \newblock Webots simulation framework.
 \newblock \url{https://github.com/cyberbotics/webots}, 2025.
 \newblock Zugriff am 24.08.2025.
-
-\bibitem{guo2010}
-Li~Guo, Qing Liao, Shuai Wei, and Yong Huang.
-\newblock A kind of bicycle robot dynamic modeling and nonlinear control.
-\newblock In {\em Proc. 2010 IEEE International Conference on Information and Automation (ICIA)}, pages 1613--1617, 2010.
 
 \bibitem{gupta2023}
 R.~Gupta and S.~Lee.
@@ -125,10 +110,10 @@ Amine Karabila.
 \newblock Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance.
 \newblock Master's thesis, Goethe-Universität Frankfurt, 2022.
 
-\bibitem{lam2011}
-P.~Y. Lam and T.~K. Sin.
-\newblock Gyroscopic stabilization of a self-balancing robot bicycle.
-\newblock {\em International Journal of Automation Technology}, 5(6):916--923, 2011.
+\bibitem{kooijman2011}
+J.~D.~G. Kooijman, J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
+\newblock A bicycle can be self-stable without gyroscopic or caster effects.
+\newblock {\em Science}, 332(6027):339--342, 2011.
 
 \bibitem{li2024webikes}
 Wenjia Li, Paris Francis, Robert McClosky, and Alexander Brown.
@@ -140,6 +125,11 @@ Cyberbotics Ltd.
 \newblock Inertialunit.
 \newblock \url{https://cyberbotics.com/doc/reference/inertialunit}, 2025.
 \newblock Geräte-Referenz, Zugriff: 24.08.2025.
+
+\bibitem{meijaard2007}
+J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
+\newblock Linearized dynamics equations for the balance and steer of a bicycle: a benchmark and review.
+\newblock {\em Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences}, 463(2084):1955--1982, 2007.
 
 \bibitem{michel2004}
 Olivier Michel.
@@ -156,20 +146,20 @@ Sang-Hyun Park and Seung-Yun Yi.
 \newblock {Active Balancing Control for Unmanned Bicycle Using Scissored-pair Control Moment Gyroscope}.
 \newblock {\em International Journal of Control, Automation and Systems}, 18(1):217--224, 2020.
 
+\bibitem{pei2019tianjic}
+Jing Pei, Lei Deng, Sen Song, Mingguo Zhao, Shuang Zhang, et~al.
+\newblock Towards artificial general intelligence with hybrid tianjic chip architecture.
+\newblock {\em Nature}, 572(7767):106--111, 2019.
+
+\bibitem{persson2021}
+Niklas Persson, Martin~C. Ekstr{\"o}m, Mikael Ekstr{\"o}m, and Alessandro~V. Papadopoulos.
+\newblock Trajectory tracking and stabilisation of a riderless bicycle.
+\newblock In {\em 2021 IEEE International Intelligent Transportation Systems Conference (ITSC)}, pages 1859--1866, Indianapolis, IN, USA, 2021. IEEE.
+
 \bibitem{ranz2021bachelor}
 Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
 \newblock Master's thesis, HWR Berlin, 2021.
-
-\bibitem{shafiekhani2015}
-A.~Shafiekhani, M.~J. Mahjoob, and M.~Akraminia.
-\newblock Design and implementation of an adaptive critic-based neuro-fuzzy controller on an unmanned bicycle.
-\newblock {\em Mechatronics}, 28:115--123, 2015.
-
-\bibitem{tamaldin2017}
-N.~Tamaldin et~al.
-\newblock {Design of a Self-balancing Bicycle}.
-\newblock In {\em Proceedings of Mechanical Engineering Research Day 2017}, pages 160--161, 2017.
 
 \bibitem{wikipedia_mpc}
 {Wikipedia contributors}.
@@ -186,24 +176,14 @@ N.~Tamaldin et~al.
 \newblock You only look once, 2025.
 \newblock Accessed 23 August 2025.
 
-\bibitem{xiong2024}
-Jiaming Xiong, Ruihan Yu, and Caishan Liu.
-\newblock Steering control and stability analysis for an autonomous bicycle: Part ii—experiments and a modified linear control law.
-\newblock {\em Nonlinear Dynamics}, 112(4):3107--3132, 2024.
-
 \bibitem{zander2023}
 Jonah Zander.
 \newblock {Entwurf einer Steuerung f{\"u}r ein selbstbalancierendes Fahrrad}.
-\newblock Bachelorarbeit, Frankfurt University of Applied Sciences, 2023.
+\newblock Bachelorarbeit, Göethe Universität Frankfurt, 2023.
 
 \bibitem{Zhao2023}
 Xu~Zhao, Wenchao Ding, Yongqi An, Yinglong Du, Tao Yu, Min Li, Ming Tang, and Jinqiao Wang.
 \newblock Fast segment anything.
 \newblock arXiv:2306.12156 [cs.CV], 2023.
-
-\bibitem{astrom2005}
-Karl~J. Åström, Richard~E. Klein, and Anders Lennartsson.
-\newblock Bicycle dynamics and control: adapted bicycles for education and research.
-\newblock {\em IEEE Control Systems Magazine}, 25(4):26--47, 2005.
 
 \end{thebibliography}

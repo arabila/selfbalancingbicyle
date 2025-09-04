@@ -2,8 +2,7 @@
 \section{Einleitung}
 
 \subsection{Problemstellung}
-
-Dieses Kapitel präzisiert die zentrale Herausforderung dieser Arbeit. Ein selbstbalancierendes Fahrrad stellt aufgrund seiner Bauart ein nichtlinear instabiles System dar. 
+In diesem Kapitel wird die zentrale Herausforderung dieser Arbeit präsentiert. 
 Ohne regelnden Eingriff kippt ein Fahrrad im Stand oder bei niedriger Geschwindigkeit. Erst durch die Kombination 
 aus gyroskopischen Effekten der rotierenden Räder, dem Nachlauf der Lenkgeometrie und einem aktiven Regler 
 lässt sich eine stabile Fahrt realisieren. Die vorliegenden Arbeiten verfolgen daher das Ziel, ein autonomaus 
@@ -14,18 +13,21 @@ von 2\,ms (500\,Hz) und gibt einen Lenkwinkel an den Antrieb weiter. Parallel d
 in Python mit niedrigerer Frequenz (20\,Hz) Informationen aus Kamerabildern, plant eine Trajektorie und überträgt 
 entsprechende Lenkwinkel‑ und Geschwindigkeitsbefehle. Die Herausforderung besteht darin, diese beiden Regelschleifen 
 so zu koppeln, dass das Fahrzeug stabil bleibt und zugleich auf visuelle Reize reagiert. Darüber hinaus soll die 
-simulierte Physik so realitätsnah sein, dass die Ergebnisse auf reale Fahrversuche übertragbar sind. Die Arbeit 
-adressiert damit die Verbindung von Regelungs‑ und Computer‑Vision‑Methoden für ein komplexes, unteraktuiertes Fahrzeug.
+simulierte Physik so realitätsnah sein, dass die Ergebnisse auf reale Fahrversuche übertragbar sind.
+
+\paragraph{Abgrenzung zu realitätsnahen und simulationsbasierten Ansätzen}
+
+Im Gegensatz zu experimentellen Untersuchungen an realen Fahrradplatformen (z.\,B. Arbeiten von Zander \cite{zander2023} und Karabila \cite{karabila2022}) 
+liegt der Fokus dieser Arbeit auf einer vollständig simulationsbasierten Methodik unter Nutzung von Webots.
+Frühere Simulationsstudien (z.\,B. Zander \cite{zander2023}, Karabila \cite{karabila2022}) berücksichtigen dynamisch variierende Geschwindigkeiten, etwa 
+aufgrund von Gefälle oder Bremsmanövern. In der hier vorliegenden Simulation hingegen wird die Geschwindigkeit als konstant angenommen. 
+Auch die Sensorik und Regelungshardware unterscheiden sich wesentlich: Reale Versuchsaufbauten (etwa bei Karabila \cite{karabila2022}) nutzten einen BNO-005 IMU-Sensor zur 
+Erfassung von Eulerwinkeln sowie PWM-basierte Motoransteuerung. Die Webots-Simulation ermöglicht hingegen direkten Zugriff 
+auf Zustandsvariablen, ohne den Einsatz realer Hardwarekomponenten oder deren Signalverarbeitung.
+\emph{Zusammenfassend zeichnet sich diese Arbeit durch ihre rein simulationsbasierte Herangehensweise, die Annahme konstanter Geschwindigkeit, den 
+Verzicht auf adaptive Regler sowie den Ausschluss hardwarebedingter Schnittstellen (Sensorik, PWM, ...) aus.}
 
 
-
-
-
-
-\paragraph{Abgrenzung.}
-Die Arbeit bleibt simulationsbasiert (Webots) und betrachtet nur eine monokulare Kamera ohne dynamische
-Hindernisumfahrung; die Geschwindigkeit ist vorgegeben, die Kamera starr montiert. Hardware-Effekte
-(z.\,B. Sensordrift, Antriebsnachgiebigkeit) sowie Multi-Sensor-Fusion sind nicht Gegenstand der Arbeit.
 
 
 
@@ -41,67 +43,50 @@ Hindernisumfahrung; die Geschwindigkeit ist vorgegeben, die Kamera starr montier
 % Stand der Technik
 %--------------------------------------------------
 \subsection{Stand der Technik}
-Die Entwicklung selbstbalancierender Fahrräder ist seit einigen Jahren Gegenstand intensiver Forschung. 
-Bereits 2005 analysierte K.J. Åström und Anders Lennartsson \cite{astrom2005} die Fahrdynamik 
-von Fahrrädern und zeigten, dass ein geeignetes 
-Lenkverhalten, insbesondere das Hineinlenken in die Fallrichtung, zur Stabilisierung genutzt werden kann. 
-Dieses Prinzip, oft als "Steer into the Fall" (STF) bezeichnet, bildet die Grundlage vieler Balance-Regelungen. 
-Allgemein sind Fahrräder ohne Fahrer inhärent instabil und verhalten sich ähnlich einem umgekehrten Pendel, 
-das aktiv ausbalanciert werden muss. Aufbauend auf diesem Verständnis wurden verschiedene 
-Methoden entwickelt, um ein fahrerloses Fahrrad im Gleichgewicht zu halten. Die mit Abstand einfachste Variante 
-nutzt die Lenksteuerung, den durch gezieltes Verdrehen des Lenkers wird das Rad unter den Schwerpunkt manövriert, 
-um Kippbewegungen auszugleichen. Zahlreiche Prototypen erreichen auf diese Weise dynamische Stabilisierung, 
-erfordern jedoch eine gewisse Vorwärtsgeschwindigkeit. So demonstrierten beispielsweise Andreo, D. and Cerone schon 2010
-einen nichtlinearen Regler, der mittels Vorderradlenkung ein autonomes Fahrrad stabilisieren konnte \cite{guo2010}. 
-Ähnlich zeigte Deng et al. (2018), dass bereits ein einfacher PID- bzw. LQR-basierter Lenkwinkelregler 
-\footnote{tEin LQR-Regler stabilisiert ein lineares System optimal, indem er Zustandsfehler und Stellaufwand minimiert.} ausreicht, 
-um ein frei fahrendes Fahrrad aufrecht zu habitablen \cite{deng2018}. Andere Arbeiten nutzen erweiterte Verfahren: 
-Andreo et al. (2009) realisierten eine Fahrstabilisierung mit einem LPV-Regler (linear parametrisch variierend), der 
-verschiedene Fahrzustände abdecken konnte \cite{andreo2009}. Shafiekhani et al. (2015) implementierten einen neuro-fuzzy 
-Regler, der durch adaptive Optimierung robuste Balance auch bei Modellunsicherheiten erzielte \cite{shafiekhani2015}. 
-Darüber hinaus wurden Sliding-Mode-Verfahren (Gleitmodusregelung) vorgeschlagen, um gegen unbekannte Störungen unempfindlich zu sein
-Insgesamt zeigt sich, dass klassische Regelungsansätze (PID, LQR) wie auch moderne Verfahren (MPC, adaptive und robuste Regelungen) 
-erfolgreich zur Stabilisierung selbstbalancierender Fahrräder eingesetzt werden können \cite{kanjanawanishkul2015,shafiekhani2015,deng2018}.
-Neben der Lenkung existieren alternative Mechanismen zur aktiven Stabilisierung. Historisch wurden vor allem zwei Ansätze untersucht
-: Zum einen die Verwendung beweglicher Massen, zum anderen gyroskopische Effekte. Bewegte Masse: Hierbei wird ein Zusatzgewicht lateral 
-verschoben oder als invertiertes Pendel im Rahmen angebracht, um durch Gewichtsverlagerung das Gleichgewicht zu halten. Diese Methode 
-kann insbesondere bei sehr niedrigen Geschwindigkeiten oder im Stillstand für Stabilität sorgen, erhöht jedoch das Systemgewicht 
-beträchtlich und ist dynamisch träge \cite{tamaldin2017}. Gyroskopische Stützung: Durch schnell rotierende Schwungmassen wird ein 
-Kreiseleffekt erzeugt, der dem Umkippen entgegenwirkt. Zwei Varianten sind verbreitet: ein Reaktionsrad, das entlang der Längsachse 
-montiert ist und durch Beschleunigen/Abbremsen Stabilisierungsmomente erzeugt, sowie ein Control Moment Gyroscope (CMG), bei dem 
-ein rotierendes Schwungrad um eine Achse geschwenkt wird. Ein einzelnes Kreiselgerät erzeugt allerdings neben dem Stabilisierungs-Moment 
-oft unerwünschte seitliche Drehmomente, weshalb Park und Yi (2020) beispielsweise ein gepaartes (scissored pair) Kreisel-System einsetzten, 
-das Störmomente kompensiert \cite{park2020}. Mit einem solchen doppelten CMG konnte sogar stationäre Balance (ohne Vorwärtsfahrt) 
-realisiert werden \cite{park2020}. Reaktionsräder wiederum sind in der Lage, ein Fahrrad aus dem Stand aufzurichten, erfordern 
-dafür jedoch große Drehmomente und energiestarke Aktuatoren, was ihren Einsatzbereich begrenzt\cite{kanjanawanishkul2015}. 
-Trotz dieser technischen Herausforderungen konnte Lam und Sin (2011) bereits ein kleines Roboterfahrrad mit Einzel-Schwungrad stabilisieren 
-\cite{lam2011}. Tamaldin et al. (2017) präsentierten einen Gesamtentwurf eines selbstbalancierenden Fahrrads, der verschiedene solcher 
-Stabilisierungsprinzipien in Betracht zog \cite{tamaldin2017}. Aktuell konzentriert sich die Forschung vermehrt darauf, Balancekontrolle 
-mit Fahrtrajektorie zu verknüpfen – also ein selbstbalancierendes Fahrrad gezielt entlang einer vorgegebenen Spur oder Fahrspur zu steuern. 
-Frühere Arbeiten adressierten bereits das Spurhalten: So gelang Saguchi et al. (2009) eine stabile Geradeausfahrt durch automatische 
-Lenkregelung, während Aphiratsakun und Techakittiroj (2013) einen autonomen Fahrrad-Prototyp (AUSB2) vorstellten, der neben dem 
-Balancieren auch einfache Trajektorien nachfahren konnte \cite{aphiratsakun2013}. Kanjanawanishkul (2015) kombinierte sogar eine 
-stationäre Balance-Regelung mit einem MPC-basierten Pfadverfolger, sodass sein Fahrrad im Stillstand balancieren und bei Fahrt 
-einer vorgegebenen Strecke folgen konnte \cite{kanjanawanishkul2015}. Ein weiterer Meilenstein ist die Arbeit von Xiong et al. (2024), 
-die ein vollautonomes Fahrrad mit minimalem Aktuatoraufwand realisierten: Durch einen analytisch entworfenen linearen Lenkregler wurde 
-das Fahrzeug sowohl im Geradeauslauf als auch im Kurvenfahren stabil gehalten, ohne dass zusätzliche Kreisel oder Gewichte nötig waren 
-\cite{xiong2024}. Diese Ergebnisse zeigen, dass eine intelligente Lenkregelung prinzipiell ausreicht, um sowohl Balance als auch Spurhaltung 
-zu gewährleisten – was für die angestrebte Fahrspurhaltung essentiell ist. Neben der Regelungstechnik spielt die Sensorik und Umfeldwahrnehmung 
-eine wachsende Rolle im Stand der Technik. Für das autonome Fahren müssen Umgebung und Fahrspur erkannt werden. Hunziker (2019) koppelte z.B. 
-Inertialsensoren mit GPS-Daten und setzte einen modellprädiktiven Regler ein, um ein elektrisches Fahrrad ohne Fahrer entlang eines vorgegebenen 
-Kurses zu steuern \cite{Hunziker2019}. In neueren Projekten werden Kameras und Computer Vision integriert, um Fahrspuren oder Hindernisse zu 
-detektieren. Ein prominentes Beispiel ist ein am Tsinghua-Universität entwickeltes autonomes Fahrrad, das mittels KI-Chip (Tianjic) sowohl 
-selbstbalanciert als auch Objekterkennung und Sprachbefehle umsetzt. Wissenschaftlich dokumentiert ist die Arbeit von Ghidaei (2024), 
-der ein video- und sensorgestütztes autonomes Fahrsystem für ein selbstbalancierendes E-Bike realisierte \cite{Ghidaei2024}. Dabei dienen 
-Kamerabilder zur Spurhaltung (Lane Keeping), während zusätzliche Sensorfusion die Stabilität gewährleistet. Dieses Projekt stellt einen 
-aktuellen Stand der Technik dar und zeigt, dass die Kombination aus Lageregelung (Balance-Controller) und Fahrspur-Assistent (Vision-basierte Steuerung) inzwischen machbar ist.
-Abschließend ist festzuhalten, dass sich das Forschungsfeld rasant entwickelt. Zahlreiche Forschungsprototypen weltweit – 
-vom LPV-geregelten Rad von Andreo (2009) bis zum neuesten visionbasierten E-Bike von Ghidaei (2024) – haben die Machbarkeit 
-des selbstbalancierenden, spurgeführten Fahrrads demonstriert. Auch an der Goethe-Universität Frankfurt wurde in den letzten 
-Jahren der Grundstein gelegt: Ranz (2021) entwickelte einen ersten selbstbalancierenden Fahrrad-Prototyp \cite{ranz2021bachelor}, 
-Karabila (2022) implementierte eine Balance-Regelung dafür \cite{karabila2022}, und Zander (2023) verbesserte das Reglerdesign weiter 
-\cite{zander2023}. Auf diesem Vorwissen aufbauend erweitert die vorliegende Arbeit den Stand der Technik um eine robuste Fahrspurhaltung, 
-indem aktuelle Methoden der Regelungstechnik und Bildverarbeitung zusammengeführt werden.
+
+
+Die Regelung eines selbstbalancierenden Fahrrads basiert auf zwei zentralen Grundlagen: 
+
+(i) einem hinreichend genauen dynamischen Modell, das die wesentlichen Fahr- und \newline
+Stabilitätseigenschaften beschreibt, und \newline
+(ii) einer abgestimmten Reglerarchitektur, die sowohl die Aufrechterhaltung des Gleichgewichts als auch die zuverlässige Spurführung gewährleistet.  \newline \newline
+Auf der Modellseite etablierten Meijaard et~al.\ den Benchmark der linearisierten Whipple-Gleichungen, der bis 
+heute als Referenz für Analyse, Identifikation und Reglersynthese dient \cite{meijaard2007}. Ergänzend zeigte Kooijman et~al.,   dass Selbststabilität 
+\emph{ohne} gyroskopische oder Caster-Effekte \footnote{„Caster-Effekte“ entstehen, wenn der Aufstandspunkt des Vorderrads hinter der Lenksäule liegt,
+wodurch das Rad sich durch die Bewegung selbständig in Fahrtrichtung ausrichtet :contentReference.} möglich ist, womit die Interaktion
+von Massenverteilung, Nachlauf und Lenkkinematik als zentrale Gestaltungsgrößen belegt wurde \cite{kooijman2011}. Diese Ergebnisse motivieren 
+regelungstechnische Ansätze, die das Prinzip „\emph{Steer into the Fall}“ explizit nutzen und die Lenkung als primären Stellgrad einsetzen.
+
+Für die aktive Balanceregelung über die Lenkung liegt mit Andreo et al.\ eine LPV-Formulierung 
+\footnote{LPV (Linear Parameter-Varying) beschreibt Systeme, deren Dynamik von zeit- oder zustandsabhängigen Parametern 
+beeinflusst wird und erlaubt so eine erweiterte Stabilitätsanalyse über verschiedene Betriebsbereiche hinweg.} vor, 
+die die geschwindigkeitsabhängige Dynamik berücksichtigt und Stabilität in einem definierten 
+Geschwindigkeitsbereich nachweist\cite{andreo2009}. Damit wird ein wichtiger Praxisaspekt adressiert, 
+da Fahrräder ihre Vorwärtsgeschwindigkeit ständig ändern und eine rein LTI-Betrachtung 
+\footnote{LTI (Linear Time-Invariant) beschreibt Systeme mit zeitlich unveränderlichen Parametern; 
+diese Annahme ist nur lokal gültig, wenn die Geschwindigkeit des Fahrrads konstant bleibt.} nur lokal gültig ist. 
+Als Alternative wurden Balanceregler mit Reaktionsrädern untersucht. Kanjanawanishkul vergleicht 
+LQR- und nichtlineare MPC-Ansätze unter Berücksichtigung von Aktuatorsättigungen und zeigt, 
+dass bereits einfache Quadratikregler bei Stand- oder Niedriggeschwindigkeit Stabilisierung ermöglichen, 
+jedoch mit zusätzlicher Masse und höherem Energiebedarf verbunden sind~\cite{kanjanawanishkul2015}. 
+Ein dritter Ansatz, der in der Robotik verbreitet ist, nutzt Control-Moment-Gyroskope (CMG).
+Park und Yi belegen experimentell, dass ein scissored-pair-CMG störende Quermomente kompensiert 
+und so eine robuste Rollstabilisierung erlaubt, die geeignet für stationäre oder sehr langsame Fahrzustände ist, 
+allerdings mit erheblichem mechanischem Aufwand~\cite{park2020}.
+
+Für die gekoppelte Aufgabe aus Balance \emph{und} Spurführung hat sich eine Kaskaden­architektur bewährt. Eine schnelle innere Balanceschleife 
+(PID/LQR) und eine langsamere äußere Spurführungsschleife (häufig MPC) wurden von Persson et al.\ entworfen. 
+Der äußere MPC optimiert dabei unter harten Nebenbedingungen (Roll-, Lenk- und Heading-Grenzen 
+sowie Positionsbeschränkungen) die Soll-Rollwinkel und damit die Kursführung, 
+während ein innerer PID die Soll-Rollwinkel über die Lenkrate stabilisiert~\cite{persson2021}.Die Autoren zeigen auf realitätsnahen Strecken (OpenStreetMap-Go-Kart-Track), dass die Kaskade 
+enge Radien und variable Geschwindigkeiten meistert und zugleich eine saubere Trennung der Zeitskalen ermöglicht. Dieser Aufbau ist unmittelbar anschlussfähig an 
+\emph{do-mpc}-basierte Implementierungen, da Optimierungs-, Nebenbedingungs- und Prädiktionshorizonte explizit parametrierbar sind.
+
+Parallel zur Reglerseite hat sich die Umfeldwahrnehmung stark weiterentwickelt. Ein prominenter Systemdemonstrator ist das Tsinghua-„Tianjic“-Fahrrad, 
+das Kameraperzeption (Objekterkennung/-tracking), Sprachkommandos, Hindernisvermeidung und Balance auf einem eingebetteten Chip integriert 
+\cite{pei2019tianjic}. Die Studie ist weniger eine methodische Neuentwicklung der Fahrdynamik, zeigt aber überzeugend, dass visuelle Spurführung 
+und Balanceregelung \emph{in Echtzeit} auf kompakten Plattformen zusammengeführt werden können, somit ein wichtiger Befund für kamerabasierte Spurhaltung.
+
 
 %--------------------------------------------------
 % Bisherige Arbeiten
@@ -118,41 +103,35 @@ indem aktuelle Methoden der Regelungstechnik und Bildverarbeitung zusammengefüh
 
   \subsubsection{Anna Ranz (2021) – Hardware-Grundlagen}
 
-  Die Bachelorarbeit von Anna Ranz bildete den Startpunkt des Projekts. Ihr Ziel
-  war die Konstruktion eines lauff\"ahigen Prototyps, mit dem grundlegende
-  physikalische Eigenschaften eines selbstbalancierenden Fahrrads untersucht
-  werden konnten. Kern der Hardware ist ein BeagleBone\,Black, der den
-  Lenkmotor mittels MD49-Controller (EMG49) \"uber UART und die
-  Inertialmess\-einheit BNO055 \"uber I\textsuperscript{2}C ansteuert. 
-  Ergänzt wurde das System durch einen Nabenmotor am Hinterrad, der eine konstante 
-  Vorwärtsfahrt sicherstellte. Damit standen erstmals sowohl die mechanische Plattform 
-  als auch die notwendigen Sensor- und Aktor-Schnittstellen zur Verfügung, um 
-  regelungstechnische Konzepte praktisch zu erproben.
-
-  Ranz implementierte erste PID-Regelkreise, validierte die Sensorik in separaten
-  Testprogrammen und analysierte die Dynamik des Gesamtsystems in Bezug auf
-  Massentr\"agheit, Raddynamik und Lenkkinematik. Von besonderer Bedeutung war die 
-  Untersuchung des Zusammenspiels zwischen Trägheitsmoment, Lenkwinkel und Rückstellkräften, 
-  da diese Größen die Stabilität maßgeblich beeinflussen. Darüber hinaus wurden 
-  Messreihen durchgeführt, um die Qualität der BNO055-IMU zu bewerten und deren Eignung 
-  für die Rollwinkelbestimmung zu prüfen. Diese Kalibrierung stellte sicher, dass die 
-  Daten mit ausreichend geringer Latenz und Genauigkeit für eine spätere Regelung 
-  verwendet werden konnten.
-
-  Die umfangreiche Dokumentation enth\"alt Schaltpl\"ane, 3D-Modelle und Messaufnahmen und
-  bildet damit die hardwareseitige Grundlage f\"ur alle sp\"ateren Arbeiten 
-  \cite{ranz2021bachelor}. Besonders hervorzuheben ist, dass Ranz nicht nur eine 
-  funktionierende Testplattform aufbaute, sondern auch systematisch deren Grenzen 
-  aufzeigte, etwa die eingeschränkte Reaktionsgeschwindigkeit des MD49-Motorcontrollers 
-  oder die Latenz der UART-Kommunikation. Diese Erkenntnisse waren für die nachfolgenden 
-  Arbeiten entscheidend, da sie Verbesserungsbedarf aufzeigten und konkrete Ansatzpunkte 
-  für die Weiterentwicklung lieferten. 
-
-  Damit markierte die Arbeit von Ranz den entscheidenden Übergang von theoretischen 
-  Überlegungen hin zu einer realen Forschungsplattform: Erst durch die von ihr geschaffene 
-  Hardware-Basis und die Analyse der physikalischen Dynamik war es möglich, in den 
-  darauffolgenden Arbeiten sowohl Regelungsalgorithmen als auch softwareseitige 
-  Optimierungen im praktischen Betrieb zu validieren.
+  Die Bachelorarbeit von Anna Ranz markierte den praktischen Ausgangspunkt des Projekts 
+  und schuf eine erstmals vollständig lauffähige Experimentalplattform, auf der regelungstechnische 
+  Konzepte an realer Hardware untersucht werden konnten \cite{ranz2021bachelor}. Zentrales Element 
+  ist ein \emph{BeagleBone Black} als Steuereinheit, der den Lenkantrieb über einen 
+  \emph{MD49}-Controller (Motor: \emph{EMG49}) via \texttt{UART} ansteuert und die 
+  Inertialmessdaten einer \emph{BNO055}-IMU über \texttt{I\textsuperscript{2}C} erfasst. 
+  Ergänzt wird die Architektur durch einen Nabenmotor am Hinterrad, der eine konstante 
+  Vorwärtsfahrt sicherstellt. In dieser Kombination standen erstmals mechanische Plattform, 
+  Sensoren und Aktoren mit klar definierten Schnittstellen zur Verfügung, um Stabilisierung 
+  und Lenkregelung systematisch zu evaluieren.
+  
+  Im Rahmen der Inbetriebnahme implementierte Ranz erste PID-Regelkreise, validierte die 
+  IMU-Sensorik in separaten Testprogrammen und analysierte die Dynamik des Gesamtsystems 
+  mit Blick auf Massenträgheit, Raddynamik und Lenkkinematik. Besondere Aufmerksamkeit 
+  galt dem Zusammenspiel von Trägheitsmoment, Lenkwinkel und Rückstellkräften, da diese 
+  Größen die Querstabilität wesentlich bestimmen. Ergänzende Messreihen dienten der
+   Bewertung der BNO055 hinsichtlich Genauigkeit und Latenz der Rollwinkelbestimmung.
+  Eine sorgfältige Kalibrierung stellte sicher, dass die Datenqualität den Anforderungen 
+   eines geschlossenen Regelkreises genügt.
+  
+  Die Arbeit dokumentiert die Hardware umfassend anhand von Schaltplänen, 3D-Modellen und 
+  Messaufnahmen und bildet damit die hardwareseitige Referenzbasis für alle nachfolgenden 
+  Entwicklungen \cite{ranz2021bachelor}. Zugleich wurden systemische Grenzen der ersten 
+  Ausbaustufe transparent herausgearbeitet, darunter die begrenzte Reaktionsgeschwindigkeit 
+  des \emph{MD49}-Motorcontrollers sowie Latenzen in der \texttt{UART}-Kommunikation und somit 
+  konkrete Ansatzpunkte für spätere Verbesserungen identifiziert.
+  
+  Insgesamt kennzeichnet die Arbeit von Ranz den Übergang von theoretischen Vorüberlegungen 
+  hin zu einer belastbaren Forschungsplattform. 
 
 
   \subsubsection{Amine Karabila (2022) – Erste funktionierende Regelung}
@@ -164,75 +143,62 @@ indem aktuelle Methoden der Regelungstechnik und Bildverarbeitung zusammengefüh
   die Lenkerstellung des MD49-Encoders \cite{md49} auswertet, während ein hinterer 
   Nabenmotor die Vortriebsdrehzahl konstant hält \cite{karabila2022}. 
   Damit gelang erstmals eine softwareseitig realisierte Balancekontrolle, die den 
-  Forschungsprototyp in eine echte Versuchsplattform verwandelte.
+  Forschungsprototyp in eine echte Versuchsplattform überführte.
   
   Ein erstes Hindernis war die Strombegrenzung des MD49, die den EMG49-Lenkmotor 
   zu langsam ansprechen ließ. Karabila ersetzte deshalb den Leistungsteil durch eine 
   BTS7960-H-Brücke \cite{bts7960} und verwendete den MD49 nur noch zur hochauflösenden 
   Wegmessung. Nicht-blockierende UART-Aufrufe verkürzten die Encoder­abfrage von rund $4\,\mathrm{ms}$ 
   auf knapp $1\,\mathrm{ms}$, sodass die Gesamttransportzeit des Reglers auf etwa $2\,\mathrm{ms}$ sank. 
-  Diese Optimierungen verdeutlichen die besonderen Herausforderungen eingebetteter Systeme: 
-  Ein stabiler Regelkreis erfordert nicht nur gute Algorithmen, sondern auch eine 
-  Hardware- und Softwarearchitektur, die minimale Verzögerungen gewährleistet.
+  Damit wird deutlich, dass die Stabilität des Regelkreises aus dem Zusammenspiel leistungsfähiger
+  Algorithmen und einer auf minimale Latenzen ausgelegten Hard-/Software resultiert.
   
   Die erste Regel­version koppelte die Motorgeschwindigkeit über einen gestreckten $\tanh$-Verlauf an 
   die Verweildauer des Rollwinkels in einer „habitablen Zone“. Außerhalb des Labors erwies sich 
-  dieses Verfahren jedoch als zu träge: Der Lenker schlug regelmäßig an die Endanschläge, und Stützräder 
+  dieses Verfahren jedoch als zu träge. Der Lenker schlug regelmäßig an die Endanschläge, und Stützräder 
   mussten das Fahrrad vor dem Kippen bewahren. Die finale Lösung verknüpfte dagegen den gemessenen 
   Rollwinkel direkt mit einem geschwindigkeits­abhängigen Soll-Encoderwert. Dadurch pendelte der 
-  Lenker nur noch mit etwa acht Ticks Amplitude um die Nullposition; ein integrierter Dämpfungsanteil 
-  reduzierte die Motordrehzahl automatisch, sobald sich das System seiner Soll-Lage näherte. 
+  Lenker nur noch um wenige Grad um die Nullposition. 
   
   Validiert wurde der Regler im Hof des Informatikgebäudes ($\approx 9.5\times26.5\,\text{m}$, fünf 
   Prozent Steigung). Bei Sollgeschwindigkeiten von $6$–$10\,\mathrm{km/h}$ blieb das Fahrrad während 
-  aller aussagekräftigen Fahrten aufrecht; Tip-Over-Events traten nicht auf. Die erfolgreichste 
-  Versuchsfahrt bei $10\,\mathrm{km/h}$ zeigte Spitzen von unter acht Encoder-Ticks und eine 
-  Querabweichung, die optisch kaum wahrnehmbar war. Diese erfolgreiche Fahrt 
-  dokumentiert die Funktionsfähigkeit der entwickelten Regelung. 
+  aller aussagekräftigen Fahrten aufrecht. 
   
-  Damit bewies Karabilas Arbeit erstmals die Realisierbarkeit einer selbst­balancierenden 
+  Damit bewies Karabilas Arbeit erstmals die Realisierbarkeit einer selbstbalancierenden 
   Regelung und schuf die Grundlage für die PID-Optimierungen von Zander sowie die MPC-Navigation von Giray. 
   Insbesondere machte sie deutlich, dass die Regelgüte stark von niedrigen Latenzen und einer robusten 
-  Kopplung zwischen Sensoren und Aktoren abhängt – ein zentrales Motiv, das auch in den nachfolgenden Arbeiten 
+  Kopplung zwischen Sensoren und Aktoren abhängt, ein zentrales Motiv, das auch in den nachfolgenden Arbeiten 
   beibehalten und weiterentwickelt wurde.
   
-\newpage
+
 \subsubsection{Jonah Zander (2023) – Optimierte PID-Balanceregelung}
 
 Zander knüpfte 2023 an die Vorarbeiten an und formulierte als Kernziel, das Fahrrad mindestens 60\,s auf 
-ebener Strecke ohne Bodenkontakt der Stützräder stabil fahren zu lassen \cite{zander2023}. Die Arbeit 
-positioniert sich zwischen eingebetteter Echtzeit-Software und Regelungsentwurf: Latenz, Jitter und Sättigungseffekte 
-sollten so adressiert werden, dass eine robuste Balance auch bei Richtungsänderungen möglich ist. 
-Grundlage waren Ranz’ Hardware und Karabilas erste geschlossene Regelstrecke \cite{ranz2021bachelor, karabila2022}.
-
-Zur Umsetzung entwickelte Zander eine modular aufgebaute C-Software auf dem BeagleBone\,Black (Debian), 
+ebener Strecke ohne Bodenkontakt der Stützräder stabil fahren zu lassen \cite{zander2023}. Zur Umsetzung entwickelte 
+Zander eine modular aufgebaute C-Software auf dem BeagleBone\,Black (Debian), 
 in der Multi-Threading Sensor-/Aktor-I/O, Reglerkern und Logging entkoppelt. Zeitkritische Abtast- und 
 Vorverarbeitungsaufgaben wurden in die Programmable Realtime Units (PRUs) verlagert, wodurch deterministische 
 Lesezyklen für Fahr- und Lenkwinkel im zweistelligen kHz-Bereich möglich wurden. Die effektive Transportverzögerung 
 zwischen Messung und Stellgröße sank dadurch deutlich, was die Stabilitätsreserven des Reglers erhöhte \cite{zander2023}.
 
 Die Balanceregelung realisierte Zander als klassisch ausgelegten PID-Regler, dessen Parameter iterativ auf 
-Basis umfangreicher Mess- und Logdaten optimiert wurden. Gegenüber der zuvor genutzten dreistufigen P-Logik 
-\cite{karabila2022} steigerten Integral- und D-Anteil Ausregelgüte und Dämpfung. In der Software wurden robuste 
+Basis umfangreicher Mess- und Logdaten optimiert wurden. Im Vergleich zur zuvor eingesetzten dreistufigen P-Logik \cite{karabila2022} 
+reduziert der I-Anteil den stationären Regelfehler (Ausregelgüte), während der D-Anteil die Einschwingdämpfung erhöht. In der Software wurden robuste 
 Elemente berücksichtigt, unter anderem Begrenzung und Glättung des Lenkmotor-Solls (Rate- und Amplitudenlimits), 
 sorgfältige Filterung der Eingangssignale (Encoder/IMU) zur Rauschunterdrückung bei erhaltener Phasenreserve 
 sowie latenzarme Pfade zwischen PRU-Puffern und Reglerkern zur Minimierung von Jitter. Das Loggingsystem 
 zeichnete synchronisierte Sensor- und Aktordaten auf und erlaubte eine systematische 
 Auswertung der Reglerwirkung \cite{zander2023}.
 
-Neben dem Reglerkern stärkte Zander die Betriebssicherheit: Zwei Notausschalter (separate Lenkungs- bzw. Gesamtabschaltung), 
+Neben dem Reglerkern stärkte Zander die Betriebssicherheit. Dabei wurden zwei Notausschalter (separate Lenkungs- bzw. Gesamtabschaltung), 
 eine Reißleine zur sofortigen Trennung der Lenkungsversorgung in kritischen Situationen sowie ein Fail-Safe 
-für den RC-Empfänger (Stop bei Signalverlust) begrenzen Risiken unkontrollierter Lenkereinschläge und mechanischer Schäden \cite{zander2023}.
+für den RC-Empfänger (Stop bei Signalverlust) begrenzen Risiken unkontrollierter Lenkereinschläge und mechanischer Schäden eingesetzt\cite{zander2023}.
 
 In experimentellen Fahrtests blieb das Fahrrad über mehr als 60\,s stabil in Balance, ohne dass die Stützräder 
-den Boden berührten; die Zielvorgabe wurde erfüllt und überschritten. Bei konstanter Geschwindigkeit auf ebenem 
+den Boden berührten. Bei konstanter Geschwindigkeit auf ebenem 
 Untergrund waren zudem gesteuerte Richtungsänderungen per Fernbedienung möglich, ohne die Balance zu verlieren 
 \cite{zander2023}. Damit erzielte Zander den bis dahin längsten autonom balancierten Fahrbetrieb des Prototyps.
 
-Für die vorliegende Arbeit ist diese PID-Basis maßgeblich: Die in \cite{zander2023} entworfene Regelung wurde 
-nach \emph{Webots} portiert und bildet die innere Schleife der dualen Reglerarchitektur. Darauf aufbauend wird 
-die vision- und trajektorienbasierte Fahreglung in der äußeren Schleife integriert. Diese klare Schichtung 
-(Balance innen, Fahrspur außen) ist zentral für die Kopplung von Regelungs- und Computer-Vision-Methoden im Gesamtsystem.
 
   
 \subsubsection{Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}
@@ -244,7 +210,9 @@ Referenztrajektorie ableitet, der das Fahrrad folgen kann, ohne die Balance zu v
 
 Die Wahrnehmungskomponente setzt auf ein effizientes Segmentierungsmodell aus der YOLOv8-Familie \cite{Ultralytics2023}. 
 Nach einer Evaluation alternativer Verfahren (u.\,a. FastSAM \cite{Zhao2023}) fiel die Wahl aufgrund des guten 
-Verhältnisses von Genauigkeit und Latenz auf ein Ultralytics-Modell in der Segmentation-Variante. Das Netz wurde 
+Verhältnisses von Genauigkeit und Latenz auf ein Ultralytics-Modell in der Segmentation-Variante
+\footnote{Gemeint ist die YOLOv8-Ausprägung, die neben Klassen/Boxen pro Objekt Pixelmasken (Semantik/Instanz) 
+vorhersagt.}. Das Netz wurde 
 mit einem angepassten Datensatz trainiert und für die Inferenz mittels TensorRT auf dem NVIDIA Jetson Nano beschleunigt, 
 sodass die Bildauswertung in Zyklen von etwa 100\,ms erfolgen konnte. Aus den segmentierten Szenen werden Stützpunkte 
 extrahiert und über Spline-Interpolation zu einer glatten Referenzspur verdichtet, die die gewünschte Fahrlinie repräsentiert.
@@ -252,17 +220,13 @@ extrahiert und über Spline-Interpolation zu einer glatten Referenzspur verdicht
 Für die Fahrregelung implementierte Giray einen Model Predictive Controller (MPC) auf Basis eines Einspurmodells 
 \cite{Hunziker2019}. Der MPC minimiert über einen endlichen Horizont Abweichungen von der Referenzspur bei gleichzeitig 
 moderatem Stellaufwand und berücksichtigt Nebenbedingungen des Systems. In jedem Rechenzyklus wird das Optimierungsproblem 
-mit der aktuellen Zustandsschätzung gelöst; angewandt wird jeweils nur die erste Stellgröße (receding horizon), bevor der 
-Vorgang mit aktualisierten Messdaten wiederholt wird. Modellierung, Trajektorien-Interpolation und MPC-Optimierung wurden 
+mit der aktuellen Zustandsschätzung gelöst. Modellierung, Trajektorien-Interpolation und MPC-Optimierung wurden 
 zunächst in Python umgesetzt und auf die Jetson-Plattform portiert.
 
-In Simulationen zeigte die Pipeline, dass Fahrbahnkanten und einfache Hindernisse zuverlässig detektiert und Referenzspuren 
-generiert werden können; das Fahrrad folgte diesen Spuren stabil, solange die äußere MPC-Schleife die innere Balanceregelung 
-nicht überfordert. Sichtbar wurden zugleich Grenzen und Folgearbeiten: Eine explizite Kollisionsvermeidung war noch nicht 
-integriert; Tiefe stand nur implizit über Bildgeometrie zur Verfügung. Als Verbesserungen werden daher die Anreicherung um 
-Tiefeninformationen (Stereo oder monocular depth) sowie eine kameraseitige Stabilisierung gegen Rollneigung (z.\,B. Gimbal) 
-genannt. Ebenso ist mit neueren Segmentierungsansätzen und leistungsfähigeren Edge-Plattformen eine weitere Reduktion der 
-Latenz zu erwarten \cite{Zhao2023,Ultralytics2023}.
+Die Pipeline detektierte in den Simulationen Fahrbahnkanten und einfache Hindernisse zuverlässig. Daraus ergaben sich 
+stabile Referenztrajektorien. Zugleich wurden Grenzen sichtbar, da eine explizite Kollisionsvermeidung noch nicht integriert wurde. 
+Eine Tiefeninformation war nur indirekt über Bildgeometrie vorhanden. Nach Giray ist mit neueren Segmentierungsansätzen und 
+leistungsfähigeren Edge Plattformen eine weitere Reduktion der Latenz zu erwarten \cite{Zhao2023}\,\cite{Ultralytics2023}.
 
 Für die vorliegende Arbeit ist die Einordnung klar: Die von Zander übernommene 
 PID-Balanceregelung bildet die innere Schleife, 
