@@ -70,16 +70,6 @@ Yasin Giray, Amine Karabila, Jonah Zander, et~al.
 \newblock \url{https://github.com/cyberbotics/webots}, 2025.
 \newblock Zugriff am 24.08.2025.
 
-\bibitem{gupta2023}
-R.~Gupta and S.~Lee.
-\newblock Evaluating webots as digital‐twin platform for multi-robot systems.
-\newblock In {\em Proc. IEEE ICRA}, 2023.
-
-\bibitem{hadi2024softgripper}
-M.~et~al. Hadi.
-\newblock Soft‐gripper simulation in webots.
-\newblock {\em Soft Robotics}, 11(2):123--135, 2024.
-
 \bibitem{apmonitor_pid}
 John Hedengren et~al.
 \newblock Proportional integral derivative (pid).
@@ -114,11 +104,6 @@ Amine Karabila.
 J.~D.~G. Kooijman, J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
 \newblock A bicycle can be self-stable without gyroscopic or caster effects.
 \newblock {\em Science}, 332(6027):339--342, 2011.
-
-\bibitem{li2024webikes}
-Wenjia Li, Paris Francis, Robert McClosky, and Alexander Brown.
-\newblock {WeBikes}: a configurable, open-source add-on for simulating single-track vehicle dynamics in the {Webots} robot simulation software.
-\newblock {\em Advances in Transportation Studies}, Special Issue Vol.~4:73--88, 2024.
 
 \bibitem{cyberbotics_inertialunit}
 Cyberbotics Ltd.
@@ -160,11 +145,6 @@ Niklas Persson, Martin~C. Ekstr{\"o}m, Mikael Ekstr{\"o}m, and Alessandro~V. Pap
 Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
 \newblock Master's thesis, HWR Berlin, 2021.
-
-\bibitem{wikipedia_mpc}
-{Wikipedia contributors}.
-\newblock Model predictive control, 2024.
-\newblock Accessed 23 August 2025.
 
 \bibitem{image_segmentation_wikipedia}
 {Wikipedia contributors}.

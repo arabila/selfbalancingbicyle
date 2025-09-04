@@ -1,23 +1,18 @@
-
 \newpage
 \section{Webots-Simulationsumgebung}
-  Hier wird die in Webots realisierte Simulationsumgebung vorgestellt, die als zentraler Versuchsstand für Entwurf, Parametrierung
-  und Evaluation der kombinierten Regelung des selbstbalancierenden Fahrrads dient. Ziel ist es, ein reproduzierbares und sicheres  
-  Testbett zu schaffen, in dem das physikalische Fahrverhalten, die sensorgeführte Pfadverfolgung sowie die Kopplung von schneller
+  In diesem Kapitel wird die in Webots realisierte Simulationsumgebung vorgestellt, die als zentraler Versuchsstand für Entwurf, Parametrierung
+  und Evaluation der kombinierten Regelung des selbstbalancierenden Fahrrads dient. Ziel ist es, eine reproduzierbare und sichere  
+  Testumgebung zu schaffen, in dem das physikalische Fahrverhalten, die sensorgeführte Pfadverfolgung sowie die Kopplung von schneller
   Balance-Regelung und langsamer Vision-/Trajektorienplanung unter kontrollierten Bedingungen untersucht werden können. Webots
   bietet dafür eine deterministische Dynamiksimulation auf Basis von ODE, eine hierarchische Szenenbeschreibung und eine klare
-  Trennung von Geometrie, Physik, Sensorik, Aktuatorik und Controllern – Eigenschaften, die systematische Parameterstudien,
-  Logging und automatisierte Auswertung wesentlich erleichtern \cite{cyberbotics2025}.
+  Trennung von Geometrie, Physik, Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025}.
 
-  Das Kapitel ist wie folgt strukturiert: Zunächst wird ein Überblick über Webots und die genutzten Kernfunktionen gegeben.
-  Anschließend wird die konkrete Szenenstruktur der Weltdatei erläutert, einschließlich globaler Simulationsparameter und
-  der Organisation der Knoten. Darauf aufbauend folgt die Beschreibung des Fahrradmodells mit seinen Gelenken, Kontakt- und
-  Masseneigenschaften sowie der eingesetzten Sensoren und Aktuatoren. Abschließend werden die Controller-Prozesse und deren
-  Interaktion skizziert sowie die angebundene GUI bzw. Auswertepfade beschrieben. Diese Gliederung macht transparent, wie
-  ausgehend von einem konsistenten physikalischen Modell die Regelungsalgorithmen iterativ entwickelt, validiert und
-  für den späteren Transfer auf den Realprototyp vorbereitet werden.
-
-
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=1.0\textwidth]{figures/Webots_wbt.png}
+    \caption{Minimalstruktur einer Webots \texttt{.wbt}-Welt}
+    \label{fig:wbt_min}
+  \end{figure}
 
   \subsection{Überblick}
   Webots ist ein frei verfügbares, quelloffenes und plattformunabhängiges Robotik Simulationsprogramm, das seit 1998 kontinuierlich 
@@ -26,175 +21,163 @@
   OpenGL\-gestützten Rendering\-Pipeline. Dadurch lassen sich fotorealistische 3D\-Szenen mit deterministischem Integrationsschema und 
   feingranularer Kontrolle der Simulationszeit schrittgenau ausführen \cite{cyberbotics2025}.
 
-  Kern des Webots\-Modells ist die hierarchische Szenenrepräsentation in \textit{World}\-Dateien 
+  Kern des Webotsmodells ist die hierarchische Szenenrepräsentation in \textit{World}-Dateien 
   (\texttt{*.wbt}; VRML\-basiert). 
   Eine Welt kapselt globale Parameter (z.\,B.\ Zeitauflösung, Kontakt\- und Reibungsmodelle), Umgebungsobjekte (Boden, Licht, Hintergrund) 
-  sowie Roboterknoten mit Sensorik, Aktuatorik und Masseneigenschaften. Geräte (z.\,B.\ Kamera, IMU, Lidar, \texttt{RotationalMotor}) 
-  sind als Nodes mit klar definierten Schnittstellen realisiert; ihre Parameter (Auflösung, Bildfrequenz, Dämpfung, Grenzwerte) sind 
+  sowie Roboterknoten mit Sensorik, Aktuatorik und Masseneigenschaften. Geräte (z.\,B.\ Kamera, IMU, Lidar, RotationalMotor) 
+  sind als Nodes mit klar definierten Schnittstellen realisiert, ihre Parameter (Auflösung, Bildfrequenz, Dämpfung, Grenzwerte) sind 
   reproduzierbar konfigurierbar. Controller laufen als getrennte Prozesse in C/C++, Python, Java oder MATLAB und kommunizieren zur Laufzeit 
-  über wohldefinierte APIs mit der Simulationswelt; mittels ROS~2\-Bridge ist zudem eine Einbettung in verteilte Robotik\-Stacks möglich 
-  \cite{gupta2023,cyberbotics2025}. Eine spezielle \emph{Supervisor}\-API erlaubt höherwertige Eingriffe (Positionsreset, automatisiertes 
+  über APIs mit der Simulationswelt\cite{cyberbotics2025}. Eine spezielle \emph{Supervisor}\-API erlaubt höherwertige Eingriffe (Positionsreset, automatisiertes 
   Logging, Metrik\-Auswertung) und bildet die Grundlage für reproduzierbare Benchmarking\-Pipelines \cite{cyberbotics2025}.
 
-  Für regelungsorientierte Studien bietet Webots drei Eigenschaften, die in dieser Arbeit zentral sind: (i) \emph{Determinismus} durch festen 
-  Zeitschritt und explizite Integrationsreihenfolge, was faire Parameterstudien ermöglicht; (ii) \emph{Modularität} durch die Trennung von 
+  Für regelungsorientierte Studien bietet Webots drei Eigenschaften, die in dieser Arbeit zentral sind:
+
+  (i) \emph{Determinismus} durch festen 
+  Zeitschritt und explizite Integrationsreihenfolge, was faire Parameterstudien ermöglicht.
+
+  (ii) \emph{Modularität} durch die Trennung von 
   Geometrie, Physik, Sensorik/Aktuatorik und Controllern, wodurch Varianten (z.\,B.\ Reibungskoeffizienten, Trägheiten, Abtastraten) isoliert 
-  untersucht werden können; (iii) \emph{Automatisierbarkeit} über den Supervisor, u.\,a.\ für Szenario\-Resets, Störgrößeninjizierung, Batch\-Runs 
+  untersucht werden können.
+
+  (iii) \emph{Automatisierbarkeit} über den Supervisor, u.\,a.\ für Szenario\-Resets, Störgrößeninjizierung, Batch\-Runs 
   und standardisierte Ergebnisberichte \cite{cyberbotics2025}.
 
-  Relevanz für \emph{fahrdynamische Einspurfahrzeuge}: In jüngeren Arbeiten wird Webots gezielt zur Simulation von Fahrrädern und Motorrädern 
-  eingesetzt. Das Open\-Source\-Add\-on \emph{WeBikes} erweitert Webots um ein konfigurierbares, physikalisch fundiertes Einspurfahrzeugmodell 
-  (Geometrie, Masseverteilung, Reifenkontakt, Steuerkinematik) und demonstriert, dass typische Phänomene wie Selbststabilisierung, Lenkdynamik 
-  und Kurvenfahrt reproduzierbar abgebildet werden können \cite{li2024webikes}. Damit wird ein freier, reproduzierbarer Vergleich zu Spezialwerkzeugen 
-  ermöglicht und eine Brücke zwischen Regelungsentwurf (z.\,B.\ Balanceregelung, MPC\-Trajektorienplanung) und virtuellen Fahrversuchen geschlagen. 
-  Über den gleichen Mechanismus nutzen weitere Studien Webots als Digital\-Twin\-Plattform für komplexe, materialabhängige Systeme (z.\,B.\ weiche Greifer),
-   was die Übertragbarkeit auf neuartige Robotertypen unterstreicht \cite{hadi2024softgripper}.
 
-  Für diese Arbeit ist Webots folglich ein geeignetes Testbett, um die Kopplung einer schnellen Balance\-Regelung (PID, \(\approx\)kHz\-Skala) mit einer 
-  langsameren vision\- bzw.\ modellprädiktiven Pfadführung (tens of Hz) systematisch zu entwerfen, zu parametrieren und zu evaluieren. Die klare Trennung 
-  der Subsysteme (Physik, Sensorik, Controller) erlaubt ablation\-artige Studien (z.\,B.\ Variation von Zeitschritt/Reibung, Sensorausfall, Verzögerungen), 
-  während die Supervisor\-Schnittstelle reproduzierbare Kampagnen mit konsistentem Logging unterstützt \cite{cyberbotics2025}.
+  Für diese Arbeit ist Webots folglich ein geeignetes Testumgebung, um die Kopplung einer schnellen Balance-PID-Regelung mit einer 
+  langsameren vision\- bzw.\ modellprädiktiven Pfadführung systematisch zu entwerfen, zu parametrieren und zu evaluieren. Die klare Trennung 
+  der Subsysteme (Physik, Sensorik, Controller) erlaubt Variantenstudien (z.\,B.\ Variation von Zeitschritt/Reibung, Sensorausfall, Verzögerungen), 
+  während die Supervisor Schnittstelle reproduzierbare Testreihen mit konsistentem Logging unterstützt \cite{cyberbotics2025}.
 
 
 
 
   \subsection{Struktur der Simulationsumgebung}
-  Die verwendete Simulationsumgebung basiert auf Webots und damit auf einer hierarchisch organisierten Szenenbeschreibung 
-  im VRML-Format. Eine \texttt{.wbt}-Datei kapselt sämtliche Entitäten der virtuellen Welt – von globalen 
-  Parametern (Zeitauflösung, Kontaktmodelle) über Umgebungsobjekte (Boden, Hintergrund, Lichtquellen) bis 
-  hin zu Robotern mitsamt deren Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025,gupta2023}. Jeder Knoten (Node) kann wiederum 
-  Unterknoten besitzen, sodass sich komplexe Systeme modular aus standardisierten Bausteinen zusammensetzen 
-  lassen. Für die vorliegende Arbeit ist diese Hierarchie entscheidend, weil sie erlaubt, (i) das physikalische 
-  Verhalten des Fahrrads getrennt von (ii) der Szenengeometrie und (iii) den übergeordneten Reglerprozessen 
-  zu modellieren. Änderungen an einem Teilbereich – etwa an den Reibungsparametern der Reifen oder an der 
-  Position einer Kamera – bleiben somit lokal und beeinträchtigen die übrigen Komponenten nicht.
+  Die Versuche werden in eine \texttt{.wbt}-Welt beschrieben, die die Szene hierarchisch (VRML) aufbaut. Dabei sind globale 
+  Einstellungen, Geometrie, Materialien und Roboter mit Sensorik, Aktuatorik und Controllern zu finden. Zentral sind ein fester 
+  Simulationszeitschritt sowie die globalen Physikparameter, die deterministische Abläufe und reproduzierbare Kontakte 
+  sicherstellen. Der Fahrradroboter (\emph{BICYCLE}) ist mit Massen- und Trägheitseigenschaften, vereinfachten Kollisionskörpern 
+  und Gelenken für Vortrieb und Lenkung modelliert. Der schnelle Balance-PID in C läuft 
+  direkt auf dem Roboter, während ein externer \emph{Supervisor} mit Kamera die Spur wahrnimmt und mittels MPC Lenksollwerte 
+  berechnet. Der Datenaustausch erfolgt über \texttt{Emitter}/\texttt{Receiver}, wobei das Logging und die Auswertung beim Supervisor liegen. 
+  Wie schon erwähnt sin daher, durch die Trennung von Physikmodell, Sensorik und Regellogik gezielte Parameterstudien bei gleichbleibender Szenengeometrie möglich.
+  Der in Listing:\ref{lst:wbt_min} gezeigte Pseudocode beschreibt die Struktur der in unseren Testfahrten verwendeten Webots-\texttt{.wbt}-Weltdatei und zeigt die minimalen Knoten 
+  (\texttt{WorldInfo}, \texttt{RectangleArena}, \texttt{Robot}, \texttt{Supervisor}) in ihrer Kernkonfiguration.
+
+  \vspace{1cm}
+
   
-  Ausgangspunkt der Welt ist eine rechteckige Bodenarena mit texturierter Fahrbahnoberfläche, die als Referenzstrecke 
-  für die visuelle Spurführung dient. Globale Kontakt- und Reibungsparameter sind hier definiert, um das Zusammenspiel 
-  zwischen Reifen und Untergrund konsistent zu halten. Ein fester Zeitschritt im Millisekundenbereich stellt sicher, 
-  dass sowohl die Balancebewegungen des Fahrrads als auch die Bildverarbeitungsschleifen deterministisch und in Echtzeit 
-  simuliert werden können \cite{cyberbotics2025}. Die Kameraperspektive des Betrachters (Viewpoint) folgt dem Fahrrad aus erhöhter Position, 
-  was die visuelle Analyse der Fahrmanöver während der Versuche erleichtert.
-  
-  Das zentrale Element der Szene ist der Roboterknoten \emph{BICYCLE}, der das selbstbalancierende Fahrrad repräsentiert. 
-  Sein Geometriemodell wurde aus CAD-Daten übernommen und mit vereinfachten Kollisionsvolumina (Boxen und Zylinder) hinterlegt, 
-  um die Physiksimulation effizient zu halten. Die Massen- und Trägheitsparameter der Baugruppen (Rahmen, Räder, Gabel) sind 
-  explizit angegeben, sodass die Dynamik – insbesondere Roll- und Nickbewegungen – realitätsnah nachgebildet wird. Bewegliche 
-  Komponenten sind über Hinge-Joints angebunden: Das Hinterrad wird über einen Rotationsmotor für den Vortrieb angesteuert, 
-  die Lenkbewegung des Vorderrads erfolgt über ein zweites Gelenk mit eigenem Servomotor. Ergänzend existiert ein Kurbel-/Pedal-Gelenk, 
-  das in erster Linie der geometrischen Vollständigkeit und nicht der Antriebserzeugung dient. Zur Zustandserfassung sind 
-  Sensorschnittstellen integriert: Eine Inertialmesseinheit (IMU) liefert dem Balance-Regler fortlaufend Orientierung und 
-  Rollwinkel \cite{bno055}; eine am Fahrrad montierte Kamera kann genutzt werden, um on-board visuelle Informationen 
-  auszuwerten. Ein Display-Modul steht optional für Debug- oder Visualisierungszwecke zur Verfügung. Die Kommunikation 
-  zwischen Fahrrad und übergeordnetem Regler erfolgt über ein Paar aus \texttt{Emitter} und \texttt{Receiver}, die einen 
-  leichten, paketbasierten Nachrichtenaustausch innerhalb von Webots ermöglichen.
-  
-  Übergeordnet ist ein \emph{Supervisor}-Knoten angelegt. Dieser spezielle Robotertyp besitzt in Webots weitreichende 
-  Eingriffsmöglichkeiten auf Welt-Ebene (z.\,B. Position-Reset, Logging, automatisierte Auswertung) und dient hier als 
-  externe Beobachter- und Steuerinstanz. Der Supervisor trägt eine statisch in der Szene platzierte Kamera, die die Fahrbahn 
-  aus einer globalen Perspektive erfasst. Auf Basis dieser Bilder führt der Python-basierte Vision-Controller eine 
-  Spurdetektion (YOLO) durch und berechnet über ein modellprädiktives Regelungsverfahren (MPC) Lenksollwerte bzw.\ Trajektorien. 
-  Diese Kommandos werden per Funkkanal (Emitter) an den Balance-Controller des Fahrrads übertragen, der sie in konkrete 
-  Motorbefehle umsetzt. Umgekehrt sendet das Fahrrad Statusdaten zurück, die der Supervisor für Evaluations- und Loggingzwecke 
-  speichert. Dieses Zusammenspiel zweier Controller-Prozesse – ein echtzeitnaher PID-Regler in C auf Roboterseite und ein 
-  bildverarbeitungsgetriebener MPC-Regler in Python auf Supervisorebene – bildet die Kernstruktur der kombinierten Regelung.
-  
-  Die gewählte Struktur der Simulationsumgebung verfolgt zwei Ziele: Erstens ermöglicht sie reproduzierbare und sichere 
-  Experimente in verschiedensten Fahrszenarien (Geradeausfahrt mit Störimpuls, Slalomkurse, Kurvenfahrten mit Steigung), 
-  ohne das reale Hardware-Risiko des Umkippens oder der Beschädigung einzugehen. Zweitens gestattet die klare Trennung von 
-  physikalischem Modell, Sensorebene und Reglerlogik eine gezielte Variation einzelner Parameter (z.\,B. Reibung, Zeitschritt, 
-  Bildauflösung), um deren Einfluss auf die Gesamtperformance systematisch zu untersuchen. Webots fungiert damit als flexibles 
-  Testbett, in dem sowohl Balance- als auch Spurführungsalgorithmen iterativ entwickelt, validiert und optimiert werden können, 
-  bevor sie auf den realen Prototyp übertragen werden.
-  \pdfcomment{Bild der Struktur der Simulationsumgebung anzeigens}
 
-
-
-
-
-  \newpage
-
-
-
-  \subsection{Das Fahrradmodell}
-  \begin{wrapfigure}{r}{0.42\textwidth} % r=rechts, l=links
-    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
-    \centering
-    \includegraphics[width=\linewidth]{figures/bicycle.png}
-    \caption{Das Fahrradmodell in Webots.}
-    \label{fig:bicycle}
-  \end{wrapfigure}
-
-  Das folgende Kapitel führt in das in Webots implementierte Fahrradmodell ein, 
-  wie es in der \texttt{.wbt}-Datei spezifiziert ist. 
-  Das Modell ist als kinematischer Baum aus starren Körpern (\texttt{Solid}) aufgebaut, die über eindimensionale Drehgelenke 
-  (\texttt{HingeJoint}) verbunden sind. Die sichtbare Geometrie (\texttt{CadShape}) ist vom physikrelevanten Kollisionsmodell 
-  (\texttt{boundingObject} mit einfachen Primitiven) getrennt; Masse, Schwerpunkt und Trägheit sind im \texttt{Physics}-Block definiert. 
-  An ausgewählten Gelenken wirken \texttt{RotationalMotor}-Aktuatoren, während Dämpfung und Haftreibung über 
-  \texttt{HingeJointParameters} festgelegt sind. In den nachfolgenden Unterabschnitten werden die Baugruppen des Fahrrads entlang 
-  der Knotenstruktur der Weltdatei beschrieben und deren Parameter hinsichtlich ihres Einflusses auf die Dynamik (Lenkung, 
-  Rad–Boden-Kontakt, Eigendämpfung) erläutert.
-
-  %\subsubsection{Hinterrad (\texttt{DEF rear\_wheel})}
-  Der Knoten \texttt{rear\_wheel} ist Teil des Gesamtfahrrads und definiert das angetriebene Hinterrad (\texttt{HingeJoint}).
-  Die \texttt{HingeJointParameters} beschreiben das Lager des Hinterrads. Der \emph{anchor} \verb|0 0.5312 0| gibt die Position 
-  der Radachse im Elternkoordinatensystem an. Die \emph{dampingConstant} \verb|0.8| ist die viskose Dämpfung des Lagers: höher 
-  bedeutet mehr Beruhigung gegen Schwingungen, aber eine trägere Rotation. Die \emph{staticFriction} \verb|0.1| ist die Haftreibung 
-  im Lager: sie verhindert kleines Flattern nahe Stillstand, erhöht jedoch das zum Anfahren nötige Drehmoment.
-  Das \texttt{endPoint Solid} ist der vom Gelenk bewegte starre Körper auf der Kind-Seite des \texttt{HingeJoint}. 
-  Er rotiert um den am Gelenk definierten Anker/Achse und bildet damit das eigentliche Bauteil (hier: das Hinterrad), 
-  das durch die Bewegung betroffen ist. In der Hierarchie gilt: Elternteil → Gelenk → \texttt{endPoint Solid}; alles, was hier angehängt ist, bewegt sich mit.
-  Das \texttt{boundingObject} definiert die kollisions- und kontaktrelevante Geometrie des Hinterrads, unabhängig vom sichtbaren Mesh. 
-  Es bestimmt, wo das Rad den Boden „berührt“, wo Kräfte eingeleitet werden und wie Kollisionen erkannt werden. Im Modell ist es ein einfacher Zylinder, 
-  der per \texttt{Pose}-Rotation (entspricht Drehung um die \(y\)-Achse um \(90^\circ\)) in die Radebene gedreht wird; so bildet er die Kontaktfläche des Reifens ab. Zusammen mit dem 
-  \texttt{contactMaterial} (z.\,B.\ \texttt{"wheel"}) entstehen daraus die Reib- und Rückpralleigenschaften im Kontakt mit dem Untergrund. 
-  Größe und Ausrichtung des \texttt{boundingObject} sollten zur realen Radgeometrie passen, da es die Kontaktlage und damit das 
-  Fahrverhalten maßgeblich beeinflusst.
-  \paragraph{Physik (\texttt{Physics})}
-  Der \texttt{Physics}-Block definiert die Masseneigenschaften des Hinterrads. \texttt{density -1} bedeutet: Masse und Trägheit werden 
-  \emph{nicht} aus dem \texttt{boundingObject} berechnet, sondern mit \texttt{mass}, \texttt{centerOfMass} und \texttt{inertiaMatrix} 
-  explizit vorgegeben. \texttt{mass 2} setzt die Gesamtmasse (kg), \texttt{centerOfMass [0 0 0]} positioniert den Schwerpunkt im Solid-Frame (hier an der Nabe), 
-  und \texttt{inertiaMatrix [0.122 0.122 0.245 0 0 0]} legt die Rotations-Trägheiten (kg·m\(^2\)) fest; größere Werte bedeuten trägere Reaktion auf 
-  Dreh- bzw.\ Kippbewegungen. Die Off-Diagonale \verb|0 0 0| zeigt an, dass Hauptachsen und Solid-Achsen ausgerichtet sind. Für automatische Berechnung 
-  könnte statt \verb|density -1| eine positive Dichte verwendet werden (dann kommen Masse/Trägheit aus Volumen×Dichte des \texttt{boundingObject}).
-
-
-
-  \begin{lstlisting}[style=wbt,caption={Hinterrad—Kinematik, Kontakt und Physik (Auszug)},label={lst:rear_wheel}]
-  DEF rear_wheel HingeJoint {
-    jointParameters HingeJointParameters {
-      anchor 0 0.5312 0
-      dampingConstant 0.1
-      staticFriction 0.8
-    }
-    device [..] # RotationalMotor (siehe Kaptitel 4.5 Aktuatoren)
-    endPoint Solid {
-      children [
-        Transform {...}  # visuelles Mesh (ohne Physik)
+  \begin{lstlisting}[style=wbt_c,caption={Minimalstruktur einer Webots \texttt{.wbt}-Welt},label={lst:wbt_min}]
+    #VRML_SIM R2025a utf8
+    
+    # -- Externe PROTOs (Arena, Hintergrund, Supervisor) --
+    EXTERNPROTO "projects/objects/floors/protos/RectangleArena.proto"
+    .... (andere EXTERNPROTOs)
+    
+    # -- Globale Welt- und Kontaktparameter --
+    WorldInfo {
+      basicTimeStep 2
+      contactProperties [
+        ContactProperties {
+          material1 "wheel"
+          material2 "ground"
+          coulombFriction [ 0.8 ]
+          bounce 0.3
+        }
       ]
-      contactMaterial "wheel"
-      boundingObject Pose {
-        rotation 0 1 0 1.5708
-        children [ Cylinder { height 0.05  radius 0.352  subdivision 72 } ]
-      }
-      physics Physics {
-        density -1, mass 2, centerOfMass [ 0 0 0 ], 
-        inertiaMatrix [ 0.122  0.122  0.245   0 0 0 ]
-      }
     }
-  }
+    
+    # -- Kamera/Blickpunkt --
+    Viewpoint {
+      orientation 0 1 0 0
+      position 0 2 8
+      follow "Little Bicycle V2"
+    }
+    
+    # -- Hintergrund + Arena (Textur als Fahrspur) --
+    TexturedBackground { skybox FALSE }
+    TexturedBackgroundLight { }
+    RectangleArena {
+      contactMaterial "ground"
+      floorSize 64 100
+      floorTileSize 64 100
+      floorAppearance PBRAppearance {
+        baseColorMap ImageTexture { url [ "textures/S-Kurve.png" ] }
+        roughness 1
+        metalness 0
+      }
+      wallThickness 0.001
+      wallHeight 0.001
+    }
+    
+    # -- Fahrradroboter (Sensorik, Aktorik, Kommunikation) --
+    DEF BICYCLE Robot {
+      name "Little Bicycle V2"
+      controller "balance_control_c"
+      supervisor TRUE
+      children [
+        InertialUnit { name "imu" }
+        Camera { name "front_cam" width 480 height 320 fieldOfView 2 }
+        Receiver { name "command_rx" channel 1 bufferSize 64 }
+        Emitter  { name "status_tx"  channel 2 bufferSize 64 }
+    
+        # Hinterradantrieb (vereinfachtes Gelenk)
+        HingeJoint {
+          jointParameters HingeJointParameters { axis 0 0 1 }
+          device [ RotationalMotor { name "motor::wheel" maxTorque 120 } ]
+          endPoint Solid { contactMaterial "wheel" }
+        }
+    
+        # Lenkung (vereinfachtes Gelenk)
+        HingeJoint {
+          jointParameters HingeJointParameters { axis 0 0 1 }
+          device [ RotationalMotor { name "handlebars motor" maxTorque 25 } ]
+          endPoint Solid { }
+        }
+      ]
+      boundingObject Box { size 0.4 1.1 1.8 }
+      physics Physics { mass 4 }
+    }
+    
+    # -- Externer Supervisor (Overhead-Kamera, Funk) --
+    Supervisor {
+      name "Vision Controller"
+      controller "vision_control_py"
+      children [
+        Camera { name "overhead" width 640 height 360 fieldOfView 2 }
+        Emitter  { name "command_tx" channel 1 bufferSize 64 }
+        Receiver { name "status_rx"  channel 2 bufferSize 64 }
+      ]
+    }
   \end{lstlisting}
+
+
+  \subsection{Physikmodell: Open Dynamics Engine (ODE) in Webots}
+  Die \emph{Open Dynamics Engine} (ODE) ist eine freie, plattformunabhängige Physikbibliothek zur Simulation starrer Mehrkörpersysteme 
+  mit Gelenken und Kollisionen. Sie kombiniert integrierte Kollisionserkennung mit einem constraintsbasierten Dynamikmodell und wird 
+  in zahlreichen Simulationsumgebungen eingesetzt.  Das Welt- und Objektverhalten 
+  wird über \texttt{WorldInfo} und \texttt{Physics} konfiguriert. Dort werden unter anderem der Zeitschritt sowie die ODE-Kernparameter 
+  ERP (Error Reduction Parameter) und CFM (Constraint Force Mixing) gesetzt. ERP/CFM steuern die „Feder-/Dämpfer“-Eigenschaften 
+  restringierter Bewegungen und Kontaktauflösungen und sind für stabile, nicht-schwingende Lenkeingriffe wesentlich. Kontakte 
+  werden als \emph{contact joints} mit Coulomb-Reibung gelöst, zusätzliche Felder Rückprall und weiche Grenzen erlauben.
+  
+  In Webots wird die Reibung über den Knoten \texttt{ContactProperties} festgelegt (Listing~\ref{lst:wbt_min} Zeile 31). Neben der üblichen Gleitreibung 
+  können auch Roll- und Drehwiderstände definiert werden. Für bestimmte einfache Grundkörper ist zudem richtungsabhängige, Reibung möglich.
+  Auf \emph{Körper}-Ebene definiert der \texttt{Physics}-Knoten Masse, Trägheit, Dämpfung und optionale ODE-Erweiterungen (Listing~\ref{lst:wbt_min} Zeile 69). 
+  Gelenke (z.\,B. \emph{Hinge} für Lenkung/Vortrieb) werden durch Motoren (\texttt{Motor}) angetrieben. In Summe ergibt sich ein kompaktes, gut abstimmbares Modell, das das 
+  Fahrrad als Mehrkörpersystem mit Kontakten, Reibung und gelenkgetriebenen Freiheitsgraden realistisch genug für Reglerentwurf
+  und Vergleichsstudien abbildet.
+
 
 
 
 
   \subsection{Sensoren}
-  Für die Stabilisierung und Spurführung des selbstbalancierenden Webots-Fahrrads 
-  kommen mehrere Sensorsysteme zum Einsatz. Zentral sind eine \textbf{Inertialmesseinheit}
+  Für die Stabilisierung des selbstbalancierenden Webots-Fahrrads kommen mehrere Sensorsysteme zum Einsatz. Zentral sind eine \textbf{Inertialmesseinheit}
   (IMU) am Fahrzeug zur Lageerfassung und eine \textbf{Kamera} zur optischen Fahrwegdetektion. Ergänzend liefern \textbf{Motorsensoren} (Encoder) an den Achsen Messgrößen wie Lenk- und 
   Raddrehwinkel. Die IMU versorgt den inneren schnellen Regelkreis (Balance-PID) laufend mit dem aktuellen Rollwinkel, während die Kamera den äußeren, langsamer 
   abtastenden Regelkreis (vision-basiertes MPC) mit Spurabweichungsinformationen speist. Beide Sensorströme werden anschließend in einfacher Weise fusioniert, um 
-  die Regelgrößen an die Aktuatoren (Lenkmotor und Antrieb) auszugeben GitHubGitHub . Im Folgenden werden die einzelnen Sensoren hinsichtlich physikalischer Funktion, 
+  die Regelgrößen an die Aktuatoren (Lenkmotor und Antrieb) auszugeben. Im Folgenden werden die einzelnen Sensoren hinsichtlich physikalischer Funktion, 
   Modellierung in Webots, Rolle im Regelkreis und Integration im Quellcode beschrieben.
   
   %--------------------------------------------------
@@ -204,7 +187,7 @@
   \subsubsection{Inertialmesseinheit (IMU)}
 
   \textbf{Physikalisches Prinzip:} Eine Inertial Measurement Unit (IMU) erfasst Trägheitsgrößen des Fahrzeugs, typischerweise mit kombinierter \textbf{Beschleunigungsmessung} (Accelerometer) und 
-  \newline\textbf{Drehratensensoren} (Gyroskope) auf drei Raumachsen \cite{cyberbotics_inertialunit}. Durch Fusion dieser Signale – oft ergänzt um einen Magnetometer-Kompass – 
+  \newline\textbf{Drehratensensoren} (Gyroskope) auf drei Raumachsen \cite{cyberbotics_inertialunit}. Durch Fusion dieser Signale (oft ergänzt um einen Magnetometer-Kompass),
   lässt sich die Orientierung im Raum bestimmen. Im realen Prototyp kommt z.\,B. der IMU-Sensor \textbf{BNO055} zum Einsatz, der intern die Rohdaten filtert und direkt \textbf{Euler-Winkel} 
   (Roll, Pitch, Yaw) bereitstellt \cite{bno055}. Die Rollachse (Seitenneigung) ist beim Fahrrad die entscheidende Stabilitätsgröße.  Reale IMUs liefern diese Winkel mit begrenzter Auflösung 
   und unterliegen Rauschen sowie Drift, was meist durch Kalibrierung und Sensorfusion 
@@ -213,10 +196,9 @@
 
   \textbf{IMU-Modell in Webots:} Webots stellt mit dem \texttt{InertialUnit}-Knoten ein abstraktes IMU-Modell bereit, das idealisierte Orientierungsdaten liefert. Konkret berechnet und 
   aktualisiert das InertialUnit-Gerät in jeder Simulationsschleife den \textbf{Kipp- und Gierwinkel} des Roboters relativ zu einem globalen Bezugssystem \cite{cyberbotics_inertialunit}. 
-  Im Gegensatz zu einer realen IMU entfallen hier Kalibrierfehler und Rauschen – die Simulation liefert die Orientierungswinkel also praktisch \textbf{fehlerfrei und ohne Drift}. 
-  Das im Webots-Weltmodell definierte Gerät \texttt{imu} ist starr im Fahrradrahmen verbaut (an geeigneter Position, etwa nahe dem Schwerpunkt) und gibt standardmäßig 
-  Roll-, Pitch- und Yaw-Winkel in Radiant aus. Die Abtastung erfolgt synchron mit dem physikalischen Simulationszeitschritt. Im vorliegenden Modell ist der \texttt{basicTimeStep} 
-  der Welt auf 2~ms gesetzt \cite{githubWebots}, was einer Messfrequenz von 500~Hz entspricht. Dadurch  können selbst schnelle Kippbewegungen des Fahrrads in Echtzeit erfasst werden \cite{githubWebots}.
+  Im Gegensatz zu einer realen IMU entfallen hier Kalibrierfehler und Rauschen, wodurch die Orientierungswinkel praktisch \textbf{fehlerfrei und ohne Drift} sind. 
+  Das im Webots-Weltmodell definierte Gerät \texttt{imu} (Listing~\ref{lst:wbt_min} Zeile 49) ist starr im Fahrradrahmen verbaut (an geeigneter Position, etwa nahe dem Schwerpunkt) und gibt standardmäßig 
+  Roll-, Pitch- und Yaw-Winkel in \textit{Radiant} aus. Die Abtastung erfolgt synchron mit dem physikalischen Simulationszeitschritt.
 
   \begin{figure}[h]
     \centering
@@ -229,36 +211,36 @@
   \textbf{Balance-Regelung}. In jedem Simulationsschritt liest der PID-Regler 
   den aktuellen Rollwinkel $\varphi_{\text{roll}}$ aus der IMU und berechnet daraus 
   die Stellgröße für den Lenkantrieb. Konkret fungiert der Rollwinkel als 
-  \emph{Regelgröße} im inneren Regelkreis: weicht das Fahrrad nach links/rechts ab, 
+  \emph{Regelgröße} im inneren Regelkreis,  wobei das Fahrrad nach links/rechts abweicht, 
   soll durch einen entsprechenden Lenkeinschlag gegengesteuert werden, 
-  bis $\varphi_{\text{roll}} = 0$ (senkrechte Lage) erreicht ist. Die hohe Abtastrate der IMU erlaubt es, den 
-  \textbf{Regelkreis mit einer Zykluszeit von 2 ms} praktisch verzögerungsfrei zu schließen. 
+  bis $\varphi_{\text{roll}} = 0$ (senkrechte Lage) erreicht ist.  Im vorliegenden Modell ist der \texttt{basicTimeStep} 
+  der Welt auf 2~ms gesetzt \cite{githubWebots}, was einer Messfrequenz von 500~Hz entspricht (Listing~\ref{lst:wbt_min} Zeile 9). Dadurch  können selbst schnelle Kippbewegungen des Fahrrads in Echtzeit erfasst werden \cite{githubWebots}.
   Dadurch reagiert der PID-Regler sehr schnell auf Lageänderungen, was eine Grundvoraussetzung ist, 
-  um das instabile überhaupt beherrschen zu können. Im äußeren (vision-basierten) 
+  um die instabilität beherrschen zu können. Im äußeren (vision-basierten) 
   Regelkreis spielt die IMU direkt keine Rolle, allerdings fließen die Balancierinformationen indirekt ein, wenn die Vision-Steuerung, 
   z.\,B. die Fahrgeschwindigkeit reduziert, sobald der Stabilitätsfaktor sinkt (starke Schräglage detektiert). 
   Insgesamt sorgt die IMU dafür, dass die \textbf{Regelstrecke} mit hoher Güte beobachtet wird, und bildet so das Fundament der Stabilisierung.
 
 
   Im C-Controller \texttt{balance\_control.c} wird die IMU über die Webots-API 
-  initialisiert und ausgelesen. Listing~1 zeigt auszugsweise, wie das Gerät referenziert, 
+  initialisiert und ausgelesen. Listing~\ref{lst:imu} zeigt auszugsweise, wie das Gerät referenziert, 
   aktiviert und genutzt wird. Zunächst wird der Device-Tag der IMU mit ihrem Namen 
   \texttt{"imu"} angefordert und das Sensor-Sampling mit dem Simulationstimestep 
   (2~ms) eingeschaltet. In der Hauptschleife ruft der Regler dann kontinuierlich die Funktion 
   \texttt{wb\_inertial\_unit\_get\_roll\_pitch\_yaw()} auf, welche einen Vektor der Winkel zurückliefert. 
   Der Rollwinkel (Index 0 des Arrays) wird extrahiert und in die Regelung eingespeist. 
-  Da die Webots-IMU per se idealisiert ist, entspricht dieser Winkel exakt der aktuellen 
+  Da die Webots-IMU idealisiert ist, entspricht dieser Winkel exakt der aktuellen 
   Fahrzeugneigung ohne Messfehler. Im Code ist dennoch ein Fallback vorgesehen: Falls der Supervisor-Knoten verfügbar ist, 
-  wird alternativ dessen Orientierungs\-matrix ausgewertet – dies diente experimentell 
+  wird alternativ dessen Orientierungs\-matrix ausgewertet, dies diente experimentell 
   der Verifikation der IMU-Daten und kann die gleiche Information liefern. 
-  Im Normalfall nutzt der PID jedoch direkt die IMU-Daten. Der exemplarische Code zeigt, wie einfach die Orientierung in Webots abgefragt werden kann, 
+  Der exemplarische Code zeigt, wie einfach die Orientierung in Webots abgefragt werden kann, 
   verglichen mit einer realen IMU (wo man per I\textsuperscript{2}C erst Rohdaten lesen und konvertieren müsste). 
   Die geringe Latenz der \texttt{wb\_inertial\_unit\_get\_roll\_pitch\_yaw}-Funktion 
   (nur ein Zeiger auf interne Simulationsdaten) trägt dazu bei, dass der Balance-Regelkreis 
   praktisch ohne zusätzliche Verzögerung arbeitet.
 
 
-  \begin{lstlisting}[style=wbt,caption={IMU-Initialisierung und -Abfrage im C-Controller (Balance-Regelung)},label={lst:imu}]
+  \begin{lstlisting}[style=wbt_c,caption={IMU-Initialisierung und -Abfrage im C-Controller (Balance-Regelung)},label={lst:imu}]
     // IMU-Geraet initialisieren (in init_devices)
     imu_sensor = wb_robot_get_device("imu");
     wb_inertial_unit_enable(imu_sensor, timestep);  // Abtastrate = Welt-Zeitschritt (2 ms)
@@ -279,11 +261,11 @@
 
   \textbf{Physikalisches Prinzip:} Die Kamera dient als \textbf{optischer Sensor}, um die Strecke vor dem Fahrrad zu erkennen. Physikalisch basiert 
   sie auf einem \textit{digitalen Bildaufnehmer} (z.\,B. CMOS-Sensor), der durch eine Linse abgebildetes Licht in Pixelwerte umwandelt. In einem 
-  realen System würde eine am Fahrzeug montierte Weitwinkel-Kamera laufend \textbf{Videobilder} der Fahrbahn liefern. Wesentliche Parameter sind 
-  die \textbf{Auflösung} (Anzahl Pixel, bestimmt Detailgenauigkeit) und die \textbf{Bildrate} (Bilder pro Sekunde, bestimmt zeitliche Auflösung). 
+  realen System würde eine am Fahrzeug montierte Weitwinkel-Kamera laufend \textbf{Videobilder} der Fahrbahn liefern, wobei essentielle Parameter sind 
+  die \textbf{Auflösung} und die \textbf{Bildrate} sind. 
   Für eine stabile Spurhaltung in Echtzeitanwendungen genügen in der Regel zweistellige Bildfrequenzen (\(\sim\!10\text{–}30\,\mathrm{Hz}\)), sofern 
-  das Fahrzeug nicht extrem schnell fährt. Die Kamera erfasst visuelle Merkmale der Umgebung – im vorliegenden Kontext insbesondere die 
-  \textbf{Straßenmarkierung} bzw. den Verlauf der Fahrspur – die dann von Bildverarbeitungsalgorithmen ausgewertet werden. Physikalisch können \textbf{Umgebungsfaktoren} wie Beleuchtung, 
+  das Fahrzeug nicht extrem schnell fährt. Die Kamera erfasst visuelle Merkmale der Umgebung, die im vorliegenden Kontext insbesondere die 
+  \textbf{Straßenmarkierung} bzw. den Verlauf der Fahrspur beinhalten, die dann von Bildverarbeitungsalgorithmen ausgewertet werden. Physikalisch können \textbf{Umgebungsfaktoren} wie Beleuchtung, 
   Bewegungsunschärfe oder Linsenverzerrungen die Bildqualität beeinflussen, was eine robuste \textbf{Merkmalsextraktion} herausfordernd macht. 
   Im Gegensatz dazu operiert eine Kamera jedoch \textbf{kontaktlos} und kann reichhaltige Umgebungsinformationen liefern, was sie ideal für die 
   \textbf{Pfadführung} macht (im Vergleich zu z.\,B. lokalen Sensorsignalen eines Gyroskops).
@@ -292,12 +274,11 @@
 
   \textbf{Simulation in Webots:} Webots simuliert Kameras über den \texttt{Camera}-Node, der virtuelle Renderings der 3D-Szene erzeugt. 
   Im \textit{Weltfile} ist für den Supervisor (die übergeordnete Instanz) eine Kamera mit definierter Position, 
-  Ausrichtung und Eigenschaften eingebettet. Diese sogenannte \textit{Vision-Kamera} blickt aus erhöhter Perspektive 
+  Ausrichtung und Eigenschaften eingebettet (Listing~\ref{lst:wbt_min} Zeile 79). Diese sogenannte \textit{Vision-Kamera} blickt aus erhöhter Perspektive 
   nach vorne unten auf die Fahrbahn (vergleichbar mit einer Helm- oder Drohnenkamera, die dem Fahrrad folgt).
   Die in der Simulation gewählte Auflösung beträgt z.\,B. 640$\times$360 Pixel bei einem Gesichtsfeld von ca. 
   114$^{\circ}$ (Field of View $\approx 2.0\,\mathrm{rad}$). Diese Einstellungen sind ein Kompromiss zwischen 
-  Sichtfeld und Bilddetail – ein breites Sichtfeld erfasst die S-Kurve vollständig, während die moderate 
-  Auflösung die Datenmenge und Rechenzeit begrenzt. Die Kamera liefert pro aktiviertem Zeitschritt ein Bild 
+  Sichtfeld und Bilddetail. Die Kamera liefert pro aktiviertem Zeitschritt ein Bild 
   im \textbf{RGBA-Format} (Rot–Grün–Blau plus Alphakanal) als Array von Byte-Werten.
   In der Controller-Software muss die Kamera explizit aktiviert werden, wobei die Abtastrate frei wählbar ist. 
   Der Vision-Controller nutzt eine Bildrate von rund 20~Hz, entsprechend einem Abtastintervall von 50~ms. 
@@ -305,10 +286,9 @@
   dass Bildverarbeitung zeitaufwändiger ist und nicht in jedem Simulationsschritt erfolgen muss. Im Webots-Code wird die Kamera z.\,B. mit 
   \texttt{camera.enable(50)} konfiguriert, sodass alle 50~ms ein neues Frame bereitgestellt wird. 
   Jedes Frame kann vom Controller über \texttt{camera.getImage()} abgeholt und weiterverarbeitet werden. 
-  Zu beachten ist, dass Webots standardmäßig keine Kamerarausfälle oder Sensorschwächen simuliert – 
-  die gelieferten Bilder sind idealisiert (scharf, bei gleichbleibender Beleuchtung). 
-  Um Realismus zu erhöhen, könnten optional Rauschen oder Unschärfe simuliert werden; 
-  im gegebenen Modell wird jedoch auf eine idealisierte Spurenerkennung abgezielt.
+  Zu beachten ist, dass Webots standardmäßig keine Kamerarausfälle oder Sensorschwächen simuliert, sodass
+  die gelieferten Bilder idealisiert sind (scharf, bei gleichbleibender Beleuchtung). 
+
 
   \begin{figure}[H]
     \centering
@@ -321,8 +301,7 @@
   \textbf{Rolle im Regelkreis:} Die Kamera ist der \textbf{Schlüsseleingang} für den vision-basierten äußeren Regelkreis. 
   Ihre Aufgabe besteht darin, dem \textbf{MPC-Fahrtrichtungsregler} Informationen über den Verlauf der Fahrspur 
   relativ zum Fahrzeug zu liefern. Im konkreten Szenario der S-Kurve extrahiert der Vision-Controller aus jedem Kamerabild 
-  den lateralen Positionsfehler $e$ der Straße: also wie weit und in welche Richtung 
-  das Fahrrad von der gewünschten Spurmitte abweicht. 
+  den lateralen Positionsfehler $e$ der Straße.
 
   Diese Bildverarbeitung geschieht in mehreren Schritten:
 
@@ -331,8 +310,8 @@
     \item \textbf{Merkmalsextraktion:} Zunächst werden relevante Bildmerkmale berechnet, 
     etwa mittels \textbf{Segmentierung} der Straße. 
     Im Projekt wurde hierzu ein vortrainiertes YOLO-Modell verwendet, das die Fahrbahn in der Vogelperspektive segmentiert. 
-    Falls kein KI-Modell verfügbar ist, greift ein Fallback auf klassische Bildverarbeitung: 
-    Kantenerkennung und Auswertung eines definierten \textit{Region-of-Interest} liefern ebenfalls einen Schätzwert 
+    Falls kein KI-Modell verfügbar ist, greift ein Fallback auf klassische Bildverarbeitung, mittels 
+    Kantenerkennung und Auswertung eines definierten \textit{Region-of-Interest} liefert ebenfalls einen Schätzwert 
     für die Spurmittellage. 
     Ergebnis dieses Schritts ist der Querfehler $e$ (in normierter Form, z.\,B. $-0.5 \dots +0.5$ relativ zur Bildmitte) 
     sowie ggf. zusätzliche Qualitätskennzahlen (etwa die erkannte Kontur oder den Bedeckungsgrad der Fahrbahnmaske).
@@ -344,18 +323,7 @@
     (Zustand $\mathbf{x} = [x,y,v,\psi]$) vorausberechnet. 
     Der MPC optimiert die Steuergröße Lenkwinkel $\delta$ (und ggf. Beschleunigung) 
     über einen kurzen Zeithorizont so, dass der Querfehler minimiert und 
-    Fahrdynamikgrenzen (Lenkwinkel- und -ratenbegrenzung, Komfort) eingehalten werden. 
-  
-    Falls der MPC (etwa mangels Rechenpower) nicht verfügbar ist, 
-    kann ersatzweise ein einfacherer PID-Ansatz verwendet werden (\textit{„Vision-PID“}), 
-    der den Fehler $e$ in einen Lenkwinkel übersetzt. 
-    In beiden Fällen resultiert ein Soll-Lenkwinkel $\delta_{\text{sol}}$ 
-    bzw. ein normierter Lenkbefehl $u_{\text{vis}} \in [-1,1]$, 
-    der an den Balance-Controller gesendet wird. 
-  
-    Zusätzlich kann die Vision-Einheit eine \textbf{Geschwindigkeitsempfehlung} $v_w$ berechnen – 
-    z.\,B. wird bei großem Kurvenfehler eine niedrigere Fahrgeschwindigkeit empfohlen, 
-    um die Stabilität zu wahren.
+    Fahrdynamikgrenzen eingehalten werden. 
   \end{enumerate}
 
   \begin{figure}[H]
@@ -371,11 +339,9 @@
   Der Balance-Controller hält während der 50~ms zwischen zwei Kamerabildern 
   die zuletzt empfangene Soll-Lenkvorgabe bei und stabilisiert weiterhin autonom. 
   Sobald ein neues Bild ausgewertet ist, wird der Lenksollwert ggf. korrigiert. Dieses \textbf{zweistufige Regelungskonzept} 
-  (innere IMU-Schleife, äußere Vision-Schleife) 
   sorgt dafür, dass das Fahrrad einerseits aufrecht bleibt, andererseits aber auch aktiv 
   Richtungskorrekturen vornimmt, um einer kurvigen Referenzstrecke zu folgen. 
-  Ohne die Kamera wäre nur ein statisches Balancieren oder eine Geradeausfahrt möglich – 
-  erst der optische Sensor ermöglicht die \textit{spurtreue Autonomie} des Modells.
+
 
   %--------------------------------------------------
   % Motorsensoren (Inkrementalgeber)
@@ -384,38 +350,34 @@
   \subsubsection{Motorsensoren (Inkrementalgeber)}
   \textbf{Physikalisches Prinzip:} Neben IMU und Kamera, die den \textit{Zustand} des Fahrzeugs in Bezug auf Lage und Umwelt erfassen, 
   spielen sogenannte \textbf{Motorsensoren} eine wichtige Rolle für die interne Zustandsmessung. 
-  Gemeint sind hier \textbf{Winkelgeber (Encoder)} an den drehbaren Komponenten – konkret am Lenkmotor und am Antriebsrad. 
+  Gemeint sind hier \textbf{Winkelgeber (Encoder)} an den drehbaren Komponenten, hierbei konkret am Lenkmotor und am Antriebsrad. 
   Physikalisch handelt es sich meist um \textit{inkrementelle Drehgeber}, 
   die auf der Motorachse montiert sind und pro Umdrehung eine bestimmte Anzahl Impulse (Zählschritte) liefern. 
-  Durch Mitzählen der Impulse kann der Steuerrechner den zurückgelegten Winkel bestimmen; 
-  über die Impulsfrequenz lässt sich auch die Drehgeschwindigkeit ermitteln. In echten Systemen werden beispielsweise \textbf{optische Encoder} (eine Scheibe mit Strichmuster und Fotodetektor) 
+  Durch Mitzählen der Impulse kann der Steuerrechner den zurückgelegten Winkel bestimmen, sodass
+  über die Impulsfrequenz sich auch die Drehgeschwindigkeit ermitteln lässt. In echten Systemen werden beispielsweise \textbf{optische Encoder} (eine Scheibe mit Strichmuster und Fotodetektor) 
   oder \textbf{Hall-Sensoren} (Magnet und Hallsensor für Umdrehungszählung) eingesetzt. 
   Im Kontext unseres selbstbalancierenden Fahrrads wird der Lenkwinkel-Encoder benötigt, 
-  um den aktuellen \textbf{Lenkeinschlag} zu kennen – wichtig etwa, um Lenkwinkelgrenzen nicht zu überschreiten 
-  und für die protokollierte Ausgabe. 
+  um den aktuellen \textbf{Lenkeinschlag} zu kennen, was wichtig ist, um Lenkwinkelgrenzen nicht zu überschreiten 
+  sowie für die protokollierte Ausgabe. 
   Der Hinterrad-Encoder erfasst die \textbf{Raddrehstellung} bzw. via Differenz auch die momentane Raddrehzahl, 
   was zur Abschätzung der Fahrgeschwindigkeit dient. 
   Physikalisch sind solche Sensoren sehr präzise (hochaufgelöste Encoder bieten $>1000$ Impulse/Umdrehung) 
-  und liefern in schneller Abfolge Signale, typischerweise synchron zum Motor 
-  (Erfassung erfolgt im kHz-Bereich, Latenzen sind vernachlässigbar). 
+  und liefern in schneller Abfolge Signale, typischerweise synchron zum Motor  
   Allerdings muss die Ansteuerungselektronik die Impulse auswerten (Interrupts zählen etc.), 
   was in der realen Implementierung zusätzlichen Programmieraufwand bedeutet.
-
   
 
   \textbf{Rolle im Regelkreis:} Die Positionssensoren werden vor allem zur \textbf{Überwachung und für abgeleitete Regelungsgrößen} genutzt. 
-  Der \textbf{Lenkwinkelsensor} gibt dem Balance-Controller Feedback, welchen Lenkeinschlag der Motor aktuell realisiert – 
+  Der \textbf{Lenkwinkelsensor} gibt dem Balance-Controller Feedback, welchen Lenkeinschlag der Motor aktuell realisiert, 
   dies ist nützlich, um z.\,B. einen \textit{Sättigungseffekt} zu erkennen: 
-  Wenn der Soll-Lenkwinkel die mechanische Grenze erreicht, kann der Regler keine weitere Korrektur mehr bewirken. 
-  Im Code wird aus dem Verhältnis von aktuellem Lenkausschlag zu Maximalwinkel ein \textbf{Stabilitätsfaktor} berechnet, 
-  der als Indikator dient. 
+  Wenn der Soll-Lenkwinkel die mechanische Grenze erreicht, kann der Regler keine weitere Korrektur mehr bewirken (An \ref{fig:sensor_api} zu sehen). 
   Außerdem fließt der gemessene Lenkwinkel in die Logging-Daten ein, 
   um das Reglerverhalten nachträglich analysieren zu können. Im laufenden Regler steckt der Lenkwert implizit schon in der Dynamik: 
   Da der Lenkmotor in Webots im Positionsmodus betrieben wird, sorgt das System automatisch dafür, 
   dass der Ist-Winkel dem Soll-Winkel folgt (siehe Abschnitt \textit{Aktuatoren}). 
-  Ein separater Positionsregelkreis ist im Code also nicht implementiert – 
+  Ein separater Positionsregelkreis ist im Code also nicht implementiert, 
   im realen System würde hier ein unterlagerter Motor-PID am Encoder hängen, 
-  aber in der Simulation übernimmt dies der Motorendpunkt. 
+  wie in der Arbeit von Zander zu sehen ist \cite{zander2023}. 
   \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/Sensor.png}
@@ -428,24 +390,14 @@
   die Winkelgeschwindigkeit $\omega$ berechnet und in km/h umgerechnet. 
   Diese Information kann für verschiedene Zwecke dienen: 
   einerseits zur \textbf{Ausgabe} (Anzeige der aktuellen Geschwindigkeit), 
-  andererseits könnte sie in einen Geschwindigkeitsregler zurückwirken. Tatsächlich wird im Balance-Controller ein einfacher Speed-Controller benutzt, 
-  der allerdings nicht die Ist-Geschwindigkeit, sondern den Vision-Lenkbefehl als Stellgröße nutzt 
-  (d.\,h. bei starkem Lenken wird die Sollgeschwindigkeit reduziert). 
-  Eine echte geschlossene Geschwindigkeitsregelung (Fahrgeschwindigkeit konstant halten) wäre ebenfalls denkbar – 
-  hierzu würde der Rad-Encoder den Ist-Wert für einen Geschwindigkeits-PID liefern, 
-  ähnlich wie im Hardware-Design mit Hall-Sensor beschrieben. Im aktuellen Simulationsmodell beschränkt sich die Nutzung also darauf, 
-  \textbf{Zustandsgrößen} zu erfassen und die Regelung zu überwachen, weniger auf direkte Korrektur. 
-  Dennoch sind die Encoder essenziell, um konsistente Zustandsinformationen zu haben: 
-  z.\,B. ermöglicht der Radencoder dem System zu erkennen, ob das Fahrrad fährt oder fast steht, 
-  was für die Balance eine Rolle spielen kann 
-  (bei zu niedriger Geschwindigkeit nimmt die Selbststabilisierung ab).
+  andererseits könnte sie in einen Geschwindigkeitsregler zurückwirken. \pdfcomment{TODO: Gehe nochmla mehr auf die Abbildung ein.}
 
   %--------------------------------------------------
   %--------------------------------------------------
   % Aktuatoren
   %--------------------------------------------------
 
-  \newpage
+
 
   \subsection{Aktuatoren}
   Das selbstbalancierende Fahrradmodell verfügt über zwei zentrale \textbf{Aktuatoren}, 
@@ -459,7 +411,7 @@
   dann ihre Umsetzung in der Simulation und schließlich ihr konkreter Einsatz im Regelungssystem 
   mitsamt Code-Beispielen erläutert.
 
-  \textbf{Physikalisches Wirkprinzip:} \\ 
+  \textbf{Physikalisches Wirkprinzip:} \\
   Bei \textbf{bürstenbehafteten DC-Motoren}, wie sie in vielen Robotikanwendungen Verwendung finden, 
   erzeugt ein stromdurchflossener Anker in einem Magnetfeld ein Drehmoment 
   (Lorentz-Kraftwirkung auf die Leiter). 
@@ -514,7 +466,7 @@
     
 
   \begin{itemize}
-    \item \textbf{Positionsmodus:} \\  
+    \item \textbf{Positionsmodus:} \\
     Der Motor strebt einen vorgegebenen Zielwinkel an (\texttt{setPosition(angle)}), 
     wobei er innerhalb der konfigurierten Kraft- und Geschwindigkeitsgrenzen das nötige Drehmoment erzeugt, 
     um diesen Winkel zu erreichen. Dieser Modus entspricht einem Servomechanismus.  
@@ -532,7 +484,7 @@
     ein Wert, der sicherstellt, dass genügend Kraft zum Aufrichten aus Schräglagen vorhanden ist, 
     ohne das System zu unrealistisch zu machen.
 
-    \item \textbf{Geschwindigkeitsmodus:} \\  
+    \item \textbf{Geschwindigkeitsmodus:} \\
     Hier wird dem Motor eine Ziel-Angulargeschwindigkeit vorgegeben (\texttt{setVelocity(omega)}), 
     während die Position auf unendlich gesetzt wird (\texttt{setPosition(INFINITY)}).  
     In Webots bedeutet dies, dass der Motor keinen festen Endwinkel hat, sondern kontinuierlich dreht.  
@@ -860,7 +812,7 @@
   ist und welche Datenquelle visualisiert wird. Zusammengenommen stellt der Monitoring-Tab ein leistungsfähiges Werkzeug dar, um die Auswirkungen 
   von Parameteränderungen sofort sichtbar zu machen und das Systemverhalten mittels aufgezeichneter Daten zu analysieren. Die Kombination aus
   laufzeitfähiger Parameteranpassung und Live-Monitoring ermöglicht ein effizientes Trial-and-Error-Tuning des selbstbalancierenden Fahrrads, 
-  unterstützt durch intuitive GUI-Interaktion und automatisierte Datenaufzeichnung.
+  unterstützt durch intuitive GUI-Interaktion und automatisierte Datenaufzeichnung. \pdfcomment{TODO: Füge die Spurverfolgung mit GPS ein.}
 
  
 
