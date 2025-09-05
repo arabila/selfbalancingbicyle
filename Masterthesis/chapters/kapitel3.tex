@@ -172,7 +172,7 @@
 
 
 
-  \subsection{Sensoren}
+  \subsection{Sensoren} \label{sec:sensors}
   Für die Stabilisierung des selbstbalancierenden Webots-Fahrrads kommen mehrere Sensorsysteme zum Einsatz. Zentral sind eine \textbf{Inertialmesseinheit}
   (IMU) am Fahrzeug zur Lageerfassung und eine \textbf{Kamera} zur optischen Fahrwegdetektion. Ergänzend liefern \textbf{Motorsensoren} (Encoder) an den Achsen Messgrößen wie Lenk- und 
   Raddrehwinkel. Die IMU versorgt den inneren schnellen Regelkreis (Balance-PID) laufend mit dem aktuellen Rollwinkel, während die Kamera den äußeren, langsamer 
@@ -357,40 +357,33 @@
   über die Impulsfrequenz sich auch die Drehgeschwindigkeit ermitteln lässt. In echten Systemen werden beispielsweise \textbf{optische Encoder} (eine Scheibe mit Strichmuster und Fotodetektor) 
   oder \textbf{Hall-Sensoren} (Magnet und Hallsensor für Umdrehungszählung) eingesetzt. 
   Im Kontext unseres selbstbalancierenden Fahrrads wird der Lenkwinkel-Encoder benötigt, 
-  um den aktuellen \textbf{Lenkeinschlag} zu kennen, was wichtig ist, um Lenkwinkelgrenzen nicht zu überschreiten 
-  sowie für die protokollierte Ausgabe. 
+  um den aktuellen \textbf{Lenkeinschlag} zu kennen, was wichtig ist, um Lenkwinkelgrenzen nicht zu überschreiten.
   Der Hinterrad-Encoder erfasst die \textbf{Raddrehstellung} bzw. via Differenz auch die momentane Raddrehzahl, 
   was zur Abschätzung der Fahrgeschwindigkeit dient. 
   Physikalisch sind solche Sensoren sehr präzise (hochaufgelöste Encoder bieten $>1000$ Impulse/Umdrehung) 
-  und liefern in schneller Abfolge Signale, typischerweise synchron zum Motor  
+  und liefern in schneller Abfolge Signale, typischerweise synchron zum Motor. 
   Allerdings muss die Ansteuerungselektronik die Impulse auswerten (Interrupts zählen etc.), 
   was in der realen Implementierung zusätzlichen Programmieraufwand bedeutet.
   
+  \textbf{Rolle im Regelkreis: } Die Positionssensoren dienen vor allem der Überwachung und der Ableitung von Regelgrößen.
+    Der \textbf{Lenkwinkelsensor} liefert dem Balance Controller das Feedback, welcher Lenkeinschlag vom Motor aktuell realisiert wird.
+    Für alle in dieser Arbeit verwendeten Webots Simulationen gilt dieselbe Lenkkonfiguration.
+    Am Lenker des selbstbalancierenden Fahrrads ist ein \texttt{RotationalMotor} mit dem Namen \texttt{"motor::handlebars"} verbaut. In der Welt-Datei (.wbt) ist
+    \texttt{"maxTorque"}  auf \texttt{25} gesetzt, was einen Moment von 25\,N\,m bedeutet.
+    Was dazu führt, dass der Istwinkel nicht 1:1 dem Sollwert folgen kann.
+    Die Parameter \texttt{dampingConstant} \texttt{0.3} und \texttt{staticFriction} \texttt{0.1} erzeugen zusätzliche Gegenmomente, die besonders um den Nullbereich kleine Sprünge abbremsen.
+    Die Gabel sowie das Vorderrad besitzen eine Masse von \texttt{2.5 kg} und eine Trägheitsmatrix von \texttt{0.06 0.07 0.12}, die schnelle Winkeländerungen begrenzen.
+    Die beobachtete Verzögerung liegt damit nicht an einer Rechen oder Übertragungsverzögerung, sondern an den Momentgrenzen und Verlusten im Gelenk.
+    Das ist in Abbildung~\ref{fig:sensor_api} erkennbar, da steile Sollsprünge geglättet werden, was dämpfend wirkt und zu weniger harten Lenkreaktionen führt.
+    
+    \begin{figure}[H]
+      \centering
+      \includegraphics[width=1.0\textwidth]{figures/Sensor.png}
+      \caption{Lenk-Sollwert und Lenk-Istwert.}
+      \label{fig:sensor_api}
+    \end{figure}
+    
 
-  \textbf{Rolle im Regelkreis:} Die Positionssensoren werden vor allem zur \textbf{Überwachung und für abgeleitete Regelungsgrößen} genutzt. 
-  Der \textbf{Lenkwinkelsensor} gibt dem Balance-Controller Feedback, welchen Lenkeinschlag der Motor aktuell realisiert, 
-  dies ist nützlich, um z.\,B. einen \textit{Sättigungseffekt} zu erkennen: 
-  Wenn der Soll-Lenkwinkel die mechanische Grenze erreicht, kann der Regler keine weitere Korrektur mehr bewirken (An \ref{fig:sensor_api} zu sehen). 
-  Außerdem fließt der gemessene Lenkwinkel in die Logging-Daten ein, 
-  um das Reglerverhalten nachträglich analysieren zu können. Im laufenden Regler steckt der Lenkwert implizit schon in der Dynamik: 
-  Da der Lenkmotor in Webots im Positionsmodus betrieben wird, sorgt das System automatisch dafür, 
-  dass der Ist-Winkel dem Soll-Winkel folgt (siehe Abschnitt \textit{Aktuatoren}). 
-  Ein separater Positionsregelkreis ist im Code also nicht implementiert, 
-  im realen System würde hier ein unterlagerter Motor-PID am Encoder hängen, 
-  wie in der Arbeit von Zander zu sehen ist \cite{zander2023}. 
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/Sensor.png}
-    \caption{Sensor- und Aktuator-API in Webots.}
-    \label{fig:sensor_api}
-  \end{figure}
-
-  Der \textbf{Raddrehwinkelsensor} am Hinterrad wird primär genutzt, um die \textbf{Fahrgeschwindigkeit} zu ermitteln. 
-  Im Controller-Code wird aus der zeitlichen Differenz des Radwinkels $\Delta \theta / \Delta t$ 
-  die Winkelgeschwindigkeit $\omega$ berechnet und in km/h umgerechnet. 
-  Diese Information kann für verschiedene Zwecke dienen: 
-  einerseits zur \textbf{Ausgabe} (Anzeige der aktuellen Geschwindigkeit), 
-  andererseits könnte sie in einen Geschwindigkeitsregler zurückwirken. \pdfcomment{TODO: Gehe nochmla mehr auf die Abbildung ein.}
 
   %--------------------------------------------------
   %--------------------------------------------------
@@ -401,8 +394,8 @@
 
   \subsection{Aktuatoren}
   Das selbstbalancierende Fahrradmodell verfügt über zwei zentrale \textbf{Aktuatoren}, 
-  die als Stellglieder in die Dynamik des Systems eingreifen: 
-  einen \textbf{Lenkantrieb} an der Vorderradgabel und einen \textbf{Antriebsmotor} für das Hinterrad. 
+  die als Stellglieder in die Dynamik des Systems eingreifen. Dabei handelt es sich um einen \textbf{Lenkantrieb} an der Vorderradgabel 
+  und einen \textbf{Antriebsmotor} für das Hinterrad. 
   Beide sind in Webots als \texttt{RotationalMotor}-Geräte realisiert und jeweils an einem drehbaren HingeJoint angebracht. 
   Physikalisch handelt es sich um \textbf{elektrische Rotationsmotoren} 
   (Gleichstrommotoren mit Getriebe), die in der Lage sind, Drehmomente aufzubringen 
@@ -414,7 +407,7 @@
   \textbf{Physikalisches Wirkprinzip:} \\
   Bei \textbf{bürstenbehafteten DC-Motoren}, wie sie in vielen Robotikanwendungen Verwendung finden, 
   erzeugt ein stromdurchflossener Anker in einem Magnetfeld ein Drehmoment 
-  (Lorentz-Kraftwirkung auf die Leiter). 
+  (Lorentz-Kraftwirkung) auf die Leiter. 
   Das resultierende \textbf{Motordrehmoment} ist annähernd proportional zum Ankerstrom, 
   während die Leerlauf-Drehzahl von der angelegten Spannung bestimmt wird. 
   Im offenen Regelkreis würde ein DC-Motor also schneller drehen bei höherer Spannung 
@@ -422,40 +415,29 @@
 
   Um präzise \textbf{Stellbewegungen} auszuführen, werden Motoren oft mit \textbf{Getrieben} 
   (zur Erhöhung von Drehmoment und Auflösung) und mit \textbf{Sensoren} rückgekoppelt (Encodern, s.\,o.). 
-  So entsteht ein \textbf{Servoantrieb}: ein Motor-Getriebe-System mit interner Positions- oder Drehzahlregelung. 
+  Ein sogenannter \textbf{Servoantrieb} ist ein Motor-Getriebe-System mit interner Positions- oder Drehzahlregelung. 
   Im realen selbstbalancierenden Fahrrad gibt es zwei solcher Antriebe:
     
   \begin{itemize}
-    \item \textbf{Der Lenkmotor} (z.\,B. ein Getriebemotor mit MD49-Motorcontroller) 
-    verstellt den Lenkerwinkel. 
-    Er arbeitet im Prinzip als \textbf{Positionsantrieb}: 
-    auf einen Sollwinkel hin geregelt, mit einem begrenzten Arbeitsbereich (hier ca. $\pm 30^{\circ}$ mechanisch). 
-    Der Motorcontroller nutzt den Encoder am Lenkgetriebe, um den Winkel exakt einzustellen 
-    (geschlossener Regelkreis). 
-    Physikalisch bedeutet dies, dass bei Abweichung zwischen Soll- und Ist-Winkel 
-    ein proportional-integral-derivativer Korrekturstrom ins Motortreiber-Modul gegeben wird, 
-    bis der Lenker die gewünschte Position erreicht. 
-    Der Lenk­winkelantrieb muss schnell und kräftig genug sein, 
-    um das Fahrrad innerhalb von Sekundenbruchteilen stabilisieren zu können – 
-    in Jonah Zanders Hardware-Aufbau wurde z.\,B. ein starker 12\,V-Motor mit Untersetzung verwendet, 
-    der $\pm 150^{\circ}$ in kurzer Zeit durchfahren kann.
+    \item \textbf{Der Lenkmotor} wird von einem BTS7960 Treibermodul mit PWM Signalen angesteuert. 
+    Die Winkelrückmeldung kommt vom Encoder am Lenkgetriebe. 
+    Der MD49 verarbeitet die Encodersignale und stellt Zählwerte zur Positionsbestimmung bereit. 
+    Der Antrieb arbeitet als Positionsantrieb auf einen Sollwinkel mit begrenztem Bereichen in beide Richtungen. 
+    Abweichungen zwischen Soll und Ist Lenkeinschlag, werden durch den Regler ausgeregelt bis der gewünschte Winkel erreicht ist. 
+    Der Antrieb muss ausreichend schnell und drehmomentstark sein um die Querstabilität sicherzustellen.
   
-    \item \textbf{Der Antriebsmotor} am Hinterrad (z.\,B. ein Nabenmotor oder kettengetriebener DC-Motor) sorgt für den Vortrieb. 
+  
+    \item \textbf{Der Antriebsmotor} am Hinterrad sorgt für den Vortrieb. 
     Dieser wird im Unterschied zum Lenker meist als \textbf{Drehzahl- bzw. Drehmomentantrieb} betrieben. 
-    Im realen System regelt man hier oft die Geschwindigkeit: 
-    Ein separater PID hält die Raddrehzahl konstant, indem er den Motorstrom anhand des Hall-Encoder-Feedbacks justiert. 
+    Im realen System regelt ein separater PID die Raddrehzahl konstant, indem er den Motorstrom anhand des Hall-Encoder-Feedbacks justiert. 
     Physikalisch verleiht das rotierende Hinterrad dem System einen \textbf{gyroskopischen Effekt}, 
     der stabilisierend wirkt, weshalb eine gewisse Grundgeschwindigkeit hilfreich ist. 
-    Gleichzeitig muss der Motor aber auch schnell drosseln oder bremsen können, 
-    um Kurven sicher zu durchfahren, ohne umzukippen.
+    Gleichzeitig muss der Motor aber auch schnell drosseln oder bremsen können, um Kurven sicher zu durchfahren, ohne umzukippen.
   \end{itemize}
 
-  \newpage
-  \textbf{Webots-Umsetzung:} Webots stellt mit dem \texttt{RotationalMotor}-Node einen Aktuator zur Verfügung, 
-  der an einen HingeJoint gekoppelt Drehmomente ausüben kann. 
-  Im Hintergrund berechnet der Physik-Kernel (ODE) die Wirkung des Motors auf das Gelenk 
-  unter Berücksichtigung von Maximalmoment und Zielvorgabe. 
-  Jeder Rotationsmotor kann in drei Modi betrieben werden:
+  \textbf{Webots-Umsetzung:} Webots stellt mit dem \texttt{RotationalMotor-}-Knoten in Ihrere Simulationsumgebung einen Aktuator zur Verfügung, 
+  der an einen HingeJoint gekoppelt, Drehmomente ausüben kann. Im Hintergrund berechnet der Physik-Kernel (ODE) die Wirkung des Motors auf das Gelenk, 
+  unter Berücksichtigung von Maximalmoment und Zielvorgabe. Jeder Rotationsmotor kann in drei Modi betrieben werden:
 
     \begin{figure}[H]
       \centering
@@ -469,63 +451,60 @@
     \item \textbf{Positionsmodus:} \\
     Der Motor strebt einen vorgegebenen Zielwinkel an (\texttt{setPosition(angle)}), 
     wobei er innerhalb der konfigurierten Kraft- und Geschwindigkeitsgrenzen das nötige Drehmoment erzeugt, 
-    um diesen Winkel zu erreichen. Dieser Modus entspricht einem Servomechanismus.  
-    Im Webots-Modell ist der Lenkungsaktor in den Positionsmodus geschaltet.  
-    Dazu wird im Code einmalig 
-    \texttt{wb\_motor\_set\_position(handlebars\_motor, 0.0)} 
+    um diesen Winkel zu erreichen. Im Webots-Modell ist der Lenkungsaktor in den Positionsmodus geschaltet.  
+    Dazu wird im Code einmalig \texttt{wb\_motor\_set\_position(handlebars\_motor, 0.0)} 
     aufgerufen, um die Start-Sollposition (geradeaus) zu setzen.  
     Anschließend erhält der Lenkmotor in jeder Regeliteration einen neuen Sollwinkel.  
-    Die Regelung der Position übernimmt Webots intern: 
-    der Motor wirkt wie eine Feder-Dämpfer-Kopplung ans Gelenk, 
+    Die Regelung der Position übernimmt Webots intern, dabei wirkt der Motor wie eine Feder-Dämpfer-Kopplung ans Gelenk, 
     die Differenz zwischen Ist- und Sollwinkel generiert ein entsprechendes Gegendrehmoment (virtueller P-Regler).  
     Parameter wie \texttt{maxTorque} und \texttt{maxVelocity} im Weltfile bestimmen, 
-    wie schnell und kräftig das Soll nachgeführt wird.  
-    Im Modell sind z.\,B. für den Lenkmotor \texttt{maxTorque = 25\,Nm} festgelegt – 
+    wie schnell und kräftig an den Sollwinkel nachgeführt wird.  
+    Im Modell sind z.\,B. für den Lenkmotor \texttt{maxTorque = 25\,Nm} festgelegt, 
     ein Wert, der sicherstellt, dass genügend Kraft zum Aufrichten aus Schräglagen vorhanden ist, 
-    ohne das System zu unrealistisch zu machen.
+    ohne das System unrealistisch zu gestalten.
 
     \item \textbf{Geschwindigkeitsmodus:} \\
-    Hier wird dem Motor eine Ziel-Angulargeschwindigkeit vorgegeben (\texttt{setVelocity(omega)}), 
+    Hier wird dem Motor eine Vorgabe-Drehgeschwindigkeit vorgegeben (\texttt{setVelocity(omega)}), 
     während die Position auf unendlich gesetzt wird (\texttt{setPosition(INFINITY)}).  
     In Webots bedeutet dies, dass der Motor keinen festen Endwinkel hat, sondern kontinuierlich dreht.  
-    Der Antriebsmotor des Hinterrads wird so betrieben: 
-    im Initialisierungscode wird \texttt{wb\_motor\_set\_position(wheel\_motor, INFINITY)} 
+    Der von uns verwendete Antriebsmotor des Hinterrads am Fahrrad wird in unseren Simulationen so betrieben.
+    Im Initialisierungscode wird \texttt{wb\_motor\_set\_position(wheel\_motor, INFINITY)} 
     aufgerufen, was den Wechsel in den Geschwindigkeitsmodus bewirkt.  
     Fortan interpretiert Webots den Befehl \texttt{wb\_motor\_set\_velocity(wheel\_motor, v)} 
     als Soll-Drehzahl (in Rad/s) für das Rad.  
     Intern wirkt wieder ein virtueller Regler, der das nötige Drehmoment aufbringt, 
-    um diese Geschwindigkeit zu erreichen/halten (bis zum max. Drehmoment).  
+    um diese Geschwindigkeit zu erreichen/halten.  
     Im Weltmodell ist für den Hinterradmotor ein recht hohes maximales Drehmoment von 120\,Nm erlaubt, 
     um Beschleunigungsvorgaben schnell umsetzen zu können.  
     Allerdings ist die erreichbare Drehzahl in der Praxis auch durch die Antriebsspannung bzw. Webots-Parameter 
     \texttt{maxVelocity} limitiert.  
-    In S-Kurven-Simulationen wurde typischerweise eine Grundgeschwindigkeit von ca. $3$–$5\,\mathrm{m/s}$ gefahren, 
+    In S-Kurven-Simulationen \footnote{In Kapitel \ref{sec:s-kurve} wurde eine S-Kurve simuliert.} wurde typischerweise 
+    eine Grundgeschwindigkeit von ca. $7$–$10\,\mathrm{km/h}$ gefahren, 
     was durch den entsprechenden \texttt{velocity}-Wert in Rad/s vorgegeben wird.
+    
     \item \textbf{Kraft-/Drehmomentmodus:}  
     Alternativ kann man in Webots Motoren auch direkt ein Drehmoment vorgeben 
     (\texttt{setTorque(t)}), um z.\,B. eigene Regelalgorithmen für die Positions- und Geschwindigkeitssteuerung umzusetzen.  
     In unserem Modell wird dieser Modus nicht explizit genutzt, 
     da die beiden in Steuerungsmodellen gängigen Modi bereits ausreichen.  
-    Dennoch ist es wichtig zu wissen, dass Webots stets mit Kräften/Momenten rechnet: 
-    Die Position- und Velocity-Modelle setzen letztlich ein solches Drehmoment um, 
-    das aus der jeweiligen Referenzgröße berechnet wird.
+    Dennoch ist es wichtig zu wissen, dass Webots stets mit Kräften/Momenten rechnet.
   \end{itemize}
 
 
-  Die beiden Motoren sind im Weltfile als Geräte \texttt{handlebars motor} und 
-  \texttt{motor::wheel} deklariert und jeweils dem passenden HingeJoint zugeordnet. 
+  Die beiden Motoren sind im Weltfile als Geräte \texttt{motor::handlebars} und 
+  \texttt{motor::wheel} z.B. deklariert und jeweils dem passenden HingeJoint zugeordnet. 
   Webots erlaubt es, mehrere Motoren pro Gelenk zu definieren, 
   doch hier ist jeweils nur einer aktiv. 
 
   Die Namensgebung \texttt{motor::wheel} für den Hinterradantrieb ist ein Spezialfall: 
   Das Präfix \texttt{::} dient dazu, den Motor vom gleichnamigen (per DEF) vorderen Rad zu unterscheiden, 
-  welches ebenfalls als \texttt{wheel} benannt ist – so können Kollisionen in der Namensauflösung vermieden werden. 
+  welches ebenfalls als \texttt{wheel} benannt ist, so können Kollisionen in der Namensauflösung vermieden werden. 
   Im Controller-Code greift man dann genau mit diesem Namen zu.
 
-  \subsubsection*{Rolle im Regelkreis}
+  \textbf{Rolle im Regelkreis: }
 
   Die Aktuatoren setzen die vom Regler berechneten Sollgrößen in physikalische Bewegung um 
-  und schließen damit die \textbf{Wirkkette des Regelkreises}. 
+  und schließen damit die Wirkkette des Regelkreises. 
   Konkret berechnet der Balance-Controller in jedem Zeitschritt zwei Stellwerte:
 
   \begin{itemize}
@@ -535,16 +514,15 @@
   \end{itemize}
 
   Diese Sollwerte werden direkt an die Motoren übergeben. 
-  Der Lenkwinkel-Sollwert stammt aus der Kombination des inneren und äußeren Regelkreises: 
-  Wie in Abschnitt \textit{Sensoren} erläutert, fusioniert der Controller den 
+  Wie in Abschnitt \ref{sec:sensors} erläutert, fusioniert der Controller den 
   \textbf{Balance-Anteil} (zur Selbstausrichtung) mit dem \textbf{Vision-Anteil} 
   (zur Kurvenfahrt) zu einer endgültigen Vorgabe \texttt{final\_steer}. 
   Dieses \texttt{final\_steer} entspricht einem Winkel in Radiant, 
   der begrenzt auf den physikalisch möglichen Bereich ($\pm 0.524$\,rad) 
-  an den Lenkmotor geschickt wird. 
+  an den Lenkmotor übergeben wird. 
 
-  Der Hinterrad-Sollwert \texttt{target\_speed} wird ebenfalls bestimmt – 
-  im aktuellen Konzept abhängig vom Lenkeinschlag 
+  Der Hinterrad-Sollwert \texttt{target\_speed} wird ebenfalls bestimmt, 
+  im aktuellen Konzept abhängig vom Lenkeinschlag,
   (starker Lenkeinschlag $\rightarrow$ automatische Reduktion der Grundgeschwindigkeit). 
   Damit fungiert der Balance-Controller gleichzeitig als einfacher 
   \textbf{Geschwindigkeitsmanager}, 
@@ -552,64 +530,32 @@
   Die Berechnung von \texttt{target\_speed} erfolgt durch einen separaten Algorithmus 
   (\texttt{speed\_pid\_compute}), 
   der den Vision-Lenkbefehl in eine prozentuale Reduktion der Grundgeschwindigkeit umsetzt. 
-  Alternativ könnte hier ein echtes Geschwindigkeits-PID auf Basis der Encoder-Daten stehen – 
-  dies ist eine mögliche Erweiterung. 
 
   Sobald die Stellgrößen vorliegen, werden sie an die Motor-API übergeben. 
-  Damit findet die \textbf{Regler-Ausgabe} statt: 
-  Die Software schreibt die Sollwerte in die Motoren, 
+  Damit findet die \textbf{Regler-Ausgabe} statt, 
+  die Software schreibt die Sollwerte in die Motoren
   und die Physiksimulation reagiert, indem sie die entsprechenden Kräfte auf das Modell einleitet. 
 
-  Der \textbf{Lenkmotor} dreht die Vorderradgabel proportional zum Regelfehler – 
-  wenn das Fahrrad z.\,B. nach rechts kippt (positiver Rollwinkel), 
-  verlangt der PID einen Lenkeinschlag nach rechts, 
-  um einen stabilisierenden Lenkimpuls zu erzeugen 
-  (das Rad wird unter den Schwerpunkt gesteuert, ähnlich wie man einen fallenden Besen durch Vorziehen stabilisiert). 
-  Gleichzeitig berücksichtigt der Vision-Anteil, ob ggf. bewusst in eine Kurve gelenkt werden soll. 
-  Die resultierende Motorbewegung ist somit eine Überlagerung aus Stabilisieren und Navigieren. 
-
-  Der \textbf{Hinterradmotor} liefert währenddessen den Vortrieb: 
-  Eine Grundgeschwindigkeit hält das Fahrrad in Bewegung 
-  (was das Balancieren erleichtert, da dynamische Stabilisierungskräfte wirken), 
-  und bei Bedarf wird verlangsamt. 
-  Im Geradeausfall (Vision inaktiv) regelt der Balance-Controller sogar nur die Balance 
-  und reduziert Geschwindigkeit auf ein Mindestmaß, falls keine Steuerkommandos kommen. 
-
-  Insgesamt sorgen die Aktuatoren dafür, 
-  dass die vom Regler vorgegebenen Stellgrößen (Lenkwinkel, Antriebskraft) 
-  tatsächlich umgesetzt werden – 
-  sie sind somit die finalen Ausführungselemente des Reglers. 
-  Ohne ausreichende Aktuatorleistung könnte das beste Regelgesetz das Fahrrad nicht stabilisieren; 
-  in der Simulation sind sie jedoch so gewählt, dass die Anforderungen erfüllt werden.
-
-  \textbf{Implementierung und Code-Integration:} Die Ansteuerung der Motoren erfolgt im Balance-Controller (C-Code) nach Berechnung der Sollwerte. 
-  Bereits während der Initialisierung werden die Motoren konfiguriert: 
-  Listing~4 zeigt, wie der Lenkmotor und der Radmotor als Devices geholt und in die gewünschten Modi versetzt werden. 
-  Für den Lenkantrieb wird die Position initial auf $0.0$ gestellt (\textit{Lenker gerade}). 
+  Bereits während der Initialisierung werden die Motoren konfiguriert,
+  Listing~\ref{lst:motorsteuerung} zeigt, wie der Lenkmotor und der Radmotor als Devices geholt und in die gewünschten Modi versetzt werden. 
+  Für den Lenkantrieb wird die Position initial auf $0.0$ gestellt. 
   Für den Hinterradantrieb wird \texttt{wb\_motor\_set\_position(wheel\_motor, INFINITY)} gesetzt, 
-  was – wie oben beschrieben – den Geschwindigkeitsmodus aktiviert. 
-  Beide Motoren würden standardmäßig mit \texttt{velocity = 0} starten; 
+  was (wie oben beschrieben) den Geschwindigkeitsmodus aktiviert. 
+  Beide Motoren würden standardmäßig mit \texttt{velocity = 0} starten und
   der Hinterradmotor erhält später im laufenden Betrieb eine Startgeschwindigkeit (Basiswert). 
 
   Im Regelprozess selbst (Hauptschleife) werden dann die aktuellen Stellbefehle übergeben:
 
   \begin{lstlisting}[language=C,caption={Motorsteuerung im Regelkreis},label={lst:motorsteuerung}]
-  wb_motor_set_position(handlebars_motor, -final_steer);
+  wb_motor_set_position(handlebars_motor, final_steer);
   wb_motor_set_velocity(wheel_motor, target_speed);
   \end{lstlisting}
 
-  Dabei ist wichtig zu erwähnen, dass der Lenkwinkel mit negativem Vorzeichen gesetzt wird. 
-  Dies rührt von der Achsdefinition her – je nach Koordinatensystem ist eine positive Rotation der Lenkachse evtl. 
-  als Linkseinschlag definiert, während der Regler positive Werte als Rechtsdrehung interpretiert (oder umgekehrt). 
-  Durch das Vorzeichen wird sichergestellt, dass z.\,B. ein positiver Reglerausgang 
-  (Korrektur nach rechts) tatsächlich den Lenker nach rechts steuert. 
-  Solche Vorzeichenkonventionen sind in der Modellierung zu beachten. 
 
   Der Wert \texttt{target\_speed} wird in Rad/Sekunde an das Hinterrad übergeben. 
-  Um einen Eindruck zu geben: Eine Zielgeschwindigkeit von z.\,B. 4\,m/s entspricht 
+  Beispielsweise entspricht eine Zielgeschwindigkeit von z.\,B. 4\,m/s 
   (bei $\sim$0.7\,m Raddurchmesser) ungefähr 11.4\,rad/s Winkelgeschwindigkeit. 
 
-  Das Logging im Code zeigt typischerweise Werte um 10–15\,rad/s für die Grundgeschwindigkeit. 
   Nachdem die Sollwerte gesetzt sind, greift die Webots-Physik die neuen Sollwerte im nächsten Zeitschritt auf 
   und beschleunigt/verstellt die Motoren entsprechend. 
   Im Code werden nach dem Setzen der Motoren noch Statuspakete versendet und Logging betrieben, 
@@ -617,18 +563,11 @@
 
 
 
-  Insgesamt ist die Motoransteuerung in Webots sehr direkt – ein Funktionsaufruf genügt, 
-  um das physikalische Stellglied zu beeinflussen. 
+  Insgesamt ist die Motoransteuerung in Webots sehr direkt, ein Funktionsaufruf genügt um das physikalische Stellglied zu beeinflussen. 
   Dies erlaubt es, die Regelalgorithmen unkompliziert mit der Simulationswelt zu koppeln. 
-  Listing~4 fasst die wichtigsten Schritte zusammen. 
-  Hier sind sowohl die Initialisierung (Modussetzen) als auch die Laufzeitschleifen der Motoren zu sehen, 
-  mit deutschen Kommentaren erläutert. 
-  Man erkennt, wie die Aktuator-Schnittstelle an die zuvor beschriebenen Regelungsgrößen gebunden ist: 
-  \texttt{final\_steer} (in rad) geht an den Lenkmotor, 
-  \texttt{target\_speed} (in rad/s) an den Radmotor. 
-  Diese Werte stammen direkt aus der Regelung (siehe vorherigen Abschnitt) – 
-  es findet keine weitere Transformation mehr statt, da die Größeneinheiten 
-  konsistent mit dem Webots-Modell gewählt wurden.
+  Listing~\ref{lst:motorsteuerung} fasst die wichtigsten Schritte zusammen. 
+  Hier sind sowohl die Initialisierung, als auch die Laufzeitschleife der Motoren zu sehen.
+
   
   \begin{lstlisting}[style=wbt_c,caption={IMU-Initialisierung und -Abfrage im C-Controller (Balance-Regelung)},label={lst:imu3}]
     // Motoren-Devices abrufen
@@ -654,31 +593,22 @@
   \end{lstlisting}
   
 
-  Durch diese Implementierung wird das Zusammenwirken aller Komponenten deutlich: 
-  \textbf{Sensoren} (IMU, Kamera, Encoder) liefern den aktuellen Zustand, 
-  der \textbf{Regler} (PID \& MPC) berechnet daraus Stellgrößen, 
-  und die \textbf{Aktuatoren} (Motoren) führen diese Stellgrößen am physikalischen Modell aus. 
-  Die Webots-Simulation ermöglicht es, all dies in einem deterministischen Umfeld zu testen – 
-  etwaige Fehlanpassungen (wie zu schwache Motoren oder unzureichende Sensorfrequenzen) 
-  würden sofort im Verhalten sichtbar und könnten iterativ justiert werden, 
-  bevor der Algorithmus auf einen realen Prototyp übertragen wird.
-
   
   \subsection{Controller}
 
 
-  Ein Webots\mbox{-}Controller ist ein separates Programm (Prozess), das einen Roboter in der Simulation steuert 
+  Ein Webots\mbox{-}Controller ist ein separates Prozess, der einen Roboter in der Simulation steuert
   und über eine definierte API mit der Simulationswelt kommuniziert. Für jeden Roboter kann ein Controller in 
-  C/C++, Python, Java oder MATLAB laufen, wobei Webots den Datenaustausch (Sensorwerte, Aktuatorbefehle) bei 
+  C/C++, Python, Java oder MATLAB betrieben werden, wobei Webots den Datenaustausch (Sensorwerte, Aktuatorbefehle) bei 
   jedem Simulationsschritt synchronisiert. Typischerweise durchläuft ein Controller eine Endlosschleife, in 
   der er Sensoren liest, Berechnungen durchführt und Aktuatoren ansteuert, wobei am Ende jeder Iteration die 
   Funktion \texttt{wb\_robot\_step()} aufgerufen werden muss. Dieser Aufruf übergibt die gewünschte 
   Control\mbox{-}Step\mbox{-}Dauer (in Millisekunden) an den Simulator und bewirkt, dass Webots die 
   Simulation um genau diesen Zeitschritt fortsetzt und dabei alle bis dahin vom Controller gesetzten 
   Befehle anwendet. Danach erhält der Controller die aktualisierten Sensorwerte des neuen Simulationszustands 
-  zurück. Abbildung~3.6 veranschaulicht diese Synchronisation \cite{cyberbotics_controller_programming}.
+  zurück. Abbildung \ref{fig:controller_sync} veranschaulicht diese Synchronisation \cite{cyberbotics_controller_programming}.
   
-  \begin{wrapfigure}{r}{0.5\textwidth} % r=rechts, l=links
+  \begin{wrapfigure}{r}{0.4\textwidth} % r=rechts, l=links
     \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
     \centering
     \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
@@ -687,35 +617,35 @@
   \end{wrapfigure}
 
 
-  Alle Anweisungen vor dem nächsten Zeitschritt (\texttt{wb\_robot\_step}\mbox{-}Aufruf) werden zunächst gesammelt; 
-  mit dem Step\mbox{-}Aufruf rechnet der Simulator den nächsten Physikschritt und aktualisiert die Sensoren, bevor 
+  Alle Anweisungen vor dem nächsten Zeitschritt (\texttt{wb\_robot\_step}\mbox{-}Aufruf) werden zunächst gesammelt.
+  Mit dem Step\mbox{-}Aufruf rechnet der Simulator den nächsten Physikschritt und aktualisiert die Sensoren, bevor 
   der Controller weiterläuft. Auf diese Weise laufen Simulation und Controller \emph{synchron} in gleichmäßigen
    Zeitschritten. Standardmäßig wartet Webots in diesem synchronen Modus darauf, dass jeder Controller seinen \texttt{wb\_robot\_step} 
-  ausführt, bevor der nächste Simulationsschritt erfolgt. Dies garantiert Konsistenz, erlaubt aber auch differierende Abtastraten: 
-  Der Kontrollschritt muss ein ganzzahliges Vielfaches des Simulations\mbox{-}Basisschritts sein.
+  ausführt, bevor der nächste Simulationsschritt erfolgt. Dies garantiert Konsistenz, erlaubt aber auch differierende Abtastraten, 
+  wobei der Kontrollschritt ein ganzzahliges Vielfaches des Simulations\mbox{-}Basisschritts sein muss.
 
-  Beispielsweise kann bei einer Weltzeit-schrittauflösung von 2\,ms ein Controller mit 2\,ms, 10\,ms oder 50\,ms 
-  Schrittweite betrieben werden — Webots führt dann pro Controller-schritt entsprechend 1, 5 bzw.\ 25 Simulationsschritte 
+  Beispielsweise kann bei einer Weltzeit Schrittauflösung von 2\,ms ein Controller mit 2\,ms, 10\,ms oder 50\,ms 
+  Schrittweite betrieben werden. Webots führt dann pro Controller-Schritt entsprechend 1, 5 bzw.\ 25 Simulationsschritte 
   aus und wartet am Ende ggf.\ auf den Controller. Diese Entkopplung nutzt Webots, um auch langsamere Controller (z.\,B.\ in Python) 
   in eine schnelle Physiksimulation einzubetten, ohne die Synchronisation zu verlieren.
 
   Um auf Sensoren und Aktuatoren zuzugreifen, stellt Webots gerätespezifische API\mbox{-}Funktionen bereit. Im C\mbox{-}Controller 
   werden z.\,B.\ Geräte über \texttt{wb\_robot\_get\_device("name")} referenziert und Sensoren mit \texttt{wb\_sensor\_enable()} 
-  aktiviert. Entsprechende Methoden existieren in Python (\texttt{robot.getDevice()}, \texttt{device.enable()}). Ein Sensor liefert 
+  aktiviert. Entsprechende Methoden existieren dabei ebenfalls in Python (\texttt{robot.getDevice()}, \texttt{device.enable()}). Ein Sensor liefert 
   erst ab dem nächsten \texttt{wb\_robot\_step()} gültige Messwerte, da die Simulationszeit dann fortgeschritten ist. 
 
+  
   Aktuatorbefehle (z.\,B.\ \texttt{wb\_motor\_set\_position()} oder \texttt{motor.setPosition()} in Python) werden zunächst lokal 
-  gepuffert—die tatsächliche Ausführung in der Physik\mbox{-}Engine erfolgt erst am nächsten Step\mbox{-}Synchronisationspunkt. Daher 
-  ist es sinnlos, in derselben Schleifeniteration zwei unterschiedliche Positionen für denselben Motor zu setzen: Nur der zuletzt vor 
-  \texttt{wb\_robot\_step()} gesetzte Wert wird im kommenden Schritt ausgeführt. Ebenso bleiben zwei unmittelbar nacheinander gelesene 
-  Sensorsamples identisch, solange kein Simulationsschritt dazwischen liegt. Dieses deterministische Schritt\mbox{-}für\mbox{-}Schritt\mbox{-}
-  Ausführungsmodell erleichtert die Reproduzierbarkeit und verhindert \emph{race conditions} zwischen Physik und Reglercode.
+  gepuffert. Die tatsächliche Ausführung in der Physik\mbox{-}Engine erfolgt erst am nächsten Step\mbox{-}Synchronisationspunkt. 
+   Ebenso bleiben zwei unmittelbar nacheinander gelesene Sensorsamples identisch, solange kein Simulationsschritt dazwischen liegt. 
+   Dieses deterministische Schritt\mbox{-}für\mbox{-}Schritt\mbox{-} Ausführungsmodell erleichtert die Reproduzierbarkeit und 
+   verhindert \emph{race conditions} \footnote{Race Conditions bezeichnen unvorhersehbares Verhalten durch konkurrierende Zugriffe.} zwischen Physik und Reglercode.
 
-  Für das selbstbalancierende Fahrrad wurden zwei Controller\mbox{-}Prozesse implementiert, die in Webots zeitgleich laufen und 
-  über die oben beschriebene Mechanik gekoppelt sind: Einerseits der \emph{Balance\mbox{-}Controller} auf dem Fahrrad (in C, hoher Takt), 
-  andererseits ein \emph{Vision\mbox{-}Controller} auf einem Supervisor\mbox{-}Knoten (in Python, langsamer Takt). Die Welt ist so 
-  konfiguriert, dass das Fahrrad einen \texttt{Receiver} und einen \texttt{Emitter} trägt, während der Supervisor das komplementäre 
-  Gegenstück besitzt; damit entsteht ein bidirektionaler Nachrichtenkanal innerhalb der Simulation:
+  Da für das selbstbalancierende Fahrrad zwei Controller\mbox{-}Prozesse implementiert wurden, die in Webots zeitgleich laufen und 
+  über die oben beschriebene Mechanik gekoppelt sind, wurden einerseits der \emph{Balance\mbox{-}Controller} auf dem Fahrrad (in C, hoher Takt), 
+  andererseits ein \emph{Vision\mbox{-}Controller} auf einem Supervisor\mbox{-}Knoten (in Python, langsamer Takt) implementiert. 
+  Die Welt-Datei ist dabei so konfiguriert, dass das Fahrrad einen \texttt{Receiver} und einen \texttt{Emitter} trägt, während der Supervisor das komplementäre 
+  Gegenstück besitzt, damit entsteht ein bidirektionaler Nachrichtenkanal innerhalb der Simulation:
 
   \begin{lstlisting}[style=wbt_c,caption={Nachrichtenkanal zwischen Controller und Simulation},label={lst:imu4}]
     Robot {
@@ -734,85 +664,89 @@
   und über Channel 2 übermittelt der Balance-Controller seinerseits Statusdaten zurück (z.\,B.\ aktueller Rollwinkel, Lenkwinkel, 
   Geschwindigkeit). Beide Controller laufen im \emph{synchronen Modus}, d.\,h.\ Webots hält die Physik so lange an, bis sowohl der 
   schnelle C-Controller (alle 2\,ms) als auch der langsamere Python-Controller ihren Schritt abgearbeitet haben \cite{cyberbotics_emitter}\cite{cyberbotics_receiver}. 
-  Praktisch bedeutet dies: Der Balance\mbox{-}Regler berechnet bei jedem Simulationsschritt neue Motorbefehle, während der
-  Vision\mbox{-}Algorithmus nur alle 25 Schritte (50\,ms) ein neues Lenkkommando liefert. Die folgenden Punkte fassen Aufgaben und Interaktion zusammen:
-
-  \begin{itemize}
-    \item \emph{Balance\mbox{-}Controller (C, 500\,Hz):} Liest hochfrequent IMU\mbox{-} (Rollwinkel) und Radsensoren aus, regelt 
-    den Balancierwinkel mittels PID und steuert den Lenkmotor sowie den Antriebsmotor kontinuierlich an. Verarbeitet eingehende Sollkommandos 
-    der Vision\mbox{-}Ebene (z.\,B.\ Lenkwinkel) und kombiniert sie mit dem internen Regleroutput. Sendet zyklisch seinen Status 
-    (Stabilitätsmaß, aktuelle Geschwindigkeit etc.) über den Emitter aus. Bei Ausbleiben externer Kommandos hält er das Fahrzeug 
-    selbständig im Gleichgewicht (Fallback auf reinen Balance\mbox{-}Modus).
-    \item \emph{Vision\mbox{-}Controller (Python, \(\sim\)20\,Hz):} Läuft als Supervisor\mbox{-}Controller mit Zugriff auf globale 
-    Informationen. Nutzt die am Fahrzeug montierte Kamera (Bildrate ca.\ 20\,Hz) zur Fahrbahnerkennung (z.\,B.\ YOLO\mbox{-}Segmentierung) 
-    und berechnet auf dieser Basis einen Trajektorien\mbox{-} bzw.\ Lenksollwert mittels modellprädiktiver Regelung (MPC) oder wahlweise 
-    eines PID. Dieses Sollkommando wird paketbasiert an den Balance\mbox{-}Controller gesendet (\texttt{Emitter} auf Kanal 1). Zudem 
-    überwacht der Vision\mbox{-}Controller den empfangenen Fahrzeugzustand (\texttt{Receiver} auf Kanal 2), um die Regelgüte zu 
-    beurteilen oder Logging durchzuführen. Gegebenenfalls passt er seine Fahrstrategie an (etwa Geschwindigkeitsanpassung bei großen Balance\mbox{-}Fehlern).
-  \end{itemize}
-
-  Durch diese Aufteilung konnte eine zweistufige Regelungsarchitektur realisiert werden: Der innere C\mbox{-}Regler stabilisiert 
-  das Fahrrad auf kurzen Zeitskalen autonom, während der äußere Python\mbox{-}Regler in größeren Abständen Kurskorrekturen vorgibt. 
+  Praktisch bedeutet dies, dass der Balance\mbox{-}Regler bei jedem Simulationsschritt neue Motorbefehle berechnet, während der
+  Vision\mbox{-}Algorithmus nur alle 25 Schritte (50\,ms) ein neues Lenkkommando liefert. ‚
   Webots gewährleistet die Synchronisierung beider Teilprozesse, sodass Kommandos verlustfrei und deterministisch am 
-  Step\mbox{-}Synchronisationspunkt ausgetauscht werden. Im Ergebnis reagiert das Gesamtsystem echtzeitnah auf Störungen 
-  (Balance) und plant zugleich vorausschauend seine Fahrtrajektorie; die Kopplung konnte in der Simulation umfassend getestet 
-  und für den späteren Hardware\mbox{-}Einsatz vorbereitet werden.
+  Step\mbox{-}Synchronisationspunkt ausgetauscht werden.
 
 
 
+  \subsection{Integriertes Konfigurationssystem}
 
-  \subsection{Angebundene GUI}
+  Die Regelungsarchitektur erfordert eine koordinierte Parametrierung sowohl des Balance-Controllers in C als auch des Vision-Controllers in Python. 
+  Zu diesem Zweck wurde ein JSON-basiertes Konfigurationssystem implementiert, das als zentrale Kommunikationsschnittstelle zwischen einem 
+  grafischen Benutzerinterface und den beiden Regelschleifen fungiert. Dieses System ermöglicht die Laufzeitanpassung der Regelungsparameter 
+  ohne Unterbrechung der Webots-Simulation und gewährleistet eine konsistente Parametrierung über alle Systemkomponenten hinweg.
 
+  Alle relevanten Parameter werden in der Datei \texttt{balance\_config.json} strukturiert abgelegt. Diese enthält 
+  sowohl die PID-Parameter für die Balance-Regelung (Kp, Ki, Kd, Ausgangsbegrenzungen) als auch Vision-spezifische Einstellungen (YOLO-Konfidenz, 
+  Fallback-ROI-Parameter, Lenkglättung). Die JSON-Struktur ermöglicht eine hierarchische Organisation der Parameter in logische Gruppen 
+  (\texttt{angle\_pid}, \texttt{speed\_control}, \texttt{vision\_control}), was sowohl die Wartbarkeit als auch die automatisierte Verarbeitung erleichtert. 
+  Listing~\ref{lst:balance_config_json} zeigt die Struktur der zentralen Konfigurationsdatei mit den wichtigsten Parametergruppen.
 
-  Die Simulationsumgebung verfügt über ein tkinter\mbox{-}basiertes GUI\mbox{-}Kontrollzentrum, mit dem sich die Regelungsparameter 
-  des selbstbalancierenden Fahrrads in Echtzeit anpassen und die Fahrdaten live überwachen lassen. Dieses GUI bietet eine benutzerfreundliche 
-  Oberfläche, um während der laufenden Webots\mbox{-}Simulation Einstellungen zu ändern, ohne die Simulation unterbrechen zu müssen. 
-  Es gliedert sich in mehrere Tabs, von denen insbesondere \enquote{Parameter} und \enquote{Monitoring} für die Laufzeitanpassung 
-  und \mbox{-}beobachtung relevant sind. Im Folgenden wird erläutert, wie diese Tabs funktionieren und wie die Laufzeitanpassung 
-  der Parameter sowie das Live\mbox{-}Monitoring umgesetzt sind.
+  \begin{lstlisting}[style=json,caption={Struktur der zentralen Konfigurationsdatei \texttt{balance\_config.json}},label={lst:balance_config_json}]
+{
+    "balance_control": {
+        "angle_pid": {
+            "angle_Kp": 4.5,
+            "angle_Ki": 0.2,
+            "angle_Kd": 0.4,
+            "angle_output_min": -0.3,
+            "angle_output_max": 0.3,
+            "angle_integral_min": -60.0,
+            "angle_integral_max": 60.0
+        },
+        "speed_control": {
+            "base_speed": 6.172839506172839,
+            "min_speed": 3.0864197530864197,
+            "max_speed": 6.172839506172839
+        },
+        "mechanical_limits": {
+            "max_handlebar_angle": 1.5,
+            "max_roll_angle": 45.0
+        },
+        "system": {
+            "enable_logging": 1,
+            "enable_preview": 1,
+            "config_reload_interval": 10,
+            "filter_size": 5
+        },
+        "vision_control": {
+            "method": "yolo",
+            "yolo_conf": 0.5,
+            "yolo_show": 0,
+            "fallback_roi_top_frac": 0.5,
+            "fallback_roi_height_frac": 0.06,
+            "steer_max_delta": 0.001,
+            "steer_max_cmd": 0.06
+        }
+    }
+}
+  \end{lstlisting}
 
+  Der Balance-Controller in C implementiert in \texttt{balance\_config.c} ein vereinfachtes JSON-Parser, 
+  das die Konfigurationsdatei periodisch einliest und die Parameter zur Laufzeit aktualisiert. Die Implementierung verzichtet auf externe 
+  JSON-Bibliotheken und nutzt stattdessen String-basierte Suchfunktionen für die Extraktion spezifischer Schlüssel-Wert-Paare. Dies gewährleistet 
+  eine schlanke Integration ohne zusätzliche Abhängigkeiten in der zeitkritischen Balance-Regelschleife. Über \texttt{balance\_config\_validate()} 
+  werden geladene Parameter auf Plausibilität geprüft, um Systeminstabilitäten durch ungültige Konfigurationen zu vermeiden.
 
-  \textbf{Parameter-Tab \mbox{-} Laufzeitfähige Parameteranpassung:} Der Parameter\mbox{-}Tab ermöglicht die direkte Einstellung der Regelungsparameter während der Simulation. Über Slider und 
-  Eingabefelder können z.\,B.\ PID\mbox{-}Reglergrößen (Kp, Ki, Kd) und andere Steuerungsgrößen komfortabel angepasst werden. Dabei werden die aktuellen Werte in Echtzeit im GUI angezeigt 
-  und validiert, während der Nutzer sie ändert. Einzelne Parametergruppen (etwa Winkel\mbox{-}PID, Geschwindigkeitsregelung, mechanische Limits) 
-  sind übersichtlich gruppiert, sodass man nicht auf die Details jedes Parameters eingehen muss, aber einen strukturierten Überblick behält.
+  Der Vision-Controller lädt dieselbe JSON-Konfiguration über Pythons native \texttt{json}-Bibliothek 
+  und extrahiert vision-spezifische Parameter. Ein konfigurierbares Reload-Intervall ermöglicht die dynamische Anpassung von Vision-Parametern 
+  (z.\,B.\ YOLO-Konfidenz, ROI-Dimensionen) während der laufenden Simulation. Diese Architektur unterstützt sowohl YOLO-basierte Spurerkennung 
+  als auch Fallback-Algorithmen, deren Parameter über die gemeinsame Konfigurationsdatei gesteuert werden.
 
-  Wesentlich ist, dass Änderungen unmittelbar wirksam werden, ohne die Simulation neu zu starten. Technisch geschieht dies durch ein 
-  SON\mbox{-}basiertes Konfigurationssystem im Hintergrund. Das GUI lädt zu Beginn die aktuellen Parameter aus einer Konfigurationsdatei 
-  (z.\,B.\ \texttt{balance\_config.json}) und schreibt geänderte Werte bei Bedarf zurück. Wird ein Wert verändert, kann der Nutzer die 
-  neue Konfiguration speichern und anwenden (Schaltflächen \enquote{Speichern} bzw.\ \enquote{Anwenden} im GUI). Die laufende 
-  Regelungssoftware erkennt diese Aktualisierung dank eines Hot\mbox{-}Reload\mbox{-}Mechanismus: Der Balance\mbox{-}Controller 
-  lädt die JSON\mbox{-}Config in kurzen Intervallen oder auf Befehl neu, sodass geänderte Parameter sofort in den Regler einfließen.
+  Die Kommunikation zwischen den Controllern wird durch ein strukturiertes Logging-System in 
+  \texttt{balance\_logging.c} dokumentiert. Dieses System erzeugt zeitgestempelte CSV-Dateien, die sowohl Balance-relevante Größen (Rollwinkel, 
+  Lenkausgang, PID-Terme) als auch Vision-Daten (Spurabweichung, Vision-Kommandos, Maskenabdeckung) sowie Positionsinformationen enthalten. 
+  Die erweiterte Datenstruktur \texttt{balance\_log\_data\_t} kapselt alle relevanten Systemzustände in einem einheitlichen Format, wodurch 
+  eine umfassende Systemanalyse ermöglicht wird.
 
+  Das grafische Interface fungiert als Vermittler zwischen Benutzer und Konfigurationssystem. Parameteränderungen werden 
+  unmittelbar in die JSON-Konfiguration geschrieben, von wo sie durch die periodischen Reload-Mechanismen der Controller aufgenommen werden. 
+  Gleichzeitig visualisiert das Interface die von \texttt{balance\_logging.c} erzeugten CSV-Daten in Echtzeit, wodurch die Auswirkungen von 
+  Parameteränderungen sofort sichtbar werden. Diese Architektur ermöglicht ein iteratives Tuning der Regelungsparameter unter direkter 
+  Beobachtung des Systemverhaltens.
 
-  \textbf{Monitoring-Tab – Live-Datenvisualisierung und CSV-Logging: }Im \emph{Monitoring}-Tab werden Fahr- und Regeldaten \emph{live} visualisiert, 
-  um das Verhalten des Fahrrads während der Simulation nachvollziehen zu können. Abbildung 9 zeigt den Monitoring-Tab mit Echtzeitdiagrammen. 
-  Der Tab bietet interaktive Plots, die zentrale Größen über der Zeit darstellen — etwa den Rollwinkel, den Lenkausgang des Reglers, die aktuelle 
-  und Ziel-Geschwindigkeit sowie die PID-Regleranteile (P, I, D). Über Auswahlkästchen kann gezielt gesteuert werden, welche Kurven angezeigt werden, 
-  um den Überblick zu behalten; beispielsweise lassen sich nur die Balance-Controller-Daten oder nur die PID-Terme ein- oder ausblenden. Zusätzlich 
-  stehen Zoom-Regler zur Verfügung, um den dargestellten Zeitraum einzugrenzen und Details zu analysieren.
-
-  Die Datengrundlage bilden CSV-Protokolldateien, die vom Balance-Controller während jeder Fahrt automatisch erzeugt werden. Jede Simulation 
-  (bzw.\ Fahrt) wird lückenlos in einer Log-Datei festgehalten — mit Zeitstempel und den relevanten Mess- und Steuergrößen (u.\,a.\ Winkel, 
-  Geschwindigkeiten, Reglerausgänge, Fehlerwerte). Der Monitoring-Tab listet diese Aufzeichnungen und ermöglicht sowohl das nachträgliche Laden 
-  einer aufgezeichneten CSV-Datei als auch den Live-Stream der jeweils neuesten Datei. Im Live-Modus wählt das System automatisch die aktuell 
-  von der Simulation beschriebene Log-Datei aus und aktualisiert die Plots fortlaufend; alternativ kann der Benutzer eine frühere Aufzeichnung 
-  vollständig laden und visualisieren. In beiden Fällen normalisiert das GUI die eingelesenen CSV-Daten (z.\,B.\ Umrechnung von Radmaß in Grad 
-  oder m/s in km/h) und zeichnet zweigeteilt: typischerweise erscheinen Winkel- und Lenkdaten im oberen Diagramm, die PID-Terme sowie Geschwindigkeiten 
-  im unteren, jeweils mit gemeinsamer Zeitachse.
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/GUI_2.png}
-    \caption{Monitoring-Tab mit Echtzeitdiagrammen.}
-    \label{fig:GUI_2}
-  \end{figure}
-
-  Ergänzend zur grafischen Darstellung bietet der Monitoring-Tab Statusanzeigen, die u.\,a.\ den aktuell geladenen Logfile-Namen, den Zeitpunkt 
-  der letzten Aktualisierung und den Laufzustand des Controllers ausweisen. So bleibt stets transparent, ob die Verbindung zur Simulation aktiv 
-  ist und welche Datenquelle visualisiert wird. Zusammengenommen stellt der Monitoring-Tab ein leistungsfähiges Werkzeug dar, um die Auswirkungen 
-  von Parameteränderungen sofort sichtbar zu machen und das Systemverhalten mittels aufgezeichneter Daten zu analysieren. Die Kombination aus
-  laufzeitfähiger Parameteranpassung und Live-Monitoring ermöglicht ein effizientes Trial-and-Error-Tuning des selbstbalancierenden Fahrrads, 
-  unterstützt durch intuitive GUI-Interaktion und automatisierte Datenaufzeichnung. \pdfcomment{TODO: Füge die Spurverfolgung mit GPS ein.}
 
  
 

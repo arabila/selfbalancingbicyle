@@ -22,50 +22,50 @@
 \contentsline {subsubsection}{\numberline {4.4.2}Kamera (Videosensor)}{19}{subsubsection.4.4.2}%
 \contentsline {subsubsection}{\numberline {4.4.3}Motorsensoren (Inkrementalgeber)}{21}{subsubsection.4.4.3}%
 \contentsline {subsection}{\numberline {4.5}Aktuatoren}{22}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Controller}{27}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Angebundene GUI}{30}{subsection.4.7}%
-\contentsline {section}{\numberline {5}Kombinierte Regelung}{32}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{32}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{33}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{36}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8) + MPC}{36}{subsubsection.5.3.1}%
-\contentsline {paragraph}{MPC-Regelung.}{38}{section*.18}%
-\contentsline {paragraph}{Limitierungen.}{39}{section*.20}%
-\contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (Kanten/ROI) + MPC}{40}{subsubsection.5.3.2}%
-\contentsline {paragraph}{Vorgehen.}{40}{section*.22}%
-\contentsline {paragraph}{MPC und Steuerung:}{41}{section*.23}%
-\contentsline {paragraph}{Limitierungen:}{41}{section*.24}%
-\contentsline {subsection}{\numberline {5.4}Gesamtregelung}{42}{subsection.5.4}%
-\contentsline {section}{\numberline {6}Ergebnisse}{43}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{43}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Teststrecken}{44}{subsection.6.2}%
-\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{44}{subsubsection.6.2.1}%
-\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers}{44}{section*.28}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers}{46}{section*.32}%
-\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung}{47}{section*.37}%
-\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{49}{subsubsection.6.2.2}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung}{49}{section*.42}%
-\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{53}{subsubsection.6.2.3}%
-\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler)}{53}{section*.50}%
-\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler)}{54}{section*.53}%
-\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung}{55}{section*.56}%
-\contentsline {paragraph}{Einordnung und Grenzen}{56}{section*.59}%
-\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{57}{subsubsection.6.2.4}%
-\contentsline {paragraph}{Fall A: Senke, \(M=1{,}0\,\text {m}\)}{57}{section*.61}%
-\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte)}{58}{section*.64}%
-\contentsline {paragraph}{Fall C: Senke, \(M=2{,}0\,\text {m}\) mit angepassten Balance-PID-Gewichten}{58}{section*.67}%
-\contentsline {paragraph}{Zusammenfassung und Ableitungen}{59}{section*.70}%
-\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{60}{section*.71}%
-\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{61}{section*.74}%
-\contentsline {paragraph}{Zusammenfassung und Ableitungen}{62}{section*.77}%
-\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{63}{subsection.6.3}%
-\contentsline {paragraph}{Motivation}{63}{section*.79}%
-\contentsline {paragraph}{Rechenzeit in Webots: virtuelle Zeit statt harter Echtzeit}{63}{section*.80}%
-\contentsline {paragraph}{Implikationen für die hier durchgeführten Versuche}{64}{section*.81}%
-\contentsline {paragraph}{Warum harte Echtzeit erst auf dem Realfahrrad kritisch wird}{64}{section*.82}%
-\contentsline {paragraph}{Konsequenzen für diese Arbeit und Folgeprojekte}{65}{section*.83}%
-\contentsline {paragraph}{Kurzfazit}{65}{section*.84}%
-\contentsline {section}{\numberline {7}Grenzen der Arbeit}{66}{section.7}%
-\contentsline {section}{\numberline {8}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{67}{section.8}%
-\contentsline {section}{\numberline {9}Fazit}{68}{section.9}%
-\contentsline {section}{\numberline {10}Literaturverzeichnis}{69}{section.10}%
+\contentsline {subsection}{\numberline {4.6}Controller}{26}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Integriertes Konfigurationssystem}{27}{subsection.4.7}%
+\contentsline {section}{\numberline {5}Kombinierte Regelung}{30}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{30}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{31}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{34}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8) + MPC}{34}{subsubsection.5.3.1}%
+\contentsline {paragraph}{MPC-Regelung.}{36}{section*.14}%
+\contentsline {paragraph}{Limitierungen.}{37}{section*.16}%
+\contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (Kanten/ROI) + MPC}{38}{subsubsection.5.3.2}%
+\contentsline {paragraph}{Vorgehen.}{38}{section*.18}%
+\contentsline {paragraph}{MPC und Steuerung:}{39}{section*.19}%
+\contentsline {paragraph}{Limitierungen:}{39}{section*.20}%
+\contentsline {subsection}{\numberline {5.4}Gesamtregelung}{40}{subsection.5.4}%
+\contentsline {section}{\numberline {6}Ergebnisse}{41}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{41}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Teststrecken}{42}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{42}{subsubsection.6.2.1}%
+\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers}{42}{section*.24}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers}{44}{section*.28}%
+\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung}{45}{section*.33}%
+\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{47}{subsubsection.6.2.2}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung}{47}{section*.38}%
+\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{51}{subsubsection.6.2.3}%
+\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler)}{51}{section*.46}%
+\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler)}{52}{section*.49}%
+\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung}{53}{section*.52}%
+\contentsline {paragraph}{Einordnung und Grenzen}{54}{section*.55}%
+\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{55}{subsubsection.6.2.4}%
+\contentsline {paragraph}{Fall A: Senke, \(M=1{,}0\,\text {m}\)}{55}{section*.57}%
+\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte)}{56}{section*.60}%
+\contentsline {paragraph}{Fall C: Senke, \(M=2{,}0\,\text {m}\) mit angepassten Balance-PID-Gewichten}{56}{section*.63}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen}{57}{section*.66}%
+\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{58}{section*.67}%
+\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten}{59}{section*.70}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen}{60}{section*.73}%
+\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{61}{subsection.6.3}%
+\contentsline {paragraph}{Motivation}{61}{section*.75}%
+\contentsline {paragraph}{Rechenzeit in Webots: virtuelle Zeit statt harter Echtzeit}{61}{section*.76}%
+\contentsline {paragraph}{Implikationen für die hier durchgeführten Versuche}{62}{section*.77}%
+\contentsline {paragraph}{Warum harte Echtzeit erst auf dem Realfahrrad kritisch wird}{62}{section*.78}%
+\contentsline {paragraph}{Konsequenzen für diese Arbeit und Folgeprojekte}{63}{section*.79}%
+\contentsline {paragraph}{Kurzfazit}{63}{section*.80}%
+\contentsline {section}{\numberline {7}Grenzen der Arbeit}{64}{section.7}%
+\contentsline {section}{\numberline {8}Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}{65}{section.8}%
+\contentsline {section}{\numberline {9}Fazit}{66}{section.9}%
+\contentsline {section}{\numberline {10}Literaturverzeichnis}{67}{section.10}%

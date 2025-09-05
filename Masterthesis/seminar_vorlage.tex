@@ -64,6 +64,47 @@
     tabsize=2,
     captionpos=b
   }
+
+  % Stil für JSON definieren
+  \lstdefinestyle{json}{
+    basicstyle=\ttfamily\footnotesize,
+    numbers=left,
+    numberstyle=\tiny,
+    stepnumber=1,
+    numbersep=5pt,
+    breaklines=true,
+    frame=single,
+    tabsize=2,
+    captionpos=b,
+    showstringspaces=false,
+    stringstyle=\color{orange!80!black},
+    keywordstyle=\color{blue},
+    commentstyle=\color{gray},
+    morestring=[b]",
+    morestring=[d]',
+    literate=
+      {0}{{{\color{red}0}}}1
+      {1}{{{\color{red}1}}}1
+      {2}{{{\color{red}2}}}1
+      {3}{{{\color{red}3}}}1
+      {4}{{{\color{red}4}}}1
+      {5}{{{\color{red}5}}}1
+      {6}{{{\color{red}6}}}1
+      {7}{{{\color{red}7}}}1
+      {8}{{{\color{red}8}}}1
+      {9}{{{\color{red}9}}}1
+      {.}{{{\color{red}.}}}1
+      {-}{{{\color{red}-}}}1
+      {:}{{{\color{blue}:}}}1
+      {,}{{{\color{blue},}}}1
+      {\{}{{{\color{blue}\{}}}1
+      {\}}{{{\color{blue}\}}}}1
+      {[}{{{\color{blue}[}}}1
+      {]}{{{\color{blue}]}}}1
+      {true}{{{\color{green!70!black}true}}}4
+      {false}{{{\color{green!70!black}false}}}5
+      {null}{{{\color{green!70!black}null}}}4
+  }
 \bibliographystyle{plain}
 
 %--------------------------------------------------

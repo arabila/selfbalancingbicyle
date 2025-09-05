@@ -451,22 +451,19 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1l
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ts1-lmr10.tfm
+INPUT ./figures/rotational_motor.png
+INPUT ./figures/rotational_motor.png
+INPUT ./figures/rotational_motor.png
+INPUT ./figures/rotational_motor.png
+INPUT ./figures/rotational_motor.png
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc
-INPUT ./figures/rotational_motor.png
-INPUT ./figures/rotational_motor.png
-INPUT ./figures/rotational_motor.png
-INPUT ./figures/rotational_motor.png
-INPUT ./figures/rotational_motor.png
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmbx9.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
 INPUT ./figures/controller_synchronization.png
 INPUT ./figures/controller_synchronization.png
 INPUT ./figures/controller_synchronization.png
 INPUT ./figures/controller_synchronization.png
 INPUT ./figures/controller_synchronization.png
-INPUT ./figures/GUI_2.png
-INPUT ./figures/GUI_2.png
-INPUT ./figures/GUI_2.png
-INPUT ./figures/GUI_2.png
-INPUT ./figures/GUI_2.png
 INPUT ./chapters/kapitel4.tex
 INPUT ./chapters/kapitel4.tex
 OUTPUT chapters/kapitel4.aux
@@ -703,8 +700,6 @@ INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmbx9.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmbx5.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmri9.tfm
 INPUT ./chapters/kapitel6.tex
 INPUT ./chapters/kapitel6.tex
