@@ -24,7 +24,7 @@
   \usepackage{subcaption}
   \usepackage{float}
   \usepackage{listings}
-  
+
   % Define custom commands
   \newcommand{\gh}{} % Placeholder for citations
 
@@ -104,6 +104,32 @@
       {true}{{{\color{green!70!black}true}}}4
       {false}{{{\color{green!70!black}false}}}5
       {null}{{{\color{green!70!black}null}}}4
+  }
+
+  % Stil für Python-Code definieren
+  \lstdefinestyle{python}{
+    language=Python,
+    basicstyle=\ttfamily\footnotesize,
+    keywordstyle=\color{blue}\bfseries,
+    stringstyle=\color{green!60!black},
+    commentstyle=\color{gray}\itshape,
+    numberstyle=\tiny\color{gray},
+    numbers=left,
+    stepnumber=1,
+    numbersep=5pt,
+    breaklines=true,
+    frame=single,
+    tabsize=4,
+    captionpos=b,
+    showstringspaces=false,
+    emphstyle=\color{red},
+    emph={self, True, False, None},
+    morecomment=[l]{\#},
+    morestring=[b]",
+    morestring=[b]',
+    identifierstyle=\color{black},
+    morekeywords=[2]{np, math, cv2, cvxpy, struct, time, os, sys},
+    keywordstyle=[2]\color{purple}
   }
 \bibliographystyle{plain}
 

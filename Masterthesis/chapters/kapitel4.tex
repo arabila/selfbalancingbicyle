@@ -1,28 +1,49 @@
 \section{Kombinierte Regelung}
 \subsection{Portierung des Balance-PID (Zander)}
 
-Jonah Zanders Bachelorarbeit (2023) behandelt die Entwicklung einer Regelung 
-für ein selbstbalancierendes Fahrrad \cite{zander2023}. 
-ein Ansatz stützte sich auf eine mehrstufige Kaskadenregelung, um die Balance des Fahrrads trotz realer Sensor- und Aktorbeschränkungen 
-sicherzustellen. In der Original-Hardwarearchitektur erfassen ein \emph{BNO055}-IMU-Sensor und ein \emph{BeagleBone-Black}-Einplatinencomputer 
-den Neigungswinkel (Rollwinkel) des Fahrrads. Diese Information wird in einer \emph{primären} PID-Schleife — dem 
-\enquote{Angle-to-Steering}-Regler — verarbeitet, der aus dem Rollwinkelabweichungssignal einen Ziel-Lenkwinkel berechnet. 
-Zander wählte dafür relativ hohe proportionale (\(K_p \approx 10\)) und differentielle Verstärkungen (\(K_d \approx 2{,}2\)) 
-und verzichtete auf einen Integralanteil (\(K_i = 0\)). Diese Parametrierung reagiert schnell und ausreichend gedämpft auf
-Neigungsabweichungen, ohne driftbedingtes Aufintegrieren — ein wichtiger Aspekt, um Aufschaukeln im realen System zu 
-vermeiden. Der resultierende Lenkwinkel-Sollwert wird anschließend an eine \emph{sekundäre} PID-Schleife übergeben. 
-Diese zweite Regelstufe regelt den elektrischen \emph{Lenkmotor} (über einen MD49-Motorcontroller) so, dass der Lenker den 
-vorgegebenen Sollwinkel tatsächlich einnimmt. Aufgrund von Reibung, Trägheit und Totzeit des Lenkantriebs sind hier wesentlich 
-höhere Reglerverstärkungen erforderlich (im Original z.\,B.\ \(K_p \approx 850\), \(K_i \approx 300\)) sowie eine Ausgangsbegrenzung, 
-um das physische System nicht zu übersteuern. Als \emph{dritte} Stufe implementierte Zander eine einfache Geschwindigkeitsregelung 
-für den Antrieb des Fahrrads. Diese war in seiner Umsetzung stark vereinfacht: Über eine Fernbedienung konnte eine konstante 
-Vorwärtsgeschwindigkeit (ca.\ \(3\,\mathrm{m/s}\)) ein- oder ausgeschaltet werden. Damit wurde gewährleistet, dass das Fahrrad
-eine minimale Fahrt erreicht — notwendig, da ein selbstbalancierendes Fahrrad bei Nullgeschwindigkeit instabil ist.
+Jonah Zanders Bachelorarbeit (2023) implementiert eine dreistufige Kaskadenregelung für ein selbstbalancierendes Fahrrad, die als Grundlage 
+für die in dieser Arbeit entwickelte Simulationsregelung dient \cite{zander2023}. Die Hardware-Architektur umfasst einen BNO055-IMU-Sensor 
+zur Neigungsmessung, einen BeagleBone-Black-Einplatinencomputer als Steuerungseinheit sowie separate Motorcontroller für Lenkung und Antrieb. 
+Die Regelungsarchitektur gliedert sich in drei hierarchische Ebenen: eine primäre Balance-PID-Regelung (Angle-to-Steering), eine sekundäre 
+Lenkpositionsregelung und eine vereinfachte Geschwindigkeitssteuerung.
 
-Zusätzlich integrierte Zander sicherheitskritische Mechanismen wie einen Watchdog-Thread und eine mehrsträngige Programmausführung, 
-um unterschiedliche Abtast- und Regelpfade in Echtzeit ablaufen zu lassen (z.\,B.\ IMU-Abtastung mit \(200\,\mathrm{Hz}\), 
-Lenkgregelung mit \(1000\,\mathrm{Hz}\)). Diese Maßnahmen kompensieren hardwarebedingte Latenzen und mögliche Sensorausfälle 
-und stellten die Balance in der Praxis robust sicher.
+\textbf{Primäre Balance-Regelung:} Das Kernstück von Zanders Implementierung bildet ein PID-Regler, der die Rollwinkelabweichung in einen 
+Lenkwinkel-Sollwert umsetzt. Listing~\ref{lst:zander_pid_params} zeigt die von Zander gewählten PID-Parameter, die sich durch hohe 
+proportionale (\(K_p = 10{,}0\)) und differentielle Verstärkungen (\(K_d = 2{,}2\)) bei deaktiviertem Integralanteil (\(K_i = 0{,}0\)) 
+auszeichnen. Diese Parametrierung gewährleistet eine schnelle Reaktion auf Neigungsänderungen ohne die Gefahr des Aufschaukelns durch 
+Drift-Integration.
+
+\begin{lstlisting}[style=wbt_c,caption={PID-Parameter in Zanders Hardware-Implementierung},label={lst:zander_pid_params}]
+//PID Angle to Steering
+#define ANGLE_PID_KP                    10.0f
+#define ANGLE_PID_KI                    0.0f
+#define ANGLE_PID_KD                    2.2f 
+#define ANGLE_PID_OUTPUT_MIN            -150.0f
+#define ANGLE_PID_OUTPUT_MAX            150.0f
+#define ANGLE_PID_INTEGRAL_MIN          -60.0f
+#define ANGLE_PID_INTEGRAL_MAX          60.0f
+\end{lstlisting}
+
+Die PID-Berechnung in Zanders System implementiert eine zeitbasierte Integration und Differentiation mit Historien-Pufferung zur 
+Rauschunterdrückung. Der Differentialterm wird über mehrere Zeitschritte gemittelt, um hochfrequente Störungen zu dämpfen, 
+während der Integralterm durch Anti-Windup-Mechanismen begrenzt wird.
+
+\textbf{Sekundäre Lenkpositionsregelung:} Die zweite Regelebene steuert den physischen Lenkmotor über einen MD49-Controller an, 
+um den von der Balance-PID vorgegebenen Sollwinkel zu erreichen. Aufgrund der mechanischen Eigenschaften des Lenkantriebs 
+(Reibung, Trägheit, Totzeit) sind hier deutlich höhere Verstärkungen erforderlich:
+
+\begin{lstlisting}[style=wbt_c,caption={Lenkpositions-PID-Parameter in Zanders System},label={lst:zander_steering_pid}]
+//PID Steering PID
+#define MD49_PID_KP                     850.0f
+#define MD49_PID_KI                     300.0f
+#define MD49_PID_KD                     30.0f
+#define MD49_PID_OUTPUT_MIN             -100000.0f
+#define MD49_PID_OUTPUT_MAX             100000.0f
+\end{lstlisting}
+
+\textbf{Echtzeit-Threading-Architektur:} Zanders Implementierung nutzt eine multi-threaded Architektur mit unterschiedlichen 
+Abtastraten: IMU-Datenerfassung mit 200\,Hz, Lenkpositionsregelung mit 1000\,Hz und Geschwindigkeitsregelung mit niedrigerer 
+Frequenz. Watchdog-Mechanismen überwachen die Thread-Ausführung und gewährleisten die Systemstabilität bei Hardwareausfällen.
 
 \begin{figure}[H]
   \centering
@@ -30,156 +51,282 @@ und stellten die Balance in der Praxis robust sicher.
   \caption{Kombimierter Regeler.}
   \label{fig:supervision_cascade}
 \end{figure}
-  
-Im Rahmen dieser Arbeit wurde Zanders Balance\mbox{-}PID\mbox{-}Regler in einer 
-Webots\mbox{-}Simulation nachgebildet — 
-jedoch in vereinfachter Form, da die Simulationsumgebung viele reale Komplexitäten abfängt. Die Sensorik in Webots 
-liefert z.\,B.\ den Rollwinkel ohne nennenswertes Rauschen oder Verzögerung, wodurch aufwändige Filterung oder Sensorfusion 
-nicht notwendig sind; ein einfacher gleitender Mittelwert über wenige Schritte genügt zur Glättung. Ebenso erlaubt die 
-Simulations\mbox{-}Aktuatorik direkten Zugriff auf den Lenkmotor: Anstatt wie im realen System einen separaten PID\mbox{-}Regler 
-für die Lenksposition und einen Motorcontroller anzusteuern, kann der simulierte Lenkwinkel direkt gesetzt werden. Konkret 
-wird in jedem Simulations\mbox{-}Timestep zunächst der aktuelle Rollwinkel berechnet und dann der Balance\mbox{-}PID 
-(mit denselben Parametern \(K_p, K_i, K_d\) wie bei Zander) ausgeführt. Dessen Ausgang — anstelle eines Encoder\mbox{-}Sollwerts — 
-wird unmittelbar als Stellwert an den virtuellen Lenkmotor übergeben, der den Lenker entsprechend positioniert. Die zweite 
-Regelstufe (Steering\mbox{-}Position\mbox{-}PID) entfällt somit, da Webots intern den Motor auf die Position eigenständig 
-hält. Auch die Thread\mbox{-}Struktur kann stark vereinfacht werden: Webots arbeitet mit einer einzigen synchronen 
-Hauptschleife, die Sensoraktualisierung und Stellgrößenberechnung in festen Zeitschritten kombiniert. Das eliminiert 
-die Notwendigkeit paralleler Threads und spezieller Watchdogs — Timing und Stabilität werden durch die Simulationsengine garantiert.
 
-Trotz dieser Vereinfachungen wurden die Kernprinzipien von Zanders Regelung beibehalten. Insbesondere stellt der 
-Rollwinkel\mbox{-}PID weiterhin das zentrale Element dar, das die Balance regelt. Die gleiche Abstimmung 
-(\(K_p\!=\!10\), \(K_i\!=\!0\), \(K_d\!=\!2{,}2\)) hat sich auch in der Simulation als geeignet erwiesen, um ein schnelles 
-Ausregeln mit moderater Dämpfung zu erreichen — analog zu den realen Tests von Zander \cite{zander2023}. Unterschiede ergeben 
-sich vor allem durch die Randbedingungen: Zanders physisches System war verschiedenen Umwelteinflüssen (Bodenunebenheiten, 
-Windstöße, Reibungsschwankungen) ausgesetzt, während die Webots-Simulation idealisierte Bedingungen bietet.
+\textbf{Adaptierung für die Webots-Simulation:} Die Portierung von Zanders Balance-Regelung in die Webots-Simulationsumgebung 
+erforderte eine systematische Vereinfachung der Hardware-spezifischen Komplexitäten bei Beibehaltung der regelungstechnischen 
+Kernprinzipien. Die wesentlichen Unterschiede zwischen Hardware- und Simulationsimplementierung zeigt Tabelle~\ref{tab:zander_comparison}.
 
-Ein weiterer Unterschied liegt in der Geschwindigkeitssteuerung. Während im realen Aufbau eine konstante Mindestgeschwindigkeit 
-manuell vorgegeben wurde, nutzt die Simulation eine adaptive Geschwindigkeitsanpassung: Die Antriebsdrehzahl wird dynamisch reduziert, 
-wenn starke Lenkeingriffe (große Stellgrößen des Balance\mbox{-}PID) auftreten. Diese direkte Kontrolle im Simulator erhöht die 
-Stabilität, indem das „Fahrrad“ bei drohender Instabilität automatisch abbremst. Zander musste hingegen einen Sicherheitsabstand 
-einplanen: Sein System durfte nicht zu langsam werden, da ein reales Fahrrad unter \(\approx 3\,\mathrm{m/s}\) kaum stabil bleibt. 
-Die Simulation erlaubt hier flexible Anpassungen, da keine Sturzgefahr für ein echtes Gerät besteht und Parameter gefahrlos variiert werden können.
+\begin{table}[H]
+\centering
+\caption{Vergleich zwischen Zanders Hardware-Implementierung und Webots-Simulation}
+\label{tab:zander_comparison}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Aspekt} & \textbf{Zander (Hardware)} & \textbf{Webots-Simulation} \\
+\hline
+Sensorik & BNO055 IMU, Rauschen & Idealer Rollwinkelsensor \\
+Threading & Multi-threaded (200/1000 Hz) & Synchrone Hauptschleife \\
+Lenkpositionsregelung & Separater MD49-PID & Direkter Motoranschluss \\
+PID-Parameter & $K_p=10, K_i=0, K_d=2.2$ & Identische Werte \\
+Ausgangsbegrenzung & $\pm 150$ (Hardware-Einheiten) & $\pm 0.3$ rad \\
+\hline
+\end{tabular}
+\end{table}
 
-Die Portierung des Zander’schen PID\mbox{-}Reglers in die Webots\mbox{-}Umgebung zeigt, dass ein vereinfachtes Regeldesign genügt, 
-wenn Sensorik und Aktorik idealisiert sind. Viele Komplexitäten der realen Implementierung (zusätzliche Regelkreise, Echtzeit\mbox{-}Threading, 
-Hardware\mbox{-}Toleranzen) mussten in der Simulation nicht nachgebildet werden, was die Implementierung schlanker machte. Dennoch basiert 
-die Regelung auf dem gleichen Prinzip wie bei Zander: der stabilisierenden Rückkopplung des Rollwinkels auf den Lenkwinkel. Die erfolgreiche 
-Balance in der Simulation bestätigt die Wirksamkeit von Zanders Ansatz unter erleichterten Bedingungen und bildet die Grundlage für 
-weiterführende Regelungs\mbox{-} und Steuerungsstrategien in dieser Arbeit.
+Die Webots-Implementierung vereinfacht die Architektur erheblich durch Elimination der sekundären Lenkpositionsregelung. 
+Listing~\ref{lst:webots_balance_pid} zeigt die zentrale Balance-Regelschleife, die direkt den Lenkwinkel setzt:
+
+\begin{lstlisting}[style=wbt_c,caption={Vereinfachte Balance-PID-Implementierung in Webots},label={lst:webots_balance_pid}]
+// 1. Roll-Winkel messen (idealisiert, ohne Rauschen)
+float roll_angle = get_roll_rad_raw();
+
+// 2. PID-Regelung: Roll-Winkel -> Lenkwinkel  
+if (control_enabled) {
+    steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
+}
+
+// 3. Lenkwinkel begrenzen
+if (steering_output > config.mechanical_limits.max_handlebar_angle) 
+    steering_output = config.mechanical_limits.max_handlebar_angle;
+else if (steering_output < -config.mechanical_limits.max_handlebar_angle)
+    steering_output = -config.mechanical_limits.max_handlebar_angle;
+
+// 4. Direkter Motoranschluss (keine sekundaere Regelung)
+wb_motor_set_position(handlebars_motor, -final_steer);
+\end{lstlisting}
+
+Der PID-Algorithmus selbst wurde von Zanders Implementierung adaptiert, jedoch mit verbesserter numerischer Stabilität. 
+Während Zanders Code eine komplexe Historien-Verwaltung mit zirkulären Puffern verwendet, nutzt die Webots-Version eine 
+vereinfachte Zeitberechnung basierend auf dem deterministischen Simulationszeitschritt:
+
+\begin{lstlisting}[style=wbt_c,caption={Vereinfachte PID-Berechnung in der Webots-Implementierung},label={lst:webots_pid_compute}]
+// I-Term (Integral) - vereinfachte Zeitberechnung
+int prev_index = (pid->history_counter + HISTORY_LEN - 1) % HISTORY_LEN;
+float dt = (pid->time_history[pid->history_counter] - 
+           pid->time_history[prev_index]) / 1000000.0; // Mikrosekunden -> Sekunden
+
+if (dt > 0.0 && dt < 1.0) {  // Plausibilitaetspruefung
+    pid->integral_term += pid->Ki * error * dt; 
+}
+
+// D-Term mit gleitendem Durchschnitt (wie bei Zander)
+float current_derivative = (error - pid->error_history[prev_index]) / dt;
+pid->derivative_history[pid->history_counter] = current_derivative;
+
+float derivative_sum = 0.0;
+for (int i = 0; i < HISTORY_LEN; i++) {
+    derivative_sum += pid->derivative_history[i];
+}
+pid->derivative_term = pid->Kd * (derivative_sum / HISTORY_LEN);
+\end{lstlisting}
+
+Die erfolgreiche Übertragung von Zanders Regelungskonzept in die Simulation bestätigt 
+die Robustheit des gewählten PID-Ansatzes. Die identischen Parameter (\(K_p = 10\), \(K_i = 0\), \(K_d = 2{,}2\)) erzielen 
+auch in der idealisierten Webots-Umgebung stabile Balance-Regelung. Der Verzicht auf den Integralanteil erweist sich als 
+vorteilhaft, da er Drift-bedingte Instabilitäten vermeidet, was ein Aspekt, der sowohl in der Hardware- als auch in der 
+Simulationsumgebung relevant ist.
+
+Die Portierung demonstriert, wie Hardware-spezifische Komplexitäten (Multi-Threading, Sensor-Rauschen, Aktor-Totzeiten) in 
+einer Simulationsumgebung abstrahiert werden können, ohne die regelungstechnischen Kernprinzipien zu beeinträchtigen. 
+Diese Vereinfachung schafft die Grundlage für die Integration zusätzlicher Regelungsebenen, insbesondere der vision-basierten 
+Pfadführung, die in den folgenden Abschnitten behandelt wird.
 
 
   
 \subsection{Portierung des Fahrtrichtungs-MPC (Giray)} \label{chap:MPC_KAPITEL}
 Yasin Giray entwickelte in seiner Masterarbeit einen vision-basierten 
 Fahrtrichtungsregler auf Basis von Model Predictive Control (MPC), 
-um das selbstbalancierende Fahrrad autonom der Fahrspur folgen zu lassen. Dieser Regler modelliert die Fahrzeugdynamik mittels Einspurmodell 
-und nutzt zwei Steuergrößen — aktuelle Geschwindigkeit \(v\) und Lenkwinkel \(\phi\) — als Eingaben für die Prädiktion. Der MPC berechnet 
+um das selbstbalancierende Fahrrad autonom der Fahrspur folgen zu lassen \cite{vision_mpc_readme}. Dieser Regler modelliert die Fahrzeugdynamik mittels Einspurmodell 
+und nutzt zwei Steuergrößen, die aktuelle Geschwindigkeit \(v\) und Lenkwinkel \(\phi\) als Eingaben für die Prädiktion. Der MPC berechnet 
 also auf Grundlage von \(v\) und Lenkeinschlag die Fahrzeugbewegung voraus. Für den prädiktiven Regler wird ein 
 Zustandsvektor \(x=[x, y, v, \text{yaw}]\) (Position, Geschwindigkeit, Gierwinkel) und ein Eingangsvektor \(u=[\text{accel}, \text{steer}]\) 
 definiert. Giray wählte einen Zeithorizont von etwa 2~s und formulierte ein Optimierungsproblem, das die Abweichung von einer Soll-Trajektorie 
-minimiert sowie Steuerungsaufwand und -änderungen penalisiert. Die Kostenfunktion des MPC addiert quadrierte Abweichungen der Zustände und 
-Eingriffe über den Horizont sowie eine 
+minimiert sowie Steuerungsaufwand und -änderungen übernimmt. Die Kostenfunktion des MPC addiert quadrierte Abweichungen der Zustände und 
+\colorbox{red}{Eingriffe über den Horizont sowie eine }
 Endzustands-Strafe, z.\,B. \(J=\sum (x^T Q x + u^T R u + \Delta u^T R_d \Delta u) + x_{\text{final}}^T Q_f x_{\text{final}}\). 
 Neben den Kosten werden physikalische Nebenbedingungen wie maximaler Lenkwinkel, Lenkwinkelrate und Geschwindigkeit im Optimierungsproblem 
 berücksichtigt, um realistische Lösungen zu gewährleisten.
 
 Wesentliche Voraussetzung für den Fahrtrichtungs-MPC ist eine geeignete Referenztrajektorie der Straße. Giray implementierte hierfür eine 
 Computer-Vision-Pipeline auf Basis von YOLOv8-Segmentierung, welche im Kamerabild die befahrbare Straße und deren Verlauf erkennt. Aus den 
-segmentierten Bilddaten wird eine Reihe von Stützpunkten der Fahrbahn extrahiert (z. B. die Mittellinie oder Fahrbahnränder). Anschließend 
-wird mittels Spline-Interpolation eine glatte Kurve durch diese Punkte gelegt, die als Referenzkurve für den MPC dient. Der MPC nutzt diese 
-prognostizierte Straßenspur, um vorauszuplanen: Er simuliert auf Basis des Einspurmodells die Fahrzeugbewegung und berechnet die optimalen 
+segmentierten Bilddaten wird eine Reihe von Stützpunkten der Fahrbahn extrahiert. Anschließend 
+wird mittels Spline-Interpolation eine glatte Kurve durch diese Punkte gelegt, die als Referenzkurve für den MPC dient. Er simuliert auf Basis des Einspurmodells die Fahrzeugbewegung und berechnet die optimalen 
 Steuerbefehle, damit das Fahrrad der Kurve bestmöglich folgt. In Girays Umsetzung wird der Regler zyklisch mit ca. 10 Hz ausgeführt (Tickrate 100 ms). 
 Pro Zyklus initialisiert der Controller den aktuellen Fahrzeugzustand (Position, Geschwindigkeit, Orientierung) und berechnet aus der ersten Sollkurve 
-einen Vorhersagepfad. Die Optimierung (z. B. gelöst mit cvxpy) liefert dann eine Stellgrößen-Sequenz für Beschleunigung und Lenkwinkel. 
+einen Vorhersagepfad. Die Optimierung liefert dann eine Stellgrößen-Sequenz für Beschleunigung und Lenkwinkel. 
 Tatsächlich wird nur der erste Lenkwinkel-Impuls umgesetzt (Receding Horizon Control), welcher als neuer Lenkbefehl an das Fahrzeug geht. 
 Im nächsten Zyklus wird der MPC erneut mit aktualisiertem Zustand und ggf. angepasster Referenz gestartet. Giray konnte in Simulationen zeigen, 
-dass der MPC-Regler das Fahrrad effektiv der vorgegebenen Spur folgen lässt: Die geplante Spline-Trajektorie (rot) und die vom MPC gefahrene 
-Ist-Trajektorie (blaue Punkte) stimmen eng überein, was die Güte der prädiktiven Regelung belegt.
+dass der MPC-Regler das Fahrrad effektiv der vorgegebenen Spur folgen lässt. Die geplante Spline-Trajektorie und die vom MPC gefahrene 
+Ist-Trajektorie in seiner Arbeit, stimmen dabei eng überein, was die Güte der prädiktiven Regelung belegt.
 
 
-In der vorliegenden Arbeit wird Girays Fahrtrichtungs-MPC nahtlos in die 
-Webots-Simulationsumgebung portiert und mit dem Balance-Regler gekoppelt. 
-Die Umsetzung erfolgt durch einen Vision-Controller in Python, der analog zum Ansatz von Giray einen modellprädiktiven Lenkwinkel-Regler realisiert. 
-Auch hier kommt ein vereinfachtes Bicycle-Modell (\(x=[x,y,v,\text{yaw}]\), \(u=[\text{accel},\text{steer}]\)) zum Einsatz, und die prädiktive 
-Optimierung berücksichtigt ähnliche Stellgrößen- und Zustandskosten sowie Begrenzungen (Lenkwinkel, Lenkrate, Geschwindigkeit). Einige Anpassungen 
-waren jedoch nötig: Anstatt einer komplexen Kurvenextraktion aus dem Kamerabild nutzt der Vision-Controller einen direkten Querfehler zur Fahrspur 
-als Eingang. Die laterale Abweichung des Fahrrads von der Fahrbahnmitte (z.\,B. normiert zwischen \(\pm 0.5\)) wird laufend aus der Bildsegmentierung 
-oder einem Fallback-Verfahren ermittelt. Aus diesem Fehler wird eine Zielführung abgeleitet: der Soll-Gierwinkel des Fahrrads wird proportional zum 
-Querfehler angepasst, sodass das Fahrzeug zurück zur Spurmitte dreht. Konkret wird ein \(target\_yaw\) berechnet, der vom aktuellen \(yaw\)-Winkel 
-um einen Korrekturterm (proportional zum Fehler) abweicht. Zwischen aktuellem \(yaw\) und diesem Ziel-\(yaw\) erzeugt das System eine kurze 
-Referenztrajektorie über den Horizont \(T\): das Fahrrad soll in \(T\) Schritten gleichmäßig von der aktuellen Ausrichtung zur Zielausrichtung 
-drehen. Dazu werden über \(T=3\) diskrete Zeitschritte (mit \(\Delta t=0{,}1\,\mathrm{s}\)) Zwischenausrichtungen interpoliert und die 
-entsprechenden vorwärts projizierten Positionen berechnet. Die resultierende Trajektorie ist im Wesentlichen eine sanfte Kurve zurück zur 
-Fahrbahnmitte. Dieses Verfahren vereinfacht die Pfadplanung erheblich und ist ausreichend für die Spurhaltung, ohne im Rahmen dieses 
-Kapitels tief in die Bildverarbeitung einsteigen zu müssen (die Details der Fahrbahnerkennung folgen in einem späteren Kapitel).
+\textbf{Adaptierung für Webots-Simulation:} Die Portierung von Girays MPC-Konzept in die Webots-Umgebung erforderte eine systematische 
+Anpassung an die spezifischen Anforderungen der Simulation und Integration mit dem vorhandenen Balance-Controller. Tabelle~\ref{tab:giray_comparison} 
+zeigt die wesentlichen Unterschiede zwischen Girays theoretischem Ansatz und der Webots-Implementierung.
 
+\begin{table}[H]
+\centering
+\caption{Vergleich zwischen Girays MPC-Konzept und Webots-Implementierung}
+\label{tab:giray_comparison}
+\begin{tabular}{|l|l|l|}
+\hline
+\textbf{Aspekt} & \textbf{Giray (Theorie)} & \textbf{Webots-Implementierung} \\
+\hline
+Prädiktionshorizont & N=20 (2\,s - 10\,Hz) & T=3 (0.3\,s - 20\,Hz) \\
+Referenzgenerierung & Spline-Interpolation & Vereinfachte Korrekturtrajectorie \\
+Zustandsvektor & $[x, y, v, \psi]^T$ & $[x, y, v, yaw]^T$ (identisch) \\
+Eingangsvektor & $[a, \delta]^T$ & $[accel, steer]^T$ (identisch) \\
+Regelfrequenz & 10\,Hz & 20\,Hz \\
+Optimierer & CVXPY (theoretisch) & CVXPY (praktisch) \\
+Integration & Standalone & Gekoppelt mit Balance-PID \\
+\hline
+\end{tabular}
+\end{table}
 
-Auf Basis der generierten Referenz führt der Vision\mbox{-}MPC in Webots die Optimierung durch. Der Prädiktionshorizont ist mit 3 Schritten 
-($\approx 0{,}3\,\mathrm{s}$) bewusst kurz gehalten, um die Rechenzeit gering zu halten. Innerhalb dieses Horizonts minimiert der MPC 
-Abweichungen zwischen Fahrzeug und Referenzpfad sowie plötzliche Änderungen der Steuerbefehle. Es gelten harte Constraints: Der Lenkwinkel 
-ist z.\,B.\ auf $\pm 30^\circ$ begrenzt, die Lenkwinkeländerung pro Zeitschritt auf ca.\ $20^\circ/\mathrm{s}$, die Geschwindigkeit auf 
-ca.\ $8\,\mathrm{m/s}$ (bzw.\ wird nicht unter $\sim 0{,}5\,\mathrm{m/s}$ fallen). Diese Grenzen orientieren sich an den physikalischen 
-Fähigkeiten des simulierten Fahrrads und entsprechen teils den in Girays Arbeit genutzten Werten. Der Optimierer (\texttt{cvxpy}) berechnet 
-dann die Eingangssequenz $u_{0\ldots T-1}$; wenn ein optimales Ergebnis gefunden wird, entnimmt der Controller den ersten Steuerbefehl 
-(Beschleunigung und Lenkausschlag) als Sollwert. Falls das Optimierungsproblem nicht zu lösen ist oder zu lange dauert, greift ein 
-Fallback\mbox{-}Regler: In diesem Fall wird etwa ein einfacher P\mbox{-}Regler genutzt, der den Lenkwinkel proportional zum aktuellen 
-Querfehler setzt. In der Praxis zeigte sich jedoch, dass der MPC mit den reduzierten Dimensionen echtzeitfähig läuft 
-(die \texttt{cvxpy}\mbox{-}Lösung erfolgt in wenigen Millisekunden).
+Die Webots-Implementierung vereinfacht Girays Ansatz erheblich durch Reduzierung des Prädiktionshorizonts auf 3 Zeitschritte 
+(\(\approx 0{,}3\,\mathrm{s}\)). Diese Entscheidung wurde aus Echtzeitgründen getroffen, da die Integration mit dem Balance-Controller 
+eine höhere Regelfrequenz (20\,Hz) erfordert. Listing~\ref{lst:webots_mpc_init} zeigt die Initialisierung des MPC-Controllers 
+mit den angepassten Parametern:
 
+\begin{lstlisting}[style=python,caption={MPC-Controller Initialisierung in der Webots-Implementierung},label={lst:webots_mpc_init}]
+def __init__(self):
+    # MPC-Parameter (reduziert gegenueber Giray)
+    self.NX = 4  # Zustandsvektor: [x, y, v, yaw]
+    self.NU = 2  # Eingaenge: [accel, steer]
+    self.T = 3   # Praediktionshorizont (reduziert fuer Echtzeitfaehigkeit)
+    
+    # Kostenmatrizen (aehnlich Girays Formulierung)
+    self.R = np.diag([0.01, 0.01])      # Eingangskostenmatrix
+    self.Rd = np.diag([0.01, 1.0])      # Eingangsdifferenzkostenmatrix
+    self.Q = np.diag([1.0, 1.0, 0.5, 0.5])  # Zustandskostenmatrix
+    self.Qf = self.Q                    # Terminale Kostenmatrix
+    
+    # Fahrzeugparameter (Bicycle-Modell)
+    self.WB = 1.2  # Radstand [m] (Fahrrad)
+    self.DT = 0.1  # Zeitschritt [s]
+    
+    # Physikalische Begrenzungen
+    self.MAX_STEER = math.radians(30.0)  # Maximaler Lenkwinkel
+    self.MAX_DSTEER = math.radians(20.0) # Maximale Lenkwinkelrate
+    self.MAX_SPEED = 8.0                 # Maximale Geschwindigkeit
+    self.MIN_SPEED = 0.5                 # Minimale Geschwindigkeit
+\end{lstlisting}
 
-Die vom Vision\mbox{-}MPC berechneten Sollgrößen — kontinuierlicher Lenkwinkel 
-(\texttt{steer\_rad}) und gewünschte Beschleunigung 
-bzw.\ Geschwindigkeit (\texttt{accel}) — werden anschließend für die Ausführung skaliert und geglättet. Insbesondere wird der Lenkwinkel 
-auf den normierten Bereich $[-1,1]$ abgebildet, der dem Stellbereich des Lenkservos entspricht. Zudem begrenzt ein Rate\mbox{-}Limiter 
-plötzliche Änderungen (z.\,B.\ maximal $\pm 0{,}005$ pro Zeitschritt in der normierten Größe), um ruckfreie Lenkbewegungen zu gewährleisten. 
-Auch die aus \texttt{accel} abgeleitete Zielgeschwindigkeit wird auf $0$ bis $1$ normiert. Dieser Wert dient als grober Speed\mbox{-}Befehl, 
-obgleich die tatsächliche Geschwindigkeitsregelung in unserem System primär auf der C\mbox{-}Seite erfolgt (siehe unten).
+Anstelle von Girays komplexer Spline-Interpolation aus Bildpunkten verwendet die Webots-Implementierung eine vereinfachte 
+Referenzgenerierung basierend auf dem aktuellen Vision-Fehler. Die Referenztrajektorie wird aus dem lateralen Spurabweichungsfehler 
+abgeleitet, indem ein Ziel-Gierwinkel berechnet und über den kurzen Horizont interpoliert wird.
 
-Die eigentliche Integration des portierten MPC in die Simulationsregelung geschieht durch eine Kaskadierung mit dem Balance\mbox{-}Controller. 
-Wie in Abbildung~4.2 (Signalflussdiagramm) skizziert, arbeitet der Vision\mbox{-}Controller (Python) auf niedriger Frequenz ($\sim 20\,\mathrm{Hz}$) 
-und sendet periodisch seine berechneten Steuerbefehle an den Balance\mbox{-}Controller (C). Der Balance\mbox{-}Controller läuft mit 
-dem Webots\mbox{-}Basis\mbox{-}Zyklus (2–10\,ms Schritte, also $>100\,\mathrm{Hz}$) und stabilisiert das Fahrzeug über einen PID\mbox{-}Regler 
-auf den Rollwinkel. Konkret regelt er den Lenkwinkel so, dass das Fahrrad aufrecht bleibt (Rollabweichung $\rightarrow$ Lenkimpuls). Die vom 
-Vision\mbox{-}MPC kommende Lenkvorgabe wird nun mit der Balance\mbox{-}Korrektur überlagert. In der Implementierung wird eine feste Gewichtung 
-von 50:50 verwendet: der finale Lenksollwert an den Motor ist der Mittelwert aus Vision\mbox{-}Output und Balance\mbox{-}PID\mbox{-}Output. 
-Damit wird verhindert, dass die Fahrtrichtungsregelung das Stabilisieren stört — das Fahrrad bleibt primär durch den PID aufrecht, während der 
-MPC langsam die Richtung vorgibt. Zusätzlich beeinflusst der Vision\mbox{-}Befehl die Geschwindigkeit: Der Balance\mbox{-}Controller enthält 
-einen unterlagerten Geschwindigkeitsregler, der bei großen Lenkausschlägen die Vortriebsleistung reduziert (ähnlich einer Kurvenverzögerung). 
-Ist also der visionäre Lenkwunsch stark (scharfe Kurve), bremst der Balance\mbox{-}Controller das Hinterrad etwas ab, um Kippgefahr zu minimieren.
+\textbf{MPC-Optimierungsalgorithmus:} Die Webots-Implementierung folgt Girays theoretischer Formulierung bei der Lösung des 
+Optimierungsproblems. Listing~\ref{lst:webots_mpc_solver} zeigt den Kern des MPC-Algorithmus:
 
-Die Kommunikation zwischen den beiden Reglern erfolgt über einen IPC-Kanal 
-innerhalb von Webots. Der Vision-Controller sendet seine Sollwerte 
-als strukturiertes Paket (Lenkkommando, Geschwindigkeitskommando, Gültigkeits-Flag und einige Diagnosewerte) an den Balance-Controller. 
-Dieser liest das Paket (Device \texttt{command\_rx}) in jedem Zyklus aus und nutzt die enthaltenen Sollgrößen in seiner Regelung. Umgekehrt 
-schickt der Balance-Controller in festen Intervallen Statusdaten zurück – insbesondere den aktuellen Rollwinkel, den resultierenden Lenkbefehl 
-und Informationen zur Stabilität – damit der Vision-Controller z.\,B. im Overlay Feedback anzeigen oder bei Kontrollverlust eingreifen kann. 
-Insgesamt ermöglicht diese Architektur eine echtzeitfähige Portierung von Girays Fahrtrichtungs-MPC in die virtuelle Umgebung: Der prädiktive 
-Lenkwinkel-Regler arbeitet mit dem Kamerabild und gibt Sollwerte vor, während der vorhandene Balance-Regler die kurzfristige Stabilisierung 
-übernimmt.
+\begin{lstlisting}[style=python,caption={MPC-Optimierungsalgorithmus in der Webots-Implementierung},label={lst:webots_mpc_solver}]
+def linear_mpc_control(self, xref, xbar, x0):
+    """Loest MPC-Optimierungsproblem"""
+    try:
+        x = cvxpy.Variable((self.NX, self.T + 1))
+        u = cvxpy.Variable((self.NU, self.T))
+        
+        cost = 0.0
+        constraints = []
+        
+        for t in range(self.T):
+            cost += cvxpy.quad_form(u[:, t], self.R)
+            
+            if t != 0:
+                cost += cvxpy.quad_form(xref[:, t] - x[:, t], self.Q)
+            
+            A, B, C = self.get_linear_model_matrix(
+                xbar[2, t], xbar[3, t], 0.0)  # Linearisierung um Referenz
+            constraints += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t] + C]
+            
+            if t < (self.T - 1):
+                cost += cvxpy.quad_form(u[:, t + 1] - u[:, t], self.Rd)
+                constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <= self.MAX_DSTEER * self.DT]
+        
+        cost += cvxpy.quad_form(xref[:, self.T] - x[:, self.T], self.Qf)
+        
+        # Randbedingungen
+        constraints += [x[:, 0] == x0]
+        constraints += [x[2, :] <= self.MAX_SPEED]
+        constraints += [x[2, :] >= self.MIN_SPEED]
+        constraints += [cvxpy.abs(u[0, :]) <= self.MAX_ACCEL]
+        constraints += [cvxpy.abs(u[1, :]) <= self.MAX_STEER]
+        
+        # Problem loesen
+        prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
+        prob.solve(verbose=False)
+        
+        if prob.status == cvxpy.OPTIMAL or prob.status == cvxpy.OPTIMAL_INACCURATE:
+            u_opt = u.value
+            if u_opt is not None:
+                return u_opt[0, 0], u_opt[1, 0]  # Erste Kontrollaktion
+        
+        return self._simple_control_fallback(xref, x0)
+        
+    except Exception as e:
+        return self._simple_control_fallback(xref, x0)
+\end{lstlisting}
+
+Die Implementierung folgt dem Standard-MPC-Schema mit quadratischen Kosten und linearen Constraints. Im Gegensatz zu Girays 
+längerfristigem Horizont ermöglicht die Reduzierung auf 3 Zeitschritte eine Echtzeitausführung mit 20\,Hz.
+
+\textbf{Integration mit Balance-Controller:} Ein wesentlicher Unterschied zu Girays Standalone-Ansatz liegt in der Integration mit 
+dem bestehenden Balance-PID-Regler. Die Webots-Implementierung realisiert eine Kaskadenregelung, bei der der MPC-Controller die 
+langfristige Spurführung übernimmt, während der Balance-PID die kurzfristige Stabilisierung gewährleistet. Die MPC-Ausgaben werden 
+normalisiert und über IPC an den C-basierten Balance-Controller übertragen:
+
+\begin{lstlisting}[style=python,caption={IPC-Übertragung der MPC-Kommandos an den Balance-Controller},label={lst:mpc_ipc}]
+def send_vision_command(self, steer_cmd, speed_cmd):
+    """Sendet erweiterte Vision-Command an Balance-Controller"""
+    try:
+        # Begrenzungen anwenden
+        steer_cmd = max(-1.0, min(1.0, steer_cmd))
+        speed_cmd = max(0.0, min(1.0, speed_cmd))
+        
+        # Erweiterte Struct-Format: 8 Felder
+        # (steer_command, speed_command, valid, vision_error, 
+        #  vision_p_term, vision_i_term, vision_d_term, mask_coverage)
+        command_data = struct.pack('ffifffff', 
+                                 steer_cmd, speed_cmd, 1,
+                                 self.vision_error, self.mpc_controller.mpc_p_term, 
+                                 self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term, 
+                                 self.vision_mask_coverage)
+        
+        self.command_emitter.send(command_data)
+        return True
+    except Exception as e:
+        return False
+\end{lstlisting}
+
+\textbf{Bewertung der Portierung:} Die Adaptation von Girays MPC-Konzept für die Webots-Simulation demonstriert sowohl die 
+Übertragbarkeit theoretischer MPC-Ansätze als auch die Notwendigkeit praktischer Kompromisse.
+Die vereinfachte Referenzgenerierung verzichtet auf Girays komplexe Spline-Interpolation, bietet jedoch ausreichende Genauigkeit 
+für die Spurhaltung in der Simulation.
+
+Die erfolgreiche Kopplung mit dem Balance-Controller zeigt, dass MPC-basierte Spurführung und PID-basierte Stabilisierung 
+komplementäre Regelungsebenen darstellen können. Girays theoretischer Beitrag zur modellprädiktiven Fahrzeugführung findet 
+somit praktische Anwendung in einem hybriden Regelungskonzept, das die Vorteile beider Ansätze kombiniert.
 
 
 
 
 \subsection{Strategien der Spurführung}
-\subsubsection{YOLO-Segmentierung (YOLOv8) + MPC}
 
-In dieser Strategie kommt ein auf YOLOv8 basierendes Segmentierungsmodell zum Einsatz, 
-um die Fahrspur im Kamerabild zu erkennen. YOLOv8 (Ultralytics) ermöglicht die 
-Echtzeit-Objekterkennung mit Segmentierung – hier wird es genutzt, um den 
-Straßenbereich im Bild als Klasse \enquote{Straße} zu identifizieren. Ziel der YOLO-Strategie ist es, 
-den lateralen Spurabweichungsfehler robust und präzise zu bestimmen, indem ein vortrainiertes neuronales 
-Netz die Fahrbahnmarkierungen und -fläche erkennt. Der daraus resultierende Fehlerwert wird anschließend 
-an einen Model Predictive Controller (MPC) übergeben, der optimale Lenk- und Beschleunigungsbefehle berechnet, um das Fahrrad auf Kurs zu halten.
+Die Vision-basierte Spurführung des selbstbalancierenden Fahrrads nutzt zwei unterschiedliche Erkennungsstrategien: 
+eine YOLO-basierte Segmentierung als Hauptverfahren und eine robuste Fallback-Strategie für Ausfallsituationen. 
+Beide Verfahren extrahieren aus dem Kamerabild einen lateralen Spurabweichungsfehler, der vom zuvor beschriebenen MPC 
+in Lenkbefehle umgesetzt wird.
 
-\textbf{Initialisierung: }Beim Start des Vision-Controllers (\texttt{vision\_control\_py.py}) wird das YOLO-Modell einmalig geladen. 
-Die Methode \texttt{\_init\_yolo()} versucht, eine trainierte Gewichtsdatei (z.\,B.\ \texttt{best.pt}) aus dem 
-Projektverzeichnis zu laden. Ist die \texttt{ultralytics}-Bibliothek verfügbar (\texttt{YOLO\_AVAILABLE=True}) 
-und die Datei vorhanden, wird ein YOLOv8-Segmentierungsmodell in \texttt{self.yolo\_model} geladen und auf das 
-vorhandene Rechengerät (GPU oder CPU) übertragen. Der folgende Codeausschnitt zeigt diese Initialisierung – es werden 
-mehrere Pfade nach der Gewichtsdatei durchsucht, das Modell geladen und bei Erfolg aktiviert. Falls kein Modell gefunden 
-wird, deaktiviert das System YOLO und wechselt automatisch in den Fallback-Modus:
+\subsubsection{YOLO-Segmentierung (YOLOv8)}
 
-\begin{lstlisting}[style=wbt_c,caption={YOLO-Modell Initialisierung},label={lst:yolo_init}]
+Die YOLO-Strategie nutzt ein vortrainiertes YOLOv8-Segmentierungsmodell zur robusten Erkennung der Fahrbahn. 
+Das neuronale Netz identifiziert Straßenbereiche als Klasse \enquote{street\_main} und liefert sowohl Bounding Boxes 
+als auch pixelgenaue Segmentierungsmasken, wie in Kapitel \ref{chap:yolo} beschrieben ist.
+Das System sucht beim Start nach einer trainierten Gewichtsdatei (\texttt{best.pt}) 
+und lädt das YOLOv8-Modell auf das verfügbare Rechengerät. Bei Nichtverfügbarkeit erfolgt automatischer Wechsel 
+zur Fallback-Strategie:
+
+\begin{lstlisting}[style=python,caption={YOLO-Modell Initialisierung},label={lst:yolo_init}]
   if YOLO_AVAILABLE:
     possible_paths = [
         "../balance_control_c/yolo_vision/runs/segment/train/weights/best.pt",
@@ -203,15 +350,9 @@ wird, deaktiviert das System YOLO und wechselt automatisch in den Fallback-Modus
 \end{lstlisting}
 
 
-Im Echtzeitbetrieb (ca.\ \(20\,\mathrm{Hz}\)) wird jedes Kamerabild durch YOLO analysiert. Die Funktion \texttt{get\_vision\_error\_yolo()} 
-führt eine Inferenz auf dem aktuellen Frame aus und filtert dabei nur Objekte der Klasse \enquote{Straße} (Klassen-ID~2) heraus. YOLO liefert 
-für erkannte Straßenbereiche \emph{Bounding Boxes} und zugehörige Segmentierungsmasken. Aus allen erkannten Bounding Boxes der Klasse~2 werden 
-die Mittelpunkte berechnet und gemittelt, um einen durchschnittlichen Straßenmittelpunkt zu erhalten. Die laterale Abweichung (\texttt{error}) 
-ergibt sich dann aus der horizontalen Differenz zwischen diesem Straßenmittelpunkt und der Bildmitte, normiert durch die Bildbreite. Der folgende 
-Codeausschnitt illustriert die Berechnung des Fehlers \texttt{error}: Alle Erkennungen mit \texttt{cls == 2} (\enquote{Straße}) werden gesammelt, 
-ihre x-Mitteltwerte berechnet und daraus die Abweichung vom Bildzentrum bestimmt. Ein positiver Fehlerwert bedeutet, dass die Straße im Bild links 
-der Fahrzeugmitte liegt (das Fahrrad muss nach links gegensteuern), ein negativer Wert entsprechend, dass die erkannte Spur rechts liegt. 
-Typischerweise liegt \texttt{error} im Bereich von etwa $-0.5$ bis $+0.5$ (dimensionslos):
+Im Echtzeitbetrieb (20\,Hz) analysiert YOLO jedes Kamerabild und filtert Straßenobjekte 
+(Klasse \enquote{street\_main}). Aus den Bounding Boxes aller erkannten Straßenbereiche wird der gemittelte Mittelpunkt berechnet. Die laterale 
+Abweichung ergibt sich als normierte Differenz zwischen Straßenmittelpunkt und Bildmitte (\texttt{error} $\in [-0.5, +0.5]$):
 
 \begin{figure}[H]
   \centering
@@ -221,7 +362,7 @@ Typischerweise liegt \texttt{error} im Bereich von etwa $-0.5$ bis $+0.5$ (dimen
 \end{figure}
 
 
-\begin{lstlisting}[style=wbt_c,caption={YOLO-Modell Error Berechnung},label={lst:yolo_error_calculation}]
+\begin{lstlisting}[style=python,caption={YOLO-Fehlerberechnung},label={lst:yolo_error_calculation}]
   street_indices = [idx for idx, cls in enumerate(r.boxes.cls) if cls == 2]
   if street_indices:
       x_centers = []
@@ -236,55 +377,26 @@ Typischerweise liegt \texttt{error} im Bereich von etwa $-0.5$ bis $+0.5$ (dimen
       return error, mask
 \end{lstlisting}
 
-Zusätzlich zur Fehlerberechnung wird eine Binärmaske der erkannten Straße erzeugt (\texttt{mask}). Alle Segmentierungspixel der Klasse Straße 
-werden dazu vereinigt, und es wird die prozentuale Maskenabdeckung im Bild (\texttt{vision\_mask\_coverage}) berechnet. Diese Informationen 
-dienen vor allem der Visualisierung und Diagnose. Für die Regelung wird ausschließlich der Fehlerwert verwendet, nicht die gesamte Maske.
-
-Um bei Aussetzern der Detektion stabil zu bleiben, implementiert das System eine Ausfallüberbrückung: Der zuletzt gültige Fehlerwert 
-(\texttt{last\_valid\_error}) und die Maske werden zwischengespeichert (\texttt{\_store\_valid\_values}). Bleibt eine YOLO-Detektion 
-in einem Zyklus aus (z.\,B.\ temporäres Nichterkennen der Spur), greift der Controller auf die zuletzt gültigen Werte zurück. 
-Bei längerer Detektionspause wird der gespeicherte Fehler schrittweise mit einem Faktor $<1$ multipliziert (Decay), sodass sein Betrag 
-allmählich abnimmt. Nach einer definierten Anzahl von Ausbleib\mbox{-}Zyklen fällt der Fehler auf $0$ zurück, um ein Ausbrechen des Fahrrads 
-zu verhindern. Durch diese Maßnahme werden abrupte Änderungen vermieden und der MPC\mbox{-}Regler bleibt auch bei kurzzeitig fehlender 
-Bildinformation stabil.
-
-\paragraph{MPC-Regelung.}
-Der mittels YOLO ermittelte Spurfehler wird an den Vision-MPC-Controller übergeben, der daraufhin einen Lenksollwert und optional einen 
-Geschwindigkeits­sollwert berechnet. Intern nutzt der MPC ein einfaches Bicycle-Modell des Fahrzeugs und einen kurzen Prädiktionshorizont, 
-um die Trajektorie zu optimieren. Ist die Optimierungs-Bibliothek verfügbar, wird ein Quadratikprogramm (\texttt{CVXPY}) gelöst, das den 
-Querfehler sowie Änderungen des Lenkwinkels in die Kostenfunktion einbezieht; andernfalls fällt der Controller auf einen einfachen P-Regler 
-zurück, der den Fehler proportional in einen Lenkwinkel umsetzt. Das Ergebnis der MPC-Berechnung ist ein Lenkwinkel (in Rad) sowie eine 
-Beschleunigung bzw.\ Zielgeschwindigkeit. Diese werden im Python-Controller noch normalisiert und geglättet – der Lenkwert \texttt{steer\_rad} 
-wird durch den maximalen Lenkwinkel dividiert und zu \texttt{steer\_cmd} $\in [-1,1]$ skaliert, anschließend durch einen Rate-Limiter nur 
-begrenzt verändert (max.\ Änderung $\pm 0.005$ pro Schritt, Begrenzung auf $\pm 0.08$). Der normierte Lenkbefehl sowie ein entsprechender 
-Geschwindigkeitsbefehl werden schließlich als Vision Command an den Balance-Controller (C-Prozess) gesendet. Dort wird dieser Soll-Lenkwert 
-mit dem stabilisierenden Lenkoutput des Balance-PID-Reglers kombiniert (standardmäßig 50/50-Gewichtung).
-
-
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=1.0\textwidth]{figures/mpc.png}
-  \caption{MPC-Strategie.}
-  \label{fig:fallback}
-\end{figure}
-
-\paragraph{Limitierungen.}
-Die YOLO-basierte Spurführung hängt stark von einem geeigneten vortrainierten Modell und ausreichender Rechenleistung ab. In Szenarien, die 
-stark von den Trainingsdaten abweichen, kann es zu Fehl- oder Nichterkennungen kommen – in solchen Fällen muss der oben beschriebene 
-Abkling-Mechanismus greifen. Zudem wird aus der Segmentierung derzeit lediglich ein einzelner Querfehlerwert extrahiert; Informationen 
-über den Straßenverlauf (z.\,B.\ Krümmung) bleiben ungenutzt, obwohl die Segmentierungsmaske solche Details prinzipiell liefert. Zukünftige 
-Erweiterungen könnten diese zusätzlichen Informationen verwenden, um vorausschauendere Lenkentscheidungen zu ermöglichen. Insgesamt bietet 
-die YOLO+MPC-Strategie eine präzise Spurhaltung, ist aber auf eine funktionierende KI-Erkennung angewiesen.
+Das System implementiert eine Ausfallüberbrückung durch Zwischenspeicherung 
+der letzten gültigen Fehlerwerte. Bei Detektionsaussetzern wird der gespeicherte Fehler mit Decay-Faktor schrittweise 
+abgeschwächt, bis er nach definierten Ausbleib-Zyklen auf Null fällt. Dies verhindert abrupte Lenkbewegungen bei 
+temporären Erkennungsverlusten.
 
 
 
-\subsubsection{Fallback-Strategie (Kanten/ROI) + MPC}
 
-Falls das YOLO-Modell nicht verfügbar oder die Erkennung unsicher ist, greift eine Fallback-Strategie auf klassische Bildverarbeitung zurück. 
-Diese Methode nutzt Kanten- und Bereichserkennung innerhalb einer ROI (Region of Interest), um weiterhin einen Spurhaltefehler zu bestimmen. 
-Ziel der Fallback-Strategie ist es, eine grundlegende Spurführung auch ohne trainiertes Modell zu gewährleisten – auf Kosten der Robustheit und 
-Genauigkeit. Statt einer neuronalen Segmentierung werden einfache Farb- und Konturfilter verwendet, um die \enquote{Straßenkante} bzw. Fahrbahn 
-im Kamerabild zu erkennen. Dadurch kann das System im Notfall den lateralen Fehler abschätzen und den MPC weiterhin mit sinnvollen Sollwerten versorgen.
+\textbf{Limitierungen:} Die YOLO-Strategie erfordert ein geeignetes vortrainiertes Modell und ausreichende 
+Rechenleistung. Bei Abweichungen von den Trainingsdaten können Fehlerkennungen auftreten. Diese Fehlererkennungen 
+werden in Kapitel \ref{chap:teststrecken} beschrieben. 
+
+
+
+\subsubsection{Fallback-Strategie (ROI-basiert)}
+
+Bei Nichtverfügbarkeit des YOLO-Modells aktiviert sich automatisch eine Fallback-Strategie, die auf klassischer 
+Bildverarbeitung basiert. Diese nutzt Farb- und Konturfilter innerhalb einer definierten Region of Interest (ROI) 
+zur Straßenerkennung, dabei mit geringerer Präzision, aber ohne Abhängigkeit von trainierten Modellen, bei 
+denen zu fehlern bei der Straßenerkennung kommen kann.
 
 \begin{figure}[H]
   \centering
@@ -293,24 +405,15 @@ im Kamerabild zu erkennen. Dadurch kann das System im Notfall den lateralen Fehl
   \label{fig:fallback}
 \end{figure}
 
-\paragraph{Vorgehen.}
-Zu Beginn setzt der Vision-Controller die Fallback-Methode ein, wenn kein YOLO-Modell geladen wurde (oder falls sie in der Konfiguration 
-ausdrücklich gewählt ist). Der Algorithmus definiert zunächst eine feste ROI im Kamerabild, in der die Straße zu vermuten ist. Diese ROI ist 
-trapezförmig: im oberen Bildbereich schmaler und nach unten breiter, um der Perspektive einer Straße nach vorne gerecht zu werden. Standardmäßig 
-beginnt die ROI bei ca.\ 40\% der Bildhöhe und erstreckt sich über \(\sim\)2\% der Bildhöhe als horizontaler Streifen. Sie liegt mittig im Bild 
-und erfasst den Bereich einige Meter vor dem Fahrrad, in dem sich die Fahrspur voraussichtlich befindet. Innerhalb dieser ROI werden die Bilddaten 
-in den HSV-Farbraum konvertiert, um Farbschwellen für die Straßenerkennung anzuwenden. Der Fallback-Algorithmus segmentiert gezielt dunkelgraue 
-Farbtöne (typisch für Asphalt) sowie weiße Bereiche (Markierungslinien): Ein Pixel gilt als \enquote{Straße}, wenn es entweder geringe Sättigung 
-und mittlere Helligkeit (Grau) oder sehr geringe Sättigung und hohe Helligkeit (Weiß) aufweist. Nach dieser Farbfilterung werden morphologische 
-Operationen (Schließen und Öffnen) durchgeführt, um Rauschen zu entfernen und verbleibende Bereiche zu verbinden. Anschließend erfolgt eine 
-Konturenerkennung in der bereinigten Binärmaske. Der folgende Codeausszug veranschaulicht diesen Ablauf – es werden zwei Binärmasken für Straße 
-und Markierungen erstellt, vereinigt und daraus Konturen extrahiert. Die größte gefundene Kontur wird als Straßenbereich angenommen, und aus 
-ihr wird der Querfehler bestimmt.
-
-\newpage
+Das System definiert eine trapezförmige ROI (ca.\ 40\% Bildhöhe, 2\% Breite) zur 
+Fokussierung auf den erwarteten Fahrbahnbereich. Innerhalb dieser ROI erfolgt HSV-basierte Farbsegmentierung für 
+dunkelgraue Straßenbereiche und weiße Markierungen, gefolgt von morphologischen Operationen zur Rauschreduktion. 
+Die größte erkannte Kontur wird als Straßenbereich interpretiert:
 
 
-\begin{lstlisting}[style=wbt_c,caption={Fallback-Modell Error Berechnung},label={lst:fallback_error_calculation}]
+
+
+\begin{lstlisting}[style=python,caption={Fallback-Fehlerberechnung},label={lst:fallback_error_calculation}]
   mask_road = cv2.inRange(hsv, road_lower, road_upper)      # Graue Strasse filtern
   mask_white = cv2.inRange(hsv, white_lower, white_upper)   # Weisse Markierungen filtern
   mask0 = cv2.bitwise_or(mask_road, mask_white)
@@ -330,21 +433,14 @@ ihr wird der Querfehler bestimmt.
 
 \end{lstlisting}
 
-Wie oben ersichtlich, wird die größte Kontur in der Maske ermittelt (vermutlich entspricht diese der Straße im Sichtbereich). Aus der umschließenden Bounding Box dieser Kontur berechnet der Code den Mittelpunkt \texttt{center\_x}. Die Differenz zwischen diesem Konturmittelpunkt und der Bildmitte (\texttt{x\_set}, entspricht hier der halben Bildbreite) ergibt den lateralen Fehler \texttt{error}, welcher – analog zur YOLO–Methode – durch die Bildbreite normiert wird. Auch in der Fallback-Strategie ist \(\texttt{error} > 0\) definiert als Spur links der Mitte, \(\texttt{error} < 0\) als Spur rechts der Mitte. Der berechnete Fehler und die zugehörige Konturmaske werden als neue gültige Werte gespeichert (\texttt{\_store\_valid\_values}), sodass sie bei der nächsten Iteration zur Verfügung stehen. Wird keine Kontur gefunden (etwa wenn die Filter keine zusammenhängende Fläche ergeben), greift das System auch hier auf die zuletzt bekannten Werte zurück. In diesem Fall setzt die gleiche Decay-Logik ein wie bei der YOLO-Strategie: Der alte Fehlerwert wird weiterverwendet und schrittweise abgeschwächt, um ruckartige Lenkbewegungen zu vermeiden. Damit überbrückt der Fallback-Ansatz kurze Erkennungsverluste ähnlich robust.
+Der Algorithmus ermittelt die größte Kontur als Straßenbereich und berechnet deren Mittelpunkt. Die normierte 
+Differenz zur Bildmitte ergibt den lateralen Fehler, analog zur YOLO-Methode. Bei Erkennungsverlusten greift 
+die gleiche Decay-Logik wie in der YOLO-Strategie.
 
-\paragraph{MPC und Steuerung:}
-Der so ermittelte Fehlerwert fließt wiederum in den MPC-Regler ein, der – wie bereits in Abschnitt 4.3.1 beschrieben – einen Lenksollwert berechnet. Die weiteren Schritte (Normierung, Glättung und Übergabe an den Balance-Controller) sind identisch zur YOLO-Strategie. Der Fallback unterscheidet sich also hauptsächlich in der Vision-Fehlerermittlung, während der Regelteil (MPC) unverändert bleibt.
-
-\paragraph{Limitierungen:}
-Die Fallback-Strategie ist einfacher, aber auch anfälliger für Störungen. Sie setzt voraus, dass sich die Straßenfarbe und -markierungen ausreichend deutlich vom Hintergrund abheben. Variierende Lichtverhältnisse, Schatten oder unkonventionelle Straßenbeläge können die fest eingestellten Schwellenwerte unbrauchbar machen. Zudem erfasst die schmale ROI nur einen begrenzten Bereich voraus – plötzliche Krümmungen oder Hindernisse außerhalb dieses Ausschnitts würden nicht rechtzeitig erkannt. Insgesamt bietet der Fallback-Ansatz eine geringere Präzision und Robustheit als die YOLO-Lösung. Er stellt jedoch sicher, dass das Fahrrad notfalls weiter stabil in der Spur gehalten werden kann, selbst wenn die KI-basierte Erkennung temporär ausfällt. In der Praxis dient diese Strategie somit als Notfallmodus, bis die vollwertige Vision-Erkennung (YOLO) wieder greift.
-
-\subsection{Gesamtregelung}
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=1.0\textwidth]{figures/Gesamtregler.png}
-  \caption{Gesamtregelung.}
-  \label{fig:gesamtregelung}
-\end{figure}
+\textbf{Limitierungen:} Die Fallback-Strategie ist anfälliger für variierende Lichtverhältnisse und 
+unkonventionelle Straßenbeläge, da sie auf feste Farbschwellenwerte angewiesen ist.
+Trotz geringerer Präzision gewährleistet sie grundlegende Spurhaltung 
+als Notfallmodus bei YOLO-Ausfall und ist besonders gut für vordefinierte Simulationswege geeignet.
 
 
 
