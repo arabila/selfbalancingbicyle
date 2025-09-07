@@ -496,11 +496,6 @@ OUTPUT chapters/kapitel5.aux
 INPUT ./chapters/kapitel5.tex
 INPUT ./chapters/kapitel5.tex
 INPUT chapters/kapitel5.tex
-INPUT ./figures/Datenblatt.png
-INPUT ./figures/Datenblatt.png
-INPUT ./figures/Datenblatt.png
-INPUT ./figures/Datenblatt.png
-INPUT ./figures/Datenblatt.png
 INPUT ./figures/Kurve.jpeg
 INPUT ./figures/Kurve.jpeg
 INPUT ./figures/Kurve.jpeg
@@ -597,6 +592,10 @@ INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ts1-lmtt10.tfm
 INPUT ./figures/Wind/Wind/Strecke.png
 INPUT ./figures/Wind/Wind/Strecke.png
 INPUT ./figures/Wind/Wind/Strecke.png

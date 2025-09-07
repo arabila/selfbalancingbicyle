@@ -617,7 +617,7 @@
   \end{wrapfigure}
 
 
-  Alle Anweisungen vor dem nächsten Zeitschritt (\texttt{wb\_robot\_step}\mbox{-}Aufruf) werden zunächst gesammelt.
+  Alle Anweisungen vor dem nächsten Zeitschritt \path{wb\_robot\_step}\mbox{-}Aufruf\path{)} werden zunächst gesammelt.
   Mit dem Step\mbox{-}Aufruf rechnet der Simulator den nächsten Physikschritt und aktualisiert die Sensoren, bevor 
   der Controller weiterläuft. Auf diese Weise laufen Simulation und Controller \emph{synchron} in gleichmäßigen
    Zeitschritten. Standardmäßig wartet Webots in diesem synchronen Modus darauf, dass jeder Controller seinen \texttt{wb\_robot\_step} 

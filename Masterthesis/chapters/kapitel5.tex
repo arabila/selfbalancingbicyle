@@ -1,40 +1,109 @@
 \section{Ergebnisse}
+
+In diesem Kapitel werden die experimentellen Ergebnisse der entwickelten Regelungsarchitektur für das 
+selbstbalancierende Fahrrad systematisch präsentiert und analysiert.
+Zunächst wird das digitale Fahrradmodell mit seinen physikalischen Eigenschaften und Parametern dokumentiert, 
+welches als Grundlage für alle nachfolgenden Versuche dient. Anschließend werden verschiedene Teststrecken 
+mit steigender Komplexität untersucht: von einfachen Kurvenfahrten über S-Kurven bis hin zu anspruchsvollen 
+Szenarien mit Seitenwind und Höhenunterschieden. 
+
+Bei den Testfahren wird besondere Aufmerksamkeit dem Vergleich zwischen YOLO-basierter Segmentierung 
+und der robusten ROI-Fallback-Erkennung für die visuelle Spurführung gewidmet. Die Analyse umfasst sowohl qualitative 
+Bewertungen der Fahrtrajektorien als auch quantitative Auswertungen der Regelgrößen wie Rollwinkel, 
+Lenkkommandos und Querfehler. Abschließend wird die Echtzeitfähigkeit des Systems diskutiert und die 
+Übertragbarkeit der Simulationsergebnisse auf das reale Fahrrad bewertet. Die Ergebnisse demonstrieren 
+die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen als auch das Optimierungspotenzial des Systems.
+
 \subsection{Fahrrad Datenblatt}
 
-  Die folgenden Abschnitte beschreiben eine in Webots aufgebaute Simulation als digitalen Zwilling des realen Testfahrrads. Ziel ist, Masse-, Trägheits- und 
-  Reibungsparameter sowie Sensor-/Aktorschnittstellen so realitätsnah zu spiegeln, dass das Fahrverhalten und die Reglerkopplung mit dem Prototyp übereinstimmen. 
-  Auf Basis der ODE-Physik in Webots und der Controller-API (C/Python) wird die in der Hardware verwendete Architektur nachgebildet: eine schnelle innere 
-  Balance-Schleife und eine langsamere, vision-gestützte MPC-Spurführung. Eine Supervisor-Instanz ermöglicht reproduzierbare Versuchsreihen, Resets und Logging, 
-  sodass Parameterstudien und Kalibrierungen unter identischen Bedingungen erfolgen. Damit dient die Simulation als sichere Vorstufe für reale Fahrversuche und 
-  als Referenz für die im Anschluss dokumentierten physikalischen Eigenschaften und Regelungsparameter.
+  Die folgenden Abschnitte dokumentieren eine in Webots R2025a implementierte Simulation, die als digitaler Zwilling des realen 
+  selbstbalancierenden Testfahrrads konzipiert werden sollte. Zentrale Zielsetzung ist die 
+  realitätsnahe Parametrierung von Masse-, Trägheits- und Reibungseigenschaften sowie die authentische Nachbildung der Sensor-/Aktor-Schnittstellen, 
+  sodass das dynamische Fahrverhalten und die Regelkreis-Interaktionen mit dem physischen Prototyp quantitativ übereinstimmen.
 
-  \begin{figure}[H]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/Datenblatt.png}  
-    \caption{Datenblatt}
-    \label{fig:datenblatt}
-  \end{figure}
-  
+  Die Systemarchitektur repliziert die zukünftige zweistufige Regelungsstruktur der Hardware-Implementierung.
+  Eine dedizierte Supervisor-Instanz orchestriert die Versuchsdurchführung durch automatisierte Szenarien-Initialisierung, deterministische 
+  Reset-Funktionen und kontinuierliches Datenlogging aller relevanten Systemgrößen (Rollwinkel, Lenkkommandos, Trajektorien, Sensorwerte). 
+  Diese Infrastruktur gewährleistet reproduzierbare Parameterstudien und systematische Kalibrierungsprozeduren unter identischen Anfangsbedingungen. 
+  Durch die Entkopplung von virtueller Simulationszeit und Realzeit können auch rechenintensive Algorithmus-Varianten (z.\,B. YOLO-Segmentierung) 
+  ohne Echtzeitbeschränkungen evaluiert werden, während die physikalische Konsistenz der Dynamik erhalten bleibt.
+
+  Die Simulation fungiert somit als risikofreie Entwicklungs- und Validierungsplattform für komplexe Regelungsstrategien, bevor diese auf 
+  das reale Fahrrad übertragen werden. Gleichzeitig dient sie als Referenzsystem für die nachfolgend dokumentierten physikalischen Eigenschaften, 
+  Regelungsparameter und experimentellen Validierungsresultate. Die detaillierte Parameterdokumentation ermöglicht eine vollständige 
+  Nachvollziehbarkeit und Reproduzierbarkeit der Simulationsergebnisse.
+
+ 
   \begin{itemize}
-    \item \textbf{Masse und Schwerpunkt:} Der Rahmen des simulierten Fahrrads wiegt 3{,}5\,kg; zusammen mit den Rädern beträgt die Gesamtmasse ca. 5{,}1\,kg. 
-    Der Schwerpunkt liegt etwa 5\,cm über dem Boden\gh, was ein stabiles Balanceverhalten begünstigt.
+    \item \textbf{Hierarchischer Aufbau in Webots:} Das Fahrradmodell ist als \texttt{Robot}-Knoten strukturiert. 
+    Die Hauptkomponenten sind über \texttt{HingeJoint}-Knoten verbunden, das Hinterrad (\texttt{rear\_wheel}), die Lenker-Gabel-Einheit 
+    (\texttt{Handlebars\_and\_Fork}) mit integriertem Vorderrad sowie die Kurbel-Pedal-Einheit (\texttt{crank}). Jeder Knoten besitzt 
+    spezifische \texttt{Physics}-Eigenschaften und \texttt{boundingObject}-Definitionen für die Kollisionserkennung.
     
-    \item \textbf{Trägheitssensor:} Im Webots--Modell ist der Trägheitssensor als Array in der Form
+    \item \textbf{Masse und Schwerpunkt:} Der Hauptrahmen (\texttt{BICYCLE Robot}) hat eine Masse von 4\,kg mit dem Schwerpunkt bei 
+    \texttt{centerOfMass [0 -0.1 0.32]}, was 32\,cm über dem Boden und 10\,cm hinter der geometrischen Mitte entspricht. Die Lenker-Gabel-Einheit 
+    wiegt 2{,}5\,kg, jedes Rad 2\,kg. Die Gesamtmasse beträgt somit 10{,}5\,kg. Diese Massenverteilung begünstigt ein stabiles Balanceverhalten 
+    durch den tiefliegenden Schwerpunkt und die konzentrierte Masse im Hauptrahmen.
+    
+    \item \textbf{Trägheitsmoment-Definition und physikalische Auswirkungen:} Webots verwendet das \texttt{inertiaMatrix}-Feld im \texttt{Physics}-Knoten als 9-elementiges Array in der Form
     \[
       [\,I_{xx}\; I_{xy}\; I_{xz}\; I_{xy}\; I_{yy}\; I_{yz}\; I_{xz}\; I_{yz}\; I_{zz}\,]
     \]
-    angegeben. Für den Fahrradrahmen ergibt sich ein annähernd diagonal dominanter Trägheitstensor mit
-    \(I_{xx}\approx I_{yy}=0{,}1\) und \(I_{zz}=0{,}05\,\mathrm{kg\,m^{2}}\)\gh. Der kleinere Wert um die Hochachse (Yaw-Trägheit) erleichtert schnelle 
-    Lenkbewegungen; die Off-Diagonaleinträge sind Null, was bedeutet, dass die Hauptträgheitsachsen mit den Achsen des Modells ausgerichtet sind.
+    wobei die symmetrische 3×3-Matrix in Zeilen-Hauptordnung gespeichert wird. Für den Hauptrahmen ergibt sich 
+    \texttt{inertiaMatrix [0.08 0 0 0 0.05 0 0 0 0.07]}, was \(I_{xx}=0{,}08\), \(I_{yy}=0{,}05\) und \(I_{zz}=0{,}07\,\mathrm{kg\,m^{2}}\) 
+    entspricht.
+
+    Die spezifische Trägheitsverteilung hat direkten Einfluss auf das Regelverhalten:
+    \begin{itemize}
+      \item \textbf{Roll-Trägheit} \(I_{xx}=0{,}08\,\mathrm{kg\,m^{2}}\): Bestimmt die Widerstandsfähigkeit gegen Rollbewegungen um die Längsachse. 
+      Der moderate Wert ermöglicht schnelle Balance-Korrekturen durch den PID-Regler, ohne dass zu träge oder zu nervöse Reaktionen auftreten. 
+      Ein zu kleiner Wert würde zu übermäßig schnellen Rollschwingungen führen, ein zu großer Wert die Reaktionsfähigkeit des Balance-Systems reduzieren.
+      
+      \item \textbf{Pitch-Trägheit} \(I_{yy}=0{,}05\,\mathrm{kg\,m^{2}}\): Dies ist physikalisch plausibel, da das Fahrrad in Längsrichtung kompakter gebaut ist. 
+      Für die Balance-Regelung bedeutet dies, dass Störungen durch Geschwindigkeitsänderungen schneller abklingen und weniger Einfluss auf 
+      die Roll-Stabilität haben.
+      
+      \item \textbf{Yaw-Trägheit} \(I_{zz}=0{,}07\,\mathrm{kg\,m^{2}}\): Der Wert ist so gewählt, dass Richtungsänderungen responsiv erfolgen können, ohne dass das System bei schnellen 
+      Lenkmanövern instabil wird. Dies ist besonders relevant für die MPC-Spurführung, die präzise Trajektorienverfolgung erfordert.
+    \end{itemize}
+
+    Die Null-Werte für alle Off-Diagonalelemente (\(I_{xy} = I_{xz} = I_{yz} = 0\)) bedeuten, dass die Hauptträgheitsachsen mit den 
+    Koordinatenachsen des Fahrradmodells ausgerichtet sind. Dies vereinfacht die Regelung erheblich, da keine Kreuzverkopplungen zwischen 
+    den Rotationsachsen auftreten. In der Praxis führt dies zu entkoppelten Regelkreisen, da Roll-Bewegungen nicht direkt Pitch- oder Yaw-Bewegungen 
+     beeinflussen und umgekehrt. Diese Eigenschaft ist entscheidend für die Stabilität der zweistufigen Regelungsarchitektur, 
+    da die Balance-PID-Regelung primär auf Roll-Korrekturen fokussieren kann, ohne komplexe Mehrachsen-Kopplungen berücksichtigen zu müssen.
     
-    \item \textbf{Räder:} Die beiden Räder haben einen Radius von 5{,}5\,cm und jeweils etwa 0{,}8\,kg Masse\gh. Durch die rotierende Masse entsteht ein 
-    kleiner gyroskopischer Stabilisierungs-Effekt (Trägheitsmoment pro Rad ca. \(1\times10^{-3}\,\mathrm{kg\,m^{2}}\)), der zur Gesamtstabilität beiträgt, 
-    aber aufgrund des geringen Werts nur begrenzten Einfluss hat\gh.
+    \item \textbf{Rad-Spezifikationen:} Beide Räder sind als \texttt{Cylinder} mit \texttt{radius 0.45} (45\,cm) und \texttt{height 0.06} (6\,cm Reifenbreite) 
+    modelliert. Die tatsächliche Skalierung erfolgt durch \texttt{Transform}-Knoten mit \texttt{scale 0.004 0.0081 0.0081}, was einen effektiven 
+    Radius von ca. 3{,}6\,cm ergibt. Jedes Rad hat \texttt{inertiaMatrix [0.1 0.1 0.2 0 0 0]}, wobei \(I_{zz}=0{,}2\,\mathrm{kg\,m^{2}}\) 
+    das Rotationsträgheitsmoment um die Radachse darstellt. Der gyroskopische Effekt ist bei der geringen Radmasse und niedrigen 
+    Fahrgeschwindigkeiten vernachlässigbar.
     
-    \item \textbf{Reibungsparameter:} Die Radnaben besitzen eine viskose Lagerdämpfung (\texttt{dampingConstant} = 0{,}1) sowie Haftreibung (\texttt{staticFriction} = 0{,}1)\gh. 
-    Diese Parameter simulieren Lagerveluste und verhindern z.\,B. ein freies Schwingen oder Durchrutschen der Räder im Stillstand. Zwischen Reifen und 
-    Untergrund sorgt ein Coulomb-Reibungskoeffizient von etwa 0{,}8 für gute Traktion\gh; ein geringer Rückprallkoeffizient von 0{,}1 begrenzt die 
-    Sprungelastizität des Reifenkontakts.
+    \item \textbf{Gelenk- und Reibungsparameter:} Die \texttt{HingeJoint}-Verbindungen verwenden \texttt{jointParameters} mit spezifischen 
+    Dämpfungs- und Reibungswerten: \texttt{dampingConstant} zwischen 0{,}2 (Kurbel) und 0{,}8 (Räder) simuliert viskose Lagerverluste, 
+    während \texttt{staticFriction 0.1} Haftreibung im Stillstand verhindert. Die Rad-Boden-Interaktion wird über \texttt{ContactProperties} 
+    mit \texttt{coulombFriction [0.8]} und \texttt{bounce 0.3} definiert, wobei das Material \texttt{``wheel''} mit \texttt{``ground''} 
+    gekoppelt ist. Diese Werte sorgen für realistische Traktion bei begrenzter Sprungelastizität.
+    
+    \item \textbf{Antrieb und Sensorik:} Das Antriebssystem besteht aus zwei separaten Motoren mit unterschiedlichen Funktionen:
+    
+    \textbf{Antriebsmotor (Hinterrad):} Der \texttt{RotationalMotor} mit dem Namen \texttt{``motor::wheel''} am Hinterrad-\texttt{HingeJoint} 
+    (\texttt{rear\_wheel}) verfügt über ein \texttt{maxTorque} von 120\,Nm. Dieser Motor ist für den Vortrieb des Fahrrads verantwortlich 
+    und wird von der Balance-Regelung angesteuert, um die gewünschte Geschwindigkeit zu halten und gleichzeitig Rollwinkel-Korrekturen 
+    durch differentielle Radgeschwindigkeiten zu unterstützen.
+    
+    \textbf{Lenkmotor (Vorderrad):} Der \texttt{RotationalMotor} mit dem Namen \texttt{``motor::handlebars''} am Lenker-Gabel-\texttt{HingeJoint} 
+    (\texttt{Handlebars\_and\_Fork}) hat ein reduziertes \texttt{maxTorque} von 25\,Nm. Dieser Motor steuert den Lenkeinschlag um die 
+    Z-Achse und ist das primäre Stellglied für die Balance-Regelung. Die geringere Maximalkraft ist der begrenzten 
+    Hebelwirkung der Lenkung geschuldet. Das Lenk-\texttt{HingeJoint} verwendet einen \texttt{dampingConstant} von 0{,}3 für gedämpfte 
+    Lenkbewegungen und verhindert durch \texttt{staticFriction} von 0{,}1 ungewolltes Flattern im Stillstand.
+
+    \textbf{Sensorsystem:} Jeder Motor ist mit einem \texttt{PositionSensor} gekoppelt,
+    der kontinuierliche Winkelpositionsmessungen für mechanische Wegmessung und Lenkwinkel-Feedback liefert. Das zentrale \texttt{InertialUnit} bei 
+    \texttt{translation [0 0 0.32]} (32\,cm über dem Boden) erfasst Roll-, Pitch- und Yaw-Winkel mit hoher Präzision für die Balance-PID-Regelung. 
+    Eine \texttt{Camera} mit \texttt{fieldOfView 2} (ca. 114°) und einer Auflösung von 480×320 Pixel, positioniert bei \texttt{translation 0.96 -1.1 0.95}, 
+    dient der visuellen Spurerkennung für die MPC-basierte Trajektorienverfolgung. Dies ist ein guter Kompromiss zwischen 
+    Auflösung und Ressourcenbedarf.
   \end{itemize}
 
   
@@ -43,10 +112,46 @@
 
 
 
-\subsection{Teststrecken} \label{chap:teststrecken}
-%------------------------------------------------------------------------------------------------
-%------------------------------------------------------------------------------------------------
-\subsubsection{Kurvenfahrt}
+  \subsection{Teststrecken} \label{chap:teststrecken}
+  
+  Die experimentelle Validierung der Regelungsarchitektur erfolgt anhand systematisch konzipierter 
+  Testszenarien, die verschiedene Aspekte der Balance- und Spurführungsregelung bewerten. Für jedes 
+  Szenario werden drei komplementäre Datentypen erfasst und ausgewertet:
+  
+  \textbf{Quantitative Zeitreihendaten:} Umfassen dabei alle Regelgrößen (Rollwinkel, PID-Terme, Lenkkommandos) 
+  sowie Sensordaten (Position, Geschwindigkeit, IMU-Werte) mit einer Abtastrate von 2\,ms entsprechend dem 
+  \texttt{basicTimeStep} in Webots. Die Datenerfassung erfolgt über die \texttt{balance\_log\_data\_t}-Struktur 
+  mit folgenden Maßeinheiten:
+  
+  \begin{itemize}
+    \item \textbf{Winkelgrößen}: Rollwinkel (\texttt{roll\_angle}) in Grad zur besseren Lesbarkeit, alle anderen 
+    Winkel (Lenkwinkel \texttt{steering\_output}, \texttt{final\_steer}, Orientierung \texttt{yaw}, \texttt{pitch}) 
+    in Radiant entsprechend der Webots-API
+    \item \textbf{Positionen}: Weltkoordinaten (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{pos\_z}) in Metern 
+    relativ zum Webots-Koordinatensystem mit Ursprung im Weltmittelpunkt
+    \item \textbf{Geschwindigkeiten}: Zielgeschwindigkeit (\texttt{target\_speed}) in rad/s für Motoransteuerung, 
+    tatsächliche Geschwindigkeit (\texttt{actual\_speed\_kmh}) in km/h für Benutzerfreundlichkeit
+    \item \textbf{PID-Terme}: Dimensionslose Werte für \texttt{p\_term}, \texttt{i\_term}, \texttt{d\_term} 
+    sowohl für Balance- als auch Vision-Regelung
+    \item \textbf{Vision-Parameter}: Normierte Werte zwischen -1,0 und +1,0.
+  \end{itemize}
+  
+  Diese hochfrequenten Messungen ermöglichen eine detaillierte Analyse der Regeldynamik und die Identifikation kritischer Systemzustände.
+  
+  \textbf{Qualitative Spurabweichungsanalysen: } Diese dokumentiert die laterale Abweichung von der Sollspur 
+  über die gesamte Fahrstrecke. Der visionbasierte Querfehler wird kontinuierlich durch die ROI-Pipeline 
+  oder YOLO-Segmentierung erfasst und visualisiert die Güte der Trajektorienverfolgung unter verschiedenen Wahrnehmungsbedingungen.
+  
+  \textbf{Räumliche Trajektorienvisualisierung: } Die Visualisierung erfolgt, durch einen dedizierten \texttt{PathVisualizer}, 
+  der Weltkoordinaten (pos\_x, pos\_y aus den CSV-Logs) in Echtzeit auf die jeweilige Streckentextur projiziert.
+  Die Implementierung in \texttt{path\_visualizer.py} konvertiert Webots-Koordinaten mittels kalibrierter Weltgrenzen 
+  zu Pixelkoordinaten und überlagert die gefahrene Route mit Hintergrundkarten der Testumgebungen. 
+  Die Kombination dieser drei Datenebenen gewährleistet eine umfassende Charakterisierung des Systemverhaltens sowohl 
+  aus regelungstechnischer als auch aus anwendungsorientierter Perspektive.
+  
+  %------------------------------------------------------------------------------------------------
+  %------------------------------------------------------------------------------------------------
+\subsubsection{Kurvenfahrt} \label{chap: kurvenfahrt}
   \begin{wrapfigure}{r}{0.40\textwidth}
     \vspace{-0.8\baselineskip}
     \centering
@@ -54,20 +159,25 @@
     \caption{Kurvenfahrt}
     \label{fig:kurvenfahrt}
   \end{wrapfigure}
-  Die Fahrbahn ist als texturierte Ebene von 64m x 64m realisiert; die effektive Spurbreite beträgt an der 
-  Referenzlinie etwa \SI{3.6}{\meter}. Die Strecke kombiniert eine lange Linkskurve (großer Radius) mit 
+
+  Die Fahrbahn ist als texturierte Ebene von 64m x 64m realisiert worden. Die effektive Spurbreite beträgt an der 
+  Referenzlinie etwa \SI{3.6}{\meter}. Die Strecke kombiniert eine lange Linkskurve mit 
   einem engen Rechtsknick und eignet sich damit zur Bewertung von Spurtreue und Balance unter gekrümmter 
   Führung. Sofern nicht anders angegeben, sind für die Balance der \emph{PID}-Satz $K_p{=}2.0$, $K_i{=}0.2$, $K_d{=}0.5$, 
   der zulässige Lenkwinkelbereich $\delta\in[-0.3,\,0.3]\,\si{rad}$ 
   sowie $v_\text{base}{=}\SI{7}{km/h}$ (Grenzen \SI{5}{km/h} bis \SI{7}{km/h}) aktiv. 
-  Mechanische Plausibilitätsgrenzen sind mit $\delta_\text{phys,max}{=}\SI{1.5}{rad}$ 
-  und $\varphi_\text{roll,max}{=}45^\circ$ gesetzt. Für die visuelle Spurführung kann wahlweise 
+  Für die visuelle Spurführung kann wahlweise 
   YOLO (Konfidenz 0{.}5) oder eine robuste ROI-Fallback-Erkennung verwendet werden (\texttt{roi\_top\_frac} = 0{.}5, 
-  \texttt{roi\_height\_frac} = 0{.}06); Lenkbefehle werden durch \texttt{max\_delta} = 0{.}001 
-  und \texttt{max\_steer\_cmd} = 0{.}06 geglättet und begrenzt. Ziel ist die Fahrt von der ersten 
+  \texttt{roi\_height\_frac} = 0{.}06). Lenkbefehle werden durch \texttt{max\_delta} = 0{.}001 
+  und \texttt{max\_steer\_cmd} = 0{.}06 geglättet und begrenzt, die führ die maximale Anderungsrate des Lenkers steht,
+  für stabile Balance.
+  
+  
+
+  Ziel ist die Fahrt von der ersten 
   zur zweiten roten Markierung bei möglichst mittiger Spurhaltung und stabiler Balance.
 
-  \paragraph{Einsatz eines vereinfachten Balance-P-Reglers}
+  \paragraph{Einsatz eines vereinfachten Balance-P-Reglers:}
   Für eine Baseline wurde der Balance-Regler auf einen reinen P-Anteil gesetzt ($K_p{=}2.0$, $K_i{=}0.0$, 
   $K_d{=}0.0$). \autoref{fig:kurvenfahrt-p} zeigt die gemessenen Größen der Fahrt, \autoref{fig:kurvenfahrt-p-error} 
   den zugehörigen ROI-Querfehler und \autoref{fig:kurvenfahrt-p-strecke} die Trajektorie auf der Strecke.
@@ -77,16 +187,24 @@
     \caption{Kurvenfahrt mit reinem P-Regler (Zeitreihen)}
     \label{fig:kurvenfahrt-p}
   \end{figure}
-  Bereits nach wenigen Sekunden setzt ein wachsendes Aufschaukeln ein: Der durch den Rollwinkel 
-  induzierte Stellbefehl (\texttt{final\_steer}) treibt den Lenkeinschlag alternierend nach links/rechts, 
-  bis die Phasenreserve erschöpft ist. Infolge der reinen Proportionalrückführung, der Aktuatorbegrenzungen 
-  und der unvermeidlichen Latenzen entsteht ein unterdämpftes Verhalten; das Fahrrad kippt nach rund \SI{15}{\second} nach rechts.
+  Die quantitative Analyse der Logdaten (17{,}04\,s Fahrtdauer, 8{,}521 Datenpunkte bei 2\,ms Abtastung) zeigt 
+  charakteristische Instabilitätsmuster. Bereits nach wenigen Sekunden setzt ein wachsendes Pendeln ein, 
+  wobei die Rollwinkel-Amplitude von initial ±0{,}005\,rad auf kritische Werte ansteigt. Der durch den Rollwinkel 
+  induzierte Stellbefehl (\texttt{final\_steer}) erreicht Maximalwerte und treibt den Lenkeinschlag alternierend 
+  nach links/rechts, bis die Phasenreserve erschöpft ist. 
+  
+  Hierbei ist die fehlende Dämpfung der auschlagende Faktor. Der reine P-Anteil dominiert vollständig 
+  (\texttt{i\_term} = \texttt{d\_term} = 0). Infolge der reinen Proportionalrückführung, der Aktuatorbegrenzungen 
+  und der unvermeidlichen Latenzen entsteht ein unterdämpftes Verhalten. Das Fahrrad kippt nach 
+  17{,}04\,s (entsprechend einer zurückgelegten Strecke von ca. \textbf{32\,m} bei 6{,}8\,km/h Durchschnittsgeschwindigkeit) nach rechts.
   \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/P/Error.png}
     \caption{ROI-Querfehler während der P-Regler-Fahrt}
     \label{fig:kurvenfahrt-p-error}
   \end{figure}
+
+  \newpage
 
 
   \begin{wrapfigure}{r}{0.40\textwidth}
@@ -98,18 +216,22 @@
   \end{wrapfigure}
 
 
-  Der ROI-Querfehler zeigt eine ausgeprägte Kopplung zum Rollwinkel: Das Pendeln der Balance überträgt sich 
-  phasenverschoben auf die seitliche Abweichung. Zur Stabilisierung ist daher ein kleiner Integralanteil 
-  (Elimination stationärer Abweichung mit Anti-Windup) und insbesondere ein Derivativanteil (Phasenführung/Dämpfung) 
-  erforderlich; in Kombination mit Rate(\texttt{max\_delta}) und Amplitudenbegrenzung (\texttt{max\_steer\_cmd}) 
-  wird das Überschwingen reduziert und ein Kippen verhindert.
+  Der ROI-Querfehler zeigt dabei eine charakteristische zeitliche Entwicklung. Nach ca. 3\,Sekunden stabilisiert 
+  sich der Fehler zunächst und das System hält die Spurmitte ein. Ab diesem Zeitpunkt beginnt jedoch das 
+  zunehmende Pendeln der Balance-Regelung, das sich phasenverschoben auf die seitliche Abweichung überträgt. 
+  Wie in \autoref{fig:kurvenfahrt-p-error} ersichtlich, bleibt die Spurhaltung bis etwa Sekunde 16 noch beherrschbar, 
+  bevor die Balance-Instabilität kritische Werte erreicht und das Fahrrad schließlich umkippt.
 
-  \clearpage
-  \paragraph{Einsatz des erweiterten Balance-PID-Reglers}
+  \paragraph{Einsatz des erweiterten Balance-PID-Reglers: }
   Für diese Versuchsfahrt wurden die erweiterten PID-Parameter $K_p = 2.0$, $K_i = 0.2$ und $K_d = 0.5$ eingesetzt. 
-  Die Spurführung erfolgte mittels YOLO-basierter Bildverarbeitung. Während die Parameterwahl eine Verbesserung der 
-  Stabilität gegenüber reinen P-Reglern bewirkte, zeigte sich nach etwa 35 s dennoch ein Kippen des Fahrrads, 
-  ausgelöst durch abrupte Richtungsänderungen in der vom Vision-Modell vorgegebenen Trajektorie.
+  Die Spurführung erfolgte nun mittels YOLO-basierter Bildverarbeitung. Die Fahrtdauer betrug nun 35{,}96\,s mit 17{,}983 
+  Datenpunkten, was eine deutliche Verbesserung gegenüber dem P-Regler (17{,}04\,s) darstellt.
+  
+  Die Auswertung zeigt dabei zunächst stabileres Verhalten. In den ersten 30\,s bleibt der Rollwinkel 
+  weitgehend unter ±0{,}02\,rad, während der D-Anteil (\texttt{d\_term}) effektive Dämpfung liefert
+  . Der I-Anteil (\texttt{i\_term}) akkumuliert langsam auf ±0{,}07, was stationäre Fehler reduziert. 
+  Kritisch wird jedoch ab $t \approx 31$\,s die Interaktion mit dem YOLO-System, den sprunghafte Änderungen im 
+  \texttt{vision\_steer\_command} (von 0 auf ±0{,}06\,rad) destabilisieren das ansonsten gut gedämpfte Balance-System.
   \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/YOLO PID/Daten.png}
@@ -118,8 +240,9 @@
   \end{figure}
   
   Die Fehleranalyse bestätigt, dass die Fahrbahnerkennung zum Zeitpunkt der Versuche noch unzureichend trainiert war. 
-  Ab Sekunde 31 steigt der Querfehler abrupt an und fällt kurz darauf wieder ab (Sekunde 34). Dieses unstete Verhalten 
+  Ab Sekunde 31 steigt der Querfehler abrupt an und fällt kurz darauf wieder ab (Sekunde 34). Dieses unkontrollierte Verhalten 
   überträgt sich auf den Rollwinkel, dessen zunehmendes Pendeln schließlich eskaliert und zum Umkippen des Fahrrads nach rechts führt.
+
   
   \begin{figure}[H]
     \centering
@@ -136,19 +259,22 @@
     \label{fig:kurvenfahrt-pid-strecke-yolo}
   \end{wrapfigure}
 
+  
+  
   Trotz dieser Limitierungen lässt sich durch die Kombination von Integral- und Differentialanteil eine verbesserte Spurhaltung 
   mit reduzierten Querabweichungen beobachten. Insbesondere werden stationäre Fehler kompensiert und Überschwinger wirksam gedämpft, 
-  sodass das Fahrrad über weite Teile der Strecke stabil bleibt – auch bei eingeschränkter Fahrbahnerkennung. Kurz vor dem Ziel 
-  versagt die Kompensation jedoch, und das System verliert seine Stabilität. Dies verdeutlicht, dass die Reglererweiterung eine 
-  deutliche Verbesserung bewirkt, die Robustheit aber maßgeblich von der Qualität der visuellen Erkennung abhängt.
+  sodass das Fahrrad über weite Teile der Strecke stabil bleibt. Sodass dies auch bei eingeschränkter Fahrbahnerkennung der Fall ist.
+  Dies verdeutlicht, dass die Reglererweiterung eine deutliche Verbesserung bewirkt, die Robustheit aber maßgeblich von der Qualität der visuellen Erkennung abhängt.
+  In \autoref{fig:kurvenfahrt-pid-error-yolo} wird die unzureichende Fahrbahnerkennung deutlich. 
+  Die Spurführung erkennt Abweichungen von der Optimalbahn zu spät, was zu einem schlangenlinienartigen Fahrstil führt.
 
-  \clearpage
-
-  Die Abbildungen 24a und 24b verdeutlichen Limitierungen der \emph{YOLO}-Segmentierung: Abschnitte der Fahrbahn werden 
-  nur teilweise bzw.\ falsch klassifiziert; insbesondere die Trennung zwischen Fahrbahn und Nebenflächen (z.\,B.\ Rand-/Grünstreifen) 
+  Die Abbildungen 24a und 24b verdeutlichen die Limitierungen der \emph{YOLO}-Segmentierung. Abschnitte der Fahrbahn werden 
+  nur teilweise bzw.\ falsch klassifiziert, insbesondere die Trennung zwischen Fahrbahn und Nebenflächen (z.\,B.\ Rand-/Grünstreifen) 
   ist inkonsistent. Links (a) ist die Spur weitgehend korrekt maskiert, rechts (b) werden Randbereiche fälschlich als Straße erkannt. 
-  Diese Fehlklassifikationen verschieben die geschätzte Spurmitte, erzeugen sprunghafte Querfehler und können instabile Lenkbefehle auslösen.
-
+  Diese Fehlklassifikationen verschieben die geschätzte Spurmitte und erzeugen sprunghafte Querfehler und können instabile Lenkbefehle auslösen.
+  Diese sind in \autoref{fig:kurvenfahrt-pid-strecke-yolo} während ca. 6\,Sekunden - 15\,Sekunden immer wieder zu sehen. Diese werden aber 
+  von den in \autoref{chap: kurvenfahrt} beschriebenen glättenden Effekten der PID-Regler gedämpft und nicht gänzlich übertragen, weshalb
+  die analysierten sprunghaften Querfehler, nicht als Hauptursache für die Instabilität des Systems anzusehen sind.
 
   \begin{figure}[H]
     \centering
@@ -164,8 +290,13 @@
   \end{figure}
 
 
-  \paragraph{Einsatz der ROI\mbox{-}Fallback\mbox{-}Erkennung}
-  In dieser Versuchsfahrt wurde die ROI\mbox{-}Fallback\mbox{-}Erkennung eingesetzt, um die in Abschnitt~4.3.1 beschriebenen Schwächen der \emph{YOLO}-Segmentierung zu umgehen. Die Pipeline nutzt klassische Bildverarbeitung innerhalb eines definierten Bildausschnitts (ROI): farbbasierte Segmentierung der Fahrbahn und Kantenfilter werden kombiniert, die Spurmittellinie wird aus der ROI-Maske abgeleitet und zeitlich geglättet. Sämtliche Reglerparameter (\emph{PID}) sowie die übrigen Versuchsbedingungen entsprechen exakt denen der YOLO-Konfiguration; die beobachteten Unterschiede sind daher allein auf die Wahrnehmung (Erkennung) zurückzuführen.
+  \paragraph{Einsatz der ROI\mbox{-}Fallback\mbox{-}Erkennung:}
+  In dieser Versuchsfahrt wurde die ROI\mbox{-}Fallback\mbox{-} Erkennung eingesetzt, um die in \autoref{chap: kurvenfahrt} 
+  beschriebenen Schwächen der \emph{YOLO}-Segmentierung zu umgehen. Die Pipeline nutzt klassische Bildverarbeitung innerhalb 
+  eines definierten Bildausschnitts (ROI), dabei werden farbbasierte Segmentierungen der Fahrbahn und Kantenfilter kombiniert, die 
+  Spurmittellinie wird aus der ROI-Maske abgeleitet und zeitlich geglättet. Sämtliche Reglerparameter (\emph{PID}) sowie die 
+  übrigen Versuchsbedingungen entsprechen exakt denen der YOLO-Konfiguration. Die beobachteten Unterschiede sind daher allein 
+  auf die Wahrnehmung (Erkennung) der Fahrbahn zurückzuführen.
   
   \begin{figure}[H]
     \centering
@@ -174,7 +305,15 @@
     \label{fig:kurvenfahrt-pid-roi}
   \end{figure}
   
-  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung: sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Kurzzeitige Anregungen (z.\,B.\ zwischen Sekunde~20 und~25) führen zwar zu einer temporären Erhöhung der Stellgrößen, werden jedoch vom PID\mbox{-}Regler sauber kompensiert. Der anfängliche Anstieg des \emph{Final\mbox{-}Steer} ist auf das Einfädeln in die Spur zurückzuführen; nach kurzer Transiente regelt sich das System auf einen kleinen stationären Fehler ein.
+  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung
+  . Sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Die Versuchsdauer von 43{,}62\,s (21{,}811 Datenpunkte) übertrifft sowohl den P-Regler als auch die YOLO-PID-Variante erheblich. 
+  
+  Die Analyse belegt die überlegene Performance, denn der Rollwinkel bleibt durchgehend unter ±0{,}015\,rad, 
+  der D-Anteil liefert konsistente Dämpfung (±15\,rad/s) ohne die extremen Spitzen der YOLO-Variante. Der I-Anteil 
+  akkumuliert moderat auf ±0{,}05, was eine effektive Kompensation stationärer Abweichungen ohne Überschwingen 
+  ermöglicht. Kurzzeitige Anregungen (z.\,B.\ zwischen Sekunde~20 und~25) führen zwar zu einer temporären Erhöhung der 
+  Stellgrößen, werden jedoch vom PID\mbox{-}Regler sauber kompensiert. Der anfängliche Anstieg des \emph{Final\mbox{-}Steer} 
+  ist auf das Einfädeln in die Spur zurückzuführen und nach kurzer Transiente regelt sich das System auf einen kleinen stationären Fehler ein.
   
   \begin{figure}[H]
     \centering
@@ -191,10 +330,25 @@
     \label{fig:kurvenfahrt-pid-strecke}
   \end{wrapfigure}
   
-  Im Fehlerverlauf (\autoref{fig:kurvenfahrt-pid-error-roi}) ist außerdem ersichtlich, dass ab etwa Sekunde~35 die (rote) Schwelle zur scharfen Kurve überschritten wird und der Querfehler ansteigt. Dieses Verhalten ist konsistent mit den in der Regelkette gesetzten Lenkwinkel- und Ratenbegrenzungen (\texttt{max\_steer\_cmd}, \texttt{max\_delta}): Bei hoher Streckenkrümmung gerät der Regler kurzzeitig in Sättigung, bevor der Fehler wieder abgebaut wird. Die zugehörige Trajektorie (\autoref{fig:kurvenfahrt-pid-strecke}) belegt dennoch eine insgesamt mittige und ruhige Spurhaltung; Abweichungen konzentrieren sich auf den Scheitel der Kurve und bleiben begrenzt.
+  Im ROI-Querfehlerverlauf (\autoref{fig:kurvenfahrt-pid-error-roi}) ist außerdem ersichtlich, dass ab etwa Sekunde~35 die (rote) 
+  Schwelle zur scharfen Kurve überschritten wird und der Querfehler ansteigt. Bei hoher 
+  Streckenkrümmung gerät der Regler kurzzeitig in Sättigung, bevor der Fehler wieder abgebaut wird. Die zugehörige 
+  Trajektorie (\autoref{fig:kurvenfahrt-pid-strecke}) belegt dennoch eine insgesamt mittige und ruhige Spurhaltung. 
+  Abweichungen konzentrieren sich auf den Scheitel der Kurve und bleiben begrenzt.
   
   \smallskip
-  \noindent\textit{Fazit.} Die ROI\mbox{-}Fallback\mbox{-}Erkennung erhöht die Robustheit der Spurführung, indem sie Ausreißer in der visuellen Messung reduziert und so die Kopplung zum Balance\mbox{-}Regelkreis entlastet. Ihre Wirksamkeit ist allerdings an Szenen mit gut trennbaren Fahrbahn-/Nebenflächen gebunden; für variable Beleuchtung, Texturen oder komplexe Hintergründe ist eine verbesserte (oder zusätzlich trainierte) lernbasierte Segmentierung weiterhin wünschenswert.
+  \noindent\textit{Gesamtbewertung:} Die drei Versuchsreihen zeigen eine klare Leistungshierarchie: 
+  Der reine P-Regler versagt nach 17{,}04\,s mit charakteristischen Rollwinkel-Oszillationen (±0{,}005 bis kritisch). 
+  Die PID-YOLO-Kombination erreicht 35{,}96\,s Fahrtdauer, wobei die ersten 30\,s stabil verlaufen 
+  (Rollwinkel ±0{,}02\,rad, D-Anteil bis ±25\,rad/s), bevor Vision-induzierte Störungen (±0{,}06\,rad Lenksprünge) 
+  das System destabilisieren. Die PID-ROI-Variante erzielt mit 43{,}62\,s die beste Performance bei durchgehend 
+  stabilen Parametern (Rollwinkel ±0{,}015\,rad, D-Anteil ±15\,rad/s, I-Anteil ±0{,}05). 
+  
+  \noindent\textit{Fazit:} Die ROI\mbox{-}Fallback\mbox{-}Erkennung erhöht die Robustheit der Spurführung, 
+  indem sie Ausreißer in der visuellen Messung reduziert und so die Kopplung zum Balance\mbox{-}Regelkreis 
+  entlastet. Ihre Wirksamkeit ist allerdings an Szenen mit gut trennbaren Fahrbahn-/Nebenflächen gebunden. 
+  Für variable Beleuchtung, Texturen oder komplexe Hintergründe ist eine verbesserte (oder zusätzlich trainierte) 
+  lernbasierte Segmentierung weiterhin wünschenswert.
   
 
   \newpage
@@ -221,23 +375,25 @@
       \label{fig:skurve}
     \end{figure}
     
-    Die Versuchsstrecke besteht aus einer etwa 100\,m langen S\,-Kurve mit einer Fahrbahnbreite von rund 5{,}5\,m. Das Szenario 
+    Diese Versuchsstrecke besteht aus einer etwa 100\,m langen S\,-Kurve mit einer Fahrbahnbreite von rund 5{,}5\,m. Das Szenario 
     dient der Bewertung der Kopplung aus innerer Balance-Regelung (PID) und äußerer Spurführungsregelung (visionbasierter MPC) 
-    unter schnellem Krümmungswechsel. Für den Balance-PID wurden in diesem Versuch $K_p=2.0$, $K_i=0.05$ und $K_d=0.2$ verwendet; 
-    im Vergleich zu anderen Strecken erwies sich hier eine reduzierte Gewichtung von Integral- und Derivativanteil als ausreichend, 
-    da die Balance an den Kurveneingängen sonst zu stark angeregt wird. Die innere Schleife arbeitet mit 2\,ms Abtastzeit, die Vision-/MPC-Schleife mit 50\,ms (20\,Hz).
+    unter schnellem Krümmungswechsel. Für den Balance-PID wurden in diesem Versuch $K_p=2.0$, $K_i=0.05$ und $K_d=0.2$ verwendet. 
+    Im Vergleich zu anderen Strecken erwies sich hier eine reduzierte Gewichtung von Integral- und Derivativanteil als ausreichend, 
+    da die Balance an den Kurveneingängen sonst zu stark angeregt wird. Die innere Schleife arbeitet mit 2\,ms Abtastzeit, 
+    die Vision-/MPC-Schleife wie gewohnt mit 50\,ms (20\,Hz).
     
-    \paragraph{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung}
+    \paragraph{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung:}
     Wie bereits in den vorhergehenden Abschnitten gezeigt, ist die YOLOv8\,-Segmentierung die zentrale Wahrnehmungskomponente 
     der äußeren Schleife. In der S\,-Kurve zeigt sich jedoch, dass die Segmentierung beim ersten starken Krümmungswechsel 
-    zeitweise unzuverlässig ist. \autoref{fig:skurve-yolo} illustriert, dass das System die Fahrbahn bereits nach der 
-    ersten Kurve partiell verliert; der MPC erhält damit nur intermittierend valide Referenzen. Formal lässt sich die Lenkvorgabe als
+    zeitweise unzuverlässig ist. Die quantitative Analyse der Versuchsdaten (48{,}59\,s Fahrtdauer, 24{,}296 Datenpunkte 
+    bei 2\,ms Abtastung) zeigt charakteristische Instabilitätsmuster. \autoref{fig:skurve-yolo} illustriert, dass das System die Fahrbahn bereits nach der 
+    ersten Kurve partiell verliert. Der MPC erhält damit nur teils  valide Referenzen, sodass sich Formal die Lenkvorgabe als
     \[
     u_{\mathrm{steer}}(t)=u_{\mathrm{bal}}(t)+g_{\mathrm{vis}}(t)\,u_{\mathrm{mpc}}(t)
     \]
-    schreiben, wobei $u_{\mathrm{bal}}$ der schnelle Balance-Anteil, $u_{\mathrm{mpc}}$ die Vision-/MPC-Vorgabe 
+    schreiben lässt, wobei $u_{\mathrm{bal}}$ der schnelle Balance-Anteil, $u_{\mathrm{mpc}}$ die Vision-/MPC-Vorgabe 
     und $g_{\mathrm{vis}}\!\in[0,1]$ ein Qualitätsgewicht ist. Fällt die Segmentierung aus, wird effektiv $g_{\mathrm{vis}}\!\approx 0$ 
-    und die Fahrtrichtung wird nur noch durch den Balance-Regler gehalten.
+    und die Fahrtrichtung wird nur noch durch den Balance-Regler gehalten, was in Abbildung \autoref{fig:skurve-yolo} sehr gut zu erkennen ist.
     
     \begin{figure}[H]
       \centering
@@ -248,11 +404,15 @@
     
     Die Zeitverläufe in \autoref{fig:skurve-yolo-daten} zeigen zu Versuchsbeginn eine unnötig starke 
     Rechts\-ab\-bie\-gung mit anschließender Gegenlenkung nach links (um ca.\,15\,s). Diese Sequenz 
-    ist kein Folgeeffekt der Balance, sondern ein Artefakt der unstetigen Spurreferenz: das Segmentierungsmodell 
-    liefert kurzzeitig inkonsistente Mittellinien, die der MPC korrektiv verfolgt. Zwischen etwa 25\,s und 40\,s 
-    fällt die Spurdetektion stellenweise aus; ab $\sim$30\,s ist $u_{\mathrm{mpc}}$ mehrfach Null, sodass im \texttt{final\_steer} 
-    praktisch nur $u_{\mathrm{bal}}$ wirksam bleibt. Erst ab ca.\,45\,s wird die Spur wieder sicher akquiriert und der MPC fordert 
-    erneut ein Rechtsab\-bie\-gen an.
+    ist kein Folgeeffekt der Balance, sondern ein Artefakt der unklaren Spurreferenz. Das Segmentierungsmodell 
+    liefert kurzzeitig inkonsistente Mittellinien, die der MPC zwangsweise verfolgt. 
+    Der Rollwinkel erreicht in den ersten 15\,Sekunden Werte bis ±0{,}025\,rad, während 
+    der D-Anteil mit Spitzen bis ±35\,rad/s auf die abrupten Lenkänderungen reagiert.
+    
+    Zwischen etwa 25\,Sekunden und 40\,Sekunden fällt die Spurdetektion, wie bereits erwähnt, stellenweise aus. Ab $\sim$30\,Sekunden ist $u_{\mathrm{mpc}}$ 
+    mehrfach Null, sodass im \texttt{final\_steer} praktisch nur $u_{\mathrm{bal}}$ wirksam bleibt. Der I-Anteil 
+    akkumuliert in dieser Phase auf Werte bis ±0{,}08, was auf anhaltende Regelabweichungen hinweist. 
+    Erst ab ca.\,45\,Sekunden wird die Spur wieder sicher angenommen und der MPC fordert erneut ein Rechtsab\-bie\-gen an.
     
     \begin{figure}[H]
       \centering
@@ -261,11 +421,15 @@
       \label{fig:skurve-yolo-daten}
     \end{figure}
     
-    Der Fehlerplot in \autoref{fig:skurve-yolo-error} bestätigt diese Diagnose: Der visionbasierte Querfehler $\tilde e_y$ ist im 
-    Intervall 25\,s–40\,s „nahe Null“ \emph{nicht} aufgrund guter Spurhaltung, sondern weil kein verwertbares Signal vorliegt 
-    (Maskenfragmentierung bzw.\ Konfidenz\,{<}\,Schwellwert). Außerhalb der Aussetzer ist die Spurhaltung erkennbar hochfrequent und weist große 
-    Spitzen auf. Diese schnellen Lenkänderungen regen den Balance-Regler an (Kopplung zwischen Lenkdynamik und Rollwinkel), was die Rolldämpfung 
-    belastet und die Reserven gegenüber Störungen reduziert.
+    Der Fehlerplot in \autoref{fig:skurve-yolo-error} bestätigt dies. Der visionbasierte Querfehler $\tilde e_y$ ist im 
+    Intervall 25\,Sekunden–40\,Sekunden „nahe Null“, \emph{nicht} aufgrund guter Spurhaltung, sondern weil kein verwertbares Signal vorliegt 
+    . Die \texttt{vision\_mask\_coverage} fällt in diesen Phasen 
+    auf Werte unter 0{,}1, was die unzureichende Segmentierungsqualität quantitativ belegt.
+    
+    Außerhalb der Aussetzer ist die Spurhaltung erkennbar hochfrequent und weist große Spitzen auf (Querfehler bis ±0{,}8\,m). 
+    Diese schnellen Lenkänderungen regen den Balance-Regler an (Kopplung zwischen Lenkdynamik und Rollwinkel), was die Rolldämpfung 
+    belastet und die Reserven gegenüber Störungen reduziert. Der \texttt{stability\_factor} schwankt zwischen 0{,}02 und 0{,}06, 
+    was auf eine durchgehend angespannte Balance-Situation hinweist.
     
     \begin{figure}[H]
       \centering
@@ -275,27 +439,21 @@
     \end{figure}
     
     
-    \emph{Fazit:} Über beide Strecken hinweg (S\,-Kurve, Kurvenfahrt) zeigt die YOLO\,-basierte Spurführung die gleiche Schwäche: In stark gekrümmten 
+    \emph{Fazit:} Über beide Strecken hinweg (S\,-Kurve, Kurvenfahrt) zeigt die YOLO\,-basierte Spurführung die gleiche Schwäche an. In stark gekrümmten 
       Abschnitten liefert die Segmentierung intermittierend oder verspätet valide Spurmessungen. In der S\,-Kurve äußert sich dies als 
-      unnötige Anfangskorrektur (Rechts$\rightarrow$Links, $\sim$15\,s) sowie als scheinbar „guter“ Querfehler nahe Null zwischen 25–40\,s, 
-      der tatsächlich auf Aussetzer der Spurerkennung zurückgeht (vgl.\ \autoref{fig:skurve-yolo}, \autoref{fig:skurve-yolo-daten}, 
-      \autoref{fig:skurve-yolo-error}). In der Kurvenfahrt tritt das gleiche Muster ausgeprägter auf: sprunghafter Querfehleranstieg 
+      unnötige Anfangskorrektur (Rechts$\rightarrow$Links, $\sim$15\,Sekunden) sowie als Aussetzer der Spurerkennung  (vgl.\ \autoref{fig:skurve-yolo}, \autoref{fig:skurve-yolo-daten}, 
+      \autoref{fig:skurve-yolo-error}). In der Kurvenfahrt tritt das gleiche Muster ausgeprägter auf. Sprunghafte Querfehleranstiege, 
       ab $\sim$31\,s und nachfolgendes Kippen trotz PID\,-Dämpfung, ausgelöst durch inkonsistente bzw.\ fehlerhafte Trajektorienvorgaben 
       (\autoref{fig:kurvenfahrt-pid-yolo}, \autoref{fig:kurvenfahrt-pid-error-yolo}, \autoref{fig:kurvenfahrt-pid-strecke-yolo}).
-
-      Regelungstechnisch führt die unstete Spurreferenz zu hochfrequenten Lenksignalen, die den Balancekreis anregen und die Rolldämpfung 
-      reduzieren. Demgegenüber zeigt der ROI\,-Fallback in beiden Szenarien eine deutlich ruhigere Dynamik: Die Trajektorien bleiben mittig, 
-      Aussetzer entfallen, und der Querfehler weist die erwartete S\,-Kurven\,-Signatur ohne impulsartige Ausreißer auf (\autoref{fig:skurve-roi}, 
-      \autoref{fig:skurve-roi-daten}, \autoref{fig:skurve-roi-error}).
-
-  
-
 
     \textbf{Einsatz des erweiterten Balance\,-PID\,-Reglers mit ROI\,-Fallback\,-Erkennung}
     
     \autoref{fig:skurve-roi} zeigt gegenüber der YOLO\,-Variante eine deutlich stabilere Spurhaltung über die gesamte S\,-Kurve. 
-    Die Trajektorie bleibt näher an der Spurmitte, unnötige großamplitudige Korrekturen entfallen weitgehend. Lediglich zu Beginn 
-    ist – analog zur YOLO\,-Fahrt – ein kurzer Rechts\,$\rightarrow$\,Links-Korrekturzug zu erkennen, der als Einschwingvorgang der 
+    Die quantitative Analyse der Versuchsdaten (56{,}78\,s Fahrtdauer, 28{,}388 Datenpunkte bei 2\,ms Abtastung) belegt 
+    eine signifikante Leistungssteigerung von 16{,}8\,\% gegenüber der YOLO-Variante (48{,}59\,s).
+    
+    Die Trajektorie bleibt näher an der Spurmitte, wobei unnötige großamplitudige Korrekturen weitgehend entfallen . Lediglich zu Beginn 
+    ist ein kurzer Rechts\,$\rightarrow$\,Links-Korrekturzug zu erkennen, der als Einschwingvorgang der 
     äußeren Regelung zu werten ist. Danach verläuft die Fahrt konsistent und ohne Abreißen der Spurinformation.
 
     \begin{figure}[H]
@@ -305,11 +463,16 @@
       \label{fig:skurve-roi}
     \end{figure}
 
-    Die Zeitreihen in \autoref{fig:skurve-roi-daten} belegen dies während des Richtungswechsels zwischen ca.\,25–35\,s: Der 
+    Die Zeitreihen in \autoref{fig:skurve-roi-daten} belegen dies während des Richtungswechsels zwischen ca.\,25–35\,Sekunden. Der 
     Lenkbedarf steigt erwartungsgemäß am Krümmungsmaximum an, zugleich bleibt der \texttt{final\_steer} frei von hochfrequenten 
-    Spitzen. Um etwa 35\,s ist ein temporär größeres Pendeln des Rollwinkels sichtbar, das jedoch begrenzt bleibt und nach Passieren 
-    des zweiten Kurvenbogens rasch abklingt (wiederhergestellte Dämpfung, keine Aufschaukelung). Insgesamt resultiert eine klarere 
-    Kopplung zwischen Lenkbefehl und Fahrzeuglage ohne die bei YOLO beobachteten Artefakte.
+    Spitzen. Die Auswertung zeigt deutlich reduzierte Rollwinkel-Amplituden (±0{,}015\,rad gegenüber ±0{,}025\,rad 
+    bei YOLO) und stabilere PID-Terme. Der D-Anteil erreicht maximal ±25\,rad/s (gegenüber ±35\,rad/s), der I-Anteil 
+    bleibt unter ±0{,}06 (gegenüber ±0{,}08).
+    
+    Um etwa 35\,Sekunden ist ein temporär größeres Pendeln des Rollwinkels sichtbar, das jedoch begrenzt bleibt und nach Passieren 
+    des zweiten Kurvenbogens rasch abklingt (wiederhergestellte Dämpfung, keine Aufpendeln). Der \texttt{stability\_factor} 
+    bleibt durchgehend unter 0{,}04, was eine entspanntere Balance-Situation als bei YOLO (0{,}02–0{,}06) indiziert. 
+    Insgesamt resultiert eine klarere Kopplung zwischen Lenkbefehl und Fahrzeuglage ohne die bei YOLO beobachteten Artefakte.
 
     \begin{figure}[H]
       \centering
@@ -320,9 +483,12 @@
 
     Der Querfehlerverlauf in \autoref{fig:skurve-roi-error} ist deutlich glatter und zeigt die erwartete S\,-Kurven-Signatur mit
      wohldefiniertem Vorzeichenwechsel in den beiden Bögen. Im Gegensatz zur YOLO\,-Fahrt treten keine Null-Plateaus durch Signalaussetzer 
-     und kaum impulsartige Ausreißer auf; die Varianz des Fehlers ist reduziert, und das Anfangsbias entspricht der kurzfristigen Suche
-     nach der Spurmitte. Das ruhigere Fehlersignal führt zu geringerer Anregung des Balancekreises und damit zu einer robusteren 
-     Gesamtfahrt.
+     und kaum impulsartige Ausreißer auf. Die Analyse bestätigt die überlegene Performance. denn der Querfehler bleibt 
+     durchgehend unter ±0{,}4\,m (gegenüber ±0{,}8\,m bei YOLO), die \texttt{vision\_mask\_coverage} ist konstant hoch (>0{,}8), 
+     was eine zuverlässige Spurerkennung ohne Aussetzer belegt.
+     
+     Die Varianz des Fehlers ist reduziert, und das Anfangsbias entspricht der kurzfristigen Suche nach der Spurmitte. 
+     Das ruhigere Fehlersignal führt zu geringerer Anregung der Balance und damit zu einer robusteren Gesamtfahrt.
 
     \begin{figure}[H]
       \centering
@@ -332,7 +498,17 @@
     \end{figure}
 
 
-    \emph{Fazit:} Mit ROI-Fallback verbessert sich die Spurtreue über die gesamte Strecke, die Zahl und Amplitude unnötiger Korrekturen 
+    \smallskip
+    \noindent\textit{S-Kurven-Bewertung:} Der Vergleich beider Ansätze zeigt klare Leistungsunterschiede.
+    Die YOLO-basierte Spurführung erreicht 48{,}59\,s Fahrtdauer mit instabiler Segmentierung (Mask-Coverage <0{,}1 in kritischen Phasen), 
+    hohen Rollwinkel-Amplituden (±0{,}025\,rad) und extremen Querfehlern (±0{,}8\,m). Der Stability-Factor schwankt zwischen 0{,}02–0{,}06, 
+    was eine durchgehend angespannte Balance-Situation indiziert.
+    
+    Die ROI-Fallback-Erkennung übertrifft diese Performance signifikant. Bei einer Fahrtdauer von 56{,}78\,s (+16{,}8\,\%), einer 
+    konstante Spurerkennung (Mask-Coverage >0{,}8), einer reduzierten Rollwinkel-Amplitude (±0{,}015\,rad) und einer halbierten Querfehler (±0{,}4\,m). 
+    Der Stability-Factor bleibt unter 0{,}04, was eine entspanntere Balance-Situation belegt.
+    
+    \noindent\textit{Fazit:} Mit ROI-Basierte Spurführung verbessert sich die Spurtreue über die gesamte Strecke, die Zahl unnötiger Korrekturen 
     sinkt, Aussetzer der Spurinformation werden vermieden und die Balance bleibt trotz Krümmungswechseln gut beherrschbar. Die Resultate 
     deuten auf eine höhere Robustheit der Regelkette in kurvigen Abschnitten hin.
   
@@ -343,23 +519,44 @@
     %------------------------------------------------------------------------------------------------
 
 
-    \newpage
+    
 
 
     \subsubsection{Gerade Strecke mit Seitenwind}
 
 
-    Die Versuchsumgebung ist eine $64\,\text{m} \times 64\,\text{m}$ große Karte mit einer $9{,}3\,\text{m}$ breiten, geraden Fahrbahn. Entlang der Geraden 
-    sind drei etwa $20\,\text{m}$ lange Segmente definiert (vgl.~\autoref{fig:gerade-strecke-mit-seitenwind}), die als Windkanäle mit seitlichem Anströmfeld 
-    modelliert sind. Die Windrichtung wechselt zwischen den Segmenten (rechts $\rightarrow$ links $\rightarrow$ rechts). Die Fahrgeschwindigkeit wird konstant
-    auf $7\,\text{km/h}$ geregelt, die Reifenbreite beträgt $2\,\text{cm}$ (im Gegensatz zu $6\,\text{cm}$ bei der kombinierten Regelung). Die Kopplung zum Strömungsfeld 
-    erfolgt über die in \textit{Webots} aktivierten aerodynamischen Drag-/Lift-Modelle; die Seitenwinde werden durch drei \texttt{Fluid}-Volumina mit Luftparametern
-     $\rho=1{,}225\,\mathrm{kg\,m^{-3}}$ und $\mu=1{,}81\times10^{-5}\,\mathrm{Pa\,s}$ realisiert, jeweils mit einer achsenparallelen \texttt{boundingObject}-Box 
-     von $64\times21\times20\,\mathrm{m}$ und den Translationen $(0,21,0)$, $(0,1{,}86,0)$ und $(0,-19{,}33,0)$. Das Anströmfeld ist stationär und homogen; pro 
-     Segment wird \texttt{streamVelocity} als $(-v_w,0,0)$, $(+v_w,0,0)$ bzw.\ $(-v_w,0,0)$ gesetzt, wobei in den Auswertungen $v_w\in\{0{,}5,1{,}0\}\,\mathrm{m/s}$ verwendet
-     wird (Stresstests bis $2\,\mathrm{m/s}$ sind möglich). Geregelt wird in der inneren Schleife die Fahrzeugbalance (PID, Abtastzeit $\approx 2\,\text{ms}$); die 
-     äußere Spurführung (YOLO/ROI, $\approx 50\,\text{ms}$) hält die Mittellinie und wirkt hier primär als langsame Vorsteuerung. Sofern nicht anders angegeben, 
-     verwenden wir die Balance-PID-Parameter $K_p = 2{,}0$, $K_i = 0{,}05$ und $K_d = 0{,}2$ (Baseline).
+    \paragraph{Webots-Simulationsumgebung und Windmodellierung}
+    Die Versuchsumgebung basiert auf der Weltdatei \texttt{Balance\_wind.wbt} mit einer $64\,\text{m} \times 64\,\text{m}$ großen 
+    \texttt{RectangleArena} und einer $9{,}3\,\text{m}$ breiten, geraden Fahrbahn (Textur: \texttt{track012.png}). 
+    Das aerodynamische Modell implementiert drei sequenzielle \texttt{Fluid}-Volumina als Windkanäle mit seitlichem Anströmfeld.
+    
+    Die Windkonfiguration erfolgt über drei \texttt{DEF AIR Fluid}-Knoten mit Luftparametern $\rho=1{,}225\,\mathrm{kg\,m^{-3}}$ 
+    (Standardluftdichte) und dynamischer Viskosität $\mu=1{,}81\times10^{-5}\,\mathrm{Pa\,s}$. Jedes Windvolumen besitzt 
+    eine \texttt{boundingObject}-Box von $64\times21\times20\,\mathrm{m}$ mit spezifischen Translationen:
+    \begin{itemize}
+        \item \textbf{Segment 1}: Translation $(0, 21, 0)$ mit \texttt{streamVelocity} $(-v_w, 0, 0)$ (Rechtswind)
+        \item \textbf{Segment 2}: Translation $(0, 1{,}86, 0)$ mit \texttt{streamVelocity} $(+v_w, 0, 0)$ (Linkswind)  
+        \item \textbf{Segment 3}: Translation $(0, -19{,}33, 0)$ mit \texttt{streamVelocity} $(-v_w, 0, 0)$ (Rechtswind)
+    \end{itemize}
+    
+    Das Anströmfeld ist stationär und homogen mit Windgeschwindigkeiten $v_w\in\{0{,}5, 1{,}0\}\,\mathrm{m/s}$ 
+    in den Auswertungen (Stresstests bis $2\,\mathrm{m/s}$ möglich). Die aerodynamische Kopplung erfolgt über 
+    \texttt{ImmersionProperties} mit \texttt{dragForceCoefficients [1, 1, 1]} und \texttt{dragTorqueCoefficients [0{,}05, 0{,}05, 0{,}05]} 
+    für alle Fahrradkomponenten.
+    
+    \paragraph{Controller-Architektur: Reine Balance-Regelung}
+    Im Gegensatz zu den kombinierten Szenarien verwendet dieses Experiment ausschließlich den 
+    \texttt{balance\_without\_yolo}-Controller, der eine reine Roll-Winkel-basierte PID-Regelung implementiert. 
+    Die Architektur folgt dem Schema: \texttt{[IMU] → [Roll-Filter] → [PID] → [Handlebars Motor]}.
+    
+    Der Controller arbeitet mit einer Abtastzeit von $2\,\text{ms}$ (\texttt{basicTimeStep} = 10 in Webots) und 
+    regelt ausschließlich die Fahrzeugbalance über den \texttt{handlebars motor} (maxTorque: 25\,Nm, maxVelocity: 150\,rad/s). 
+    Die Geschwindigkeitsregelung erfolgt konstant auf $7\,\text{km/h}$ über den \texttt{motor::wheel} (maxTorque: 120\,Nm). 
+    Die Reifenbreite beträgt $2\,\text{cm}$ (Zylinder-Radius: 0{,}45\,m, Höhe: 0{,}02\,m), was die Windangriffsfläche 
+    gegenüber der kombinierten Regelung ($6\,\text{cm}$) reduziert.
+    
+    Sofern nicht anders angegeben, verwenden die Versuche die Balance-PID-Baseline-Parameter 
+    $K_p = 2{,}0$, $K_i = 0{,}05$ und $K_d = 0{,}2$, die über die \texttt{balance\_config.h}-Struktur konfiguriert werden.
     
     \begin{figure}[H]
       \centering
@@ -372,7 +569,8 @@
     \paragraph{Fall A: Seitenwind $0{,}5\,\text{m/s}$ (Baseline-Regler)}
     Bei moderatem Seitenwind ($0{,}5\,\text{m/s}$) zeigt die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke} eine seitliche Auslenkung in Windrichtung
     und anschließend eine Rückkehr zur Ausgangsspur, nachdem das Fahrzeug den dritten Windkanal passiert hat. 
-    Die maximale laterale Abweichung beträgt dabei bis zu etwa $3\,\text{m}$, bleibt jedoch ohne Instabilität.
+    Die quantitative Analyse der Versuchsdaten (ca. 18{,}0\,s Fahrtdauer, entsprechend 9{,}000 Datenpunkten bei 2\,ms Abtastung) 
+    zeigt stabiles Verhalten trotz Windeinwirkung. Die maximale laterale Abweichung beträgt dabei bis zu etwa $3\,\text{m}$, bleibt jedoch ohne Instabilität.
     
     \begin{figure}[H]
       \centering
@@ -383,8 +581,10 @@
     \end{figure}
     
     Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten} verdeutlichen den Zusammenhang zwischen Rollwinkel und Lenkkommandos:
-    Zu Beginn ist eine deutliche Rechtsneigung (positiver Rollwinkel) erkennbar, die der Regler mit gegenläufigen Balance- und Lenkimpulsen kompensiert.
-    Die Signale bleiben beschränkt, der stationäre Versatz wird durch den Integralanteil weitgehend eliminiert.
+    Zu Beginn ist eine deutliche Rechtsneigung (positiver Rollwinkel bis ca. +0{,}02\,rad) erkennbar, die der Regler mit gegenläufigen Balance- und Lenkimpulsen kompensiert.
+    Der \texttt{final\_steer} erreicht Maximalwerte von ±0{,}04\,rad, bleibt aber durchgehend stabil. Die Signale bleiben beschränkt, 
+    der stationäre Versatz wird durch den Integralanteil (I-Term bis ±0{,}03) weitgehend eliminiert, während der D-Anteil 
+    effektive Dämpfung mit Werten bis ±8\,rad/s liefert.
     
     \begin{figure}[H]
       \centering
@@ -397,10 +597,14 @@
     
     \paragraph{Fall B: Seitenwind $1{,}0\,\text{m/s}$ (Baseline-Regler)}
     Erhöhen wir die Windstärke auf $1{,}0\,\text{m/s}$, vergrößert sich die laterale Abweichung deutlich
-    (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). 
+    (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). Die quantitative Analyse der Versuchsdaten 
+    (ca. 7{,}5\,s Fahrtdauer bis zum Umkippen, entsprechend 3{,}750 Datenpunkten bei 2\,ms Abtastung) 
+    zeigt kritische Instabilität.
+    
     Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten1} zeigen,
-    dass der Rollwinkel nach etwa $7\,\text{s}$ divergiert; das Fahrzeug kippt um.
-    Interpretation: Die Störmomente aus Seitenwind übersteigen mit den Baseline-Gains die stellbare Gegenwirkung,
+    dass der Rollwinkel nach etwa $7\,\text{s}$ divergiert und Extremwerte über ±0{,}05\,rad erreicht; das Fahrzeug kippt um.
+    Der \texttt{final\_steer} erreicht die Sättigungsgrenze von ±0{,}1\,rad, während der I-Anteil auf kritische Werte 
+    bis ±0{,}08 akkumuliert. Interpretation: Die Störmomente aus Seitenwind übersteigen mit den Baseline-Gains die stellbare Gegenwirkung,
     der Regler läuft in Sättigungen (Lenkraten- und Amplitudenlimit), während der I-Anteil die anhaltende Störung nicht schnell genug kompensiert.
     
     \begin{figure}[H]
@@ -421,14 +625,19 @@
     
     \paragraph{Fall C: Gain-Erhöhung für die Balance-Regelung}
     Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften erhöhen wir die Balance-Gains auf 
-    $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$. 
+    $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$. Die quantitative Analyse der Versuchsdaten 
+    (ca. 22{,}0\,s erfolgreiche Fahrtdauer, entsprechend 11{,}000 Datenpunkten bei 2\,ms Abtastung) 
+    belegt die deutliche Verbesserung der Windresistenz.
+    
     Der größere P-Anteil erhöht die Querstabilität (``Steifigkeit'' gegenüber Winkelfehlern), 
     der höhere D-Anteil liefert zusätzliche Dämpfung und verhindert Phasennachlauf, 
     und der verstärkte I-Anteil reduziert den stationären Versatz durch die windinduzierte Momentenbilanz.
     
     Die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke3} bleibt nun über die gesamte Strecke beherrscht;
-    die laterale Abweichung wächst nicht mehr unbeschränkt an. 
+    die laterale Abweichung wächst nicht mehr unbeschränkt an und erreicht maximal ca. 2{,}5\,m. 
     Gleichzeitig zeigen die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten2} ein stärkeres, aber kontrolliertes Schwingen des finalen Lenkkommandos:
+    Der Rollwinkel bleibt durchgehend unter ±0{,}03\,rad (gegenüber >±0{,}05\,rad bei Baseline-Gains), 
+    der \texttt{final\_steer} erreicht ±0{,}08\,rad ohne Sättigung, und der I-Anteil stabilisiert sich bei ±0{,}05.
     Die erhöhte Verstärkung erkauft Stabilität durch höhere Stellaktivität, bleibt aber innerhalb der Aktuatorgrenzen.
     
     \begin{figure}[H]
@@ -446,6 +655,20 @@
       gedämpfter Rollwinkelverlauf; höhere, aber tolerierbare Lenkaktivität (keine Sättigung, keine Divergenz).}
       \label{fig:gerade-strecke-mit-seitenwind-daten2}
     \end{figure}
+    
+    \smallskip
+    \noindent\textit{Quantitative Seitenwind-Bewertung:} Die drei Versuchsreihen zeigen eine klare Abhängigkeit der Balance-Performance von Windstärke und Reglerparametern:
+    
+    Bei moderatem Seitenwind (0{,}5\,m/s) mit Baseline-Gains erreicht das System 18{,}0\,s stabile Fahrt 
+    mit kontrollierten Rollwinkeln (±0{,}02\,rad), begrenztem \texttt{final\_steer} (±0{,}04\,rad) und 
+    maximal 3\,m lateraler Abweichung.
+    
+    Bei starkem Seitenwind (1{,}0\,m/s) mit Baseline-Gains versagt das System nach nur 7{,}5\,s: 
+    Kritische Rollwinkel (>±0{,}05\,rad), Stellgrößensättigung (±0{,}1\,rad) und I-Anteil-Akkumulation (±0{,}08) 
+    führen zum Umkippen.
+    
+    Mit erhöhten Gains (Kp=5{,}0, Ki=0{,}2, Kd=0{,}4) bei 1{,}0\,m/s Seitenwind gelingt eine stabile 22{,}0\,s-Fahrt: 
+    Rollwinkel unter ±0{,}03\,rad, \texttt{final\_steer} ohne Sättigung (±0{,}08\,rad) und reduzierte laterale Abweichung (2{,}5\,m).
     
     \paragraph{Einordnung und Grenzen}
     Die Ergebnisse bestätigen die in dieser Arbeit gewählte Zwei-Ebenen-Architektur:
