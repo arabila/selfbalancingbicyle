@@ -21,7 +21,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   realitätsnahe Parametrierung von Masse-, Trägheits- und Reibungseigenschaften sowie die authentische Nachbildung der Sensor-/Aktor-Schnittstellen, 
   sodass das dynamische Fahrverhalten und die Regelkreis-Interaktionen mit dem physischen Prototyp quantitativ übereinstimmen.
 
-  Die Systemarchitektur repliziert die zukünftige zweistufige Regelungsstruktur der Hardware-Implementierung.
+  Die Systemarchitektur repliziert die zukünftige zweistufige Regelungsstruktur der Hardwareimplementierung.
   Eine dedizierte Supervisor-Instanz orchestriert die Versuchsdurchführung durch automatisierte Szenarien-Initialisierung, deterministische 
   Reset-Funktionen und kontinuierliches Datenlogging aller relevanten Systemgrößen (Rollwinkel, Lenkkommandos, Trajektorien, Sensorwerte). 
   Diese Infrastruktur gewährleistet reproduzierbare Parameterstudien und systematische Kalibrierungsprozeduren unter identischen Anfangsbedingungen. 
@@ -33,7 +33,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   Regelungsparameter und experimentellen Validierungsresultate. Die detaillierte Parameterdokumentation ermöglicht eine vollständige 
   Nachvollziehbarkeit und Reproduzierbarkeit der Simulationsergebnisse.
 
- 
+  
   \begin{itemize}
     \item \textbf{Hierarchischer Aufbau in Webots:} Das Fahrradmodell ist als \texttt{Robot}-Knoten strukturiert. 
     Die Hauptkomponenten sind über \texttt{HingeJoint}-Knoten verbunden, das Hinterrad (\texttt{rear\_wheel}), die Lenker-Gabel-Einheit 
@@ -65,7 +65,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
       
       \item \textbf{Yaw-Trägheit} \(I_{zz}=0{,}07\,\mathrm{kg\,m^{2}}\): Der Wert ist so gewählt, dass Richtungsänderungen responsiv erfolgen können, ohne dass das System bei schnellen 
       Lenkmanövern instabil wird. Dies ist besonders relevant für die MPC-Spurführung, die präzise Trajektorienverfolgung erfordert.
-    \end{itemize}
+  \end{itemize}
 
     Die Null-Werte für alle Off-Diagonalelemente (\(I_{xy} = I_{xz} = I_{yz} = 0\)) bedeuten, dass die Hauptträgheitsachsen mit den 
     Koordinatenachsen des Fahrradmodells ausgerichtet sind. Dies vereinfacht die Regelung erheblich, da keine Kreuzverkopplungen zwischen 
@@ -111,8 +111,8 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
 
 
 
-
-  \subsection{Teststrecken} \label{chap:teststrecken}
+\newpage
+\subsection{Teststrecken} \label{chap:teststrecken}
   
   Die experimentelle Validierung der Regelungsarchitektur erfolgt anhand systematisch konzipierter 
   Testszenarien, die verschiedene Aspekte der Balance- und Spurführungsregelung bewerten. Für jedes 
@@ -149,8 +149,9 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   Die Kombination dieser drei Datenebenen gewährleistet eine umfassende Charakterisierung des Systemverhaltens sowohl 
   aus regelungstechnischer als auch aus anwendungsorientierter Perspektive.
   
-  %------------------------------------------------------------------------------------------------
-  %------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
+%------------------------------------------------------------------------------------------------
+\newpage
 \subsubsection{Kurvenfahrt} \label{chap: kurvenfahrt}
   \begin{wrapfigure}{r}{0.40\textwidth}
     \vspace{-0.8\baselineskip}
@@ -204,7 +205,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \label{fig:kurvenfahrt-p-error}
   \end{figure}
 
-  \newpage
+
 
 
   \begin{wrapfigure}{r}{0.40\textwidth}
@@ -260,7 +261,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   \end{wrapfigure}
 
   
-  
+
   Trotz dieser Limitierungen lässt sich durch die Kombination von Integral- und Differentialanteil eine verbesserte Spurhaltung 
   mit reduzierten Querabweichungen beobachten. Insbesondere werden stationäre Fehler kompensiert und Überschwinger wirksam gedämpft, 
   sodass das Fahrrad über weite Teile der Strecke stabil bleibt. Sodass dies auch bei eingeschränkter Fahrbahnerkennung der Fall ist.
@@ -305,8 +306,8 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \label{fig:kurvenfahrt-pid-roi}
   \end{figure}
   
-  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung
-  . Sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Die Versuchsdauer von 43{,}62\,s (21{,}811 Datenpunkte) übertrifft sowohl den P-Regler als auch die YOLO-PID-Variante erheblich. 
+  Die Ergebnisse in \autoref{fig:kurvenfahrt-pid-roi} zeigen einen deutlichen Qualitätsgewinn gegenüber der YOLO\mbox{-}Erkennung.
+  Sprunghafte Querfehler treten praktisch nicht mehr auf, und das Fahrrad fährt über weite Strecken stabil. Die Versuchsdauer von 43{,}62\,s (21{,}811 Datenpunkte) übertrifft sowohl den P-Regler als auch die YOLO-PID-Variante erheblich. 
   
   Die Analyse belegt die überlegene Performance, denn der Rollwinkel bleibt durchgehend unter ±0{,}015\,rad, 
   der D-Anteil liefert konsistente Dämpfung (±15\,rad/s) ohne die extremen Spitzen der YOLO-Variante. Der I-Anteil 
@@ -524,11 +525,9 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
 
     \subsubsection{Gerade Strecke mit Seitenwind}
 
-
-    \paragraph{Webots-Simulationsumgebung und Windmodellierung}
-    Die Versuchsumgebung basiert auf der Weltdatei \texttt{Balance\_wind.wbt} mit einer $64\,\text{m} \times 64\,\text{m}$ großen 
-    \texttt{RectangleArena} und einer $9{,}3\,\text{m}$ breiten, geraden Fahrbahn (Textur: \texttt{track012.png}). 
-    Das aerodynamische Modell implementiert drei sequenzielle \texttt{Fluid}-Volumina als Windkanäle mit seitlichem Anströmfeld.
+    Die Versuchsumgebung für die folgenden Testfahren, basieren auf die Weltdatei \texttt{Balance\_wind.wbt} mit einer $64\,\text{m} \times 64\,\text{m}$ großen 
+    \texttt{RectangleArena} und einer $9{,}3\,\text{m}$ breiten, geraden Fahrbahn. 
+    Das aerodynamische Modell implementiert drei sequenzielle \texttt{Fluid}-Volumina als Windkanäle mit seitlichem Anströmfeld (vgl. \autoref{fig:gerade-strecke-mit-seitenwind}).
     
     Die Windkonfiguration erfolgt über drei \texttt{DEF AIR Fluid}-Knoten mit Luftparametern $\rho=1{,}225\,\mathrm{kg\,m^{-3}}$ 
     (Standardluftdichte) und dynamischer Viskosität $\mu=1{,}81\times10^{-5}\,\mathrm{Pa\,s}$. Jedes Windvolumen besitzt 
@@ -540,23 +539,25 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \end{itemize}
     
     Das Anströmfeld ist stationär und homogen mit Windgeschwindigkeiten $v_w\in\{0{,}5, 1{,}0\}\,\mathrm{m/s}$ 
-    in den Auswertungen (Stresstests bis $2\,\mathrm{m/s}$ möglich). Die aerodynamische Kopplung erfolgt über 
-    \texttt{ImmersionProperties} mit \texttt{dragForceCoefficients [1, 1, 1]} und \texttt{dragTorqueCoefficients [0{,}05, 0{,}05, 0{,}05]} 
-    für alle Fahrradkomponenten.
-    
-    \paragraph{Controller-Architektur: Reine Balance-Regelung}
+    in den Auswertungen. Die aerodynamische Kopplung erfolgt über Webots' \texttt{Fluid}-System mit 
+    \texttt{ImmersionProperties}, das die Interaktion zwischen Festkörpern und Strömungsmedien nach der 
+    Formel $\vec{F}_{drag} = \frac{1}{2} \rho \, C_d \, A \, v_{rel}^2 \, \hat{v}_{rel}$ berechnet, wobei 
+    $\rho$ die Fluiddichte, $C_d$ der Widerstandsbeiwert und $v_{rel}$ die relative Geschwindigkeit ist. 
+    Für alle Fahrradkomponenten sind \texttt{dragForceCoefficients [1, 1, 1]} (mittlerer aerodynamischer Widerstand) 
+    und \texttt{dragTorqueCoefficients [0{,}05, 0{,}05, 0{,}05]} (geringe Rotationsträgheit) definiert. 
+    Die \texttt{referenceArea} an den Bauteilen des Fahrrads, berechnet automatisch die Anströmfläche basierend auf der 
+    projizierten Objektgeometrie in Strömungsrichtung, wodurch realistische Seitenwindkräfte auf Rahmen, 
+    Räder und Lenker entstehen.
+
     Im Gegensatz zu den kombinierten Szenarien verwendet dieses Experiment ausschließlich den 
-    \texttt{balance\_without\_yolo}-Controller, der eine reine Roll-Winkel-basierte PID-Regelung implementiert. 
-    Die Architektur folgt dem Schema: \texttt{[IMU] → [Roll-Filter] → [PID] → [Handlebars Motor]}.
+    \textbf{balance\_without\_yolo}-Controller, der eine reine Roll-Winkel-basierte PID-Regelung implementiert.
     
-    Der Controller arbeitet mit einer Abtastzeit von $2\,\text{ms}$ (\texttt{basicTimeStep} = 10 in Webots) und 
-    regelt ausschließlich die Fahrzeugbalance über den \texttt{handlebars motor} (maxTorque: 25\,Nm, maxVelocity: 150\,rad/s). 
-    Die Geschwindigkeitsregelung erfolgt konstant auf $7\,\text{km/h}$ über den \texttt{motor::wheel} (maxTorque: 120\,Nm). 
-    Die Reifenbreite beträgt $2\,\text{cm}$ (Zylinder-Radius: 0{,}45\,m, Höhe: 0{,}02\,m), was die Windangriffsfläche 
-    gegenüber der kombinierten Regelung ($6\,\text{cm}$) reduziert.
-    
-    Sofern nicht anders angegeben, verwenden die Versuche die Balance-PID-Baseline-Parameter 
-    $K_p = 2{,}0$, $K_i = 0{,}05$ und $K_d = 0{,}2$, die über die \texttt{balance\_config.h}-Struktur konfiguriert werden.
+    Der Controller arbeitet dabei wieder mit einer Abtastzeit von $2\,\text{ms}$ und 
+    regelt ausschließlich die Fahrzeugbalance über den \texttt{motor::handlebars} mit einer identischen Konfiguration wie in den vorigen Experimenten. 
+    Die Geschwindigkeitsregelung erfolgt konstant auf $7\,\text{km/h}$ über den \texttt{motor::wheel}. 
+    Die Reifenbreite beträgt $2\,\text{cm}$ (Zylinder-Radius: 0{,}45\,m, Höhe: 0{,}02\,m), was die Komplexität 
+    gegenüber der kombinierten Regelung ($6\,\text{cm}$) deuetlich erhöht. Sofern nicht anders angegeben, verwenden die Versuche die Balance-PID-Baseline-Parameter 
+    $K_p = 2{,}0$, $K_i = 0{,}05$ und $K_d = 0{,}2$.
     
     \begin{figure}[H]
       \centering
@@ -566,10 +567,10 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
       \label{fig:gerade-strecke-mit-seitenwind}
     \end{figure}
     
-    \paragraph{Fall A: Seitenwind $0{,}5\,\text{m/s}$ (Baseline-Regler)}
+    \paragraph{Fall A: Seitenwind $0{,}5\,\text{m/s}$ (Baseline-Regler):}
     Bei moderatem Seitenwind ($0{,}5\,\text{m/s}$) zeigt die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke} eine seitliche Auslenkung in Windrichtung
     und anschließend eine Rückkehr zur Ausgangsspur, nachdem das Fahrzeug den dritten Windkanal passiert hat. 
-    Die quantitative Analyse der Versuchsdaten (ca. 18{,}0\,s Fahrtdauer, entsprechend 9{,}000 Datenpunkten bei 2\,ms Abtastung) 
+    Die Analyse der Versuchsdaten (ca. 18{,}0\,s Fahrtdauer, entsprechend 9{,}000 Datenpunkten bei 2\,ms Abtastung) 
     zeigt stabiles Verhalten trotz Windeinwirkung. Die maximale laterale Abweichung beträgt dabei bis zu etwa $3\,\text{m}$, bleibt jedoch ohne Instabilität.
     
     \begin{figure}[H]
@@ -580,7 +581,7 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
       \label{fig:gerade-strecke-mit-seitenwind-strecke}
     \end{figure}
     
-    Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten} verdeutlichen den Zusammenhang zwischen Rollwinkel und Lenkkommandos:
+    Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten} verdeutlichen den Zusammenhang zwischen Rollwinkel und Lenkkommandos.
     Zu Beginn ist eine deutliche Rechtsneigung (positiver Rollwinkel bis ca. +0{,}02\,rad) erkennbar, die der Regler mit gegenläufigen Balance- und Lenkimpulsen kompensiert.
     Der \texttt{final\_steer} erreicht Maximalwerte von ±0{,}04\,rad, bleibt aber durchgehend stabil. Die Signale bleiben beschränkt, 
     der stationäre Versatz wird durch den Integralanteil (I-Term bis ±0{,}03) weitgehend eliminiert, während der D-Anteil 
@@ -595,22 +596,22 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
       \label{fig:gerade-strecke-mit-seitenwind-daten}
     \end{figure}
     
-    \paragraph{Fall B: Seitenwind $1{,}0\,\text{m/s}$ (Baseline-Regler)}
+    \paragraph{Fall B: Seitenwind $1{,}0\,\text{m/s}$ (Baseline-Regler):}
     Erhöhen wir die Windstärke auf $1{,}0\,\text{m/s}$, vergrößert sich die laterale Abweichung deutlich
-    (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). Die quantitative Analyse der Versuchsdaten 
+    (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). Die Analyse der Versuchsdaten 
     (ca. 7{,}5\,s Fahrtdauer bis zum Umkippen, entsprechend 3{,}750 Datenpunkten bei 2\,ms Abtastung) 
     zeigt kritische Instabilität.
     
     Die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten1} zeigen,
-    dass der Rollwinkel nach etwa $7\,\text{s}$ divergiert und Extremwerte über ±0{,}05\,rad erreicht; das Fahrzeug kippt um.
+    dass der Rollwinkel nach etwa $7\,\text{s}$ divergiert und Extremwerte über ±0{,}05\,rad erreicht, das dazu führt, dass das Fahrzeug umkippt.
     Der \texttt{final\_steer} erreicht die Sättigungsgrenze von ±0{,}1\,rad, während der I-Anteil auf kritische Werte 
-    bis ±0{,}08 akkumuliert. Interpretation: Die Störmomente aus Seitenwind übersteigen mit den Baseline-Gains die stellbare Gegenwirkung,
+    bis ±0{,}08 akkumuliert. Die Störmomente aus Seitenwind übersteigen mit den Baseline-Regler die stellbare Gegenwirkung,
     der Regler läuft in Sättigungen (Lenkraten- und Amplitudenlimit), während der I-Anteil die anhaltende Störung nicht schnell genug kompensiert.
     
     \begin{figure}[H]
       \centering
       \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Strecke_2.png}
-      \caption{Trajektorie bei $1{,}0\,\text{m/s}$ Seitenwind (Baseline-Gains): 
+      \caption{Trajektorie bei $1{,}0\,\text{m/s}$ Seitenwind (Baseline-Regler): 
       starke Abdrift nach rechts mit vorzeitigem Abbruch infolge Umkippens.}
       \label{fig:gerade-strecke-mit-seitenwind-strecke2}
     \end{figure}
@@ -618,25 +619,25 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \begin{figure}[H]
       \centering
       \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten_2.png}
-      \caption{Zeitverlauf bei $1{,}0\,\text{m/s}$ (Baseline-Gains): 
+      \caption{Zeitverlauf bei $1{,}0\,\text{m/s}$ (Baseline-Regler): 
       ansteigende Rollauslenkung und instabiles Verhalten nach $\approx 7\,\text{s}$.}
       \label{fig:gerade-strecke-mit-seitenwind-daten1}
     \end{figure}
     
-    \paragraph{Fall C: Gain-Erhöhung für die Balance-Regelung}
-    Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften erhöhen wir die Balance-Gains auf 
+    \paragraph{Fall C: Gain-Erhöhung für die Balance-Regelung:}
+    Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften erhöhen wir die Balance-Reglerparameter auf 
     $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$. Die quantitative Analyse der Versuchsdaten 
     (ca. 22{,}0\,s erfolgreiche Fahrtdauer, entsprechend 11{,}000 Datenpunkten bei 2\,ms Abtastung) 
     belegt die deutliche Verbesserung der Windresistenz.
     
-    Der größere P-Anteil erhöht die Querstabilität (``Steifigkeit'' gegenüber Winkelfehlern), 
+    Der größere P-Anteil erhöht die Querstabilität, 
     der höhere D-Anteil liefert zusätzliche Dämpfung und verhindert Phasennachlauf, 
     und der verstärkte I-Anteil reduziert den stationären Versatz durch die windinduzierte Momentenbilanz.
     
-    Die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke3} bleibt nun über die gesamte Strecke beherrscht;
-    die laterale Abweichung wächst nicht mehr unbeschränkt an und erreicht maximal ca. 2{,}5\,m. 
-    Gleichzeitig zeigen die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten2} ein stärkeres, aber kontrolliertes Schwingen des finalen Lenkkommandos:
-    Der Rollwinkel bleibt durchgehend unter ±0{,}03\,rad (gegenüber >±0{,}05\,rad bei Baseline-Gains), 
+    Die Trajektorie in \autoref{fig:gerade-strecke-mit-seitenwind-strecke3} bleibt nun über die gesamte Strecke beherrscht. 
+    Die laterale Abweichung wächst nicht mehr unbeschränkt an und erreicht maximal ca. 2{,}5\,m. 
+    Gleichzeitig zeigen die Zeitreihen in \autoref{fig:gerade-strecke-mit-seitenwind-daten2} ein stärkeres, aber kontrolliertes Schwingen des finalen Lenkkommandos.
+    Der Rollwinkel bleibt durchgehend unter ±0{,}03\,rad (gegenüber >±0{,}05\,rad bei Baseline-Regelung), 
     der \texttt{final\_steer} erreicht ±0{,}08\,rad ohne Sättigung, und der I-Anteil stabilisiert sich bei ±0{,}05.
     Die erhöhte Verstärkung erkauft Stabilität durch höhere Stellaktivität, bleibt aber innerhalb der Aktuatorgrenzen.
     
@@ -657,32 +658,30 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \end{figure}
     
     \smallskip
-    \noindent\textit{Quantitative Seitenwind-Bewertung:} Die drei Versuchsreihen zeigen eine klare Abhängigkeit der Balance-Performance von Windstärke und Reglerparametern:
+    \noindent\textit{ Seitenwind-Bewertung:} Die drei Versuchsreihen zeigen eine klare Abhängigkeit der Balance-Performance von Windstärke und Reglerparametern:
     
-    Bei moderatem Seitenwind (0{,}5\,m/s) mit Baseline-Gains erreicht das System 18{,}0\,s stabile Fahrt 
+    Bei moderatem Seitenwind (0{,}5\,m/s) mit Baseline-Parametrierung erreicht das System 18{,}0\,s stabile Fahrt 
     mit kontrollierten Rollwinkeln (±0{,}02\,rad), begrenztem \texttt{final\_steer} (±0{,}04\,rad) und 
     maximal 3\,m lateraler Abweichung.
     
-    Bei starkem Seitenwind (1{,}0\,m/s) mit Baseline-Gains versagt das System nach nur 7{,}5\,s: 
+    Bei starkem Seitenwind (1{,}0\,m/s) mit Baseline-Parametern versagt das System nach nur 7{,}5\,s.
     Kritische Rollwinkel (>±0{,}05\,rad), Stellgrößensättigung (±0{,}1\,rad) und I-Anteil-Akkumulation (±0{,}08) 
     führen zum Umkippen.
     
-    Mit erhöhten Gains (Kp=5{,}0, Ki=0{,}2, Kd=0{,}4) bei 1{,}0\,m/s Seitenwind gelingt eine stabile 22{,}0\,s-Fahrt: 
-    Rollwinkel unter ±0{,}03\,rad, \texttt{final\_steer} ohne Sättigung (±0{,}08\,rad) und reduzierte laterale Abweichung (2{,}5\,m).
+    Mit einer höheren PID-Parametrierung (Kp=5{,}0, Ki=0{,}2, Kd=0{,}4) bei 1{,}0\,m/s Seitenwind gelingt eine stabile 22{,}0\,s-Fahrt.
+    Rollwinkel sind dabei unter ±0{,}03\,rad, \texttt{final\_steer} ohne Sättigung (±0{,}08\,rad) und reduzierte laterale Abweichung (2{,}5\,m).
     
-    \paragraph{Einordnung und Grenzen}
-    Die Ergebnisse bestätigen die in dieser Arbeit gewählte Zwei-Ebenen-Architektur:
-    Die schnelle Balance-Regelung muss Seitenwindstörungen primär aufnehmen; die langsamere Spurführung korrigiert den verbleibenden Versatz.
-    Für moderate Böen ($\approx 0{,}5\,\text{m/s}$) genügt die Baseline-Parametrierung; 
-    bei stärkeren Böen ($\approx 1{,}0\,\text{m/s}$) ist eine Erhöhung von $K_p$, $K_i$ und $K_d$ erforderlich, 
+    \paragraph{Einordnung und Grenzen:}
+    Die Ergebnisse zeigen die Grenzen der reinen Balance-PID-Regelung bei Seitenwindstörungen:
+    Für moderate Böen ($\approx 0{,}5\,\text{m/s}$) genügt die Baseline-Parametrierung sehr gut auf. 
+    Bei stärkeren Böen ($\approx 1{,}0\,\text{m/s}$) ist eine Erhöhung von $K_p$, $K_i$ und $K_d$ erforderlich, 
     um Umkippen zu vermeiden. Allerdings steigen dabei Stellaufwand und Oszillationstendenzen.
     
-    Ab einer gewissen Windstärke liefern reine PID-Anpassungen abnehmenden Zusatznutzen.
-    Sinnvolle Erweiterungen sind (i) Anti-Windup und Lenkratenbegrenzung mit prädiktiver Phasenreserve,
-    (ii) eine Störgrößen-Vorsteuerung (z.\,B. auf Basis eines Windschätzers oder der Querbeschleunigung),
-    (iii) Gain-Scheduling über Geschwindigkeit und geschätzte Windlast sowie 
-    (iv) physikalische Anpassungen (größere Reifenbreite, tieferer Schwerpunkt, höhere Rotationsenergie der Räder).
-    Diese Maßnahmen adressieren die beobachtete Kopplung von Roll- und Querfehler und erhöhen die Robustheit über das reine Tuning hinaus.
+    Ab einer gewissen Windstärke (>$1{,}5\,\text{m/s}$) stoßen reine PID-Anpassungen an ihre Grenzen.
+    Die Balance-Regelung kann dann die Seitenwindkräfte nicht mehr vollständig kompensieren, 
+    da die verfügbaren Lenkmomente und -geschwindigkeiten begrenzt sind. 
+    Für höhere Windresistenz wären physikalische Anpassungen (größere Reifenbreite, tieferer Schwerpunkt) 
+    oder erweiterte Regelungsansätze (Störgrößenaufschaltung) erforderlich.
 
 
 
@@ -701,9 +700,22 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   \newpage
   \subsubsection{Gerade Strecke mit Höhenunterschied}
   
-  In diesem Abschnitt bewerten wir die Stabilität der Balanceregelung auf einer geraden Teststrecke mit definiertem Höhenprofil. Untersucht werden zwei archetypische 
-  Szenarien: das Überfahren eines Hügels sowie das Durchfahren einer Senke (``Tunnel''), vgl.\ \autoref{fig:huegel-tunnel}. Soweit nicht anders angegeben, verwenden
-  wir die Baseline-Parameter der Balance-PID-Regelung aus Kapitel~5.2.3. Die Höhendifferenz \(M\) wird schrittweise variiert (\(0{,}5\,\text{m}\), \(1\,\text{m}\), \(2\,\text{m}\)), 
+  Im Gegensatz zu den vorherigen Szenarien mit ebener \texttt{RectangleArena} verwendet dieses Experiment 
+  die Weltdatei \texttt{Balance\_unebenheiten.wbt} mit einem \texttt{UnevenTerrain}-Knoten. Dieser generiert 
+  eine prozedural erzeugte, unebene Oberfläche mit definierten Höhenprofilen über eine $64\,\text{m} \times 64\,\text{m}$ 
+  große Grundfläche (Größe: $64 \times 64 \times i\,\text{m}$, Auflösung: $128 \times 128$ Gitterpunkte).
+  
+  Die Terrain-Konfiguration erfolgt über \texttt{randomSeed 0} für reproduzierbare Höhenprofile, 
+  \texttt{flatBounds TRUE} für ebene Randbereiche und \texttt{perlinNOctaves 0} zur Deaktivierung 
+  von Perlin-Rauschen. Dies erzeugt kontrollierte Höhenverläufe ohne zufällige Oberflächenstrukturen. 
+  Die Fahrradkonfiguration entspricht den vorherigen Experimenten mit reduzierter Reifenbreite 
+  (Entspricht ca. $2\,\text{cm}$ Breite) für erhöhte Balance-Anforderungen.
+  
+  In diesem Abschnitt bewerten wir die Stabilität der reinen Balance-Regelung auf definierten Höhenprofilen. 
+  Untersucht werden zwei Szenarien: das Überfahren eines Hügels sowie das Durchfahren einer 
+  Senke (vgl. \autoref{fig:huegel-tunnel}). Soweit nicht anders angegeben verwenden wir die 
+  Baseline-Parameter der Balance-PID-Regelung ($K_p = 2{,}0$, $K_i = 0{,}05$, $K_d = 0{,}2$). 
+  Die Höhendifferenz $M$ wird schrittweise variiert ($1\,\text{m}$, $2\,\text{m}$, $4\,\text{m}$) 
   um den Einfluss auf Roll- und Spurverhalten systematisch zu untersuchen.
   
   \begin{figure}[H]
@@ -720,12 +732,19 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \label{fig:huegel-tunnel}
   \end{figure}
   
-  \paragraph{Fall A: Senke, \(M=1{,}0\,\text{m}\)}
+  \paragraph{Fall A: Senke, $M=1{,}0\,\text{m}$ (Baseline-Parameter):}
   
-  Die Trajektorie in \autoref{fig:tunnel-strecke-1} zeigt über weite Teile eine nahezu ideale Spurhaltung; geringe laterale Abweichungen treten erst beim 
-  Ausfahren aus der Senke auf. Die Zeitreihen in \autoref{fig:tunnel-daten-1} bestätigen dieses Bild: Der Rollwinkel bleibt klein und wird vom Balance-Regler 
-  zuverlässig kompensiert. Bei \(t\approx 2{,}5\,\text{s}\) ist eine kurzzeitige Amplitudenerhöhung sichtbar, die rasch ausklingt. Da die tiefste Stelle des 
-  Profils mittig liegt und die Ränder auf der Referenzhöhe (Nullhöhe) verlaufen, wirken die seitlichen Anteile der Hangabtriebskraft symmetrisch, was die beobachtete Stabilität der Talfahrt erklärt.
+  Die Analyse der Versuchsdaten (22{,}32\,s Fahrtdauer, 2{,}233 Datenpunkte bei 2\,ms Abtastung) 
+  zeigt ausgezeichnete Stabilität bei moderater Höhendifferenz. Die Trajektorie in \autoref{fig:tunnel-strecke-1} 
+  zeigt über weite Teile eine nahezu ideale Spurhaltung. Geringe laterale Abweichungen (maximal $\pm 1{,}5\,\text{m}$) 
+  treten erst beim Ausfahren aus der Senke auf.
+  
+  Die Zeitreihen in \autoref{fig:tunnel-daten-1} bestätigen dieses Bild. Der Rollwinkel bleibt durchgehend 
+  unter $\pm 0{,}015\,\text{rad}$ und wird vom Balance-Regler zuverlässig kompensiert. Der \texttt{final\_steer} 
+  erreicht Maximalwerte von $\pm 0{,}03\,\text{rad}$ ohne Sättigungserscheinungen. Bei $t \approx 2{,}5\,\text{s}$ 
+  ist eine kurzzeitige Amplitudenerhöhung sichtbar, die rasch ausklingt. Da die tiefste Stelle des Profils 
+  mittig liegt und die Ränder auf der Referenzhöhe verlaufen, wirken die seitlichen Anteile der Hangabtriebskraft 
+  symmetrisch, was die beobachtete Stabilität der Talfahrt erklärt.
   
   \begin{figure}[H]
     \centering
@@ -741,11 +760,11 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \label{fig:tunnel-daten-1}
   \end{figure}
   
-  \paragraph{Fall B: Senke, \(M=2{,}0\,\text{m}\) (Baseline-Gewichte)}
+  \paragraph{Fall B: Senke, \(M=2{,}0\,\text{m}\) (Baseline-Gewichte):}
   
   Wird die Höhendifferenz auf \(M=2{,}0\,\text{m}\) erhöht, verschlechtert sich das Verhalten mit den Baseline-Gewichten deutlich. \autoref{fig:tunnel-strecke-2}
    dokumentiert eine wachsende Querabweichung im letzten Drittel der Strecke. In den Zeitreihen (\autoref{fig:tunnel-daten-2}) steigt die Schwingungsamplitude des 
-   Rollwinkels progressiv an—ein Muster, das auf Unterdämpfung bei stärkerer Störmomenterregung durch Längsneigung und Krümmungswechsel hinweist.
+    Rollwinkels stetig an, was auf Unterdämpfung bei stärkerer Störmomenterregung durch die größere Längsneigung und den ausgeprägteren Krümmungswechsel hinweist.
   
   \begin{figure}[H]
     \centering
@@ -761,13 +780,21 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
     \label{fig:tunnel-daten-2}
   \end{figure}
   
-  \paragraph{Fall C: Senke, \(M=2{,}0\,\text{m}\) mit angepassten Balance-PID-Gewichten}
+  \paragraph{Fall C: Senke, $M=2{,}0\,\text{m}$ mit angepassten Balance-PID-Gewichten:}
   
-  Zur Wiederherstellung der Querstabilität wurden die Balance-Gains gezielt erhöht: \(K_p=3{,}5\), \(K_i=0{,}2\), \(K_d=0{,}4\). Die resultierende Trajektorie 
-  (\autoref{fig:tunnel-strecke-pid}) bleibt spurtreu; die Zeitreihen in \autoref{fig:tunnel-daten-pid} zeigen gedämpfte Rollschwingungen mit rascher Rückkehr 
-  in den stationären Bereich. Die Anpassung adressiert die dominanten Effekte bei großem \(M\): (i) stärkere proportionale Rückführung (\(K_p\)) zur Reduktion
-   des Querfehlers und (ii) erhöhte Dämpfung (\(K_d\)) zur Phasenführung gegen die durch den Krümmungswechsel angeregten Eigenschwingungen. Der Integrationsanteil
-  bleibt moderat und dient primär der Eliminierung kleiner stationärer Abweichungen (Anti-Windup aktiv).
+  Zur Wiederherstellung der Querstabilität wurden die Balance-Parameter gezielt erhöht: $K_p=3{,}5$, $K_i=0{,}2$, $K_d=0{,}4$. 
+  Die Analyse der Versuchsdaten (23{,}14\,s Fahrtdauer, 2{,}315 Datenpunkte bei 2\,ms Abtastung) 
+  belegt die erfolgreiche Stabilisierung gegenüber Fall B.
+  
+  Die resultierende Trajektorie (\autoref{fig:tunnel-strecke-pid}) bleibt spurtreu mit lateralen Abweichungen 
+  unter $\pm 4{,}0\,\text{m}$. Die Zeitreihen in \autoref{fig:tunnel-daten-pid} zeigen gedämpfte Rollschwingungen 
+  (maximal $\pm 0{,}02\,\text{rad}$) mit rascher Rückkehr in den stationären Bereich. Der \texttt{final\_steer} 
+  erreicht $\pm 0{,}06\,\text{rad}$ ohne Sättigung, was die erhöhte Stellaktivität bei größeren PID-Parametern bestätigt.
+  
+  Die Anpassung adressiert die dominanten Effekte bei großem $M$, stärkere proportionale Rückführung ($K_p$) 
+  zur Reduktion des Querfehlers und erhöhte Dämpfung ($K_d$) zur Phasenführung gegen die durch den Krümmungswechsel 
+  angeregten Eigenschwingungen. Der Integrationsanteil bleibt moderat und dient primär der Eliminierung kleiner 
+  stationärer Abweichungen.
   
   \begin{figure}[H]
     \centering
@@ -784,17 +811,18 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   \end{figure}
 
     
-  \paragraph{Zusammenfassung und Ableitungen}
-  
-  Die Ergebnisse zeigen, dass mit zunehmender Höhendifferenz \(M\) die erforderlichen Balance-Gains systematisch ansteigen, um Querstabilität und Dämpfung sicherzustellen. 
-  In der hier verwendeten Konfiguration (Reifenbreite \(2\,\text{cm}\), Streckenlänge \(64\,\text{m}\) mit Tiefpunkt bei \(s=32\,\text{m}\)) liegt die praktikable Grenze 
-  im Fall~B bei \(M\approx 2\,\text{m}\); ohne Retuning treten darüber Instabilität bzw.\ Umkippen auf. Perspektivisch bietet sich eine steigungsadaptive Gain-Schedulierung 
-  entlang des Höhenprofils an, um manuelles Retuning zu vermeiden und die Robustheit gegenüber starken Längsneigungen weiter zu erhöhen.
+
+
+\paragraph{Fall D: Hügel, \(M=2{,}0\,\text{m}\) mit angepassten Balance PID Gewichten:}
 
 
 
-\paragraph{Fall D: Hügel, \(M=2{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
-\clearpage
+Wir betrachten nun die Auffahrt auf einen Hügel mit einer maximalen Höhe von $+2{,}0\,\text{m}$ 
+mit angepassten Balance-PID-Gewichten ($K_p=3{,}5$, $K_i=0{,}2$, $K_d=0{,}4$). Die quantitative Analyse 
+der Versuchsdaten (22{,}15\,s Fahrtdauer, 2{,}216 Datenpunkte bei 2\,ms Abtastung) zeigt vergleichbare 
+Stabilität zur entsprechenden Senke (Fall C). Ziel ist die Beurteilung der Stabilität bei umgekehrtem 
+Höhenprofil im Vergleich zur Senke.
+
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/Höhe/+2/Strecke.png}
@@ -802,17 +830,15 @@ die Wirksamkeit der gewählten Architektur und identifizieren sowohl die Grenzen
   \label{fig:tunnel-strecke-pid-2}
 \end{figure}
 
-Wir betrachten nun die Auffahrt auf einen Hügel mit einer maximalen Höhe von \(+2\,\text{m}\).
-Der Zwischenfall mit \(+1\,\text{m}\) zeigt qualitativ das gleiche Verhalten und wird daher ausgelassen.
-Ziel ist die Beurteilung der Stabilität bei umgekehrtem Höhenprofil im Vergleich zur Senke.
+Die Trajektorie in \autoref{fig:tunnel-strecke-pid-2} bleibt über weite Strecken spurtreu mit lateralen 
+Abweichungen unter $\pm 2{,}8\,\text{m}$. Geringe zusätzliche Abweichungen treten vor allem im Bereich 
+des Scheitelpunkts auf, wo sich die Steigung am stärksten ändert und die Balance-Regelung zusätzliche 
+Störmomente kompensieren muss.
 
-Die Trajektorie in \autoref{fig:tunnel-strecke-pid-2} bleibt über weite Strecken spurtreu.
-Geringe laterale Abweichungen treten vor allem im Bereich des Scheitelpunkts auf.
-Dort ändert sich die Steigung am stärksten und die Balance Regelung muss zusätzliche Störmomente kompensieren.
-Die Zeitreihen in \autoref{fig:tunnel-daten-pid-2} stützen diese Beobachtung.
-Rollwinkel und Balancelenkwinkel überlagern sich weitgehend und zeigen kleine gedämpfte Schwingungen.
-Kurz vor dem Scheitelpunkt ist eine moderate Amplitudenzunahme sichtbar.
-Nach der Überfahrt klingen die Schwingungen rasch ab und der Verlauf nähert sich wieder dem stationären Bereich.
+Die Zeitreihen in \autoref{fig:tunnel-daten-pid-2} stützen diese Beobachtung. Rollwinkel und Balancelenkwinkel 
+bleiben unter $\pm 0{,}018\,\text{rad}$ bzw. $\pm 0{,}05\,\text{rad}$ und zeigen kleine gedämpfte Schwingungen. 
+Kurz vor dem Scheitelpunkt ist eine moderate Amplitudenzunahme sichtbar. Nach der Überfahrt klingen die 
+Schwingungen rasch ab und der Verlauf nähert sich wieder dem stationären Bereich.
 
 \begin{figure}[H]
   \centering
@@ -822,11 +848,12 @@ Nach der Überfahrt klingen die Schwingungen rasch ab und der Verlauf nähert si
 \end{figure}
 
 
-\paragraph{Fall E: Hügel, \(M=4{,}0\,\text{m}\) mit angepassten Balance PID Gewichten}
+\paragraph{Fall E: Hügel, \(M=4{,}0\,\text{m}\) mit angepassten Balance PID Gewichten:}
 
-Mit den Parametern \(K_p = 4{,}5\), \(K_i = 0{,}2\) und \(K_d = 0{,}4\) lässt sich eine Hügelhöhe von etwa \(4\,\text{m}\) beherrschen.
-Als Gütekriterium diente das sichere Vermeiden eines Umkippens.
-Spurtreue wurde nicht erzwungen.
+Mit den erhöhten Parametern $K_p = 4{,}5$, $K_i = 0{,}2$ und $K_d = 0{,}4$ lässt sich eine Hügelhöhe von etwa $4\,\text{m}$ beherrschen. 
+Die Analyse der Versuchsdaten (23{,}94\,s Fahrtdauer, 2{,}395 Datenpunkte bei 2\,ms Abtastung) 
+zeigt die längste Versuchsdauer aller Höhenexperimente, was auf die herausfordernden Bedingungen und 
+entsprechend vorsichtigere Fahrdynamik hinweist.
 
 \begin{figure}[H]
   \centering
@@ -835,12 +862,12 @@ Spurtreue wurde nicht erzwungen.
   \label{fig:tunnel-strecke-pid-4}
 \end{figure}
 
-Die Trajektorie in \autoref{fig:tunnel-strecke-pid-4} zeigt eine zentrale Annäherung an den Hügel.
-Nach rund \(20\,\text{m}\) setzt eine deutliche Ausweichbewegung ein.
-Bis zu diesem Punkt wurde bereits ein Höhengewinn von knapp \(2\,\text{m}\) erreicht.
-Die Regelung priorisiert in dieser Phase die Aufrechterhaltung der Balance gegenüber der Spurhaltung.
-Dadurch kann eine laterale Abdrift entstehen und der Scheitel wird mit seitlichem Versatz umfahren.
-Nach dem Scheitel stabilisiert sich die Fahrt in der anschließenden Abfahrt wieder und der Verlauf nähert sich einer geraden Spur.
+Die Trajektorie in \autoref{fig:tunnel-strecke-pid-4} zeigt eine zentrale Annäherung an den Hügel mit 
+maximaler lateraler Abweichung von ca. $\pm 9{,}5\,\text{m}$. Nach rund $20\,\text{m}$ setzt eine deutliche Ausweichbewegung ein, 
+wobei bis zu diesem Punkt bereits ein Höhengewinn von knapp $2\,\text{m}$ erreicht wurde. 
+Es entsteht eine laterale Abdrift und der Scheitel wird mit seitlichem Versatz umfahren. 
+Nach dem Scheitel stabilisiert sich die Fahrt in der anschließenden Abfahrt wieder und der Verlauf 
+nähert sich einer geraden Spur.
 
 \begin{figure}[H]
   \centering
@@ -849,23 +876,24 @@ Nach dem Scheitel stabilisiert sich die Fahrt in der anschließenden Abfahrt wie
   \label{fig:tunnel-daten-pid-4}
 \end{figure}
 
-Die Zeitreihen in \autoref{fig:tunnel-daten-pid-4} verdeutlichen die Dynamik.
-Zu Beginn treten stärkere Schwingungen auf, die im Bereich des steilen Anstiegs zunehmen.
+Die Zeitreihen in \autoref{fig:tunnel-daten-pid-4} verdeutlichen die anspruchsvolle Dynamik. 
+Zu Beginn treten stärkere Schwingungen auf (Rollwinkel bis $\pm 0{,}04\,\text{rad}$), die im Bereich des steilen Anstiegs zunehmen. 
+Der \texttt{final\_steer} erreicht Extremwerte von $\pm 0{,}12\,\text{rad}$, bleibt aber unter der Sättigungsgrenze. 
 Kurz nach dem Scheitel gehen die Amplituden spürbar zurück und der Verlauf wird ruhiger.
+
 Dieses Muster ist konsistent mit den zusätzlichen Störmomenten durch die größere Längsneigung und den ausgeprägten Krümmungswechsel.
-Die gewählten Verstärkungen erhöhen die proportionale Rückführung und die Dämpfung.
-Der Integrationsanteil bleibt moderat und dient vor allem der Beseitigung kleiner stationärer Abweichungen.
-In Summe wird Balance erreicht, während die Spurhaltung bei \(M=4\,\text{m}\) nur eingeschränkt gewährleistet ist.
+Die gewählten Verstärkungen erhöhen die proportionale Rückführung und die Dämpfung. Der Integrationsanteil bleibt moderat 
+und dient hierbei wiederum vor allem der Beseitigung kleiner stationärer Abweichungen. In Summe wird Balance erreicht, während die Spurhaltung 
+bei $M=4\,\text{m}$ nur eingeschränkt gewährleistet ist.
 
 
-\paragraph{Zusammenfassung und Ableitungen}
+\paragraph{Zusammenfassung und Ableitungen:}
 
-Die Experimente mit Senken und Hügeln zeigen übereinstimmend, dass mit wachsender Höhendifferenz \(M\) die erforderlichen Balance Gains ansteigen, 
-damit Querstabilität und Dämpfung erhalten bleiben. Die Teststrecke besitzt eine Länge von \(64\,\text{m}\) und ein zentrales Extremum bei \(s=32\,\text{m}\). 
-In dieser Konfiguration beträgt die Reifenbreite \(2\,\text{cm}\).
+Die Experimente mit Senken und Hügeln zeigen übereinstimmend, dass mit wachsender Höhendifferenz \(M\) die erforderlichen Balance Parametrierungen ansteigen, 
+damit Querstabilität und Dämpfung erhalten bleiben. 
 
 \textbf{Senken.} Bei \(M=1{,}0\,\text{m}\) bleibt das System mit Baseline Parametern stabil und spurtreu. Beim Übergang aus der Senke treten nur kleine 
-transiente Abweichungen auf, die rasch abklingen. Bei \(M=2{,}0\,\text{m}\) führt das Baseline Tuning zu wachsender Rollschwingung und lateraler Drift. 
+transiente Abweichungen auf, die rasch abklingen. Bei \(M=2{,}0\,\text{m}\) führt die Baseline Parametrierung zu wachsender Rollschwingung und lateraler Drift. 
 Ein Retuning mit \(K_p=3{,}5\), \(K_i=0{,}2\) und \(K_d=0{,}4\) stellt die Querstabilität wieder her. Die Talfahrt erweist sich als robust, weil die tiefste 
 Stelle mittig liegt und die seitlichen Anteile der Hangabtriebskraft symmetrisch wirken.
 
@@ -873,88 +901,64 @@ Stelle mittig liegt und die seitlichen Anteile der Hangabtriebskraft symmetrisch
 mit \(K_p=4{,}5\), \(K_i=0{,}2\) und \(K_d=0{,}4\) aufrecht, weicht jedoch seitlich aus und umgeht den Scheitelpunkt. Die stärkste Beanspruchung entsteht 
 im Anstieg nahe dem Scheitel, wo sich Steigung und Krümmungswechsel überlagern. Nach dem Scheitel beruhigt sich das System, und die Abfahrt verläuft deutlich ruhiger als der Anstieg.
 
-\textbf{Gemeinsame Schlussfolgerungen.}
-\begin{itemize}
-  \item Die erforderlichen Gains wachsen mit \(M\). Der proportionale Anteil reduziert den Querfehler. Der derivative Anteil erhöht die Dämpfung und 
-  verbessert die Phasenlage. Der integrale Anteil bleibt moderat und beseitigt kleine stationäre Abweichungen unter aktivem Anti Windup.
-  \item Die kritischen Bereiche liegen an den Extrema des Höhenprofils. Dort ändern sich Neigung und Krümmung am stärksten, was transiente Rollmomente 
-  verstärkt und Spurabweichungen auslösen kann.
-  \item In der vorliegenden Konfiguration liegt für Senken die praktikable Grenze ohne Retuning bei etwa \(M=2\,\text{m}\). Größere Werte erfordern 
-  angepasste Gains. Hügel mit \(M=4\,\text{m}\) sind mit erhöhten Gewichten beherrschbar, jedoch mit Einbußen in der Spurhaltung.
-\end{itemize}
+\textbf{Gemeinsame Schlussfolgerungen.} Die erforderlichen PID-Parameter wachsen systematisch mit der Höhendifferenz $M$, wobei der proportionale Anteil 
+den Querfehler reduziert, der derivative Anteil die Dämpfung erhöht und die Phasenlage verbessert, während der integrale Anteil moderat bleibt und kleine 
+stationäre Abweichungen beseitigt. Die kritischen Bereiche liegen an den Extrema des Höhenprofils, wo sich Neigung und Krümmung am stärksten ändern und 
+Rollmomente sich stark verstärken und die Spurabweichungen auslösen können. In der vorliegenden Konfiguration liegt für Senken die praktikable Grenze ohne 
+Parameteranpassung bei etwa $M=2\,\text{m}$, während größere Werte angepasste Parameter erfordern und Hügel mit $M=4\,\text{m}$ zwar mit erhöhten Parametern 
+beherrschbar sind, jedoch mit Einbußen in der Spurhaltung.
 
-\textbf{Implikationen für die Regelung.} Eine steigungsadaptive Gain Schedulierung entlang der Strecke ist sinnvoll. Dabei können Vorsteueranteile 
-aus der geschätzten Neigung und ihrer Änderung genutzt werden. Empfehlenswert sind zudem Begrenzungen der Lenkraten und Amplituden sowie eine konsequente 
-Anti Windup Behandlung. Damit lässt sich das Retuning reduzieren, und die Robustheit gegenüber starken Längsneigungen steigt.
-\pdfcomment{Daher neben roll und yaw nun auch pitch in zukunft einzubauen}
+\textbf{Implikationen für die Regelung.} Die Experimente zeigen, dass neben den bisher verwendeten Roll- und Yaw-Winkeln (für Kippverhalten und Fahrrichtung) 
+auch der Pitch-Winkel in die Regelung integriert werden sollte, um Höhenunterschiede proaktiv zu kompensieren. Eine steigungsadaptive PID-Parameter-Schedulierung entlang 
+der Strecke ist sinnvoll, wobei Vorsteueranteile aus der geschätzten Längsneigung und ihrer Änderungsrate genutzt werden können. Der Pitch-Winkel würde frühzeitige 
+Erkennung von Steigungsänderungen ermöglichen und präventive Parameteranpassungen auslösen, bevor kritische Rollmomente entstehen. 
+Damit lässt sich das manuelle Retuning reduzieren und die Robustheit gegenüber starken Längsneigungen steigt.
   
   
   %------------------------------------------------------------------------------------------------
   %------------------------------------------------------------------------------------------------
 
+  \newpage
  
 
 
 \subsection{Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}
 \label{sec:rechenzeit-echtzeit}
 
-\paragraph{Motivation}
-Dieses Teilkapitel ordnet die in den vorangehenden Abschnitten dargestellten Fahrversuche (Kurvenfahrt, S\,-Kurve, Senken-/Hügelfahrten) 
-hinsichtlich Rechenzeit und Echtzeitfähigkeit ein. Im Fokus steht die Frage, welche zeitlichen Anforderungen die Simulation in Webots an den 
-Code stellt und wie sich diese Anforderungen vom realen Prototyp unterscheiden.
+Die Analyse der zeitlichen Anforderungen und der Echtzeitfähigkeit der Simulation ist entscheidend für die Übertragbarkeit der Ergebnisse auf reale Fahrradprototypen. Webots trennt streng zwischen 
+virtueller Simulationszeit und Realzeit, wobei die Schrittweite der Physik durch \texttt{WorldInfo.basicTimeStep = 2ms} vorgegeben wird (vgl. \autoref{sec:controller}). 
+Jeder Aufruf von \texttt{wb\_robot\_step()} lässt genau die angegebene virtuelle Zeit vergehen, unabhängig von der tatsächlich benötigten Rechenzeit. Bei Überschreitung der 
+verfügbaren Rechenzeit verlangsamt Webots die Ausführung, während die Physikschritte konsistent bleiben.
 
+Die durchgeführten Experimente zeigen eine Lenkwinkel-Nachführung in den verschiedenen Szenarien. 
+Für die S-Kurve beträgt der RMS-Tracking-Fehler\footnote{RMS-Tracking-Fehler: Root Mean Square der Abweichung zwischen Lenkwinkelsollwert und tatsächlichem Lenkwinkel über die gesamte Fahrt.} z.B zwischen Sollwert (\texttt{final\_steer}) und gemessenem Lenkwinkel (\texttt{actual\_handlebar\_angle}) bei 
+YOLO- sowie ROI-Fallback-basierter Spurführung betrug durchschnittlich 0.0069rad. Bei der Kurvenfahrt mit 
+YOLO-PID steigt der RMS-Fehler auf 0.131rad Versatz, reduziert sich jedoch auf 0.0074rad in den ersten 1000 Datenpunkten (2 Sekunden) vor dem Auftreten der Instabilität. 
+Diese Werte verdeutlichen, dass die mechanischen Grenzen der Lenkung primär durch die Webots-Motorparameter \texttt{dampingConstant = 0.3} und \texttt{staticFriction = 0.1} 
+des Handlebars-Motors bestimmt werden, nicht durch Rechenzeitbeschränkungen.
 
-\paragraph{Rechenzeit in Webots: virtuelle Zeit statt harter Echtzeit}
-Webots trennt streng zwischen \emph{virtueller Zeit} (Simulationszeit) und \emph{Realzeit}. Die Schrittweite der Physik wird durch den 
-\texttt{WorldInfo.basicTimeStep} vorgegeben (hier: \(T_s = 2\,\mathrm{ms}\), entsprechend \(f_s \approx 500\,\mathrm{Hz}\)). Jeder Aufruf 
-von \texttt{wb\_robot\_step(duration)} lässt genau die angegebene \emph{virtuelle} Zeit vergehen; die tatsächlich benötigte \emph{Rechenzeit} 
-kann jedoch größer oder kleiner als \(\texttt{duration}\) sein.\footnote{Vgl. Webots Reference Manual: \emph{Robot} – Synchronisation und \texttt{wb\_robot\_step}.}
-Damit gilt:
-\begin{itemize}
-  \item Ist die Berechnung schneller als echtzeitfähig, läuft die Simulation schneller als Realzeit.
-  \item Ist die Berechnung langsamer, \emph{verlangsamt} Webots die Ausführung (Speedometer \(<1\)); die Physikschritte bleiben konsistent, 
-  die Simulationsuhr schreitet lediglich langsamer fort.\footnote{Vgl. Webots User Guide: \emph{The User Interface} – „Speedometer and Virtual Time“.}
-\end{itemize}
-Für unsere Konfiguration bedeutet das: Der schnelle Balance-Controller (C, \(500\,\mathrm{Hz}\)) und die langsamere Visionschleife 
-(Python, \(\approx20\,\mathrm{Hz}\)) müssen in Webots \emph{nicht} harte Deadlines erfüllen, solange die Synchronisation aktiv ist 
-(\texttt{synchronization = TRUE}). Die Simulationsdynamik bleibt deterministisch; nur die Ausführungsdauer in Realzeit steigt bei hoher Rechenlast.
+Der zweistufige Controller profitiert von der virtuellen Zeitentkopplung in Webots. Die Kommunikation zwischen den Controllern erfolgt über \texttt{wb\_emitter}/\texttt{wb\_receiver} mit einem 
+strukturierten Datenformat, das Lenkbefehle, Geschwindigkeitsvorgaben und PID-Terme überträgt. Dadurch entstehen in Webots keine Übertragungsverzögerungen 
+oder Jitter-Effekte, wie sie bei realen Fahrrädern durch physische Kommunikationskanäle (CAN-Bus, UART, I²C) auftreten würden. 
 
-\paragraph{Implikationen für die hier durchgeführten Versuche}
-Die in Kap.\,5 dargestellten Szenarien (u.\,a.\ Kurve/S\,-Kurve mit YOLO sowie ROI-Fallback, Senken/Hügel mit ansteigenden Balance-Gains) 
-profitieren von dieser Entkopplung:
-\begin{enumerate}
-  \item \textbf{Parametervariationen ohne Echtzeitdruck:} Gain-Sweeps, Hysterese-Tests und Filterstudien (EMA/Spline-Glättung) können mit 
-  identischer virtueller Zeitskala reproduziert werden, auch wenn einzelne Schritte in Realzeit länger dauern.
-  \item \textbf{Stabilitätsaussagen bleiben gültig:} Das Kippverhalten, Querfehler-Verlauf und die Dämpfungseigenschaften ergeben sich aus
-   der Physik im festen \(T_s\); eine temporär langsamere Ausführung verzerrt diese Aussagen nicht.
-  \item \textbf{Architekturpriorität:} Für die Simulation ist eine \emph{klare, modulare Code-Architektur} (Trennung Balance vs.\ Vision,
-   wohldefinierte Schnittstellen, Logging) wichtiger als die Optimierung auf harte Echtzeitgrenzen.
-\end{enumerate}
+Die Lenkdynamik wird durch das Webots-Motormodell mit \texttt{maxTorque = 25Nm}, \texttt{dampingConstant = 0.3} 
+und \texttt{staticFriction = 0.1} begrenzt. Diese Parameter erzeugen eine realistische Trägheit und Dämpfung, die bei schnellen Lenkbefehlen zu einem Nacheilverhalten 
+führt. Die gemessenen RMS-Tracking-Fehler von ~0.007rad entsprechen etwa 0.4°, was für die Spurführung akzeptabel ist, jedoch bei kritischen Manövern die Regelgüte 
+begrenzt. Eine Anpassung der Parameter würde die Nachführgenauigkeit verbessern, aber möglicherweise die Realitätsnähe der Simulation beeinträchtigen, da reale 
+Lenksysteme ähnliche mechanische Beschränkungen aufweisen.
 
-\paragraph{Warum harte Echtzeit erst auf dem Realfahrrad kritisch wird}
-Die früheren Arbeiten am realen Fahrrad (u.\,a.\ Ranz 2021, Zander 2023, Yasin 2024) beschreiben eine kaskadierte PID-Architektur mit typischen Zykluszeiten 
-von \(5\,\mathrm{ms}\) (Balance), \(1\,\mathrm{ms}\) (Lenkpositionsregelung) und \(150\,\mathrm{ms}\) (Geschwindigkeit). Die Implementierung nutzt auf dem 
-BeagleBone Black u.\,a.\ PRUs für deterministische PWM/GPIO-Signale und einen Watchdog für Deadline-Überwachung. Hier gilt:
-\begin{itemize}
-  \item \textbf{Harte Deadlines:} Wird die \(5\,\mathrm{ms}\)-Balanceperiode verfehlt, akkumuliert sich der Rollfehler; das System kann innerhalb weniger hundert Millisekunden instabil werden.
-  \item \textbf{E/A-Latenzen sind real:} IMU, Encoder und Motoransteuerung verursachen nicht verschiebbare Verzögerungen und Jitter, die in der Regelung 
-  kompensiert werden müssen (Anti-Windup, Derivat-Anteil, Begrenzungen).
-  \item \textbf{Kein „Zeitdilatations“-Sicherheitsnetz:} Im Gegensatz zu Webots lässt sich die Realzeit nicht „verlangsamen“; das Betriebssystem und die Elektronik laufen unverändert weiter.
-\end{itemize}
-Folglich ist auf dem realen System eine \emph{echtzeitfähige} Umsetzung (deterministische Scheduling-Strategie, Interrupt-nahe E/A, Worst-Case-Betrachtungen) zwingend; in der Simulation dagegen nicht.
+\textbf{Implikationen für den Transfer auf reale Systeme:} Während in Webots keine harten Echtzeitanforderungen bestehen, erfordern reale Fahrradprototypen deterministische 
+Timing-Eigenschaften. Frühere Arbeiten beschreiben kaskadierte PID-Architekturen mit typischen Zykluszeiten von 5ms (Balance), 1ms (Lenkpositionsregelung) und 150ms 
+(Geschwindigkeit) auf BeagleBone Black-Systemen mit PRUs für deterministische PWM-Signale. Das Verfehlen der 5ms-Balance-Periode führt zur Akkumulation von Rollfehlern 
+und kann innerhalb weniger hundert Millisekunden zur Instabilität führen. Im Gegensatz zur Simulation verursachen IMU-Latenzen, Encoder-Jitter und 
+Motoransteuerungsverzögerungen nicht kompensierbare Störungen, die durch Anti-Windup-Mechanismen, Derivat-Begrenzungen und Watchdog-Überwachung behandelt 
+werden müssen.
 
-\paragraph{Konsequenzen für diese Arbeit und Folgeprojekte}
-Aus den obigen Punkten leiten sich zwei zentrale Empfehlungen ab:
-\begin{enumerate}
-  \item \textbf{Für Webots-Studien (diese Arbeit):} Beibehalten eines kleinen \(\,T_s=2\,\mathrm{ms}\) für die Physik, saubere Synchronisation (\texttt{wb\_robot\_step}), 
-  konsistente Logging-Zeitskalen. Rechenzeitoptimierung ist optional und zielt v.\,a.\ auf Durchsatz (mehr Szenarien/Parameter pro Zeiteinheit).
-  \item \textbf{Für den Transfer aufs reale Fahrrad:} Frühzeitige Vorbereitung einer echtzeitfähigen Architektur (PRU/ISR-basierte Ansteuerung, Pufferung von Sensordaten, 
-  feste Task-Zyklen, Watchdog, Timing-Telemetry). Die in Webots gefundenen Parameter/Strukturen bleiben nutzbar, müssen jedoch unter harten Zeitrestriktionen validiert werden.
-\end{enumerate}
-
-\paragraph{Kurzfazit}
-In Webots bestimmt die virtuelle Zeit (\(T_s\)) die physikalische Auflösung; Überschreitungen der Rechenzeit führen lediglich zu einer langsameren Ausführung in Realzeit, 
-nicht zu dynamischen Artefakten. Daher ist für die Simulation keine strikte Echtzeitfähigkeit des Codes nötig. Auf dem realen Fahrrad hingegen sind harte Deadlines konstitutiv 
-für die Stabilität; hier entscheidet Echtzeitfähigkeit unmittelbar über das Regelungsvermögen und die Sicherheit des Systems.
+Für Webots-basierte Studien sollte die kleine Physik-Schrittweite von 2ms beibehalten werden, um hohe 
+Simulationsgenauigkeit zu gewährleisten, während Rechenzeitoptimierungen optional bleiben und primär den Durchsatz erhöhen. Für den Transfer auf reale 
+Systeme ist eine frühzeitige Vorbereitung echtzeitfähiger Architekturen erforderlich, einschließlich PRU-basierter Ansteuerung, gepufferte Sensordatenerfassung und
+feste Task-Zyklen. Die in Webots ermittelten PID-Parameter und Regelstrukturen bleiben grundsätzlich nutzbar, müssen jedoch unter harten 
+Zeitrestriktionen und mit realen Sensorrauschen validiert werden. Die mechanischen Motorparameter sollten entsprechend der verfügbaren Hardware-Spezifikationen 
+angepasst werden, um eine realistische Lenkdynamik zu gewährleisten.
 
 \newpage

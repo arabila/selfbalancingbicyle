@@ -49,7 +49,7 @@ Kostenfunktional minimieren und gleichzeitig die Systembeschränkungen einhalten
 und die Optimierung mit vorwärts verschobenem Horizont neu gelöst, weshalb man auch von \emph{receding horizon control} spricht.  Zu den wesentlichen 
 Vorteilen von MPC zählen die proaktive Reaktion auf künftige Störungen, die Möglichkeit nichtlineare Modelle ohne Linearisierung zu berücksichtigen 
 und die explizite Berücksichtigung von physikalischen und sicherheitsrelevanten Beschränkungen.  Im Gegensatz zu reaktiven PID‑Reglern kann MPC damit 
-frühzeitig gegensteuern und gleichzeitig harte Grenzen, etwa Stellweg‑ oder Geschwindigkeitsbeschränkungen, einhalten \cite{do_mpc_basics}.
+frühzeitig gegensteuern und gleichzeitig harte Grenzen, etwa Stellweg‑ oder Geschwindigkeitsbeschränkungen, einhalten.
 
 \begin{figure}[H]
   \centering
@@ -105,7 +105,7 @@ deren pixelgenauen Umrisse bestimmen.  Wie bei früheren YOLO‑Versionen werden
 um den Kompromiss zwischen Geschwindigkeit und Genauigkeit zu steuern \cite{openmmlab_yolov8}.
 
 In dieser Arbeit wird eine YOLOv8‑basierte Segmentierung für die Umfeldwahrnehmung genutzt.  Das Modell ist auf vier Klassen trainiert: Wiese 
-(„meadow“), Hindernis („obstacle“), Hauptfahrbahn („street\_main“) und Seitenfahrbahn („street\_side“), wie in Abbildung \ref{fig:yolo} zu sehen ist \cite{yolo_vision_regelung}. Dabei liefert es
+(„meadow“), Hindernis („obstacle“), Hauptfahrbahn („street\_main“) und Seitenfahrbahn („street\_side“), wie in Abbildung \ref{fig:yolo} zu sehen ist \cite{vision_mpc_readme}. Dabei liefert es
 pro Klasse ein Pixelmasken Overlay sowie die zugehörigen Bounding Boxes.  Anschließend wird aus dem Segment „street\_main“ der laterale Fehler 
 bestimmt, der als Eingang für die Pfadverfolgung dient.  Die genauen Details zur Modellauswahl, Datensatzgenerierung und Implementierung werden 
 in einem späteren Kapitel beschrieben.  Hier soll lediglich hervorgehoben werden, dass die Kombination aus schneller YOLO‑Detektion und Instanzsegmentierung 

@@ -45,13 +45,6 @@ um den von der Balance-PID vorgegebenen Sollwinkel zu erreichen. Aufgrund der me
 Abtastraten: IMU-Datenerfassung mit 200\,Hz, Lenkpositionsregelung mit 1000\,Hz und Geschwindigkeitsregelung mit niedrigerer 
 Frequenz. Watchdog-Mechanismen überwachen die Thread-Ausführung und gewährleisten die Systemstabilität bei Hardwareausfällen.
 
-\begin{figure}[H]
-  \centering
-  \includegraphics[width=0.8\textwidth]{figures/Kombimierter Regeler.png}
-  \caption{Kombimierter Regeler.}
-  \label{fig:supervision_cascade}
-\end{figure}
-
 \textbf{Adaptierung für die Webots-Simulation:} Die Portierung von Zanders Balance-Regelung in die Webots-Simulationsumgebung 
 erforderte eine systematische Vereinfachung der Hardware-spezifischen Komplexitäten bei Beibehaltung der regelungstechnischen 
 Kernprinzipien. Die wesentlichen Unterschiede zwischen Hardware- und Simulationsimplementierung zeigt Tabelle~\ref{tab:zander_comparison}.
@@ -141,9 +134,8 @@ und nutzt zwei Steuergrößen, die aktuelle Geschwindigkeit \(v\) und Lenkwinkel
 also auf Grundlage von \(v\) und Lenkeinschlag die Fahrzeugbewegung voraus. Für den prädiktiven Regler wird ein 
 Zustandsvektor \(x=[x, y, v, \text{yaw}]\) (Position, Geschwindigkeit, Gierwinkel) und ein Eingangsvektor \(u=[\text{accel}, \text{steer}]\) 
 definiert. Giray wählte einen Zeithorizont von etwa 2~s und formulierte ein Optimierungsproblem, das die Abweichung von einer Soll-Trajektorie 
-minimiert sowie Steuerungsaufwand und -änderungen übernimmt. Die Kostenfunktion des MPC addiert quadrierte Abweichungen der Zustände und 
-\colorbox{red}{Eingriffe über den Horizont sowie eine }
-Endzustands-Strafe, z.\,B. \(J=\sum (x^T Q x + u^T R u + \Delta u^T R_d \Delta u) + x_{\text{final}}^T Q_f x_{\text{final}}\). 
+minimiert sowie Steuerungsaufwand und -änderungen übernimmt. Die Kostenfunktion des MPC addiert quadrierte Abweichungen der Zustände und Eingriffe über den Horizont sowie eine 
+Endzustands-Strafe, z.\,B. \(J=\sum (x^T Q x + u^T R u + \Delta u^T R_d \Delta u) + x_{\text{final}}^T Q_f x_{\text{final}}\) \cite{vision_mpc_readme}. 
 Neben den Kosten werden physikalische Nebenbedingungen wie maximaler Lenkwinkel, Lenkwinkelrate und Geschwindigkeit im Optimierungsproblem 
 berücksichtigt, um realistische Lösungen zu gewährleisten.
 
@@ -307,7 +299,7 @@ Die erfolgreiche Kopplung mit dem Balance-Controller zeigt, dass MPC-basierte Sp
 komplementäre Regelungsebenen darstellen können. Girays theoretischer Beitrag zur modellprädiktiven Fahrzeugführung findet 
 somit praktische Anwendung in einem hybriden Regelungskonzept, das die Vorteile beider Ansätze kombiniert.
 
-
+\newpage
 
 
 \subsection{Strategien der Spurführung}

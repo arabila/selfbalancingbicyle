@@ -127,13 +127,6 @@
   year = {2019}
 }
 
-@mastersthesis{Ghidaei2024,
-  author = {Ghidaei, Yassin},
-  title = {Video- und sensorgest\"utztes autonomes Fahren f\"ur ein selbstbalancierendes Fahrrad},
-  school = {Goethe-Universit\"at Frankfurt am Main},
-  year = {2024}
-}
-
 @misc{Zhao2023,
   author = {Zhao, Xu and Ding, Wenchao and An, Yongqi and Du, Yinglong and Yu, Tao and Li, Min and Tang, Ming and Wang, Jinqiao},
   title = {Fast Segment Anything},
@@ -252,43 +245,52 @@
   howpublished = {\url{https://eng.libretexts.org/Bookshelves/Industrial_and_Systems_Engineering/Chemical_Process_Dynamics_and_Controls_(Woolf)/09:_Proportional-Integral-Derivative_(PID)_Control/9.06:_PID_Downsides_and_Solutions}}
 }
 
-@misc{do_mpc_basics,
+@online{do_mpc_basics,
   author       = {{do-mpc development team}},
-  title        = {Basics of model predictive control},
+  title        = {Theory: Basics of Model Predictive Control},
+  subtitle     = {do-mpc Documentation},
+  version      = {v4.1.0},
   year         = {2024},
   url          = {https://www.do-mpc.com/en/v4.1.0/theory_mpc.html},
-  note         = {Accessed 23 August 2025}
+  urldate      = {2025-08-23},
+  organization = {do-mpc project},
+  note         = {Open-source Python framework for model predictive control}
 }
 
-@misc{wikipedia_mpc,
-  author       = {{Wikipedia contributors}},
-  title        = {Model predictive control},
+@article{rawlings2017model,
+  author       = {Rawlings, James B. and Mayne, David Q. and Diehl, Moritz},
+  title        = {Model Predictive Control: Theory, Computation, and Design},
+  journal      = {IEEE Control Systems Magazine},
+  pages        = {38--52},
+  year         = {2017},
+  publisher    = {IEEE},
+  doi          = {10.1109/MCS.2017.2696761}
+}
+
+@mastersthesis{vision_mpc_readme,
+  author       = {Giray, Yasin},
+  title        = {Video- und sensorgestütztes autonomes fahren für ein selbstbalancierendes fahrrad},
+  school       = {Goethe-Universität Frankfurt am Main},
   year         = {2024},
-  url          = {https://en.wikipedia.org/wiki/Model_predictive_control},
-  note         = {Accessed 23 August 2025}
-}
-
-@misc{vision_mpc_readme,
-  author       = {Giray, Yasin and Karabila, Amine and Zander, Jonah and others},
-  title        = {Vision Controller README for selfbalancing bicycle},
-  year         = {2023},
-  howpublished = {\url{https://github.com/arabila/selfbalancingbicyle/tree/master/Regelstuerung/controllers/vision_control_py/README.md}},
+  type         = {Master's thesis},
   note         = {Describes the MPC-based vision controller and its integration with the balance controller}
 }
-@misc{yolo_wikipedia,
-  author       = {{Wikipedia contributors}},
-  title        = {You Only Look Once},
-  year         = {2025},
-  url          = {https://en.wikipedia.org/wiki/You_Only_Look_Once},
-  note         = {Accessed 23 August 2025}
+@inproceedings{redmon2016you,
+  author       = {Redmon, Joseph and Divvala, Santosh and Girshick, Ross and Farhadi, Ali},
+  title        = {You Only Look Once: Unified, Real-Time Object Detection},
+  booktitle    = {Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition (CVPR)},
+  year         = {2016},
+  organization = {IEEE}
 }
 
-@misc{image_segmentation_wikipedia,
-  author       = {{Wikipedia contributors}},
-  title        = {Image segmentation},
-  year         = {2025},
-  url          = {https://en.wikipedia.org/wiki/Image_segmentation},
-  note         = {Accessed 23 August 2025}
+@article{garcia2017review,
+  author       = {Garcia-Garcia, Alberto and Orts-Escolano, Sergio and Oprea, Sergiu and Villena-Martinez, Victor and Garcia-Rodriguez, Jose},
+  title        = {A Review on Deep Learning Techniques Applied to Semantic Segmentation},
+  journal      = {arXiv preprint arXiv:1704.06857},
+  year         = {2017},
+  eprint       = {1704.06857},
+  archivePrefix = {arXiv},
+  primaryClass = {cs.CV}
 }
 
 @misc{openmmlab_yolov8,
@@ -304,8 +306,6 @@
   title   = {{Cyberbotics Ltd. Webots}: Professional Mobile Robot Simulation},
   journal = {International Journal of Advanced Robotic Systems},
   year    = {2004},
-  volume  = {1},
-  number  = {1},
   pages   = {39--42},
   doi     = {10.5772/5618}
 }
@@ -360,13 +360,6 @@
   note         = {Zugriff am 24.08.2025}
 }
 
-@misc{yolo_vision_regelung,
-  author       = {Ghidaei, Yassin and Karabila, Amine},
-  title        = {YOLO-based Vision Control for Self-Balancing Bicycle},
-  year         = {2024},
-  howpublished = {Internal project documentation},
-  note         = {Vision controller implementation using YOLO for path detection and MPC for trajectory planning}
-}
 @misc{cyberbotics_controller_programming,
   author       = {{Cyberbotics Ltd.}},
   title        = {Controller Programming},
@@ -435,6 +428,60 @@
   number  = {7767},
   pages   = {106--111},
   doi     = {10.1038/s41586-019-1424-8}
+}
+
+@inproceedings{smith2006ode_stability,
+  author    = {Smith, Russell},
+  title     = {Numerical Stability and Performance Issues in ODE},
+  booktitle = {Proceedings of the Workshop on Principles of Advanced and Distributed Simulation (PADS)},
+  year      = {2006},
+  pages     = {127--134},
+  publisher = {IEEE Computer Society}
+}
+
+@article{drumwright2008ode_contact,
+  author  = {Drumwright, Evan and Shell, Dylan A.},
+  title   = {Modeling contact friction and joint friction in dynamic robotic simulation using the Principle of Maximum Dissipation},
+  journal = {Algorithmic Foundations of Robotics VIII},
+  year    = {2008},
+  pages   = {249--266},
+  publisher = {Springer}
+}
+
+@inproceedings{catto2009ode_friction,
+  author    = {Catto, Erin},
+  title     = {Modeling and Solving Constraints},
+  booktitle = {Game Developers Conference},
+  year      = {2009},
+  note      = {Physics simulation in game engines}
+}
+
+@book{shabana2020multibody,
+  author    = {Shabana, Ahmed A.},
+  title     = {Dynamics of Multibody Systems},
+  publisher = {Cambridge University Press},
+  year      = {2020},
+  edition   = {5th},
+  isbn      = {978-1-108-83731-0}
+}
+
+@article{wilson2004bicycling_aerodynamics,
+  author  = {Wilson, David Gordon},
+  title   = {Bicycling Science},
+  journal = {Scientific American},
+  year    = {2004},
+  volume  = {290},
+  number  = {3},
+  pages   = {74--81}
+}
+
+@inproceedings{lacoursiere2007ode_timestep,
+  author    = {Lacoursiere, Claude},
+  title     = {Ghosts and machines: regularized variational methods for interactive simulations of multibodies with dry frictional contacts},
+  booktitle = {Proceedings of the 2007 ACM SIGGRAPH/Eurographics symposium on Computer animation},
+  year      = {2007},
+  pages     = {81--90},
+  publisher = {Eurographics Association}
 }
 
 

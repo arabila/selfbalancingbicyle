@@ -24,6 +24,7 @@
   \usepackage{subcaption}
   \usepackage{float}
   \usepackage{listings}
+  \usepackage{fancyhdr}  % Für professionelle Header und Footer
 
   % Define custom commands
   \newcommand{\gh}{} % Placeholder for citations
@@ -48,21 +49,64 @@
     numbersep=6pt
   }
 
-  % Stil für C-Code definieren
+  % Stil für C-Code definieren (optimiert)
   \lstdefinestyle{wbt_c}{
     language=C,
     basicstyle=\ttfamily\footnotesize,
-    keywordstyle=\color{blue},
-    commentstyle=\color{gray},
-    stringstyle=\color{green!50!black},
+    keywordstyle=\color{blue!80!black}\bfseries,
+    commentstyle=\color{gray!70!black}\itshape,
+    stringstyle=\color{green!60!black},
     numbers=left,
-    numberstyle=\tiny,
+    numberstyle=\tiny\color{gray!50!black},
     stepnumber=1,
     numbersep=5pt,
     breaklines=true,
     frame=single,
     tabsize=2,
-    captionpos=b
+    captionpos=b,
+    showstringspaces=false,
+    % Zusätzliche Farben für verschiedene Elemente
+    identifierstyle=\color{black},
+    % Webots-spezifische Funktionen hervorheben
+    morekeywords=[2]{wb_robot_step, wb_robot_get_device, wb_inertial_unit_enable, 
+                     wb_inertial_unit_get_roll_pitch_yaw, wb_motor_set_position, 
+                     wb_motor_set_velocity, wb_camera_enable, wb_camera_get_image,
+                     wb_receiver_get_queue_length, wb_receiver_next_packet,
+                     wb_emitter_send, DEF, Robot, Supervisor, Camera, InertialUnit,
+                     RotationalMotor, HingeJoint, ContactProperties, WorldInfo,
+                     Viewpoint, TexturedBackground, RectangleArena},
+    keywordstyle=[2]\color{purple!70!black}\bfseries,
+    % Numerische Werte hervorheben
+    literate=
+      {0}{{{\color{red!70!black}0}}}1
+      {1}{{{\color{red!70!black}1}}}1
+      {2}{{{\color{red!70!black}2}}}1
+      {3}{{{\color{red!70!black}3}}}1
+      {4}{{{\color{red!70!black}4}}}1
+      {5}{{{\color{red!70!black}5}}}1
+      {6}{{{\color{red!70!black}6}}}1
+      {7}{{{\color{red!70!black}7}}}1
+      {8}{{{\color{red!70!black}8}}}1
+      {9}{{{\color{red!70!black}9}}}1
+      {.0}{{{\color{red!70!black}.0}}}2
+      {.1}{{{\color{red!70!black}.1}}}2
+      {.2}{{{\color{red!70!black}.2}}}2
+      {.3}{{{\color{red!70!black}.3}}}2
+      {.4}{{{\color{red!70!black}.4}}}2
+      {.5}{{{\color{red!70!black}.5}}}2
+      {.6}{{{\color{red!70!black}.6}}}2
+      {.7}{{{\color{red!70!black}.7}}}2
+      {.8}{{{\color{red!70!black}.8}}}2
+      {.9}{{{\color{red!70!black}.9}}}2
+      {INFINITY}{{{\color{orange!80!black}INFINITY}}}8
+      {TRUE}{{{\color{orange!80!black}TRUE}}}4
+      {FALSE}{{{\color{orange!80!black}FALSE}}}5
+      {NULL}{{{\color{orange!80!black}NULL}}}4,
+    % Präprozessor-Direktiven
+    morecomment=[l][\color{brown!80!black}]{\#},
+    % String-Literale
+    morestring=[b]",
+    morestring=[b]'
   }
 
   % Stil für JSON definieren
@@ -145,6 +189,32 @@
 
 \setlength\parskip{\medskipamount}
 \setlength\parindent{0pt}
+
+% Header-Konfiguration
+\pagestyle{fancy}
+\fancyhf{} % Alle Header und Footer löschen
+
+% Header-Stil definieren
+\fancyhead[L]{\small\textsc{Masterarbeit}} % Links: Autor
+\fancyhead[C]{\small\textsc{\leftmark}} % Mitte: Aktuelles Kapitel
+\fancyhead[R]{\small\thepage} % Rechts: Seitenzahl
+
+% Footer leer lassen
+\fancyfoot{}
+
+% Linie unter Header
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Spezielle Seitenstile für Titelseite und Inhaltsverzeichnis
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyhead{}
+  \fancyfoot{}
+  \renewcommand{\headrulewidth}{0pt}
+}
+
+% Titelseite ohne Header
 \thispagestyle{empty}
 
 %--------------------------------------------------
@@ -173,9 +243,11 @@
 %--------------------------------------------------
 % Inhaltsverzeichnis
 %--------------------------------------------------
+\thispagestyle{plain} % Inhaltsverzeichnis ohne Header
 \setcounter{tocdepth}{3} % bis zur Ebene subsubsection anzeigen
 \tableofcontents
 \newpage
+\pagestyle{fancy} % Ab hier wieder mit Header
 
 
 %--------------------------------------------------
@@ -219,7 +291,22 @@
 % Literaturverzeichnis
 %--------------------------------------------------
 \section{Literaturverzeichnis}
-% Hier später \bibliographystyle und \bibliography einfügen
+
+
+%--------------------------------------------------
+% Abbildungsverzeichnis
+%--------------------------------------------------
+\thispagestyle{plain} % Abbildungsverzeichnis ohne Header
+\listoffigures
+\newpage
+
+%--------------------------------------------------
+% Codesnippet-Verzeichnis (Listings)
+%--------------------------------------------------
+\thispagestyle{plain} % Codesnippet-Verzeichnis ohne Header
+\lstlistoflistings
+\newpage
+
 %--------------------------------------------------
 % Anhang (Parametertabellen, Screenshots, Release-Link)
 %--------------------------------------------------

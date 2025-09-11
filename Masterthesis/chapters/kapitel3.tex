@@ -1,5 +1,5 @@
 \newpage
-\section{Webots-Simulationsumgebung}
+\section{Simulationsumgebung}
   In diesem Kapitel wird die in Webots realisierte Simulationsumgebung vorgestellt, die als zentraler Versuchsstand für Entwurf, Parametrierung
   und Evaluation der kombinierten Regelung des selbstbalancierenden Fahrrads dient. Ziel ist es, eine reproduzierbare und sichere  
   Testumgebung zu schaffen, in dem das physikalische Fahrverhalten, die sensorgeführte Pfadverfolgung sowie die Kopplung von schneller
@@ -7,12 +7,6 @@
   bietet dafür eine deterministische Dynamiksimulation auf Basis von ODE, eine hierarchische Szenenbeschreibung und eine klare
   Trennung von Geometrie, Physik, Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025}.
 
-  \begin{figure}[h]
-    \centering
-    \includegraphics[width=1.0\textwidth]{figures/Webots_wbt.png}
-    \caption{Minimalstruktur einer Webots \texttt{.wbt}-Welt}
-    \label{fig:wbt_min}
-  \end{figure}
 
   \subsection{Überblick}
   Webots ist ein frei verfügbares, quelloffenes und plattformunabhängiges Robotik Simulationsprogramm, das seit 1998 kontinuierlich 
@@ -150,6 +144,7 @@
       ]
     }
   \end{lstlisting}
+  \newpage
 
 
   \subsection{Physikmodell: Open Dynamics Engine (ODE) in Webots}
@@ -501,6 +496,7 @@
   welches ebenfalls als \texttt{wheel} benannt ist, so können Kollisionen in der Namensauflösung vermieden werden. 
   Im Controller-Code greift man dann genau mit diesem Namen zu.
 
+  \newpage
   \textbf{Rolle im Regelkreis: }
 
   Die Aktuatoren setzen die vom Regler berechneten Sollgrößen in physikalische Bewegung um 
@@ -594,7 +590,7 @@
   
 
   
-  \subsection{Controller}
+  \subsection{Controller} \label{sec:controller}
 
 
   Ein Webots\mbox{-}Controller ist ein separates Prozess, der einen Roboter in der Simulation steuert
@@ -608,13 +604,7 @@
   Befehle anwendet. Danach erhält der Controller die aktualisierten Sensorwerte des neuen Simulationszustands 
   zurück. Abbildung \ref{fig:controller_sync} veranschaulicht diese Synchronisation \cite{cyberbotics_controller_programming}.
   
-  \begin{wrapfigure}{r}{0.4\textwidth} % r=rechts, l=links
-    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
-    \centering
-    \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
-    \caption{Synchronisation zwischen Controller und Simulation.}
-    \label{fig:controller_sync}
-  \end{wrapfigure}
+
 
 
   Alle Anweisungen vor dem nächsten Zeitschritt \path{wb\_robot\_step}\mbox{-}Aufruf\path{)} werden zunächst gesammelt.
@@ -634,18 +624,37 @@
   aktiviert. Entsprechende Methoden existieren dabei ebenfalls in Python (\texttt{robot.getDevice()}, \texttt{device.enable()}). Ein Sensor liefert 
   erst ab dem nächsten \texttt{wb\_robot\_step()} gültige Messwerte, da die Simulationszeit dann fortgeschritten ist. 
 
+  \begin{wrapfigure}{r}{0.4\textwidth} % r=rechts, l=links
+    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
+    \centering
+    \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
+    \caption{Synchronisation zwischen Controller und Simulation.}
+    \label{fig:controller_sync}
+  \end{wrapfigure}
   
   Aktuatorbefehle (z.\,B.\ \texttt{wb\_motor\_set\_position()} oder \texttt{motor.setPosition()} in Python) werden zunächst lokal 
-  gepuffert. Die tatsächliche Ausführung in der Physik\mbox{-}Engine erfolgt erst am nächsten Step\mbox{-}Synchronisationspunkt. 
+  gepuffert. Die tatsächliche Ausführung in der Physik\mbox{-}Engine erfolgt erst am nächsten Step-Synchronisationspunkt. 
    Ebenso bleiben zwei unmittelbar nacheinander gelesene Sensorsamples identisch, solange kein Simulationsschritt dazwischen liegt. 
    Dieses deterministische Schritt\mbox{-}für\mbox{-}Schritt\mbox{-} Ausführungsmodell erleichtert die Reproduzierbarkeit und 
    verhindert \emph{race conditions} \footnote{Race Conditions bezeichnen unvorhersehbares Verhalten durch konkurrierende Zugriffe.} zwischen Physik und Reglercode.
 
-  Da für das selbstbalancierende Fahrrad zwei Controller\mbox{-}Prozesse implementiert wurden, die in Webots zeitgleich laufen und 
+  Da für das selbstbalancierende Fahrrad zwei Controller-Prozesse implementiert wurden, die in Webots zeitgleich laufen und 
   über die oben beschriebene Mechanik gekoppelt sind, wurden einerseits der \emph{Balance\mbox{-}Controller} auf dem Fahrrad (in C, hoher Takt), 
   andererseits ein \emph{Vision\mbox{-}Controller} auf einem Supervisor\mbox{-}Knoten (in Python, langsamer Takt) implementiert. 
   Die Welt-Datei ist dabei so konfiguriert, dass das Fahrrad einen \texttt{Receiver} und einen \texttt{Emitter} trägt, während der Supervisor das komplementäre 
   Gegenstück besitzt, damit entsteht ein bidirektionaler Nachrichtenkanal innerhalb der Simulation:
+
+  Über Channel 1 sendet der Vision-Controller Steuerkommandos an das Fahrrad, 
+  und über Channel 2 übermittelt der Balance-Controller seinerseits Statusdaten zurück (z.\,B.\ aktueller Rollwinkel, Lenkwinkel, 
+  Geschwindigkeit). Beide Controller laufen im \emph{synchronen Modus}, d.\,h.\ Webots hält die Physik so lange an, bis sowohl der 
+  schnelle C-Controller (alle 2\,ms) als auch der langsamere Python-Controller ihren Schritt abgearbeitet haben \cite{cyberbotics_emitter}\cite{cyberbotics_receiver}. 
+  Praktisch bedeutet dies, dass der Balance\mbox{-}Regler bei jedem Simulationsschritt neue Motorbefehle berechnet, während der
+  Vision\mbox{-}Algorithmus nur alle 25 Schritte (50\,ms) ein neues Lenkkommando liefert. ‚
+  Webots gewährleistet die Synchronisierung beider Teilprozesse, sodass Kommandos verlustfrei und deterministisch am 
+  Step\mbox{-}Synchronisationspunkt ausgetauscht werden.
+
+
+  \clearpage
 
   \begin{lstlisting}[style=wbt_c,caption={Nachrichtenkanal zwischen Controller und Simulation},label={lst:imu4}]
     Robot {
@@ -660,16 +669,7 @@
     }
   \end{lstlisting}
 
-  Über Channel 1 sendet der Vision-Controller Steuerkommandos an das Fahrrad, 
-  und über Channel 2 übermittelt der Balance-Controller seinerseits Statusdaten zurück (z.\,B.\ aktueller Rollwinkel, Lenkwinkel, 
-  Geschwindigkeit). Beide Controller laufen im \emph{synchronen Modus}, d.\,h.\ Webots hält die Physik so lange an, bis sowohl der 
-  schnelle C-Controller (alle 2\,ms) als auch der langsamere Python-Controller ihren Schritt abgearbeitet haben \cite{cyberbotics_emitter}\cite{cyberbotics_receiver}. 
-  Praktisch bedeutet dies, dass der Balance\mbox{-}Regler bei jedem Simulationsschritt neue Motorbefehle berechnet, während der
-  Vision\mbox{-}Algorithmus nur alle 25 Schritte (50\,ms) ein neues Lenkkommando liefert. ‚
-  Webots gewährleistet die Synchronisierung beider Teilprozesse, sodass Kommandos verlustfrei und deterministisch am 
-  Step\mbox{-}Synchronisationspunkt ausgetauscht werden.
-
-
+ 
 
   \subsection{Integriertes Konfigurationssystem}
 

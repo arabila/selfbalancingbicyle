@@ -1,11 +1,23 @@
 \section{Abstract}
-  Diese Masterarbeit beschäftigt sich mit der Entwicklung einer kombinierten Regelungsstrategie für ein autonom fahrendes,
-  selbstbalancierendes Fahrrad, basierend auf den Ergebnissen dreier vorangegangener Forschungsarbeiten. Ziel dieser Arbeit 
-  ist die erfolgreiche Integration einer PID-Balanceregelung mit einer MPC-basierten Fahrtrichtungsregelung, die mithilfe 
-  eines YOLO-Modells zur visuellen Spurdetektion ergänzt wird. Zur Validierung und Optimierung der kombinierten Regelung 
-  wurde die Simulationsumgebung Webots verwendet, wodurch die Robustheit und Funktionalität der entwickelten Regelungsalgorithmen
-  realitätsnah überprüft werden konnten. Im Rahmen der Arbeit wurde eine zweistufige Regelungsarchitektur umgesetzt, welche die präzise 
-  Balancierung des Fahrrads mittels eines PID-Reglers und die zuverlässige Spurverfolgung sowie Navigation mithilfe eines MPC-Reglers sicherstellt. 
-  Die gewonnenen Simulationsergebnisse bestätigen die Machbarkeit und Effizienz des entwickelten Ansatzes und legen damit eine solide Grundlage für die zukünftige
-  Implementierung der Regelung in einem realen autonomen Fahrrad.
+  Diese Masterarbeit entwickelt und validiert eine zweistufige Regelungsarchitektur für ein
+  selbstbalancierendes Fahrrad durch die systematische Integration einer hochfrequenten PID-Balanceregelung (500\,Hz) mit 
+  einer visionbasierten MPC-Spurführung (20\,Hz). Basierend auf den Arbeiten von Ranz (2021), Karabila (2022), Zander (2023) 
+  und Giray (2024) wird erstmals die erfolgreiche Kopplung von Balance- und Fahrtrichtungsregelung in einer realitätsnahen 
+  Webots-Simulationsumgebung demonstriert.
+
+  Die Arbeit löst das zentrale Problem der Reglerinteraktion durch eine duale Controller-Architektur: Ein in C implementierter 
+  Balance-Controller stabilisiert kontinuierlich den Rollwinkel mit 2\,ms Abtastzeit, während ein Python-basierter Vision-Controller 
+  mittels YOLOv8-Segmentierung und MPC-Algorithmus Trajektorien plant und Lenkbefehle überträgt. Zur Erhöhung der Robustheit wurde 
+  zusätzlich eine ROI-basierte Fallback-Erkennung entwickelt, die bei Ausfall der neuronalen Spurdetektion klassische Bildverarbeitung einsetzt.
+
+  Umfangreiche experimentelle Validierung in verschiedenen Testszenarien belegen die Leistungsfähigkeit des Systems. Dazu gehören
+  Kurvenfahrten mit bis zu 43,62\,s stabiler Fahrdauer, erfolgreiche Navigation durch S-Kurven mit 16,8\% Verbesserung gegenüber 
+  reiner YOLO-basierter Erkennung, sowie Robustheit bei Seitenwind bis 1,0\,m/s und Höhenunterschieden bis 4\,m durch adaptive 
+  PID-Parametrierung. Die ROI-Fallback-Strategie erwies sich der YOLO-Segmentierung in allen Testszenarien als überlegen und 
+  reduzierte Rollwinkel-Amplituden um bis zu 40\% sowie Querfehler um 50\%.
+
+  Die Simulationsergebnisse demonstrieren erstmals die praktische Machbarkeit der Kopplung von Balance- und Spurführungsregelung 
+  bei konstanter Geschwindigkeit und schaffen durch detaillierte Parameterdokumentation und Echtzeitanalyse eine fundierte Grundlage 
+  für die Übertragung auf reale autonome Fahrradprototypen. Die entwickelte Methodik ermöglicht risikofreie Validierung komplexer 
+  Regelungsstrategien und systematische Optimierung vor Hardware-Implementierung.
 \newpage

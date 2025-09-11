@@ -1,0 +1,47 @@
+\babel@toc {english}{}\relax 
+\contentsline {figure}{\numberline {1}{\ignorespaces Verständnisschema der MPC-Regelung}}{11}{figure.caption.3}%
+\contentsline {figure}{\numberline {2}{\ignorespaces YOLO-Segmentierung mit YOLOv8}}{13}{figure.caption.4}%
+\contentsline {figure}{\numberline {3}{\ignorespaces IMU-Knoten in Webots.}}{18}{figure.caption.5}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Kamera-Knoten in Webots.}}{20}{figure.caption.6}%
+\contentsline {figure}{\numberline {5}{\ignorespaces Querfehler $e$ der Straße.}}{21}{figure.caption.7}%
+\contentsline {figure}{\numberline {6}{\ignorespaces Lenk-Sollwert und Lenk-Istwert.}}{22}{figure.caption.8}%
+\contentsline {figure}{\numberline {7}{\ignorespaces Aktuatoren im Fahrradmodell.}}{23}{figure.caption.9}%
+\contentsline {figure}{\numberline {8}{\ignorespaces Synchronisation zwischen Controller und Simulation.}}{27}{figure.caption.10}%
+\contentsline {figure}{\numberline {9}{\ignorespaces YOLOv8-Segmentierung.}}{37}{figure.caption.13}%
+\contentsline {figure}{\numberline {10}{\ignorespaces Fallback-Strategie.}}{38}{figure.caption.14}%
+\contentsline {figure}{\numberline {11}{\ignorespaces Kurvenfahrt}}{43}{figure.caption.15}%
+\contentsline {figure}{\numberline {12}{\ignorespaces Kurvenfahrt mit reinem P-Regler (Zeitreihen)}}{43}{figure.caption.17}%
+\contentsline {figure}{\numberline {13}{\ignorespaces ROI-Querfehler während der P-Regler-Fahrt}}{44}{figure.caption.18}%
+\contentsline {figure}{\numberline {14}{\ignorespaces Gefahrene Trajektorie (P-Regler)}}{44}{figure.caption.19}%
+\contentsline {figure}{\numberline {15}{\ignorespaces Kurvenfahrt mit PID-Regler und YOLO-Spurführung}}{45}{figure.caption.21}%
+\contentsline {figure}{\numberline {16}{\ignorespaces ROI-Querfehler während der PID-Regler-Fahrt (YOLO)}}{45}{figure.caption.22}%
+\contentsline {figure}{\numberline {17}{\ignorespaces Gefahrene Trajektorie (PID-Regler mit YOLO)}}{45}{figure.caption.23}%
+\contentsline {figure}{\numberline {18}{\ignorespaces Strecke gut und schlecht nebeneinander.}}{46}{figure.caption.24}%
+\contentsline {figure}{\numberline {19}{\ignorespaces Kurvenfahrt mit PID\mbox {-}Regler und ROI\mbox {-}Fallback\mbox {-}Erkennung}}{46}{figure.caption.26}%
+\contentsline {figure}{\numberline {20}{\ignorespaces ROI\mbox {-}Querfehler während der PID\mbox {-}Regler\mbox {-}Fahrt (ROI)}}{47}{figure.caption.27}%
+\contentsline {figure}{\numberline {21}{\ignorespaces Gefahrene Trajektorie (PID\mbox {-}Regler, ROI)}}{47}{figure.caption.28}%
+\contentsline {figure}{\numberline {22}{\ignorespaces S\,-Kurve}}{48}{figure.caption.29}%
+\contentsline {figure}{\numberline {23}{\ignorespaces S\,-Kurve mit YOLO\,-Regler}}{49}{figure.caption.31}%
+\contentsline {figure}{\numberline {24}{\ignorespaces S\,-Kurve: ausgewählte Zeitreihen (Rollwinkel, Balance-Soll, \texttt {final\_steer})}}{49}{figure.caption.32}%
+\contentsline {figure}{\numberline {25}{\ignorespaces S\,-Kurve: visionbasierter Querfehler $\tilde e_y$}}{50}{figure.caption.33}%
+\contentsline {figure}{\numberline {26}{\ignorespaces S-Kurve mit ROI-Regler}}{50}{figure.caption.34}%
+\contentsline {figure}{\numberline {27}{\ignorespaces S-Kurve mit ROI-Regler Daten}}{51}{figure.caption.35}%
+\contentsline {figure}{\numberline {28}{\ignorespaces S-Kurve mit ROI-Regler Error}}{51}{figure.caption.36}%
+\contentsline {figure}{\numberline {29}{\ignorespaces Versuchsaufbau: Gerade Strecke mit drei seitlichen Windkanälen (rote Drahtgitterboxen). Die Fahrbahnmitte dient als Referenz für die Spurführung.}}{53}{figure.caption.37}%
+\contentsline {figure}{\numberline {30}{\ignorespaces Trajektorie bei $0{,}5\,\text {m/s}$ Seitenwind: Blaue Linie = Fahrzeugspur; Start (grün) und Endpunkt (rot). Die Auslenkung in den ersten beiden Windsegmenten wird nach dem dritten Segment wieder abgebaut.}}{53}{figure.caption.39}%
+\contentsline {figure}{\numberline {31}{\ignorespaces Zeitreihen bei $0{,}5\,\text {m/s}$ Seitenwind: Rollwinkel, Balance-Steer und finales Lenkkommando. Die Richtung der Seitenböe spiegelt sich in der Vorzeichenfolge des Rollwinkels wider; der D-Anteil dämpft die schnelle Nick-/Roll-Dynamik.}}{54}{figure.caption.40}%
+\contentsline {figure}{\numberline {32}{\ignorespaces Trajektorie bei $1{,}0\,\text {m/s}$ Seitenwind (Baseline-Regler): starke Abdrift nach rechts mit vorzeitigem Abbruch infolge Umkippens.}}{54}{figure.caption.42}%
+\contentsline {figure}{\numberline {33}{\ignorespaces Zeitverlauf bei $1{,}0\,\text {m/s}$ (Baseline-Regler): ansteigende Rollauslenkung und instabiles Verhalten nach $\approx 7\,\text {s}$.}}{55}{figure.caption.43}%
+\contentsline {figure}{\numberline {34}{\ignorespaces Trajektorie bei $1{,}0\,\text {m/s}$ Seitenwind mit erhöhten Balance-Gains: stabilisierte Fahrt ohne Umkippen; die Abdrift wird begrenzt und anschließend abgebaut.}}{55}{figure.caption.45}%
+\contentsline {figure}{\numberline {35}{\ignorespaces Zeitreihen bei $1{,}0\,\text {m/s}$ mit erhöhten Gains: gedämpfter Rollwinkelverlauf; höhere, aber tolerierbare Lenkaktivität (keine Sättigung, keine Divergenz).}}{56}{figure.caption.46}%
+\contentsline {figure}{\numberline {36}{\ignorespaces Höhenprofile der Teststrecke: Hügel (a) und Senke/Tunnel (b).}}{57}{figure.caption.48}%
+\contentsline {figure}{\numberline {37}{\ignorespaces Trajektorie durch die Senke (Fall~A, \(M=1{,}0\,\text {m}\)).}}{58}{figure.caption.50}%
+\contentsline {figure}{\numberline {38}{\ignorespaces Zeitverläufe Rollwinkel/Balancelenkung (Fall~A, \(M=1{,}0\,\text {m}\)).}}{58}{figure.caption.51}%
+\contentsline {figure}{\numberline {39}{\ignorespaces Trajektorie durch die Senke (Fall~B, \(M=2{,}0\,\text {m}\), Baseline-Gewichte).}}{58}{figure.caption.53}%
+\contentsline {figure}{\numberline {40}{\ignorespaces Zeitverläufe Rollwinkel/Balancelenkung (Fall~B, \(M=2{,}0\,\text {m}\), Baseline-Gewichte).}}{59}{figure.caption.54}%
+\contentsline {figure}{\numberline {41}{\ignorespaces Trajektorie mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text {m}\)).}}{59}{figure.caption.56}%
+\contentsline {figure}{\numberline {42}{\ignorespaces Zeitverläufe mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text {m}\)).}}{60}{figure.caption.57}%
+\contentsline {figure}{\numberline {43}{\ignorespaces Trajektorie durch den Hügel (Fall~D, \(M=2{,}0\,\text {m}\)).}}{60}{figure.caption.59}%
+\contentsline {figure}{\numberline {44}{\ignorespaces Zeitverläufe mit angepasstem Balance PID (Fall~D, \(M=2{,}0\,\text {m}\)).}}{61}{figure.caption.60}%
+\contentsline {figure}{\numberline {45}{\ignorespaces Trajektorie durch den Hügel (Fall~E, \(M=4{,}0\,\text {m}\)).}}{61}{figure.caption.62}%
+\contentsline {figure}{\numberline {46}{\ignorespaces Zeitverläufe mit angepasstem Balance PID (Fall~E, \(M=4{,}0\,\text {m}\)).}}{62}{figure.caption.63}%

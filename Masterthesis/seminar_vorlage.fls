@@ -208,6 +208,8 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listing
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/listings.cfg
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/listings.cfg
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/listings.cfg
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/fontenc.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/fontenc.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/jknappen/ec/ecrm1095.tfm
@@ -320,6 +322,8 @@ INPUT ./chapters/abstract.tex
 INPUT chapters/abstract.tex
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT ./seminar_vorlage.toc
 INPUT ./seminar_vorlage.toc
 INPUT seminar_vorlage.toc
@@ -412,11 +416,6 @@ OUTPUT chapters/kapitel3.aux
 INPUT ./chapters/kapitel3.tex
 INPUT ./chapters/kapitel3.tex
 INPUT chapters/kapitel3.tex
-INPUT ./figures/Webots_wbt.png
-INPUT ./figures/Webots_wbt.png
-INPUT ./figures/Webots_wbt.png
-INPUT ./figures/Webots_wbt.png
-INPUT ./figures/Webots_wbt.png
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
@@ -424,11 +423,13 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listing
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstmisc.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstmisc.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtt9.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtk10.tfm
 INPUT ./figures/enu_nue.thumbnail.jpg
 INPUT ./figures/enu_nue.thumbnail.jpg
 INPUT ./figures/enu_nue.thumbnail.jpg
 INPUT ./figures/enu_nue.thumbnail.jpg
 INPUT ./figures/enu_nue.thumbnail.jpg
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtti10.tfm
 INPUT ./figures/camera.png
 INPUT ./figures/camera.png
 INPUT ./figures/camera.png
@@ -470,16 +471,9 @@ OUTPUT chapters/kapitel4.aux
 INPUT ./chapters/kapitel4.tex
 INPUT ./chapters/kapitel4.tex
 INPUT chapters/kapitel4.tex
-INPUT ./figures/Kombimierter Regeler.png
-INPUT ./figures/Kombimierter Regeler.png
-INPUT ./figures/Kombimierter Regeler.png
-INPUT ./figures/Kombimierter Regeler.png
-INPUT ./figures/Kombimierter Regeler.png
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtk10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtti10.tfm
 INPUT ./figures/Yolo_Snapshot.png
 INPUT ./figures/Yolo_Snapshot.png
 INPUT ./figures/Yolo_Snapshot.png
@@ -536,7 +530,6 @@ INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
 INPUT ./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png
@@ -592,10 +585,6 @@ INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
 INPUT ./figures/S-Kurve/Fallback/Error.png
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ts1-lmtt10.tfm
 INPUT ./figures/Wind/Wind/Strecke.png
 INPUT ./figures/Wind/Wind/Strecke.png
 INPUT ./figures/Wind/Wind/Strecke.png
@@ -693,8 +682,6 @@ INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
 INPUT ./figures/Höhe/+4 /Daten.png
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtt8.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmri9.tfm
 INPUT ./chapters/kapitel6.tex
 INPUT ./chapters/kapitel6.tex
 OUTPUT chapters/kapitel6.aux
@@ -713,6 +700,14 @@ OUTPUT chapters/kapitel8.aux
 INPUT ./chapters/kapitel8.tex
 INPUT ./chapters/kapitel8.tex
 INPUT chapters/kapitel8.tex
+INPUT ./seminar_vorlage.lof
+INPUT ./seminar_vorlage.lof
+INPUT seminar_vorlage.lof
+OUTPUT seminar_vorlage.lof
+INPUT ./seminar_vorlage.lol
+INPUT ./seminar_vorlage.lol
+INPUT seminar_vorlage.lol
+OUTPUT seminar_vorlage.lol
 INPUT ./seminar_vorlage.bbl
 INPUT ./seminar_vorlage.bbl
 INPUT seminar_vorlage.bbl
@@ -755,6 +750,7 @@ INPUT ./seminar_vorlage.out
 INPUT ./seminar_vorlage.out
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb
@@ -765,7 +761,6 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/publi
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri9.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb

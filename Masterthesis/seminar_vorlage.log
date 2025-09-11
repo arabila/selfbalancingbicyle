@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  7 SEP 2025 21:03
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  10 SEP 2025 23:27
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -546,7 +546,24 @@ File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 File: listings.cfg 2024/09/23 1.10c listings configuration
 ))
 Package: listings 2024/09/23 1.10c (Carsten Heinz)
- (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/fontenc.sty
+ (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+Package: fancyhdr 2025/02/07 v5.2 Extensive control of page headers and footers
+\f@nch@headwidth=\skip72
+\f@nch@offset@elh=\skip73
+\f@nch@offset@erh=\skip74
+\f@nch@offset@olh=\skip75
+\f@nch@offset@orh=\skip76
+\f@nch@offset@elf=\skip77
+\f@nch@offset@erf=\skip78
+\f@nch@offset@olf=\skip79
+\f@nch@offset@orf=\skip80
+\f@nch@height=\skip81
+\f@nch@footalignment=\skip82
+\f@nch@widthL=\skip83
+\f@nch@widthC=\skip84
+\f@nch@widthR=\skip85
+\@temptokenb=\toks33
+) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2021/04/29 v2.0v Standard LaTeX package
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/lmodern.sty
 Package: lmodern 2015/05/01 v1.6.1 Latin Modern Fonts
@@ -605,7 +622,7 @@ Package csquotes Info: Checking for multilingual support...
 Package csquotes Info: ... found 'babel' package.
 Package csquotes Info: Adjusting default style.
 Package csquotes Info: Redefining alias 'default' -> 'english'.
-LaTeX Font Info:    Trying to load font information for T1+lmr on input line 153.
+LaTeX Font Info:    Trying to load font information for T1+lmr on input line 223.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmr.fd
 File: t1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
@@ -615,24 +632,24 @@ File: l3backend-pdftex.def 2024-05-08 L3 backend support: PDF output (pdfTeX)
 ) (./seminar_vorlage.aux (./chapters/abstract.aux) (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux))
 \openout1 = `seminar_vorlage.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
-LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 153.
-LaTeX Font Info:    ... okay on input line 153.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
+LaTeX Font Info:    Checking defaults for PU/pdf/m/n on input line 223.
+LaTeX Font Info:    ... okay on input line 223.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count353
@@ -640,24 +657,24 @@ LaTeX Font Info:    ... okay on input line 153.
 \scratchbox=\box118
 \nofMPsegments=\count354
 \nofMParguments=\count355
-\everyMPshowfont=\toks33
+\everyMPshowfont=\toks34
 \MPscratchCnt=\count356
 \MPscratchDim=\dimen194
 \MPnumerator=\count357
 \makeMPintoPDFobject=\count358
-\everyMPtoPDFconversion=\toks34
+\everyMPtoPDFconversion=\toks35
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 485.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
 File: epstopdf-sys.cfg 2010/07/13 v1.3 Configuration of (r)epstopdf for TeX Live
 ))
-Package hyperref Info: Link coloring ON on input line 153.
+Package hyperref Info: Link coloring ON on input line 223.
  (./seminar_vorlage.out) (./seminar_vorlage.out)
 \@outlinefile=\write4
 \openout4 = `seminar_vorlage.out'.
 
-Package soulpos Info: Loading soulutf8 on input line 153.
+Package soulpos Info: Loading soulutf8 on input line 223.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/soul/soulutf8.sty
 Package: soulutf8 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
 
@@ -670,12 +687,12 @@ Package soulutf8 Warning: This package is obsolete,
 Package: soul 2023-06-14 v3.1 Permit use of UTF-8 characters in soul (HO)
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/soul/soul-ori.sty
 Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
-\SOUL@word=\toks35
-\SOUL@lasttoken=\toks36
-\SOUL@syllable=\toks37
-\SOUL@cmds=\toks38
-\SOUL@buffer=\toks39
-\SOUL@token=\toks40
+\SOUL@word=\toks36
+\SOUL@lasttoken=\toks37
+\SOUL@syllable=\toks38
+\SOUL@cmds=\toks39
+\SOUL@buffer=\toks40
+\SOUL@token=\toks41
 \SOUL@syllgoal=\dimen195
 \SOUL@syllwidth=\dimen196
 \SOUL@charkern=\dimen197
@@ -686,18 +703,18 @@ Package: soul-ori 2023-06-14 v3.1 letterspacing/underlining (mf)
 \SOUL@comma=\count360
 \SOUL@apo=\count361
 \SOUL@grave=\count362
-\SOUL@spaceskip=\skip72
+\SOUL@spaceskip=\skip86
 \SOUL@ttwidth=\dimen257
 \SOUL@uldp=\dimen258
 \SOUL@ulht=\dimen259
 )) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/translations/translations-basic-dictionary-english.trsl
 File: translations-basic-dictionary-english.trsl (english translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 153.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `english'. on input line 223.
  (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/translations/translations-basic-dictionary-german.trsl
 File: translations-basic-dictionary-german.trsl (german translation file `translations-basic-dictionary')
 )
-Package translations Info: loading dictionary `translations-basic-dictionary' for `german'. on input line 153.
+Package translations Info: loading dictionary `translations-basic-dictionary' for `german'. on input line 223.
 Package caption Info: Begin \AtBeginDocument code.
 Package caption Info: float package is loaded.
 Package caption Info: listings package is loaded.
@@ -710,12 +727,12 @@ Package epstopdf Info: Source file: <header_hwr.eps>
 (epstopdf)                    date: 2025-07-29 14:39:29
 (epstopdf)                    size: 50266 bytes
 (epstopdf)             Command: <repstopdf --outfile=header_hwr-eps-converted-to.pdf header_hwr.eps>
-(epstopdf)             \includegraphics on input line 155.
+(epstopdf)             \includegraphics on input line 225.
 Package epstopdf Info: Output file is already uptodate.
-<header_hwr-eps-converted-to.pdf, id=172, 512.91624pt x 49.18375pt>
+<header_hwr-eps-converted-to.pdf, id=253, 512.91624pt x 49.18375pt>
 File: header_hwr-eps-converted-to.pdf Graphic file (type pdf)
 <use header_hwr-eps-converted-to.pdf>
-Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 155.
+Package pdftex.def Info: header_hwr-eps-converted-to.pdf  used on input line 225.
 (pdftex.def)             Requested size: 512.915pt x 49.18361pt.
 
 
@@ -818,7 +835,7 @@ Overfull \hbox (13.56477pt too wide) in paragraph at lines 106--116
 [7{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}]
 
 [8{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}])
-Overfull \hbox (15.46548pt too wide) in paragraph at lines 231--185
+Overfull \hbox (15.46548pt too wide) in paragraph at lines 231--257
 []\T1/lmr/m/n/10.95 Für die vor-liegende Ar-beit ist die Einord-nung klar: Die von Zan-der über-nommene PID-Balanceregelung
  []
 
@@ -851,7 +868,7 @@ Overfull \hbox (4.03358pt too wide) in paragraph at lines 30--38
 
 
 {/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathex.enc}]
-<figures/MPC_scheme_basic.svg.png, id=344, 2890.8pt x 1601.985pt>
+<figures/MPC_scheme_basic.svg.png, id=443, 2890.8pt x 1601.985pt>
 File: figures/MPC_scheme_basic.svg.png Graphic file (type png)
 <use figures/MPC_scheme_basic.svg.png>
 Package pdftex.def Info: figures/MPC_scheme_basic.svg.png  used on input line 56.
@@ -860,8 +877,18 @@ Package pdftex.def Info: figures/MPC_scheme_basic.svg.png  used on input line 56
 
 [11 <./figures/MPC_scheme_basic.svg.png>]
 
+LaTeX Warning: Citation `yolo_wikipedia' on page 12 undefined on input line 87.
+
+
+LaTeX Warning: Citation `image_segmentation_wikipedia' on page 12 undefined on input line 96.
+
+
+LaTeX Warning: Citation `image_segmentation_wikipedia' on page 12 undefined on input line 97.
+
+
+
 [12]
-<figures/Yolo.png, id=376, 1131.22626pt x 637.38126pt>
+<figures/Yolo.png, id=468, 1131.22626pt x 637.38126pt>
 File: figures/Yolo.png Graphic file (type png)
 <use figures/Yolo.png>
 Package pdftex.def Info: figures/Yolo.png  used on input line 120.
@@ -872,14 +899,13 @@ Package pdftex.def Info: figures/Yolo.png  used on input line 120.
 \openout2 = `chapters/kapitel3.aux'.
 
  (./chapters/kapitel3.tex
-<figures/Webots_wbt.png, id=386, 1556.81625pt x 641.39626pt>
-File: figures/Webots_wbt.png Graphic file (type png)
-<use figures/Webots_wbt.png>
-Package pdftex.def Info: figures/Webots_wbt.png  used on input line 12.
-(pdftex.def)             Requested size: 469.75499pt x 193.53606pt.
-
-Overfull \hbox (6.623pt too wide) in paragraph at lines 24--32
+Overfull \hbox (6.623pt too wide) in paragraph at lines 18--26
 []\T1/lmr/m/n/10.95 Kern des We-botsmod-ells ist die hi-er-ar-chis-che Szenen-repräsen-ta-tion in \T1/lmr/m/it/10.95 World\T1/lmr/m/n/10.95 -Dateien (\T1/lmtt/m/n/10.95 *.wbt\T1/lmr/m/n/10.95 ; VRML-
+ []
+
+
+Overfull \hbox (0.98264pt too wide) in paragraph at lines 36--38
+[]\T1/lmr/m/n/10.95 (iii) \T1/lmr/m/it/10.95 Au-toma-tisier-barkeit \T1/lmr/m/n/10.95 über den Su-per-vi-sor, u.a. für Szenario-Resets, Stör-gröÿen-in-jizierung, Batch-
  []
 
 
@@ -888,17 +914,14 @@ Overfull \hbox (6.623pt too wide) in paragraph at lines 24--32
 
 
 
- <./figures/Webots_wbt.png>]
-Overfull \hbox (0.98264pt too wide) in paragraph at lines 42--44
-[]\T1/lmr/m/n/10.95 (iii) \T1/lmr/m/it/10.95 Au-toma-tisier-barkeit \T1/lmr/m/n/10.95 über den Su-per-vi-sor, u.a. für Szenario-Resets, Stör-gröÿen-in-jizierung, Batch-
- []
-
-(/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
+] (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 ) (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstmisc.sty
 File: lstmisc.sty 2024/09/23 1.10c (Carsten Heinz)
 )
-Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 70.
+Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on input line 64.
+LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
+(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 72.
 
 
 [15]
@@ -906,64 +929,65 @@ Package hyperref Info: bookmark level for unknown lstlisting defaults to 0 on in
 [16]
 
 [17]
-<figures/enu_nue.thumbnail.jpg, id=507, 401.5pt x 140.525pt>
+<figures/enu_nue.thumbnail.jpg, id=597, 401.5pt x 140.525pt>
 File: figures/enu_nue.thumbnail.jpg Graphic file (type jpg)
 <use figures/enu_nue.thumbnail.jpg>
-Package pdftex.def Info: figures/enu_nue.thumbnail.jpg  used on input line 205.
+Package pdftex.def Info: figures/enu_nue.thumbnail.jpg  used on input line 200.
 (pdftex.def)             Requested size: 375.80542pt x 131.54028pt.
 
 
 [18 <./figures/enu_nue.thumbnail.jpg>]
-
-[19]
-<figures/camera.png, id=535, 698.61pt x 304.13625pt>
+<figures/camera.png, id=610, 698.61pt x 304.13625pt>
 File: figures/camera.png Graphic file (type png)
 <use figures/camera.png>
-Package pdftex.def Info: figures/camera.png  used on input line 295.
+Package pdftex.def Info: figures/camera.png  used on input line 290.
 (pdftex.def)             Requested size: 375.80542pt x 163.60461pt.
-<figures/querfehler.png, id=536, 638.385pt x 360.34625pt>
+
+
+[19]
+<figures/querfehler.png, id=627, 638.385pt x 360.34625pt>
 File: figures/querfehler.png Graphic file (type png)
 <use figures/querfehler.png>
-Package pdftex.def Info: figures/querfehler.png  used on input line 331.
+Package pdftex.def Info: figures/querfehler.png  used on input line 326.
 (pdftex.def)             Requested size: 375.80542pt x 212.12958pt.
 
 
 [20 <./figures/camera.png>]
-Overfull \hbox (1.98547pt too wide) in paragraph at lines 368--378
+Overfull \hbox (1.98547pt too wide) in paragraph at lines 363--373
 []\T1/lmr/bx/n/10.95 Rolle im Regelkreis:  \T1/lmr/m/n/10.95 Die Po-si-tion-ssen-soren di-enen vor allem der Überwachung und der Ableitung
  []
 
 
 
 [21 <./figures/querfehler.png>]
-<figures/Sensor.png, id=553, 1321.93875pt x 337.26pt>
+<figures/Sensor.png, id=644, 1321.93875pt x 337.26pt>
 File: figures/Sensor.png Graphic file (type png)
 <use figures/Sensor.png>
-Package pdftex.def Info: figures/Sensor.png  used on input line 381.
+Package pdftex.def Info: figures/Sensor.png  used on input line 376.
 (pdftex.def)             Requested size: 469.75499pt x 119.84392pt.
 
-Overfull \hbox (0.46405pt too wide) in paragraph at lines 407--415
+Overfull \hbox (0.46405pt too wide) in paragraph at lines 402--410
 \T1/lmr/m/n/10.95 Bei \T1/lmr/bx/n/10.95 bürsten-be-hafteten DC-Motoren\T1/lmr/m/n/10.95 , wie sie in vie-len Robotikan-wen-dun-gen Ver-wen-dung finden,
  []
 
 
-Overfull \hbox (4.28831pt too wide) in paragraph at lines 407--415
+Overfull \hbox (4.28831pt too wide) in paragraph at lines 402--410
 \T1/lmr/m/n/10.95 erzeugt ein strom-durch-flossener Anker in einem Mag-net-feld ein Drehmo-ment (Lorentz-Kraftwirkung)
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 422.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 417.
 (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 
 [22 <./figures/Sensor.png>]
-<figures/rotational_motor.png, id=561, 432.61626pt x 266.9975pt>
+<figures/rotational_motor.png, id=651, 432.61626pt x 266.9975pt>
 File: figures/rotational_motor.png Graphic file (type png)
 <use figures/rotational_motor.png>
-Package pdftex.def Info: figures/rotational_motor.png  used on input line 444.
+Package pdftex.def Info: figures/rotational_motor.png  used on input line 439.
 (pdftex.def)             Requested size: 281.85585pt x 173.95778pt.
 
-Overfull \hbox (5.72421pt too wide) in paragraph at lines 451--465
+Overfull \hbox (5.72421pt too wide) in paragraph at lines 446--460
 \T1/lmr/m/n/10.95 modus geschal-tet. Dazu wird im Code ein-ma-lig \T1/lmtt/m/n/10.95 wb_motor_set_position(handlebars_motor,
  []
 
@@ -972,78 +996,72 @@ Overfull \hbox (5.72421pt too wide) in paragraph at lines 451--465
 [23{/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-ts1.enc} <./figures/rotational_motor.png>]
 
 [24]
-Overfull \hbox (1.2765pt too wide) in paragraph at lines 539--546
+Overfull \hbox (1.2765pt too wide) in paragraph at lines 535--542
 []\T1/lmr/m/n/10.95 Bereits während der Ini-tial-isierung wer-den die Mo-toren kon-fig-uri-ert, List-ing [][]3[][] zeigt, wie der Lenkmo-
  []
 
 
-Overfull \hbox (118.23344pt too wide) in paragraph at lines 539--546
+Overfull \hbox (118.23344pt too wide) in paragraph at lines 535--542
 \T1/lmr/m/n/10.95 Lenkantrieb wird die Po-si-tion ini-tial auf $\OT1/lmr/m/n/10.95 0\OML/lmm/m/it/10.95 :\OT1/lmr/m/n/10.95 0$ \T1/lmr/m/n/10.95 gestellt. Für den Hin-ter-radantrieb wird \T1/lmtt/m/n/10.95 wb_motor_set_position(wheel_motor,
  []
 
 
-Overfull \hbox (4.03427pt too wide) in paragraph at lines 555--558
+Overfull \hbox (4.03427pt too wide) in paragraph at lines 551--554
 []\T1/lmr/m/n/10.95 Der Wert \T1/lmtt/m/n/10.95 target_speed \T1/lmr/m/n/10.95 wird in Rad/Sekunde an das Hin-ter-rad übergeben. Beispiel-sweise entspricht
  []
 
 
-Overfull \hbox (63.63156pt too wide) in paragraph at lines 555--558
+Overfull \hbox (63.63156pt too wide) in paragraph at lines 551--554
 \T1/lmr/m/n/10.95 eine Zielgeschwindigkeit von z.B. 4m/s (bei $\OMS/lmsy/m/n/10.95 ^^X$\T1/lmr/m/n/10.95 0.7m Rad-durchmesser) unge-fähr 11.4rad/s Winkelgeschwindigkeit. 
  []
 
 
 
 [25]
-<figures/controller_synchronization.png, id=605, 481.8pt x 903.375pt>
+
+[26]
+<figures/controller_synchronization.png, id=706, 481.8pt x 903.375pt>
 File: figures/controller_synchronization.png Graphic file (type png)
 <use figures/controller_synchronization.png>
-Package pdftex.def Info: figures/controller_synchronization.png  used on input line 614.
+Package pdftex.def Info: figures/controller_synchronization.png  used on input line 630.
 (pdftex.def)             Requested size: 187.89912pt x 352.30106pt.
 
-Underfull \hbox (badness 1609) in paragraph at lines 615--615
-[]\T1/lmr/m/n/10.95 Figure 9: |Syn-chro-ni-sa-tion zwis-chen
+Underfull \hbox (badness 1609) in paragraph at lines 631--631
+[]\T1/lmr/m/n/10.95 Figure 8: |Syn-chro-ni-sa-tion zwis-chen
  []
 
 
-Underfull \hbox (badness 1107) in paragraph at lines 620--626
-[][]\T1/lmr/m/n/10.95 Alle An-weisun-gen vor dem näch-sten Zeitschritt $\T1/lmtt/m/n/10.95 wb \
+Underfull \hbox (badness 3547) in paragraph at lines 635--640
+\T1/lmtt/m/n/10.95 motor.setPosition() \T1/lmr/m/n/10.95 in Python) wer-den zunächst
  []
 
 
-Underfull \hbox (badness 1062) in paragraph at lines 620--626
-\T1/lmr/m/n/10.95 chro-nen Modus da-rauf, dass jeder Con-troller seinen
+Underfull \hbox (badness 4981) in paragraph at lines 635--640
+\T1/lmr/m/n/10.95 lokal gepuffert. Die tat-säch-liche Aus-führung in
  []
 
 
-Overfull \hbox (63.8071pt too wide) in paragraph at lines 632--636
-\T1/lmr/m/n/10.95 C[]Controller wer-den z.B. Geräte über \T1/lmtt/m/n/10.95 wb_robot_get_device("name")
+Underfull \hbox (badness 3590) in paragraph at lines 635--640
+\T1/lmr/m/n/10.95 der Physik[]Engine er-folgt erst am näch-sten Step-
  []
 
 
-Underfull \hbox (badness 3128) in paragraph at lines 632--636
-\T1/lmr/m/n/10.95 tiviert. Entsprechende Meth-o-den ex-istieren dabei
- []
-
-
-Overfull \hbox (22.3641pt too wide) in paragraph at lines 632--636
-\T1/lmr/m/n/10.95 eben-falls in Python (\T1/lmtt/m/n/10.95 robot.getDevice()\T1/lmr/m/n/10.95 , \T1/lmtt/m/n/10.95 device.enable()\T1/lmr/m/n/10.95 ).
+Underfull \hbox (badness 1960) in paragraph at lines 641--646
+\T1/lmr/m/n/10.95 auf dem Fahrrad (in C, ho-her Takt), an-der-er-seits
  []
 
 
 
-[26 <./figures/controller_synchronization.png>]
-Overfull \hbox (15.8763pt too wide) in paragraph at lines 663--671
-\T1/lmr/m/n/10.95 bei-der Teil-prozesse, so-dass Kom-man-dos ver-lust-frei und de-ter-min-is-tisch am Step[]Synchronisationspunkt
- []
-
-
+[27 <./figures/controller_synchronization.png>]
 Overfull \hbox (1.09428pt too wide) in paragraph at lines 676--680
 \T1/lmr/m/n/10.95 Die Regelungsar-chitek-tur er-fordert eine ko-or-dinierte Parame-trierung sowohl des Balance-Controllers
  []
 
 
 
-[27]
+[28
+
+]
 Overfull \hbox (6.92569pt too wide) in paragraph at lines 727--732
 \T1/lmr/m/n/10.95 Such-funk-tio-nen für die Ex-trak-tion spez-i-fis-cher Schlüssel-Wert-Paare. Dies gewährleis-tet eine schlanke
  []
@@ -1054,8 +1072,6 @@ Overfull \hbox (5.44284pt too wide) in paragraph at lines 727--732
  []
 
 
-
-[28]
 Overfull \hbox (0.47641pt too wide) in paragraph at lines 738--743
 \T1/lmtt/m/n/10.95 balance_logging.c \T1/lmr/m/n/10.95 doku-men-tiert. Dieses Sys-tem erzeugt zeit-gestem-pelte CSV-Dateien, die sowohl
  []
@@ -1070,11 +1086,11 @@ Overfull \hbox (3.34343pt too wide) in paragraph at lines 44--47
 []\T1/lmr/bx/n/10.95 Echtzeit-Threading-Architektur: \T1/lmr/m/n/10.95 Zan-ders Im-ple-men-tierung nutzt eine multi-threaded Ar-chitek-
  []
 
-<figures/Kombimierter Regeler.png, id=688, 804.00375pt x 380.42125pt>
-File: figures/Kombimierter Regeler.png Graphic file (type png)
-<use figures/Kombimierter Regeler.png>
-Package pdftex.def Info: figures/Kombimierter Regeler.png  used on input line 50.
-(pdftex.def)             Requested size: 375.80542pt x 177.81119pt.
+
+Overfull \hbox (19.97307pt too wide) in paragraph at lines 48--51
+\T1/lmr/m/n/10.95 spezifischen Kom-plex-itäten bei Beibehal-tung der regelung-stech-nis-chen Kern-prinzip-ien. Die wesentlichen
+ []
+
 
 
 [30
@@ -1082,77 +1098,59 @@ Package pdftex.def Info: figures/Kombimierter Regeler.png  used on input line 50
 
 
 ]
-Overfull \hbox (19.97307pt too wide) in paragraph at lines 55--58
-\T1/lmr/m/n/10.95 spezifischen Kom-plex-itäten bei Beibehal-tung der regelung-stech-nis-chen Kern-prinzip-ien. Die wesentlichen
- []
-
-
-Overfull \hbox (5.7175pt too wide) in paragraph at lines 76--78
+Overfull \hbox (5.7175pt too wide) in paragraph at lines 69--71
 []\T1/lmr/m/n/10.95 Die Webots-Implementierung vere-in-facht die Ar-chitek-tur er-he-blich durch Elim-i-na-tion der sekundären
  []
 
 
 
-[31 <./figures/Kombimierter Regeler.png>]
-Overfull \hbox (33.34177pt too wide) in paragraph at lines 137--149
-\T1/lmr/m/n/10.95 tion des MPC ad-diert quadri-erte Ab-we-ichun-gen der Zustände und [][][][][][]
- []
-
-
-Overfull \hbox (11.38988pt too wide) in paragraph at lines 137--149
-\T1/lmr/m/n/10.95 den physikalis-che Nebenbe-din-gun-gen wie max-i-maler Lenkwinkel, Lenkwinkel-rate und Geschwindigkeit
- []
-
-
+[31]
 
 [32] (/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/listings/lstlang1.sty
 File: lstlang1.sty 2024/09/23 1.10c listings language file
 )
-LaTeX Font Info:    Font shape `T1/lmtt/bx/n' in size <9> not available
-(Font)              Font shape `T1/lmtt/b/n' tried instead on input line 192.
-
-
-[33]
-Overfull \hbox (40.95491pt too wide) in paragraph at lines 215--218
+Overfull \hbox (40.95491pt too wide) in paragraph at lines 207--210
 []\T1/lmr/m/n/10.95 Anstelle von Gi-rays kom-plexer Spline-Interpolation aus Bild-punk-ten ver-wen-det die Webots-Implementierung
  []
 
 
-Overfull \hbox (13.61482pt too wide) in paragraph at lines 219--221
+
+[33]
+Overfull \hbox (13.61482pt too wide) in paragraph at lines 211--213
 \T1/lmr/m/n/10.95 mulierung bei der Lö-sung des Op-ti-mierungsprob-lems. List-ing [][]12[][] zeigt den Kern des MPC-Algorithmus: 
+ []
+
+
+Overfull \hbox (2.11226pt too wide) in paragraph at lines 265--269
+[]\T1/lmr/bx/n/10.95 Integration mit Balance-Controller: \T1/lmr/m/n/10.95 Ein wesentlicher Un-ter-schied zu Gi-rays Standalone-Ansatz
  []
 
 
 
 [34]
-Overfull \hbox (2.11226pt too wide) in paragraph at lines 273--277
-[]\T1/lmr/bx/n/10.95 Integration mit Balance-Controller: \T1/lmr/m/n/10.95 Ein wesentlicher Un-ter-schied zu Gi-rays Standalone-Ansatz
- []
-
-
-Overfull \hbox (3.5289pt too wide) in paragraph at lines 301--305
+Overfull \hbox (3.5289pt too wide) in paragraph at lines 293--297
 []\T1/lmr/bx/n/10.95 Bewertung der Portierung: \T1/lmr/m/n/10.95 Die Adap-ta-tion von Gi-rays MPC-Konzept für die Webots-Simulation
  []
 
 
 
 [35]
-<figures/Yolo_Snapshot.png, id=869, 644.4075pt x 356.33125pt>
+<figures/Yolo_Snapshot.png, id=956, 644.4075pt x 356.33125pt>
 File: figures/Yolo_Snapshot.png Graphic file (type png)
 <use figures/Yolo_Snapshot.png>
-Package pdftex.def Info: figures/Yolo_Snapshot.png  used on input line 359.
+Package pdftex.def Info: figures/Yolo_Snapshot.png  used on input line 351.
 (pdftex.def)             Requested size: 375.80542pt x 207.81406pt.
 
 
 [36]
-Overfull \hbox (9.96655pt too wide) in paragraph at lines 396--400
+Overfull \hbox (9.96655pt too wide) in paragraph at lines 388--392
 \T1/lmr/m/n/10.95 auf klas-sis-cher Bild-ver-ar-beitung basiert. Diese nutzt Farb- und Kon-tur-fil-ter in-ner-halb einer definierten
  []
 
-<figures/Fallback_snapshot.png, id=897, 1281.78876pt x 359.3425pt>
+<figures/Fallback_snapshot.png, id=983, 1281.78876pt x 359.3425pt>
 File: figures/Fallback_snapshot.png Graphic file (type png)
 <use figures/Fallback_snapshot.png>
-Package pdftex.def Info: figures/Fallback_snapshot.png  used on input line 403.
+Package pdftex.def Info: figures/Fallback_snapshot.png  used on input line 395.
 (pdftex.def)             Requested size: 469.75499pt x 131.69351pt.
 
 
@@ -1162,13 +1160,8 @@ Package pdftex.def Info: figures/Fallback_snapshot.png  used on input line 403.
 \openout2 = `chapters/kapitel5.aux'.
 
  (./chapters/kapitel5.tex
-Overfull \hbox (48.17944pt too wide) in paragraph at lines 24--30
-[]\T1/lmr/m/n/10.95 Die Sys-temar-chitek-tur repliziert die zukün-ftige zweistu-fige Regelungsstruk-tur der Hardware-Implementierung.
- []
-
-
-Overfull \hbox (26.91812pt too wide) in paragraph at lines 24--30
-\T1/lmr/m/n/10.95 Eine dedi-zierte Supervisor-Instanz or-chestri-ert die Ver-suchs-durch-führung durch au-toma-tisierte Szenarien-
+Overfull \hbox (15.41043pt too wide) in paragraph at lines 24--30
+\T1/lmr/m/n/10.95 Kalib-rierungsproze-duren unter iden-tis-chen An-fangs-be-din-gun-gen. Durch die En-tkop-plung von virtueller
  []
 
 
@@ -1190,6 +1183,8 @@ Overfull \hbox (5.28525pt too wide) in paragraph at lines 82--87
 
 
 [40]
+
+[41]
 Overfull \hbox (19.08496pt too wide) in paragraph at lines 121--125
 []\T1/lmr/bx/n/10.95 Quantitative Zeitrei-hen-daten: \T1/lmr/m/n/10.95 Um-fassen dabei alle Regel-gröÿen (Roll-winkel, PID-Terme, Lenkkom-
  []
@@ -1206,412 +1201,549 @@ Overfull \hbox (48.60567pt too wide) in paragraph at lines 130--132
 
 
 
-[41]
-<figures/Kurve.jpeg, id=953, 4015.0pt x 4015.0pt>
+[42]
+<figures/Kurve.jpeg, id=1044, 4015.0pt x 4015.0pt>
 File: figures/Kurve.jpeg Graphic file (type jpg)
 <use figures/Kurve.jpeg>
-Package pdftex.def Info: figures/Kurve.jpeg  used on input line 158.
+Package pdftex.def Info: figures/Kurve.jpeg  used on input line 159.
 (pdftex.def)             Requested size: 187.89912pt x 187.89635pt.
 
-Underfull \hbox (badness 1199) in paragraph at lines 163--174
+Underfull \hbox (badness 1199) in paragraph at lines 164--175
 \OT1/lmr/m/n/10.95 7$$[]\OML/lmm/m/it/10.95 =\OT1/lmr/m/n/10.95 h$\T1/lmr/m/n/10.95 ) ak-tiv. Für die vi-suelle Spur-führung kann
  []
 
-<figures/Kurve/Test P und PID/P/Daten.png, id=957, 1331.97626pt x 349.305pt>
+<figures/Kurve/Test P und PID/P/Daten.png, id=1048, 1331.97626pt x 349.305pt>
 File: figures/Kurve/Test P und PID/P/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Daten.png  used on input line 186.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Daten.png  used on input line 187.
 (pdftex.def)             Requested size: 469.75499pt x 123.19131pt.
-
-
-[42 <./figures/Kurve.jpeg>]
-<figures/Kurve/Test P und PID/P/Error.png, id=967, 1322.9425pt x 347.2975pt>
+<figures/Kurve/Test P und PID/P/Error.png, id=1049, 1322.9425pt x 347.2975pt>
 File: figures/Kurve/Test P und PID/P/Error.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Error.png  used on input line 202.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Error.png  used on input line 203.
 (pdftex.def)             Requested size: 469.75499pt x 123.3153pt.
 
 
-[43 <./figures/Kurve/Test P und PID/P/Daten.png> <./figures/Kurve/Test P und PID/P/Error.png>]
-<figures/Kurve/Test P und PID/P/Strecke.png, id=975, 564.1075pt x 564.1075pt>
+[43 <./figures/Kurve.jpeg> <./figures/Kurve/Test P und PID/P/Daten.png>]
+<figures/Kurve/Test P und PID/P/Strecke.png, id=1061, 564.1075pt x 564.1075pt>
 File: figures/Kurve/Test P und PID/P/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Strecke.png  used on input line 213.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Strecke.png  used on input line 214.
 (pdftex.def)             Requested size: 187.89912pt x 187.89478pt.
-<figures/Kurve/Test P und PID/YOLO PID/Daten.png, id=977, 1319.93124pt x 348.30125pt>
+<figures/Kurve/Test P und PID/YOLO PID/Daten.png, id=1063, 1319.93124pt x 348.30125pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Daten.png  used on input line 237.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Daten.png  used on input line 238.
 (pdftex.def)             Requested size: 469.75499pt x 123.95871pt.
-<figures/Kurve/Test P und PID/YOLO PID/Error.png, id=978, 1321.93875pt x 345.29pt>
+
+
+[44 <./figures/Kurve/Test P und PID/P/Error.png> <./figures/Kurve/Test P und PID/P/Strecke.png>]
+<figures/Kurve/Test P und PID/YOLO PID/Error.png, id=1071, 1321.93875pt x 345.29pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Error.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Error.png  used on input line 249.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Error.png  used on input line 250.
 (pdftex.def)             Requested size: 469.75499pt x 122.69734pt.
-
-
-[44 <./figures/Kurve/Test P und PID/P/Strecke.png> <./figures/Kurve/Test P und PID/YOLO PID/Daten.png>]
-<figures/Kurve/Test P und PID/YOLO PID/Strecke.png, id=987, 564.1075pt x 565.11125pt>
+<figures/Kurve/Test P und PID/YOLO PID/Strecke.png, id=1072, 564.1075pt x 565.11125pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke.png  used on input line 257.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke.png  used on input line 258.
 (pdftex.def)             Requested size: 187.89912pt x 188.22911pt.
 
-Underfull \hbox (badness 7944) in paragraph at lines 264--270
+Underfull \hbox (badness 7944) in paragraph at lines 265--271
 \T1/lmr/m/n/10.95 bi-na-tion von Integral- und Dif-fer-en-tialanteil eine
  []
 
 
-Underfull \hbox (badness 2726) in paragraph at lines 271--278
+Underfull \hbox (badness 2726) in paragraph at lines 272--279
 \T1/lmr/m/n/10.95 ins-beson-dere die Tren-nung zwis-chen Fahrbahn und
  []
 
-<figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png, id=991, 961.5925pt x 538.01pt>
+
+
+[45 <./figures/Kurve/Test P und PID/YOLO PID/Daten.png> <./figures/Kurve/Test P und PID/YOLO PID/Error.png> <./figures/Kurve/Test P und PID/YOLO PID/Strecke.png>]
+<figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png, id=1086, 961.5925pt x 538.01pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png  used on input line 282.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png  used on input line 283.
 (pdftex.def)             Requested size: 225.48038pt x 126.15324pt.
-<figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png, id=992, 961.5925pt x 540.0175pt>
+<figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png, id=1087, 961.5925pt x 540.0175pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png  used on input line 286.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png  used on input line 287.
 (pdftex.def)             Requested size: 225.48038pt x 126.62396pt.
 
-
-[45 <./figures/Kurve/Test P und PID/YOLO PID/Error.png> <./figures/Kurve/Test P und PID/YOLO PID/Strecke.png>]
-Overfull \hbox (4.41104pt too wide) in paragraph at lines 294--300
+Overfull \hbox (4.41104pt too wide) in paragraph at lines 295--301
  []\T1/lmr/bx/n/10.95 Einsatz der ROI[]Fallback[]Erkennung:[] \T1/lmr/m/n/10.95 In dieser Ver-suchs-fahrt wurde die ROI[]Fallback[] Erken-
  []
 
-<figures/Kurve/Test P und PID/PID/Daten.png, id=1002, 1326.9575pt x 347.2975pt>
+<figures/Kurve/Test P und PID/PID/Daten.png, id=1089, 1326.9575pt x 347.2975pt>
 File: figures/Kurve/Test P und PID/PID/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/PID/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Daten.png  used on input line 303.
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Daten.png  used on input line 304.
 (pdftex.def)             Requested size: 469.75499pt x 122.94437pt.
 
-Overfull \hbox (6.75272pt too wide) in paragraph at lines 308--310
-[]\T1/lmr/m/n/10.95 Die Ergeb-nisse in [][]Fig-ure 21[][][] zeigen einen deut-lichen Qual-itäts-gewinn gegenüber der YOLO[]Erkennung
+Overfull \hbox (9.79436pt too wide) in paragraph at lines 309--311
+[]\T1/lmr/m/n/10.95 Die Ergeb-nisse in [][]Fig-ure 19[][][] zeigen einen deut-lichen Qual-itäts-gewinn gegenüber der YOLO[]Erkennung.
  []
 
-<figures/Kurve/Test P und PID/PID/Error.png, id=1004, 1328.965pt x 342.27875pt>
-File: figures/Kurve/Test P und PID/PID/Error.png Graphic file (type png)
-<use figures/Kurve/Test P und PID/PID/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Error.png  used on input line 320.
-(pdftex.def)             Requested size: 469.75499pt x 120.98491pt.
 
 
 [46 <./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png> <./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png> <./figures/Kurve/Test P und PID/PID/Daten.png>]
-<figures/Kurve/Test P und PID/PID/Strecke.png, id=1016, 565.11125pt x 562.1pt>
+<figures/Kurve/Test P und PID/PID/Error.png, id=1101, 1328.965pt x 342.27875pt>
+File: figures/Kurve/Test P und PID/PID/Error.png Graphic file (type png)
+<use figures/Kurve/Test P und PID/PID/Error.png>
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Error.png  used on input line 321.
+(pdftex.def)             Requested size: 469.75499pt x 120.98491pt.
+<figures/Kurve/Test P und PID/PID/Strecke.png, id=1102, 565.11125pt x 562.1pt>
 File: figures/Kurve/Test P und PID/PID/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/PID/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Strecke.png  used on input line 328.
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Strecke.png  used on input line 329.
 (pdftex.def)             Requested size: 187.89912pt x 186.89162pt.
 
-Underfull \hbox (badness 6510) in paragraph at lines 329--329
-[]\T1/lmr/m/n/10.95 Figure 23: |Gefahrene Tra-jek-to-rie
+Underfull \hbox (badness 6510) in paragraph at lines 330--330
+[]\T1/lmr/m/n/10.95 Figure 21: |Gefahrene Tra-jek-to-rie
  []
 
 
-Underfull \hbox (badness 2818) in paragraph at lines 340--346
+Underfull \hbox (badness 2818) in paragraph at lines 341--347
 \T1/lmr/m/n/10.95 klare Leis-tung-shier-ar-chie: Der reine P-Regler ver-
  []
 
 
-Underfull \hbox (badness 2057) in paragraph at lines 340--346
+Underfull \hbox (badness 2057) in paragraph at lines 341--347
 \T1/lmr/m/n/10.95 sagt nach 17,04s mit charak-ter-is-tis-chen Rollwinkel-
  []
 
 
 
 [47 <./figures/Kurve/Test P und PID/PID/Error.png> <./figures/Kurve/Test P und PID/PID/Strecke.png>]
-<figures/S-Kurve.png, id=1027, 1535.7375pt x 490.83376pt>
+<figures/S-Kurve.png, id=1113, 1535.7375pt x 490.83376pt>
 File: figures/S-Kurve.png Graphic file (type png)
 <use figures/S-Kurve.png>
-Package pdftex.def Info: figures/S-Kurve.png  used on input line 373.
+Package pdftex.def Info: figures/S-Kurve.png  used on input line 374.
 (pdftex.def)             Requested size: 469.75499pt x 150.13472pt.
 
-Overfull \hbox (31.93784pt too wide) in paragraph at lines 386--391
+Overfull \hbox (31.93784pt too wide) in paragraph at lines 387--392
 \T1/lmr/m/n/10.95 den vorherge-hen-den Ab-schnit-ten gezeigt, ist die YOLOv8-Segmentierung die zen-trale Wahrnehmungskom-
  []
 
-<figures/S-Kurve/YOLO/Strecke.png, id=1030, 831.105pt x 232.87pt>
+<figures/S-Kurve/YOLO/Strecke.png, id=1116, 831.105pt x 232.87pt>
 File: figures/S-Kurve/YOLO/Strecke.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Strecke.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Strecke.png  used on input line 400.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Strecke.png  used on input line 401.
 (pdftex.def)             Requested size: 469.75499pt x 131.62152pt.
 
 
 [48 <./figures/S-Kurve.png>]
-<figures/S-Kurve/YOLO/Daten.png, id=1039, 2360.82pt x 554.07pt>
+<figures/S-Kurve/YOLO/Daten.png, id=1125, 2360.82pt x 554.07pt>
 File: figures/S-Kurve/YOLO/Daten.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Daten.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Daten.png  used on input line 419.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Daten.png  used on input line 420.
 (pdftex.def)             Requested size: 469.75499pt x 110.24559pt.
-<figures/S-Kurve/YOLO/Error.png, id=1041, 2375.87625pt x 587.19376pt>
+<figures/S-Kurve/YOLO/Error.png, id=1127, 2375.87625pt x 587.19376pt>
 File: figures/S-Kurve/YOLO/Error.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Error.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Error.png  used on input line 436.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Error.png  used on input line 437.
 (pdftex.def)             Requested size: 469.75499pt x 116.09268pt.
 
 
 [49 <./figures/S-Kurve/YOLO/Strecke.png> <./figures/S-Kurve/YOLO/Daten.png>]
-<figures/S-Kurve/Fallback/Strecke.png, id=1058, 835.12pt x 220.825pt>
+<figures/S-Kurve/Fallback/Strecke.png, id=1144, 835.12pt x 220.825pt>
 File: figures/S-Kurve/Fallback/Strecke.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Strecke.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Strecke.png  used on input line 461.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Strecke.png  used on input line 462.
 (pdftex.def)             Requested size: 469.75499pt x 124.21712pt.
 
-Overfull \hbox (4.44067pt too wide) in paragraph at lines 466--471
-[]\T1/lmr/m/n/10.95 Die Zeitrei-hen in [][]Fig-ure 29[][][] bele-gen dies während des Rich-tungswech-sels zwis-chen ca.25^^U35Sekunden.
+Overfull \hbox (4.44067pt too wide) in paragraph at lines 467--472
+[]\T1/lmr/m/n/10.95 Die Zeitrei-hen in [][]Fig-ure 27[][][] bele-gen dies während des Rich-tungswech-sels zwis-chen ca.25^^U35Sekunden.
  []
 
 
-Overfull \hbox (15.05481pt too wide) in paragraph at lines 466--471
+Overfull \hbox (15.05481pt too wide) in paragraph at lines 467--472
 \T1/lmr/m/n/10.95 Der Lenkbe-darf steigt er-wartungs-gemäÿ am Krüm-mungs-max-i-mum an, zu-gle-ich bleibt der \T1/lmtt/m/n/10.95 final_steer
  []
 
 
 
 [50 <./figures/S-Kurve/YOLO/Error.png> <./figures/S-Kurve/Fallback/Strecke.png>]
-<figures/S-Kurve/Fallback/Daten.png, id=1069, 2362.8275pt x 553.06625pt>
+<figures/S-Kurve/Fallback/Daten.png, id=1155, 2362.8275pt x 553.06625pt>
 File: figures/S-Kurve/Fallback/Daten.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Daten.png  used on input line 479.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Daten.png  used on input line 480.
 (pdftex.def)             Requested size: 469.75499pt x 109.95303pt.
-<figures/S-Kurve/Fallback/Error.png, id=1071, 2391.93625pt x 551.05875pt>
+<figures/S-Kurve/Fallback/Error.png, id=1157, 2391.93625pt x 551.05875pt>
 File: figures/S-Kurve/Fallback/Error.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Error.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Error.png  used on input line 495.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Error.png  used on input line 496.
 (pdftex.def)             Requested size: 469.75499pt x 108.21698pt.
 
-Overfull \hbox (12.1684pt too wide) in paragraph at lines 507--510
+Overfull \hbox (12.1684pt too wide) in paragraph at lines 508--511
 \T1/lmr/m/n/10.95 56,78s (+16,8%), einer kon-stante Spur-erken-nung (Mask-Coverage >0,8), einer re-duzierten Rollwinkel-
  []
 
 
 
 [51 <./figures/S-Kurve/Fallback/Daten.png> <./figures/S-Kurve/Fallback/Error.png>]
-Overfull \hbox (12.6503pt too wide) in paragraph at lines 533--536
+Overfull \hbox (12.6503pt too wide) in paragraph at lines 532--535
 []\T1/lmr/m/n/10.95 Die Wind-kon-fig-u-ra-tion er-folgt über drei \T1/lmtt/m/n/10.95 DEF AIR Fluid\T1/lmr/m/n/10.95 -Knoten mit Luft-pa-ram-e-tern $\OML/lmm/m/it/10.95 ^^Z \OT1/lmr/m/n/10.95 = 1[]225 []$
  []
 
-LaTeX Font Info:    Trying to load font information for TS1+lmtt on input line 550.
-(/opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/ts1lmtt.fd
-File: ts1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
-)
-Overfull \hbox (7.33714pt too wide) in paragraph at lines 548--551
- []\T1/lmr/bx/n/10.95 Controller-Architektur: Reine Balance-Regelung[] \T1/lmr/m/n/10.95 Im Gegen-satz zu den kom-binierten Szenar-
+
+Overfull \hbox (50.35886pt too wide) in paragraph at lines 541--551
+\T1/lmr/m/n/10.95 Auswer-tun-gen. Die aero-dy-namis-che Kop-plung er-folgt über We-bots' \T1/lmtt/m/n/10.95 Fluid\T1/lmr/m/n/10.95 -System mit \T1/lmtt/m/n/10.95 ImmersionProperties\T1/lmr/m/n/10.95 ,
  []
 
-<figures/Wind/Wind/Strecke.png, id=1079, 1418.29875pt x 855.195pt>
+
+Overfull \hbox (22.5281pt too wide) in paragraph at lines 541--551
+\T1/lmr/m/n/10.95 das die In-ter-ak-tion zwis-chen Fes-tkör-pern und Strö-mungsme-dien nach der Formel $[] \OT1/lmr/m/n/10.95 = []\OML/lmm/m/it/10.95 ^^Z C[] A v[] []$
+ []
+
+
+Overfull \hbox (30.62173pt too wide) in paragraph at lines 555--561
+\T1/lmr/m/n/10.95 vorigen Ex-per-i-menten. Die Geschwindigkeit-sregelung er-folgt kon-stant auf $\OT1/lmr/m/n/10.95 7 []$ \T1/lmr/m/n/10.95 über den \T1/lmtt/m/n/10.95 motor::wheel\T1/lmr/m/n/10.95 .
+ []
+
+<figures/Wind/Wind/Strecke.png, id=1166, 1418.29875pt x 855.195pt>
 File: figures/Wind/Wind/Strecke.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke.png  used on input line 563.
+Package pdftex.def Info: figures/Wind/Wind/Strecke.png  used on input line 564.
 (pdftex.def)             Requested size: 469.75499pt x 283.24611pt.
 
 
 [52]
-<figures/Wind/Wind/Strecke_1.png, id=1088, 643.40375pt x 134.5025pt>
+<figures/Wind/Wind/Strecke_1.png, id=1174, 643.40375pt x 134.5025pt>
 File: figures/Wind/Wind/Strecke_1.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_1.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_1.png  used on input line 577.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_1.png  used on input line 578.
 (pdftex.def)             Requested size: 469.75499pt x 98.20445pt.
 
-Overfull \hbox (17.32692pt too wide) in paragraph at lines 583--588
+Overfull \hbox (17.32692pt too wide) in paragraph at lines 584--589
 \T1/lmr/m/n/10.95 erkennbar, die der Re-gler mit gegen-läu-fi-gen Balance- und Lenkim-pulsen kom-pen-siert. Der \T1/lmtt/m/n/10.95 final_steer
  []
 
 
-Overfull \hbox (6.89493pt too wide) in paragraph at lines 583--588
+Overfull \hbox (6.89493pt too wide) in paragraph at lines 584--589
 \T1/lmr/m/n/10.95 er-re-icht Max-i-mal-w-erte von \TS1/lmr/m/n/10.95 ±\T1/lmr/m/n/10.95 0,04rad, bleibt aber durchge-hend sta-bil. Die Sig-nale bleiben beschränkt,
  []
 
 
 
 [53 <./figures/Wind/Wind/Strecke.png> <./figures/Wind/Wind/Strecke_1.png>]
-<figures/Wind/Wind/Daten.png, id=1100, 1764.5925pt x 407.5225pt>
+<figures/Wind/Wind/Daten.png, id=1185, 1764.5925pt x 407.5225pt>
 File: figures/Wind/Wind/Daten.png Graphic file (type png)
 <use figures/Wind/Wind/Daten.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten.png  used on input line 591.
+Package pdftex.def Info: figures/Wind/Wind/Daten.png  used on input line 592.
 (pdftex.def)             Requested size: 469.75499pt x 108.48419pt.
-<figures/Wind/Wind/Strecke_2.png, id=1103, 644.4075pt x 148.555pt>
+<figures/Wind/Wind/Strecke_2.png, id=1188, 644.4075pt x 148.555pt>
 File: figures/Wind/Wind/Strecke_2.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_2.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_2.png  used on input line 612.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_2.png  used on input line 613.
 (pdftex.def)             Requested size: 469.75499pt x 108.29689pt.
-<figures/Wind/Wind/Daten_2.png, id=1104, 1798.72pt x 409.53pt>
+<figures/Wind/Wind/Daten_2.png, id=1189, 1798.72pt x 409.53pt>
 File: figures/Wind/Wind/Daten_2.png Graphic file (type png)
 <use figures/Wind/Wind/Daten_2.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten_2.png  used on input line 620.
+Package pdftex.def Info: figures/Wind/Wind/Daten_2.png  used on input line 621.
 (pdftex.def)             Requested size: 469.75499pt x 106.9502pt.
 
 
 [54 <./figures/Wind/Wind/Daten.png> <./figures/Wind/Wind/Strecke_2.png>]
-Overfull \hbox (8.59352pt too wide) in paragraph at lines 627--631
- []\T1/lmr/bx/n/10.95 Fall C: Gain-Erhöhung für die Balance-Regelung[] \T1/lmr/m/n/10.95 Zur Verbesserung der Ro-bus-theit gegenüber
+Overfull \hbox (12.09149pt too wide) in paragraph at lines 628--632
+ []\T1/lmr/bx/n/10.95 Fall C: Gain-Erhöhung für die Balance-Regelung:[] \T1/lmr/m/n/10.95 Zur Verbesserung der Ro-bus-theit gegenüber
  []
 
-<figures/Wind/Wind/Strecke_3.png, id=1116, 559.59062pt x 167.12437pt>
+
+Overfull \hbox (16.13205pt too wide) in paragraph at lines 628--632
+\OML/lmm/m/it/10.95 K[] \OT1/lmr/m/n/10.95 = 0[]4$\T1/lmr/m/n/10.95 . Die quan-ti-ta-tive Anal-yse der Ver-suchs-daten (ca. 22,0s er-fol-gre-iche Fahrt-dauer, entsprechend
+ []
+
+<figures/Wind/Wind/Strecke_3.png, id=1201, 559.59062pt x 167.12437pt>
 File: figures/Wind/Wind/Strecke_3.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_3.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_3.png  used on input line 645.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_3.png  used on input line 646.
 (pdftex.def)             Requested size: 469.75499pt x 140.29935pt.
-<figures/Wind/Wind/Daten_3.png, id=1117, 1307.88625pt x 347.2975pt>
+<figures/Wind/Wind/Daten_3.png, id=1202, 1307.88625pt x 347.2975pt>
 File: figures/Wind/Wind/Daten_3.png Graphic file (type png)
 <use figures/Wind/Wind/Daten_3.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten_3.png  used on input line 653.
+Package pdftex.def Info: figures/Wind/Wind/Daten_3.png  used on input line 654.
 (pdftex.def)             Requested size: 469.75499pt x 124.73553pt.
 
 
 [55 <./figures/Wind/Wind/Daten_2.png> <./figures/Wind/Wind/Strecke_3.png>]
-Overfull \hbox (2.29749pt too wide) in paragraph at lines 674--679
- []\T1/lmr/bx/n/10.95 Einordnung und Gren-zen[] \T1/lmr/m/n/10.95 Die Ergeb-nisse bestäti-gen die in dieser Ar-beit gewählte Zwei-Ebenen-
+Overfull \hbox (1.67352pt too wide) in paragraph at lines 675--679
+ []\T1/lmr/bx/n/10.95 Einordnung und Gren-zen:[] \T1/lmr/m/n/10.95 Die Ergeb-nisse zeigen die Gren-zen der reinen Balance-PID-Regelung
+ []
+
+
+Overfull \hbox (5.87054pt too wide) in paragraph at lines 680--685
+\T1/lmr/m/n/10.95 physikalis-che An-pas-sun-gen (gröÿere Reifen-bre-ite, tief-erer Schw-er-punkt) oder er-weit-erte Regelungsan-
  []
 
 
 
 [56 <./figures/Wind/Wind/Daten_3.png>]
-<figures/Huegel.png, id=1135, 1116.17pt x 887.315pt>
+Overfull \hbox (2.3725pt too wide) in paragraph at lines 708--713
+[]\T1/lmr/m/n/10.95 Die Terrain-Konfiguration er-folgt über \T1/lmtt/m/n/10.95 randomSeed 0 \T1/lmr/m/n/10.95 für re-pro-duzier-bare Höhen-pro-file, \T1/lmtt/m/n/10.95 flatBounds
+ []
+
+<figures/Huegel.png, id=1220, 1116.17pt x 887.315pt>
 File: figures/Huegel.png Graphic file (type png)
 <use figures/Huegel.png>
-Package pdftex.def Info: figures/Huegel.png  used on input line 712.
+Package pdftex.def Info: figures/Huegel.png  used on input line 724.
 (pdftex.def)             Requested size: 225.48038pt x 179.24704pt.
-<figures/Tunnel.png, id=1136, 1114.1625pt x 891.33pt>
+<figures/Tunnel.png, id=1221, 1114.1625pt x 891.33pt>
 File: figures/Tunnel.png Graphic file (type png)
 <use figures/Tunnel.png>
-Package pdftex.def Info: figures/Tunnel.png  used on input line 716.
+Package pdftex.def Info: figures/Tunnel.png  used on input line 728.
 (pdftex.def)             Requested size: 225.48038pt x 180.38454pt.
-<figures/HoÌˆhe/-1/Strecke.png, id=1139, 560.59438pt x 127.97812pt>
+<figures/HoÌˆhe/-1/Strecke.png, id=1224, 560.59438pt x 127.97812pt>
 File: figures/HoÌˆhe/-1/Strecke.png Graphic file (type png)
 <use figures/HoÌˆhe/-1/Strecke.png>
-Package pdftex.def Info: figures/HoÌˆhe/-1/Strecke.png  used on input line 732.
+Package pdftex.def Info: figures/HoÌˆhe/-1/Strecke.png  used on input line 751.
 (pdftex.def)             Requested size: 469.75499pt x 107.24506pt.
-<figures/HoÌˆhe/-1/Daten.png, id=1140, 1314.9125pt x 347.2975pt>
+
+
+[57 <./figures/Huegel.png> <./figures/Tunnel.png>]
+<figures/HoÌˆhe/-1/Daten.png, id=1235, 1314.9125pt x 347.2975pt>
 File: figures/HoÌˆhe/-1/Daten.png Graphic file (type png)
 <use figures/HoÌˆhe/-1/Daten.png>
-Package pdftex.def Info: figures/HoÌˆhe/-1/Daten.png  used on input line 739.
+Package pdftex.def Info: figures/HoÌˆhe/-1/Daten.png  used on input line 758.
 (pdftex.def)             Requested size: 469.75499pt x 124.06783pt.
-
-
-[57 <./figures/Huegel.png> <./figures/Tunnel.png> <./figures/HoÌˆhe/-1/Strecke.png>]
-<figures/HoÌˆhe/-2/Strecke.png, id=1154, 564.1075pt x 185.19188pt>
+<figures/HoÌˆhe/-2/Strecke.png, id=1238, 564.1075pt x 185.19188pt>
 File: figures/HoÌˆhe/-2/Strecke.png Graphic file (type png)
 <use figures/HoÌˆhe/-2/Strecke.png>
-Package pdftex.def Info: figures/HoÌˆhe/-2/Strecke.png  used on input line 752.
+Package pdftex.def Info: figures/HoÌˆhe/-2/Strecke.png  used on input line 771.
 (pdftex.def)             Requested size: 469.75499pt x 154.21783pt.
-<figures/HoÌˆhe/-2/Daten.png, id=1155, 1322.9425pt x 352.31625pt>
+<figures/HoÌˆhe/-2/Daten.png, id=1239, 1322.9425pt x 352.31625pt>
 File: figures/HoÌˆhe/-2/Daten.png Graphic file (type png)
 <use figures/HoÌˆhe/-2/Daten.png>
-Package pdftex.def Info: figures/HoÌˆhe/-2/Daten.png  used on input line 759.
+Package pdftex.def Info: figures/HoÌˆhe/-2/Daten.png  used on input line 778.
 (pdftex.def)             Requested size: 469.75499pt x 125.09732pt.
 
 
-[58 <./figures/HoÌˆhe/-1/Daten.png> <./figures/HoÌˆhe/-2/Strecke.png> <./figures/HoÌˆhe/-2/Daten.png>]
-<figures/HoÌˆhe/-2PID/Strecke.png, id=1169, 565.11125pt x 145.54375pt>
+[58 <./figures/HoÌˆhe/-1/Strecke.png> <./figures/HoÌˆhe/-1/Daten.png> <./figures/HoÌˆhe/-2/Strecke.png>]
+<figures/HoÌˆhe/-2PID/Strecke.png, id=1252, 565.11125pt x 145.54375pt>
 File: figures/HoÌˆhe/-2PID/Strecke.png Graphic file (type png)
 <use figures/HoÌˆhe/-2PID/Strecke.png>
-Package pdftex.def Info: figures/HoÌˆhe/-2PID/Strecke.png  used on input line 774.
+Package pdftex.def Info: figures/HoÌˆhe/-2PID/Strecke.png  used on input line 801.
 (pdftex.def)             Requested size: 469.75499pt x 120.98781pt.
-<figures/HoÌˆhe/-2PID/Daten.png, id=1170, 1328.965pt x 342.27875pt>
+<figures/HoÌˆhe/-2PID/Daten.png, id=1253, 1328.965pt x 342.27875pt>
 File: figures/HoÌˆhe/-2PID/Daten.png Graphic file (type png)
 <use figures/HoÌˆhe/-2PID/Daten.png>
-Package pdftex.def Info: figures/HoÌˆhe/-2PID/Daten.png  used on input line 781.
+Package pdftex.def Info: figures/HoÌˆhe/-2PID/Daten.png  used on input line 808.
 (pdftex.def)             Requested size: 469.75499pt x 120.98491pt.
 
 
-[59 <./figures/HoÌˆhe/-2PID/Strecke.png> <./figures/HoÌˆhe/-2PID/Daten.png>]
-<figures/HoÌˆhe/+2/Strecke.png, id=1182, 568.1225pt x 163.61125pt>
+[59 <./figures/HoÌˆhe/-2/Daten.png> <./figures/HoÌˆhe/-2PID/Strecke.png>]
+<figures/HoÌˆhe/+2/Strecke.png, id=1263, 568.1225pt x 163.61125pt>
 File: figures/HoÌˆhe/+2/Strecke.png Graphic file (type png)
 <use figures/HoÌˆhe/+2/Strecke.png>
-Package pdftex.def Info: figures/HoÌˆhe/+2/Strecke.png  used on input line 800.
+Package pdftex.def Info: figures/HoÌˆhe/+2/Strecke.png  used on input line 828.
 (pdftex.def)             Requested size: 469.75499pt x 135.28801pt.
-<figures/HoÌˆhe/+2/Daten.png, id=1185, 1313.90875pt x 345.29pt>
+<figures/HoÌˆhe/+2/Daten.png, id=1266, 1313.90875pt x 345.29pt>
 File: figures/HoÌˆhe/+2/Daten.png Graphic file (type png)
 <use figures/HoÌˆhe/+2/Daten.png>
-Package pdftex.def Info: figures/HoÌˆhe/+2/Daten.png  used on input line 819.
+Package pdftex.def Info: figures/HoÌˆhe/+2/Daten.png  used on input line 845.
 (pdftex.def)             Requested size: 469.75499pt x 123.45076pt.
-<figures/HoÌˆhe/+4 /Strecke.png, id=1186, 565.11125pt x 217.31187pt>
+
+
+[60 <./figures/HoÌˆhe/-2PID/Daten.png> <./figures/HoÌˆhe/+2/Strecke.png>]
+<figures/HoÌˆhe/+4 /Strecke.png, id=1276, 565.11125pt x 217.31187pt>
 File: figures/HoÌˆhe/+4 /Strecke.png Graphic file (type png)
 <use figures/HoÌˆhe/+4 /Strecke.png>
-Package pdftex.def Info: figures/HoÌˆhe/+4 /Strecke.png  used on input line 833.
+Package pdftex.def Info: figures/HoÌˆhe/+4 /Strecke.png  used on input line 860.
 (pdftex.def)             Requested size: 469.75499pt x 180.64732pt.
-
-
-[60
-
- <./figures/HoÌˆhe/+2/Strecke.png> <./figures/HoÌˆhe/+2/Daten.png>]
-<figures/HoÌˆhe/+4 /Daten.png, id=1198, 1329.96875pt x 345.29pt>
+<figures/HoÌˆhe/+4 /Daten.png, id=1278, 1329.96875pt x 345.29pt>
 File: figures/HoÌˆhe/+4 /Daten.png Graphic file (type png)
 <use figures/HoÌˆhe/+4 /Daten.png>
-Package pdftex.def Info: figures/HoÌˆhe/+4 /Daten.png  used on input line 847.
+Package pdftex.def Info: figures/HoÌˆhe/+4 /Daten.png  used on input line 874.
 (pdftex.def)             Requested size: 469.75499pt x 121.95972pt.
 
 
-[61 <./figures/HoÌˆhe/+4 /Strecke.png> <./figures/HoÌˆhe/+4 /Daten.png>]
-Package hyperref Info: bookmark level for unknown lpcsec defaults to 0 on input line 889.
+[61 <./figures/HoÌˆhe/+2/Daten.png> <./figures/HoÌˆhe/+4 /Strecke.png>]
 
-Overfull \hbox (5.31589pt too wide) in paragraph at lines 902--905
- []\T1/lmr/bx/n/10.95 Motivation[] \T1/lmr/m/n/10.95 Dieses Teilka-pi-tel ord-net die in den vo-r-ange-hen-den Ab-schnit-ten dargestell-ten Fahrver-
- []
-
-
-
-[62]
-Overfull \hbox (1.66133pt too wide) in paragraph at lines 928--930
-[]\T1/lmr/bx/n/10.95 Stabilitätsaussagen bleiben gültig: \T1/lmr/m/n/10.95 Das Kip-pver-hal-ten, Querfehler-Verlauf und die Dämp-
- []
-
-
+[62 <./figures/HoÌˆhe/+4 /Daten.png>]
 
 [63]
+Overfull \hbox (35.96992pt too wide) in paragraph at lines 928--932
+\T1/lmr/m/n/10.95 virtueller Sim-u-la-tion-szeit und Re-alzeit, wobei die Schrit-tweite der Physik durch \T1/lmtt/m/n/10.95 WorldInfo.basicTimeStep
+ []
 
-[64])
+
+Overfull \hbox (3.70985pt too wide) in paragraph at lines 950--956
+\T1/lmr/m/n/10.95 tan-forderun-gen beste-hen, er-fordern reale Fahrrad-pro-to-typen de-ter-min-is-tis-che Timing-Eigenschaften.
+ []
+
+
+Overfull \hbox (12.91006pt too wide) in paragraph at lines 950--956
+\T1/lmr/m/n/10.95 (Bal-ance), 1ms (Lenkpo-si-tion-sregelung) und 150ms (Geschwindigkeit) auf Bea-gle-Bone Black-Systemen
+ []
+
+
+
+[64]
+
+[65])
 \openout2 = `chapters/kapitel6.aux'.
 
- (./chapters/kapitel6.tex)
+ (./chapters/kapitel6.tex
+Overfull \hbox (2.70636pt too wide) in paragraph at lines 3--9
+\T1/lmr/m/n/10.95 Die vor-liegende Ar-beit demon-stri-ert die Mach-barkeit einer kom-binierten Balance- und Spurführungs-
+ []
 
-[65
+
+Overfull \hbox (11.25343pt too wide) in paragraph at lines 3--9
+\T1/lmr/m/n/10.95 Vere-in-fachun-gen zur Fokussierung auf die Kern-prob-lematik, teil-weise aber auch ure-igene Beschränkun-
+ []
 
 
+Overfull \hbox (17.52672pt too wide) in paragraph at lines 13--17
+\T1/lmr/bx/n/10.95 Inertial Mea-sure-ment Unit (IMU)\T1/lmr/m/n/10.95 : Die Sen-sor-daten-er-fas-sung in der Webots-Simulationsumgebung
+ []
 
-]
-\openout2 = `chapters/kapitel7.aux'.
 
- (./chapters/kapitel7.tex)
+Overfull \hbox (11.7992pt too wide) in paragraph at lines 13--17
+\T1/lmr/m/n/10.95 weist fun-da-men-tale Un-ter-schiede zur realen Hardware-Implementierung auf, die er-he-bliche Auswirkun-
+ []
+
+
+Overfull \hbox (25.65895pt too wide) in paragraph at lines 18--22
+[]\T1/lmr/m/n/10.95 Während die Webots-\T1/lmtt/m/n/10.95 InertialUnit \T1/lmr/m/n/10.95 über die API-Funktion \T1/lmtt/m/n/10.95 wb_inertial_unit_get_roll_pitch_yaw()
+ []
+
+
+Overfull \hbox (10.08356pt too wide) in paragraph at lines 23--28
+[]\T1/lmr/m/n/10.95 Der BNO055 ar-beitet als 9-Achsen-Fusionssensor, der Accelerometer-, Gyroscope- und Magnetometer-
+ []
+
+
+Overfull \hbox (0.66765pt too wide) in paragraph at lines 23--28
+\T1/lmr/m/n/10.95 endliche Au-flö-sung führt zwangsläu-fig zu Quan-tisierungs-fehlern, die bei der hochfre-quenten Balance-
+ []
+
+
 
 [66
 
 
 
 ]
-\openout2 = `chapters/kapitel8.aux'.
 
- (./chapters/kapitel8.tex)
+[67]
+Overfull \hbox (0.9573pt too wide) in paragraph at lines 91--96
+\T1/lmr/m/n/10.95 Geschwindigkeitss-chätzung rel-a-tiver Ob-jek-t-be-we-gun-gen nicht möglich, und 3D-Trajektorienplanung
+ []
 
-[67
+
+
+[68]
+Overfull \hbox (42.39928pt too wide) in paragraph at lines 138--142
+\T1/lmr/m/n/10.95 wichtige Ef-fekte wie Reifend-e-for-ma-tion, Aufbau- und Ab-bau-ver-hal-ten der Seit-enkraft sowie geschwindigkeits-
+ []
+
+
+Overfull \hbox (4.85577pt too wide) in paragraph at lines 138--142
+\T1/lmr/m/n/10.95 und lastab-hängige Rei-bungsko-ef-fizien-ten un-berück-sichtigt bleiben. Beson-ders kri-tisch ist die fehlende
+ []
+
+
+
+[69]
+Overfull \hbox (21.78258pt too wide) in paragraph at lines 160--164
+\T1/lmr/m/n/10.95 sichtigt. Die In-ter-ak-tion zwis-chen Fahrer, Fahrrad und Luft-strö-mung, die bei höheren Geschwindigkeiten
+ []
+
+
+Overfull \hbox (0.3358pt too wide) in paragraph at lines 197--201
+\T1/lmr/m/n/10.95 (per-fekte IMU- und Kam-er-a-daten ohne Rauschen oder Drift), die vere-in-fachte ODE-basierte Physik-
+ []
+
+
+Overfull \hbox (48.24004pt too wide) in paragraph at lines 197--201
+\T1/lmr/m/n/10.95 mod-el-lierung (ins-beson-dere bei Reifen-Fahrbahn-Interaktionen) und die Echtzeitfähigkeits-Herausforderungen
+ []
+
+
+
+[70])
+
+[71]
+\openout2 = `chapters/kapitel7.aux'.
+
+ (./chapters/kapitel7.tex
+Overfull \hbox (3.74104pt too wide) in paragraph at lines 3--4
+\T1/lmr/m/n/10.95 Die vor-liegende Ar-beit hat ein um-fassendes Sys-tem zur Regelung eines selb-st-bal-ancieren-den Fahrrads
+ []
+
+
+Overfull \hbox (25.52115pt too wide) in paragraph at lines 15--16
+[]\T1/lmr/bx/n/10.95 Ultraschall/LiDAR\T1/lmr/m/n/10.95 : Ab-standsmes-sung für Hin-derniserken-nung und 3D-Umgebungsmodellierung 
+ []
+
+
+
+[72
 
 
 
 ]
+Overfull \hbox (3.11923pt too wide) in paragraph at lines 62--63
+[]\T1/lmr/bx/n/10.95 Real-Time Con-straints\T1/lmr/m/n/10.95 : Garantierte Aus-führungszeiten für die 500Hz Balance-Regelschleife 
+ []
 
-[68
 
 
-] (./seminar_vorlage.bbl
-Underfull \hbox (badness 2334) in paragraph at lines 23--27
+[73]
+Overfull \hbox (27.43533pt too wide) in paragraph at lines 106--107
+[]\T1/lmr/m/n/10.95 Besonders vielver-sprechend ist die Möglichkeit, durch Re-in-force-ment Learn-ing nicht nur die Regelungsper-
+ []
+
+
+Overfull \hbox (24.63696pt too wide) in paragraph at lines 106--107
+\T1/lmr/m/n/10.95 for-mance zu op-ti-mieren, son-dern auch neue Fahrstrate-gien zu ent-decken, die über klas-sis-che Regelungsan-
+ []
+
+)
+
+[74]
+
+[75]
+\openout2 = `chapters/kapitel8.aux'.
+
+ (./chapters/kapitel8.tex)
+
+[76
+
+
+
+] (./seminar_vorlage.lof
+
+[77
+
+
+])
+\tf@lof=\write6
+\openout6 = `seminar_vorlage.lof'.
+
+
+
+[78] (./seminar_vorlage.lol)
+\tf@lol=\write7
+\openout7 = `seminar_vorlage.lol'.
+
+
+
+[79] (./seminar_vorlage.bbl
+Underfull \hbox (badness 2334) in paragraph at lines 29--33
 []\T1/lmr/m/n/10.95 Cyberbotics Ltd.  Con-troller pro-gram-ming.  [][]$\T1/lmtt/m/n/10.95 https : / / cyberbotics . com / doc / guide /
  []
 
 
-Underfull \hbox (badness 1609) in paragraph at lines 62--66
-\T1/lmr/m/n/10.95 bal-anc-ing bi-cy-cle.  [][]$\T1/lmtt/m/n/10.95 https : / / github . com / arabila / selfbalancingbicyle / tree / master /
- []
 
+[80]
 
+[81])
 
-[69])
-
-[70] (./seminar_vorlage.aux (./chapters/abstract.aux) (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
+[82] (./seminar_vorlage.aux (./chapters/abstract.aux) (./chapters/Einleitung.aux) (./chapters/kapitel1.aux) (./chapters/kapitel2.aux) (./chapters/kapitel3.aux) (./chapters/kapitel4.aux) (./chapters/kapitel5.aux) (./chapters/kapitel6.aux) (./chapters/kapitel7.aux) (./chapters/kapitel8.aux) * soulpos - computing points - it may take a few seconds *
 \openout3 = `seminar_vorlage.upb'.
 
  (./seminar_vorlage.upa))
@@ -1619,22 +1751,26 @@ Underfull \hbox (badness 1609) in paragraph at lines 62--66
 LaTeX2e <2024-11-01> patch level 2
 L3 programming layer <2025-01-18>
  ***********
+
+
+LaTeX Warning: There were undefined references.
+
 Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
-(rerunfilecheck)             Checksum: 92E4290A91A437A8E6EAADF40CF7D873;8656.
+(rerunfilecheck)             Checksum: FDB8ED22F0B3DCE7B0DB15CFEB0347F8;12935.
  ) 
 Here is how much of TeX's memory you used:
- 27277 strings out of 473190
- 550124 string characters out of 5704335
- 1454679 words of memory out of 5000000
- 49484 multiletter control sequences out of 15000+600000
- 648251 words of font info for 94 fonts, out of 8000000 for 9000
+ 27575 strings out of 473190
+ 555595 string characters out of 5704335
+ 1429912 words of memory out of 5000000
+ 49750 multiletter control sequences out of 15000+600000
+ 646157 words of font info for 92 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 86i,9n,131p,651b,2903s stack positions out of 10000i,1000n,20000p,200000b,200000s
-</opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
-Output written on seminar_vorlage.pdf (70 pages, 17552855 bytes).
+ 86i,13n,131p,703b,2911s stack positions out of 10000i,1000n,20000p,200000b,200000s
+</opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtti10.pfb>
+Output written on seminar_vorlage.pdf (82 pages, 16981573 bytes).
 PDF statistics:
- 1511 PDF objects out of 1728 (max. 8388607)
- 1282 compressed objects within 13 object streams
- 597 named destinations out of 1000 (max. 500000)
- 592 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 1732 PDF objects out of 2073 (max. 8388607)
+ 1494 compressed objects within 15 object streams
+ 623 named destinations out of 1000 (max. 500000)
+ 742 words of extra memory for PDF output out of 10000 (max. 10000000)
 

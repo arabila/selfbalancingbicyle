@@ -1,1 +1,108 @@
-\section{Zukünftige Arbeiten (Sensor-Fusion, Reinforcement Learning, Hardware-in-the-Loop)}
+\section{Zukünftige Arbeiten}
+
+Die vorliegende Arbeit hat ein umfassendes System zur Regelung eines selbstbalancierenden Fahrrads entwickelt, das eine duale Controller-Architektur mit PID-basierter Balance-Regelung und YOLO-gestützter Vision-Kontrolle implementiert. Trotz der erzielten Erfolge in der Simulation zeigen sich mehrere vielversprechende Forschungsrichtungen, die das System erheblich erweitern und verbessern könnten.
+
+\subsection{Sensor-Fusion für robuste Zustandsschätzung}
+
+Das aktuelle System basiert primär auf IMU-Daten zur Roll-Winkel-Bestimmung und Kamerabildern für die Spurerkennung. Eine Integration multipler Sensoren durch fortgeschrittene Sensor-Fusion-Techniken würde die Robustheit und Genauigkeit des Systems erheblich steigern.
+
+\subsubsection{Erweiterte Kalman-Filter-Implementierung}
+Die Implementierung eines Extended Kalman Filters (EKF) oder Unscented Kalman Filters (UKF) zur Fusion von IMU-, Kamera- und zusätzlichen Sensordaten stellt eine natürliche Erweiterung dar. Der EKF könnte folgende Sensormodalitäten integrieren:
+
+\begin{itemize}
+    \item \textbf{IMU-Fusion}: Kombination von Gyroskop-, Beschleunigungs- und Magnetometer-Daten für präzise Orientierungsschätzung
+    \item \textbf{Optischer Fluss}: Ergänzung zur YOLO-Segmentierung für kontinuierliche Bewegungsschätzung
+    \item \textbf{Ultraschall/LiDAR}: Abstandsmessung für Hinderniserkennung und 3D-Umgebungsmodellierung
+    \item \textbf{Encoder-Fusion}: Integration von Rad- und Lenkwinkel-Encodern für kinematische Konsistenz
+\end{itemize}
+
+Die Zustandsschätzung würde dabei den Systemzustand $\mathbf{x} = [x, y, \theta, \dot{x}, \dot{y}, \dot{\theta}, \phi_{roll}, \delta_{steer}]^T$ umfassen, wobei die Prozess- und Messmodelle die nichtlineare Fahrradkinematik berücksichtigen.
+
+\subsubsection{Adaptive Sensor-Gewichtung}
+Ein adaptives Gewichtungssystem könnte die Zuverlässigkeit verschiedener Sensoren dynamisch bewerten und entsprechend anpassen. Bei schlechten Lichtverhältnissen würde beispielsweise die Gewichtung der Kameradaten reduziert und die IMU-Daten stärker berücksichtigt.
+
+\subsection{Reinforcement Learning für optimale Regelung}
+
+Während die aktuelle PID-Regelung für grundlegende Stabilisierung ausreicht, bietet Reinforcement Learning (RL) das Potenzial für adaptive und optimale Regelstrategien, die sich an verschiedene Fahrbedingungen anpassen können.
+
+\subsubsection{Deep Deterministic Policy Gradient (DDPG)}
+Die Implementierung eines DDPG-Algorithmus würde kontinuierliche Aktionsräume für Lenkwinkel und Geschwindigkeit ermöglichen. Der Zustandsraum könnte erweitert werden um:
+
+\begin{itemize}
+    \item Aktuelle und historische Sensordaten (IMU, Kamera, Geschwindigkeit)
+    \item Pfadkrümmung und Vorausschau-Informationen
+    \item Umgebungsbedingungen (Windstärke, Oberflächenbeschaffenheit)
+    \item Systemzustand (Batteriestand, Motortemperatur)
+\end{itemize}
+
+Das Belohnungssystem würde Balance-Erhaltung, Spurgenauigkeit und Energieeffizienz optimieren:
+\begin{equation}
+R_t = w_1 \cdot R_{balance} + w_2 \cdot R_{tracking} + w_3 \cdot R_{energy} + w_4 \cdot R_{safety}
+\end{equation}
+
+\subsubsection{Hierarchisches Reinforcement Learning}
+Ein hierarchischer Ansatz könnte verschiedene Abstraktionsebenen implementieren:
+\begin{itemize}
+    \item \textbf{High-Level Policy}: Pfadplanung und Geschwindigkeitsstrategie
+    \item \textbf{Mid-Level Policy}: Kurvenstrategie und Hindernisumfahrung  
+    \item \textbf{Low-Level Policy}: Direkte Motor-Ansteuerung für Balance
+\end{itemize}
+
+\subsubsection{Transfer Learning und Sim-to-Real}
+Die Übertragung der in Webots trainierten RL-Modelle auf reale Hardware erfordert Domain Adaptation-Techniken. Ansätze wie Domain Randomization während des Trainings und progressive Realitätsanpassung könnten die Sim-to-Real-Lücke überbrücken.
+
+\subsection{Hardware-in-the-Loop für realitätsnahe Validierung}
+
+Die Validierung des entwickelten Systems erfordert eine schrittweise Annäherung an reale Bedingungen durch Hardware-in-the-Loop (HIL) Simulationen.
+
+\subsubsection{Embedded Controller Integration}
+Die Portierung der C-basierten Balance-Regelung auf Embedded-Systeme wie BeagleBone Black oder Raspberry Pi würde realistische Rechenzeit- und Ressourcenbeschränkungen einführen. Kritische Aspekte umfassen:
+
+\begin{itemize}
+    \item \textbf{Real-Time Constraints}: Garantierte Ausführungszeiten für die 500Hz Balance-Regelschleife
+    \item \textbf{Interrupt-Handling}: Prioritätsbasierte Behandlung von Sensor-Interrupts
+    \item \textbf{Memory Management}: Optimierte Datenstrukturen für begrenzte RAM-Ressourcen
+    \item \textbf{Power Management}: Energieeffiziente Algorithmen für Batteriebetrieb
+\end{itemize}
+
+\subsubsection{Sensorik-Hardware-Integration}
+Die Integration realer Sensoren würde Rauschen, Latenz und Ausfälle einführen:
+\begin{itemize}
+    \item \textbf{IMU-Kalibrierung}: Bias-Kompensation und Temperaturkorrekturen
+    \item \textbf{Kamera-Latenz}: Bildverarbeitungs-Pipeline mit ~50ms Verzögerung
+    \item \textbf{Sensor-Ausfälle}: Graceful Degradation bei Sensor-Fehlern
+\end{itemize}
+
+\subsubsection{Aktorik-Hardware-Modellierung}
+Realistische Motormodelle würden Trägheit, Backlash und Sättigungseffekte berücksichtigen:
+\begin{equation}
+\tau_{motor} = K_t \cdot i_{motor} - B \cdot \omega_{motor} - \tau_{friction}(\omega_{motor})
+\end{equation}
+
+\subsection{Systemintegration und Validierung}
+
+\subsubsection{Modular Testing Framework}
+Ein systematisches Test-Framework würde verschiedene Komplexitätsstufen ermöglichen:
+\begin{enumerate}
+    \item \textbf{Unit Tests}: Einzelne Algorithmus-Komponenten
+    \item \textbf{Integration Tests}: Sensor-Fusion und Controller-Interaktion  
+    \item \textbf{System Tests}: Vollständige HIL-Simulation
+    \item \textbf{Field Tests}: Reale Hardware-Validierung
+\end{enumerate}
+
+\subsubsection{Performance Metriken}
+Quantitative Bewertungskriterien würden umfassen:
+\begin{itemize}
+    \item \textbf{Balance-Performance}: RMS Roll-Winkel, Zeit bis zum Umfallen
+    \item \textbf{Tracking-Genauigkeit}: Laterale Abweichung, Pfadverfolgungsfehler
+    \item \textbf{Energieeffizienz}: Verbrauch pro Kilometer, Regenerationsrate
+    \item \textbf{Robustheit}: Performance unter Störungen und Sensorausfällen
+\end{itemize}
+
+\subsection{Fazit und Ausblick}
+
+Die vorgeschlagenen Erweiterungen würden das selbstbalancierende Fahrrad von einem Simulationsprototyp zu einem robusten, adaptiven System entwickeln. Die Kombination aus fortgeschrittener Sensor-Fusion, lernfähigen Regelungsalgorithmen und realitätsnaher Hardware-Integration stellt eine natürliche Evolution des aktuellen Ansatzes dar. 
+
+Besonders vielversprechend ist die Möglichkeit, durch Reinforcement Learning nicht nur die Regelungsperformance zu optimieren, sondern auch neue Fahrstrategien zu entdecken, die über klassische Regelungsansätze hinausgehen. Die systematische HIL-Validierung würde dabei sicherstellen, dass die entwickelten Algorithmen auch unter realen Bedingungen zuverlässig funktionieren.
+
+Diese Forschungsrichtungen adressieren sowohl die technischen Herausforderungen der Systemrealisierung als auch die wissenschaftlichen Fragen der optimalen Regelung komplexer, unteraktuierter Systeme und tragen somit zur Weiterentwicklung autonomer Fahrzeugsysteme bei.
