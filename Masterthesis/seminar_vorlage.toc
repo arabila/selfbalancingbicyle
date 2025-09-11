@@ -54,25 +54,27 @@
 \contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{64}{subsection.6.3}%
 \contentsline {section}{\numberline {7}Grenzen der Arbeit}{66}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{66}{subsection.7.1}%
-\contentsline {subsubsection}{\numberline {7.1.1}Idealisierte Sensormodelle}{66}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{66}{subsubsection.7.1.1}%
 \contentsline {subsubsection}{\numberline {7.1.2}Kamera und Vision-Pipeline}{67}{subsubsection.7.1.2}%
-\contentsline {subsubsection}{\numberline {7.1.3}Vereinfachte Physikmodellierung}{69}{subsubsection.7.1.3}%
-\contentsline {subsection}{\numberline {7.2}Fazit der Limitierungsanalyse}{70}{subsection.7.2}%
-\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{72}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Sensor-Fusion für robuste Zustandsschätzung}{72}{subsection.8.1}%
-\contentsline {subsubsection}{\numberline {8.1.1}Erweiterte Kalman-Filter-Implementierung}{72}{subsubsection.8.1.1}%
-\contentsline {subsubsection}{\numberline {8.1.2}Adaptive Sensor-Gewichtung}{72}{subsubsection.8.1.2}%
-\contentsline {subsection}{\numberline {8.2}Reinforcement Learning für optimale Regelung}{72}{subsection.8.2}%
-\contentsline {subsubsection}{\numberline {8.2.1}Deep Deterministic Policy Gradient (DDPG)}{73}{subsubsection.8.2.1}%
-\contentsline {subsubsection}{\numberline {8.2.2}Hierarchisches Reinforcement Learning}{73}{subsubsection.8.2.2}%
-\contentsline {subsubsection}{\numberline {8.2.3}Transfer Learning und Sim-to-Real}{73}{subsubsection.8.2.3}%
-\contentsline {subsection}{\numberline {8.3}Hardware-in-the-Loop für realitätsnahe Validierung}{73}{subsection.8.3}%
-\contentsline {subsubsection}{\numberline {8.3.1}Embedded Controller Integration}{73}{subsubsection.8.3.1}%
-\contentsline {subsubsection}{\numberline {8.3.2}Sensorik-Hardware-Integration}{74}{subsubsection.8.3.2}%
-\contentsline {subsubsection}{\numberline {8.3.3}Aktorik-Hardware-Modellierung}{74}{subsubsection.8.3.3}%
-\contentsline {subsection}{\numberline {8.4}Systemintegration und Validierung}{74}{subsection.8.4}%
-\contentsline {subsubsection}{\numberline {8.4.1}Modular Testing Framework}{74}{subsubsection.8.4.1}%
-\contentsline {subsubsection}{\numberline {8.4.2}Performance Metriken}{74}{subsubsection.8.4.2}%
-\contentsline {subsection}{\numberline {8.5}Fazit und Ausblick}{75}{subsection.8.5}%
-\contentsline {section}{\numberline {9}Fazit}{76}{section.9}%
-\contentsline {section}{\numberline {10}Literaturverzeichnis}{77}{section.10}%
+\contentsline {subsubsection}{\numberline {7.1.3}Vereinfachte Physikmodellierung}{68}{subsubsection.7.1.3}%
+\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{69}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}{69}{subsection.8.1}%
+\contentsline {subsubsection}{\numberline {8.1.1}Hardware-orientierte Simulationsparametrierung}{69}{subsubsection.8.1.1}%
+\contentsline {subsubsection}{\numberline {8.1.2}Alternative Simulationsumgebungen}{69}{subsubsection.8.1.2}%
+\contentsline {subsection}{\numberline {8.2}MPC-Optimierung und Multi-Environment-Training}{70}{subsection.8.2}%
+\contentsline {subsubsection}{\numberline {8.2.1}Erweiterte MPC-Modellierung}{70}{subsubsection.8.2.1}%
+\contentsline {subsubsection}{\numberline {8.2.2}Multi-Environment-Training und Robustheitsvalidierung}{70}{subsubsection.8.2.2}%
+\contentsline {subsection}{\numberline {8.3}Erweiterte Physikumgebung für realistische Szenarien}{70}{subsection.8.3}%
+\contentsline {subsubsection}{\numberline {8.3.1}Erweiterte Reifen- und Kontaktmodellierung}{70}{subsubsection.8.3.1}%
+\contentsline {subsubsection}{\numberline {8.3.2}Umgebungsdynamik und Störungsmodellierung}{71}{subsubsection.8.3.2}%
+\contentsline {subsection}{\numberline {8.4}Präzise geometrische Modellierung des realen Fahrrads}{71}{subsection.8.4}%
+\contentsline {subsubsection}{\numberline {8.4.1}Geometrische Parametrierung}{71}{subsubsection.8.4.1}%
+\contentsline {subsubsection}{\numberline {8.4.2}Dynamische Eigenschaften und Kalibrierung}{71}{subsubsection.8.4.2}%
+\contentsline {subsection}{\numberline {8.5}Fazit und methodischer Ausblick}{71}{subsection.8.5}%
+\contentsline {section}{\numberline {9}Fazit}{73}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse}{73}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Methodische Beiträge}{73}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Limitierungen und kritische Reflexion}{73}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.4}Wissenschaftlicher Beitrag}{74}{subsection.9.4}%
+\contentsline {subsection}{\numberline {9.5}Ausblick}{74}{subsection.9.5}%
+\contentsline {section}{\numberline {10}Literaturverzeichnis}{75}{section.10}%

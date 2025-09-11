@@ -15,45 +15,45 @@ A level-1 auxiliary file: chapters/kapitel8.aux
 Database file #1: refs.bib
 Warning--I didn't find a database entry for "yolo_wikipedia"
 Warning--I didn't find a database entry for "image_segmentation_wikipedia"
-You've used 35 entries,
+You've used 30 entries,
             2118 wiz_defined-function locations,
-            699 strings with 9726 characters,
-and the built_in function-call counts, 10236 in all, are:
-= -- 1033
-> -- 417
-< -- 6
-+ -- 171
-- -- 134
-* -- 553
-:= -- 1692
-add.period$ -- 114
-call.type$ -- 35
-change.case$ -- 171
+            671 strings with 8947 characters,
+and the built_in function-call counts, 8666 in all, are:
+= -- 862
+> -- 381
+< -- 4
++ -- 155
+- -- 124
+* -- 468
+:= -- 1451
+add.period$ -- 98
+call.type$ -- 30
+change.case$ -- 151
 chr.to.int$ -- 0
-cite$ -- 35
-duplicate$ -- 379
-empty$ -- 874
-format.name$ -- 134
-if$ -- 2198
+cite$ -- 30
+duplicate$ -- 309
+empty$ -- 730
+format.name$ -- 124
+if$ -- 1848
 int.to.chr$ -- 0
-int.to.str$ -- 35
-missing$ -- 16
-newline$ -- 184
-num.names$ -- 70
-pop$ -- 236
+int.to.str$ -- 30
+missing$ -- 12
+newline$ -- 159
+num.names$ -- 60
+pop$ -- 214
 preamble$ -- 1
-purify$ -- 135
+purify$ -- 120
 quote$ -- 0
-skip$ -- 312
+skip$ -- 254
 stack$ -- 0
-substring$ -- 544
-swap$ -- 89
-text.length$ -- 6
+substring$ -- 418
+swap$ -- 67
+text.length$ -- 4
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 138
+type$ -- 118
 warning$ -- 0
-while$ -- 102
-width$ -- 37
-write$ -- 385
+while$ -- 82
+width$ -- 32
+write$ -- 330
 (There were 2 warnings)

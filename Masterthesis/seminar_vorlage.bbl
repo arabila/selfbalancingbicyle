@@ -48,11 +48,6 @@ Cyberbotics.
 \newblock Md49 dual motor driver datasheet.
 \newblock \url{https://www.robot-electronics.co.uk}, 2019.
 
-\bibitem{drumwright2008ode_contact}
-Evan Drumwright and Dylan~A. Shell.
-\newblock Modeling contact friction and joint friction in dynamic robotic simulation using the principle of maximum dissipation.
-\newblock {\em Algorithmic Foundations of Robotics VIII}, pages 249--266, 2008.
-
 \bibitem{vision_mpc_readme}
 Yasin Giray.
 \newblock Video- und sensorgestütztes autonomes fahren für ein selbstbalancierendes fahrrad.
@@ -64,11 +59,6 @@ Yasin Giray.
 \newblock Webots simulation framework.
 \newblock \url{https://github.com/cyberbotics/webots}, 2025.
 \newblock Zugriff am 24.08.2025.
-
-\bibitem{guo2020pacejka}
-Y.~Guo and L.~Wang.
-\newblock A simplified implementation of the pacejka tire model for real-time vehicle simulation.
-\newblock {\em International Journal of Vehicle Systems Modelling and Testing}, 15(3):221--235, 2020.
 
 \bibitem{apmonitor_pid}
 John Hedengren et~al.
@@ -104,11 +94,6 @@ Amine Karabila.
 J.~D.~G. Kooijman, J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
 \newblock A bicycle can be self-stable without gyroscopic or caster effects.
 \newblock {\em Science}, 332(6027):339--342, 2011.
-
-\bibitem{lacoursiere2007ode_timestep}
-Claude Lacoursiere.
-\newblock Ghosts and machines: regularized variational methods for interactive simulations of multibodies with dry frictional contacts.
-\newblock In {\em Proceedings of the 2007 ACM SIGGRAPH/Eurographics symposium on Computer animation}, pages 81--90. Eurographics Association, 2007.
 
 \bibitem{cyberbotics_inertialunit}
 Cyberbotics Ltd.
@@ -151,25 +136,15 @@ Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
 \newblock Master's thesis, HWR Berlin, 2021.
 
-\bibitem{shabana2020multibody}
-Ahmed~A. Shabana.
-\newblock {\em Dynamics of Multibody Systems}.
-\newblock Cambridge University Press, 5th edition, 2020.
+\bibitem{schramm2018fahrzeugdynamik}
+Dieter Schramm, Manfred Hiller, and Roberto Bardini.
+\newblock {\em Modellbildung und Simulation der Dynamik von Kraftfahrzeugen}.
+\newblock Springer-Verlag Berlin Heidelberg, 3., {\"u}berarbeitete auflage edition, 2018.
 
 \bibitem{smith2006ode_stability}
 Russell Smith.
 \newblock Numerical stability and performance issues in ode.
 \newblock In {\em Proceedings of the Workshop on Principles of Advanced and Distributed Simulation (PADS)}, pages 127--134. IEEE Computer Society, 2006.
-
-\bibitem{ode2006smith}
-Russell Smith.
-\newblock Open dynamics engine (ode) manual.
-\newblock \url{http://www.ode.org/}, 2006.
-
-\bibitem{wilson2004bicycling_aerodynamics}
-David~Gordon Wilson.
-\newblock Bicycling science.
-\newblock {\em Scientific American}, 290(3):74--81, 2004.
 
 \bibitem{zander2023}
 Jonah Zander.

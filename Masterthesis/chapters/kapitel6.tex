@@ -9,8 +9,8 @@ bildet die Grundlage für zukünftige Erweiterungen des Systems.
 
 \subsection{Simulationsbedingte Limitierungen}
 
-\subsubsection{Idealisierte Sensormodelle}
-\textbf{Inertial Measurement Unit (IMU)}: Die Sensordatenerfassung in der Webots-Simulationsumgebung weist fundamentale 
+\subsubsection{Inertial Measurement Unit (IMU)}
+Die Sensordatenerfassung in der Webots-Simulationsumgebung weist fundamentale 
 Unterschiede zur realen Hardware-Implementierung auf, die erhebliche Auswirkungen auf die Übertragbarkeit der entwickelten 
 Regelungsalgorithmen haben. Diese Diskrepanz manifestiert sich besonders deutlich beim Vergleich zwischen der verwendeten 
 \texttt{InertialUnit} in Webots und dem in den Vorarbeiten eingesetzten BNO055-IMU-Sensor.
@@ -30,12 +30,6 @@ Besonders kritisch erweist sich die Temperaturabhängigkeit des BNO055, die zu z
 akkumulieren über die Betriebszeit und können die Regelstabilität beeinträchtigen. Im Gegensatz dazu liefert die Webots-Simulation 
 zeitinvariante, temperaturunabhängige Messungen. Die I²C-Kommunikation über \texttt{/dev/i2c-2} auf dem BeagleBone Black verursacht 
 zusätzlich variable Kommunikationslatenzen, die Ranz durch spezielle Timeout-Mechanismen und Pufferstrategien kompensieren musste.
-
-Ein weiterer Aspekt betrifft die verschiedenen Betriebsmodi des BNO055 (IMU, NDOF, Compass), die unterschiedliche 
-Genauigkeits-Energie-Kompromisse bieten. Modusumschaltungen über \texttt{set\_mode()} erfordern Wartezeiten und können 
-zu temporären Messausfällen führen und in der Webots-Abstraktion vollständig entfallen. Das charakteristische 
-Sensorrauschen des BNO055 erforderte in Karabilas Implementierung zusätzliche Software-Filter, während die Webots-IMU perfekt 
-geglättete Werte liefert.
 
 Diese Diskrepanzen zwischen Simulation und Realität lassen sich durch verschiedene Ansätze verringern. Die Implementierung eines 
 konfigurierbaren Rauschmodells in der Webots-Simulation könnte die spektralen Eigenschaften des BNO055 nachbilden, beispielsweise
@@ -61,13 +55,8 @@ um Bildauswertungszyklen von etwa 100\,ms zu erreichen \cite{vision_mpc_readme}.
 Während die Webots-Simulation deterministisch identische Bilder unter kontrollierten Bedingungen liefert, unterliegt die reale 
 Kameraverarbeitung verschiedenen Störfaktoren. Girays Implementierung dokumentiert Herausforderungen bei der Echtzeitverarbeitung, 
 wobei die Inferenzzeit des YOLOv8-Modells auf eingebetteter Hardware kritisch für die angestrebte 20\,Hz-Abtastrate der Vision-Pipeline 
-wird. Die in der Simulation problemlos erreichbare Bildverarbeitung erfordert in der Realität komplexe Optimierungsstrategien wie 
-TensorRT-Beschleunigung und Modellkompression.
-
-Ein weiterer kritischer Aspekt betrifft die Robustheit gegenüber Umgebungsvariationen. Girays System implementiert einen Fallback-Mechanismus 
-auf klassische Bildverarbeitung (ROI-basierte Kantenerkennung), falls die YOLO-Segmentierung versagt oder keine ausreichende Konfidenz erreicht. 
-Diese Redundanz ist in der Webots-Simulation nicht erforderlich, da die idealen Bildbedingungen konsistent zuverlässige Segmentierungsergebnisse 
-gewährleisten. Reale Systeme müssen hingegen mit wechselnden Beleuchtungsverhältnissen, Schatten, Reflektionen und temporären Sichtbehinderungen umgehen.
+wird. \pdfcomment{Hier sich sein mit den hz}Die in der Simulation problemlos erreichbare Bildverarbeitung erfordert in der Realität komplexe 
+Optimierungsstrategien wie TensorRT-Beschleunigung und Modellkompression.
 
 Die monokulare Kameraarchitektur in Girays System limitiert zusätzlich die Tiefenwahrnehmung auf geometrische Approximationen. Während 
 dies in der 2D-Simulation von Webots unproblematisch ist, führt es in realen 3D-Umgebungen zu Unsicherheiten bei der Entfernungsschätzung 
@@ -78,101 +67,30 @@ Die Übertragung von Girays Vision-Pipeline in die Webots-Simulation abstrahiert
 optimistischen Performance-Bewertungen führen. Algorithmen, die in der idealisierten Simulationsumgebung robust funktionieren, können 
 unter realen Bedingungen mit variierenden Lichtverhältnissen, Bewegungsunschärfe und Hardwarelimitierungen versagen.
 
-\textbf{Begrenzte Trainingsdata und Szenarioabdeckung:}
-
-Das verwendete YOLOv8-Modell wurde auf einem begrenzten Datensatz mit nur vier Klassen trainiert (\textit{meadow}, \textit{obstacle}, 
-\textit{street\_main}, \textit{street\_side}). Diese Klassifikation ist für einfache Testszenarien ausreichend, deckt aber nicht die 
-Vielfalt realer Verkehrssituationen ab. Fehlende Klassen umfassen Fahrbahnmarkierungen verschiedener Arten, Verkehrszeichen, komplexe 
-Fahrbahngeometrien bei Kreuzungen und Abbiegungen sowie Witterungseinflüsse wie Nässe oder Schnee. Die begrenzte Trainingsdata führen 
-dazu, dass das Modell bei unbekannten Szenarien versagen kann oder falsche Klassifikationen liefert.
-
-\textbf{Monokulare Tiefenwahrnehmung und 3D-Limitierungen:}
-
-Das System verwendet nur eine einzige Kamera und verfügt daher über keine direkte Tiefenwahrnehmung. Entfernungen zu Objekten werden nur 
-indirekt über geometrische Annahmen geschätzt. Dies führt zu erheblichen Limitierungen bei der Hinderniserkennung, da zwischen nahen 
-kleinen und fernen großen Objekten nicht unterschieden werden kann. Ebenso ist eine korrekte Geschwindigkeitsschätzung relativer 
-Objektbewegungen nicht möglich, und 3D-Trajektorienplanung für Steigungen und Gefälle wird nicht unterstützt. Eine stereo-basierte 
-oder LiDAR-gestützte Tiefenwahrnehmung würde diese Limitierungen adressieren, war aber nicht Teil des Arbeitsumfangs.
-
-\textbf{Robustheit gegenüber Umgebungsvariationen:}
-
-Das implementierte Fallback-ROI-System basiert auf einfachen geometrischen Annahmen über den Fahrbahnverlauf und zeigt begrenzte 
-Robustheit gegenüber Beleuchtungsänderungen wie Schatten oder Gegenlicht, Kamerawinkel-Variationen durch Vibrationen oder Montageungenauigkeiten 
-sowie verschiedene Fahrbahntypen mit unterschiedlichen Oberflächenmaterialien und -farben. Diese Einschränkungen werden in der kontrollierten 
-Webots-Umgebung nicht sichtbar, können aber in realen Anwendungen zu Systemversagen führen.
-
-\textbf{Echtzeitfähigkeit und Hardware-Transfer:}
-
-Ein kritischer Aspekt der Vision-Pipeline betrifft die Echtzeitfähigkeit auf eingebetteten Systemen. Die Webots-Simulation läuft nicht in Echtzeit, wenn rechenintensive Algorithmen wie die YOLO-Segmentierung ausgeführt werden, wodurch die Übertragbarkeit der Timing-Anforderungen auf eingebettete Hardware unklar bleibt. Insbesondere die YOLO-Inferenz auf einem NVIDIA Jetson Nano könnte zu langsam für die angestrebte 20\,Hz-Abtastrate sein, was eine Optimierung der Modelle durch Quantisierung, Pruning oder den Einsatz leistungsfähigerer Hardware erforderlich macht.
-
-Zusätzlich ist die IPC-Kommunikation zwischen den Controllern in Webots idealisiert und weist keine Paketverluste oder variable Latenzen auf. Reale Kommunikationssysteme (UART, Ethernet, CAN) können hingegen variable Latenzen je nach Systemlast, Paketverluste durch Übertragungsfehler sowie Jitter durch unregelmäßige Ankunftszeiten der Nachrichten aufweisen. Diese Effekte können die Stabilität des Gesamtsystems beeinträchtigen und erfordern robuste Kommunikationsprotokolle mit Fehlerbehandlung und Timeout-Mechanismen.
+Zusätzlich ist die IPC-Kommunikation zwischen den Controllern in Webots idealisiert und weist keine Paketverluste oder variable Latenzen 
+auf. Reale Kommunikationssysteme (UART, Ethernet, CAN) können hingegen variable Latenzen je nach Systemlast, Paketverluste durch 
+Übertragungsfehler sowie Jitter durch unregelmäßige Ankunftszeiten der Nachrichten aufweisen. Diese Effekte können die Stabilität 
+des Gesamtsystems beeinträchtigen und erfordern robuste Kommunikationsprotokolle mit Fehlerbehandlung und Timeout-Mechanismen.
 
 Die aufgezeigten Unterschiede zwischen idealisierter Simulation und realer Sensorik stellen eine der kritischsten Limitierungen für 
 die direkte Übertragbarkeit der entwickelten Regelungsstrategien dar. Sie unterstreichen die Notwendigkeit einer mehrstufigen 
 Validierungsstrategie, die von der Simulation über Hardware-in-the-Loop-Tests bis hin zu realen Fahrversuchen reicht.
 
 \subsubsection{Vereinfachte Physikmodellierung}
-Die Webots-Simulation basiert auf der Open Dynamics Engine (ODE), einer weit verbreiteten Open-Source-Physikbibliothek für die Simulation 
-starrer Mehrkörpersysteme \cite{ode2006smith}. Obwohl ODE eine solide Grundlage für robotische Simulationen bietet, weist sie verschiedene 
-systemimmanente Limitierungen auf, die erhebliche Auswirkungen auf die Realitätstreue der Fahrradsimulation haben.
+Wie in Kapitel \ref{sec:ode} dargestellt, basiert die Webots-Simulation auf der Open Dynamics Engine (ODE). Die dort beschriebenen 
+Eigenschaften und Implementierungsdetails von ODE führen jedoch zu verschiedenen grundlegenden Limitierungen, die Auswirkungen 
+auf die Realitätstreue der Fahrradsimulation haben und die Übertragbarkeit der Ergebnisse auf reale Systeme teilweise einschränken.
 
-\textbf{Fundamentale ODE-Limitierungen:}
+Die kritischsten Limitierungen betreffen die vereinfachte Reifen-Fahrbahn-Modellierung und numerische Stabilitätsprobleme. ODE reduziert 
+den Reifenkontakt auf eine Punkt-zu-Ebene-Interaktion mit konstantem Reibungskoeffizienten, während reale Reifen komplexe nichtlineare 
+Charakteristika aufweisen. Besonders die fehlende Modellierung des Seitenschlupfes, der bei Kurvenfahrten die lateralen Führungskräfte 
+bestimmt, beeinträchtigt die Realitätstreue der Fahrdynamik erheblich \cite{catto2009ode_friction}. Im Gegensatz zu den in der 
+Fahrzeugdynamik etablierten detaillierten Reifenmodellen \cite{schramm2018fahrzeugdynamik} vernachlässigt die ODE-Simulation 
+fundamentale Aspekte der Reifen-Fahrbahn-Interaktion.
 
-Die ODE verwendet einen expliziten Euler-Integrator mit fester Schrittweite, der bei komplexen Mehrkörpersystemen zu numerischen 
-Instabilitäten führen kann \cite{smith2006ode_stability}. Diese Problematik manifestiert sich besonders bei der Simulation von Fahrzeugen 
-mit schnellen Bewegungen und komplexen Kontaktinteraktionen. Die constraint-basierte Kontaktauflösung von ODE nutzt eine iterative LCP-Lösung 
-(Linear Complementarity Problem), die bei unzureichender Iterationszahl zu penetrierenden Objekten oder unrealistischen Kontaktkräften führen 
-kann \cite{drumwright2008ode_contact}.
-
-Ein kritischer Aspekt für die Fahrradsimulation betrifft die Behandlung von Reibung und Kontaktdynamik. ODE implementiert das 
-Coulomb-Reibungsmodell mit einer vereinfachten Approximation, die nur isotrope Reibungskoeffizienten unterstützt. Dies führt zu 
-erheblichen Limitierungen bei der realistischen Modellierung des Reifen-Fahrbahn-Kontakts, der für die Fahrdynamik von entscheidender 
-Bedeutung ist \cite{catto2009ode_friction}.
-
-\textbf{Reifenmodell-Defizite:}
-
-Das in der Simulation verwendete Reifenmodell weist fundamentale Vereinfachungen gegenüber realen Reifen-Fahrbahn-Interaktionen auf. 
-Während moderne Fahrdynamiksimulationen auf komplexe Reifenmodelle wie das Pacejka Magic Formula Model zurückgreifen \cite{guo2020pacejka}, 
-reduziert die ODE-basierte Simulation den Reifenkontakt auf eine Punkt-zu-Ebene-Interaktion mit konstantem Reibungskoeffizienten.
-
-Reale Reifen zeigen komplexe nichtlineare Charakteristika, die von der ODE-Simulation nicht erfasst werden. Die Kontaktfläche (Latsch) wird 
-als infinitesimaler Punkt modelliert, wodurch wichtige Effekte wie Reifendeformation, Aufbau- und Abbauverhalten der Seitenkraft sowie 
-geschwindigkeits- und lastabhängige Reibungskoeffizienten unberücksichtigt bleiben. Besonders kritisch ist die fehlende Modellierung des 
-Seitenschlupfes, der bei Kurvenfahrten die lateralen Führungskräfte bestimmt und maßgeblich das Lenkverhalten beeinflusst.
-
-Die temperaturabhängige Variation der Reibungseigenschaften, die in realen Fahrsituationen erheblichen Einfluss auf die Fahrdynamik hat, 
-wird vollständig vernachlässigt. Ebenso fehlt die Berücksichtigung der dynamischen Radlastverlagerung, die bei Beschleunigung, Bremsung 
-und Kurvenfahrt die Aufstandskräfte und damit die verfügbaren Reibungskräfte verändert.
-
-\textbf{Mehrkörperdynamik-Approximationen:}
-
-Die ODE-Implementierung in Webots nutzt vereinfachte Modelle für die Gelenk- und Constraint-Behandlung. Komplexe kinematische Ketten, wie 
-sie im realen Fahrrad durch die Kopplungseffekte zwischen Lenkung, Rahmengeometrie und Radaufhängung entstehen, werden durch idealisierte 
-HingeJoints approximiert. Diese Vereinfachung vernachlässigt wichtige Aspekte wie Spiel in Lagern, elastische Verformungen des Rahmens und 
-nichtlineare Steifigkeitscharakteristika \cite{shabana2020multibody}.
-
-Die Dämpfungsmodellierung in ODE basiert auf linearen viskosen Dämpfern, die das komplexe Dämpfungsverhalten realer mechanischer Systeme nur 
-unzureichend abbilden. Reale Fahrradsysteme zeigen frequenz- und amplitudenabhängige Dämpfungscharakteristika, die durch die vereinfachte 
-ODE-Modellierung nicht erfasst werden.
-
-\textbf{Aerodynamische Vereinfachungen:}
-
-Die in der Simulation implementierte Windkraft-Modellierung stellt eine erhebliche Vereinfachung gegenüber realen aerodynamischen Effekten dar. 
-Komplexe Strömungsphänomene wie Wirbelbildung, Grenzschichteffekte und geschwindigkeitsabhängige Druckverteilungen bleiben unberücksichtigt. 
-Die Interaktion zwischen Fahrer, Fahrrad und Luftströmung, die bei höheren Geschwindigkeiten dominierend wird, wird durch einfache lineare 
-Widerstandsmodelle approximiert \cite{wilson2004bicycling_aerodynamics}.
-
-\textbf{Numerische Stabilität und Performance-Kompromisse:}
-
-Ein weiterer kritischer Aspekt betrifft die Kompromisse zwischen numerischer Stabilität und Recheneffizienz in ODE. Die Verwendung großer 
-Zeitschritte zur Beschleunigung der Simulation kann zu numerischen Artefakten führen, während kleine Zeitschritte die Echtzeitfähigkeit 
-gefährden. Diese Problematik ist besonders relevant für die hochfrequente Balance-Regelung (500\,Hz), die präzise und stabile Physikberechnungen 
-erfordert \cite{lacoursiere2007ode_timestep}.
-
-Die constraint stabilization in ODE nutzt Baumgarte-Stabilisierung mit konfigurierbaren ERP (Error Reduction Parameter) und CFM (Constraint 
-Force Mixing) Werten. Diese Parameter müssen sorgfältig abgestimmt werden, um einen Kompromiss zwischen Stabilität und Steifigkeit der 
-Constraints zu erreichen. Suboptimale Parametrierung kann zu schwingenden oder instabilen Systemverhalten führen, das die Validität der 
-Simulationsergebnisse beeinträchtigt.
+Der verwendete explizite Euler-Integrator\footnote{Der Euler-Integrator ist ein numerisches Verfahren zur Lösung von Differentialgleichungen, das aufgrund seiner einfachen Implementierung weit verbreitet ist, jedoch bei großen Zeitschritten oder steifen Systemen zu Stabilitätsproblemen neigt.} kann bei der hochfrequenten Balance-Regelung (500\,Hz) zu numerischen Instabilitäten führen, 
+was die Validität der Simulationsergebnisse gefährdet \cite{smith2006ode_stability}. Zusätzlich vernachlässigt die vereinfachte 
+Mehrkörperdynamik-Modellierung wichtige Aspekte wie Spiel in Lagern und elastische Verformungen des Rahmens.
 
 Diese fundamentalen Limitierungen der ODE-basierten Physikmodellierung stellen eine erhebliche Einschränkung für die Übertragbarkeit der 
 Simulationsergebnisse auf reale Fahrradsysteme dar und erfordern eine kritische Bewertung der erzielten Regelungsperformance.
@@ -187,28 +105,3 @@ von der idealisierten Simulation abweichen lassen und erfordern robuste Adaptati
 
 
 
-\subsection{Fazit der Limitierungsanalyse}
-
-Die identifizierten Grenzen der vorliegenden Arbeit schmälern nicht die Bedeutung der erzielten Ergebnisse, sondern ordnen sie in einen 
-realistischen wissenschaftlichen Kontext ein. Die erfolgreiche Demonstration der kombinierten Balance- und Spurführungsregelung in der 
-Webots-Simulationsumgebung stellt einen wichtigen methodischen Entwicklungsschritt dar, der die grundsätzliche Machbarkeit der gewählten 
-Regelungsarchitektur belegt.
-
-Die systematische Analyse der Limitierungen zeigt jedoch deutlich auf, dass zwischen der idealisierten Simulationsumgebung und realen 
-Implementierungen erhebliche Diskrepanzen bestehen. Besonders kritisch für eine praktische Umsetzung erweisen sich die sensorischen 
-Idealisierungen (perfekte IMU- und Kameradaten ohne Rauschen oder Drift), die vereinfachte ODE-basierte Physikmodellierung (insbesondere 
-bei Reifen-Fahrbahn-Interaktionen) und die Echtzeitfähigkeits-Herausforderungen bei der Vision-Pipeline auf eingebetteten Systemen.
-
-Die Hardware-Transfer-Problematik manifestiert sich auf mehreren Ebenen: von der numerischen Stabilität der Physiksimulation über die 
-Kommunikationslatenz zwischen den Controllern bis hin zu mechanischen Toleranzen und elektronischen Nichtlinearitäten, die in der 
-Simulation vollständig abstrahiert werden. Diese Faktoren können das reale Systemverhalten erheblich von den Simulationsergebnissen 
-abweichen lassen.
-
-Methodisch unterstreichen die aufgezeigten Grenzen die Notwendigkeit einer mehrstufigen Validierungsstrategie, die von der Simulation 
-über Hardware-in-the-Loop-Tests bis hin zu systematischen Feldversuchen reicht. Die ausschließlich simulationsbasierte Validierung der 
-vorliegenden Arbeit stellt daher eine bewusste Fokussierung auf die algorithmische Entwicklung dar, erfordert aber zwingend eine 
-experimentelle Absicherung in nachfolgenden Arbeiten.
-
-Trotz der genannten Einschränkungen bildet die vorliegende Arbeit eine fundierte Grundlage für die Weiterentwicklung autonomer 
-selbstbalancierender Fahrradsysteme. Die identifizierten Limitierungen zeigen konkrete Ansatzpunkte für zukünftige Forschungsarbeiten 
-auf und unterstreichen die Bedeutung einer kritischen Reflexion der Übertragbarkeit von Simulationsergebnissen auf reale Anwendungen.
