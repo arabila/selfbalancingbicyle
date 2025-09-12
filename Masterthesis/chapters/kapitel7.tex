@@ -1,68 +1,81 @@
 \section{Zukünftige Arbeiten}
 
-Die vorliegende Arbeit hat erfolgreich die grundsätzliche Machbarkeit einer kombinierten Balance- und Spurführungsregelung in der Webots-Simulationsumgebung demonstriert. Die dabei identifizierten Limitierungen zeigen jedoch konkrete Ansatzpunkte für zukünftige Forschungsarbeiten auf, die eine schrittweise Annäherung an reale Implementierungen ermöglichen würden. Die folgenden Forschungsrichtungen adressieren systematisch die Überbrückung der Lücke zwischen idealisierter Simulation und praktischer Umsetzung.
+Die vorliegende Arbeit hat erfolgreich die grundsätzliche Machbarkeit einer kombinierten Balance- und Spurführungsregelung 
+in der Webots-Simulationsumgebung demonstriert. Die dabei identifizierten Limitierungen zeigen jedoch konkrete Ansatzpunkte 
+für zukünftige Forschungsarbeiten auf, die eine schrittweise Annäherung an reale Implementierungen ermöglichen würden. 
+Die folgenden Forschungsrichtungen zeigen systematische Wege auf, um die Lücke zwischen der idealisierten Simulation und 
+der praktischen Umsetzung zu schließen.
 
 \subsection{Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}
 
-Die Verbesserung der Simulationsrealität stellt einen kritischen Schritt zur Validierung der entwickelten Regelungsstrategien dar. Basierend auf den Hardware-Implementierungen von Ranz (2021) und Karabila (2022) lassen sich konkrete Ansätze zur Konfiguration einer realitätsnäheren Webots-Simulation ableiten.
+Die Verbesserung der Simulationsrealität stellt einen kritischen Schritt zur Validierung der entwickelten Regelungsstrategien 
+dar. Basierend auf den Hardware-Implementierungen von Ranz (2021) und Karabila (2022) lassen sich konkrete Ansätze zur 
+Konfiguration einer realitätsnäheren Webots-Simulation ableiten. Die in den Bachelor-Arbeiten dokumentierten 
+Hardware-Spezifikationen bieten eine präzise Grundlage für die Simulationsparametrierung.
 
-\subsubsection{Hardware-orientierte Simulationsparametrierung}
-Die in den Bachelor-Arbeiten dokumentierten Hardware-Spezifikationen bieten eine präzise Grundlage für die Simulationsparametrierung. Ranz' Implementierung nutzt einen BNO055-IMU mit spezifischen I²C-Kommunikationslatenz über \texttt{/dev/i2c-2}, MD49-Motorcontroller mit UART-Schnittstelle über \texttt{/dev/ttyO4} und einen BeagleBone Black als Embedded-Plattform. Diese Hardware-Charakteristika sollten in der Webots-Simulation durch entsprechende Latenz- und Rauschmodelle abgebildet werden.
+Ranz' Implementierung nutzt einen BNO055-IMU mit spezifischen I²C-Kommunikationslatenz über \texttt{/dev/i2c-2}, 
+MD49-Motorcontroller mit UART-Schnittstelle über \texttt{/dev/ttyO4} und einen BeagleBone Black als Embedded-Plattform. 
+Diese Hardware-Charakteristika sollten in der Webots-Simulation durch entsprechende Latenz- und Rauschmodelle abgebildet 
+werden. Die BNO055-spezifischen Eigenschaften wie Betriebsmodi (IMU, NDOF, Compass), Achsen-Remapping-Konfigurationen 
+(\texttt{BNO055\_AXIS\_CONFIG = 0x21}) und typische Sensorrauschen können durch erweiterte IMU-Plugins in Webots modelliert werden.
 
-Die BNO055-spezifischen Eigenschaften wie Betriebsmodi (IMU, NDOF, Compass), Achsen-Remapping-Konfigurationen (\texttt{BNO055\_AXIS\_CONFIG = 0x21}) und typische Sensorrauschen können durch erweiterte IMU-Plugins in Webots modelliert werden. Ebenso sollten die MD49-Motorcharakteristika wie Beschleunigungsrampen, Encoder-Feedback und Stromverbrauchsmodelle implementiert werden.
+Als Alternative zu Webots bietet CARLA als spezialisierte Fahrzeugsimulation erweiterte Möglichkeiten für realistische 
+Umgebungsmodellierung und Sensorsimulation. Die Integration eines Fahrradmodells in CARLA würde Zugang zu hochauflösenden 
+Umgebungen, realistischen Wetterbedingungen und komplexen Verkehrsszenarien ermöglichen. CARLAs Python-API würde dabei 
+eine nahtlose Integration der entwickelten Vision-Pipeline erlauben, während die UE4-basierte Rendering-Engine 
+fotorealistische Kamerabilder für die YOLO-Segmentierung bereitstellt. CARLA wurde für die vorliegende Arbeit aufgrund 
+der fehlenden macOS-Kompatibilität (Stand Anfang 2025) und der hohen GPU-Anforderungen nicht gewählt, stellt jedoch 
+eine vielversprechende Option für zukünftige Arbeiten dar. Gazebo mit ROS-Integration stellt eine weitere 
+Alternative dar, die durch umfangreiche Sensor-Plugins und die Bullet Physics Engine eine systematische Evaluierung 
+verschiedener Physikmodelle ermöglichen würde.
 
-\subsubsection{Alternative Simulationsumgebungen}
-CARLA bietet als spezialisierte Fahrzeugsimulation erweiterte Möglichkeiten für realistische Umgebungsmodellierung und Sensorsimulation. Die Integration eines Fahrradmodells in CARLA würde Zugang zu hochauflösenden Umgebungen, realistischen Wetterbedingungen und komplexen Verkehrsszenarien ermöglichen. CARLAs Python-API würde dabei eine nahtlose Integration der entwickelten Vision-Pipeline erlauben, während die UE4-basierte Rendering-Engine fotorealistische Kamerabilder für die YOLO-Segmentierung bereitstellt.
+\subsection{MPC-Optimierung und erweiterte Physikmodellierung}
 
-Gazebo mit ROS-Integration stellt eine weitere Alternative dar, die durch umfangreiche Sensor-Plugins und realistische Physikmodellierung überzeugt. Die Kombination aus Gazebos ODE-Alternative (Bullet Physics Engine) und ROS-basierten Sensor-Fusion-Frameworks würde eine systematische Evaluierung verschiedener Physikmodelle ermöglichen.
+Die Model Predictive Control-Implementierung bietet erhebliches Optimierungspotenzial durch erweiterte Modellierung und 
+systematisches Training in diversen Umgebungen. Das aktuelle kinematische Fahrradmodell kann durch dynamische Erweiterungen 
+wie Reifenschlupf-Modellierung, aerodynamische Kräfte und Trägheitseffekte verbessert werden. Die Integration eines 
+Pacejka-Reifenmodells\footnote{Das Pacejka-Reifenmodell, auch als "Magic Formula" bekannt, beschreibt mathematisch die 
+nichtlinearen Kraft-Schlupf-Beziehungen von Reifen und wird standardmäßig in der Fahrzeugdynamik-Simulation eingesetzt.} 
+würde realistische Kraft-Schlupf-Charakteristika ermöglichen und die Kurvenstabilität erheblich 
+verbessern. Die MPC-Kostenfunktion sollte um Terme für Energieeffizienz, Komfort und Robustheit gegenüber 
+Modellungenauigkeiten erweitert werden.
 
-\subsection{MPC-Optimierung und Multi-Environment-Training}
+Systematisches Training der MPC-Parameter in verschiedenen Webots-Umgebungen würde die Generalisierungsfähigkeit erheblich 
+verbessern. Szenarien sollten verschiedene Fahrbahnoberflächen (Asphalt, Kies, nasse Bedingungen), Steigungen, Kurvenradien 
+und Windverhältnisse umfassen. Monte-Carlo-Simulationen mit randomisierten Umgebungsparametern würden statistische Aussagen 
+über die Robustheit der Regelung ermöglichen.
 
-Die Model Predictive Control-Implementierung bietet erhebliches Optimierungspotenzial durch erweiterte Modellierung und systematisches Training in diversen Umgebungen.
+Die Implementierung realistischerer Physikmodelle in Webots erfordert sowohl die Erweiterung der ODE-Konfiguration als auch 
+die Integration zusätzlicher Umgebungseffekte. Die Integration komplexerer Reifenmodelle über Webots-Plugins würde eine 
+realitätsnähere Simulation der Reifen-Fahrbahn-Interaktion ermöglichen. Temperaturabhängige Reibungskoeffizienten, 
+Aquaplaning-Effekte bei Nässe und die Modellierung verschiedener Fahrbahnoberflächen mit unterschiedlichen Eigenschaften 
+würden die Vielfalt realer Fahrbedingungen abbilden. Die Integration realistischer Windmodelle mit turbulenten Strömungen 
+und dynamische Hindernisse würden realistische Ausweichmanöver erfordern und die Vision-Pipeline unter Stress setzen.
 
-\subsubsection{Erweiterte MPC-Modellierung}
-Das aktuelle kinematische Fahrradmodell kann durch dynamische Erweiterungen wie Reifenschlupf-Modellierung, aerodynamische Kräfte und Trägheitseffekte verbessert werden. Die Integration eines Pacejka-Reifenmodells würde realistische Kraft-Schlupf-Charakteristika ermöglichen und die Kurvenstabilität erheblich verbessern.
+\subsection{Präzise geometrische Modellierung und Systemkalibrierung}
 
-Die MPC-Kostenfunktion sollte um Terme für Energieeffizienz, Komfort (Minimierung von Beschleunigungsänderungen) und Robustheit gegenüber Modellungenauigkeiten erweitert werden. Adaptive MPC-Ansätze könnten Online-Parameterschätzung implementieren, um sich an veränderte Fahrbedingungen anzupassen.
+Die exakte Übertragung der physikalischen Eigenschaften der in den Bachelor-Arbeiten verwendeten Hardware in die Simulation 
+ist entscheidend für die Validität der Ergebnisse. Basierend auf den 3D-Modell-Dateien und Konstruktionszeichnungen aus Ranz' 
+Arbeit sollten alle relevanten geometrischen Parameter präzise vermessen und in Webots implementiert werden. Dies umfasst 
+Radstand, Nachlauf, Lenkkopfwinkel, Schwerpunktlage und Trägheitsmomente. Die Massenverteilung des realen Systems, 
+einschließlich BeagleBone Black, Sensoren, Aktuatoren und Batterien, muss exakt modelliert werden.
 
-\subsubsection{Multi-Environment-Training und Robustheitsvalidierung}
-Systematisches Training der MPC-Parameter in verschiedenen Webots-Umgebungen würde die Generalisierungsfähigkeit erheblich verbessern. Szenarien sollten verschiedene Fahrbahnoberflächen (Asphalt, Kies, nasse Bedingungen), Steigungen, Kurvenradien und Windverhältnisse umfassen.
+Die Identifikation der realen Systemdynamik durch experimentelle Modalanalyse würde präzise Dämpfungs- und Steifigkeitsparameter 
+liefern. Pendelversuche am realen Fahrrad könnten die Eigenfrequenzen des Balance-Systems bestimmen. Die Kalibrierung der 
+Simulationsparameter sollte durch Vergleich charakteristischer Systemantworten (Sprungantwort, Frequenzgang) zwischen Simulation 
+und realem System erfolgen. Dabei könnten Identifikationsverfahren wie Least-Squares-Schätzung\footnote{Die Least-Squares-Schätzung (Methode der kleinsten Quadrate) ist ein mathematisches Optimierungsverfahren zur Parameterschätzung, das die Summe der quadrierten Abweichungen zwischen Mess- und Modellwerten minimiert.} oder Kalman-Filter-basierte\footnote{Kalman-Filter sind rekursive Schätzverfahren, die Systemzustände und Parameter auch bei verrauschten Messungen optimal schätzen können, indem sie Vorhersage- und Korrekturschritte kombinieren.} 
+Parameterschätzung eingesetzt werden.
 
-Monte-Carlo-Simulationen mit randomisierten Umgebungsparametern würden statistische Aussagen über die Robustheit der Regelung ermöglichen. Dabei könnten Störgrößen wie Seitenwinde, Fahrbahnunebenheiten und Sensorausfälle systematisch variiert werden.
+\subsection{Methodischer Ausblick}
 
-\subsection{Erweiterte Physikumgebung für realistische Szenarien}
+Die vorgeschlagenen Erweiterungen folgen einer systematischen Methodik zur schrittweisen Überbrückung der Sim-to-Real-Lücke\footnote{Die Sim-to-Real-Lücke bezeichnet die Diskrepanz zwischen simulierten und realen Systemverhalten, die durch idealisierte Modellierungen, vereinfachte Physik und fehlende Umgebungseinflüsse in der Simulation entsteht.}. 
+Die Kombination aus hardware-orientierter Simulationsparametrierung, erweiterten Physikmodellen und alternativen 
+Simulationsumgebungen würde eine robuste Validierungsplattform für die entwickelten Regelungsstrategien schaffen.
 
-Die Implementierung realistischerer Physikmodelle in Webots erfordert sowohl die Erweiterung der ODE-Konfiguration als auch die Integration zusätzlicher Umgebungseffekte.
+Besonders vielversprechend ist die Möglichkeit, durch CARLA-Integration von den umfangreichen Entwicklungen im Bereich 
+autonomer Fahrzeuge zu profitieren und gleichzeitig die spezifischen Herausforderungen der Fahrradbalancierung zu 
+adressieren. Die systematische Multi-Environment-Evaluierung würde dabei statistische Aussagen über die Robustheit und 
+Übertragbarkeit der Ergebnisse ermöglichen.
 
-\subsubsection{Erweiterte Reifen- und Kontaktmodellierung}
-Die Integration komplexerer Reifenmodelle über Webots-Plugins würde eine realitätsnähere Simulation der Reifen-Fahrbahn-Interaktion ermöglichen. Temperaturabhängige Reibungskoeffizienten, Aquaplaning-Effekte bei Nässe und verschleißbedingte Charakteristika-Änderungen könnten implementiert werden.
-
-Die Modellierung verschiedener Fahrbahnoberflächen mit unterschiedlichen Reibungskoeffizienten, Rauigkeiten und dynamischen Eigenschaften würde die Vielfalt realer Fahrbedingungen abbilden. Besonders relevant sind Übergangszonen zwischen verschiedenen Oberflächentypen, die kritische Situationen für die Balance-Regelung darstellen.
-
-\subsubsection{Umgebungsdynamik und Störungsmodellierung}
-Die Integration realistischer Windmodelle mit turbulenten Strömungen und Böeneffekten würde die aerodynamische Herausforderung für das Balance-System erheblich steigern. Webots' Wind-Plugin kann durch stochastische Windgeschwindigkeits- und -richtungsmodelle erweitert werden.
-
-Dynamische Hindernisse wie andere Verkehrsteilnehmer, Fußgänger oder Tiere würden realistische Ausweichmanöver erfordern und die Vision-Pipeline unter Stress setzen. Die Integration von SUMO (Simulation of Urban Mobility) in Webots könnte komplexe Verkehrsszenarien ermöglichen.
-
-\subsection{Präzise geometrische Modellierung des realen Fahrrads}
-
-Die exakte Übertragung der physikalischen Eigenschaften der in den Bachelor-Arbeiten verwendeten Hardware in die Simulation ist entscheidend für die Validität der Ergebnisse.
-
-\subsubsection{Geometrische Parametrierung}
-Basierend auf den 3D-Modell-Dateien und Konstruktionszeichnungen aus Ranz' Arbeit sollten alle relevanten geometrischen Parameter präzise vermessen und in Webots implementiert werden. Dies umfasst Radstand, Nachlauf, Lenkkopfwinkel, Schwerpunktlage und Trägheitsmomente.
-
-Die Massenverteilung des realen Systems, einschließlich BeagleBone Black, Sensoren, Aktuatoren und Batterien, muss exakt modelliert werden. Besonders kritisch ist die Position des Gesamtschwerpunkts, da diese direkt die Balance-Charakteristika beeinflusst.
-
-\subsubsection{Dynamische Eigenschaften und Kalibrierung}
-Die Identifikation der realen Systemdynamik durch experimentelle Modalanalyse würde präzise Dämpfungs- und Steifigkeitsparameter liefern. Pendelversuche am realen Fahrrad könnten die Eigenfrequenzen des Balance-Systems bestimmen.
-
-Die Kalibrierung der Simulationsparameter sollte durch Vergleich charakteristischer Systemantworten (Sprungantwort, Frequenzgang) zwischen Simulation und realem System erfolgen. Dabei könnten Identifikationsverfahren wie Least-Squares-Schätzung oder Kalman-Filter-basierte Parameterschätzung eingesetzt werden.
-
-\subsection{Fazit und methodischer Ausblick}
-
-Die vorgeschlagenen Erweiterungen folgen einer systematischen Methodik zur schrittweisen Überbrückung der Sim-to-Real-Lücke. Die Kombination aus hardware-orientierter Simulationsparametrierung, erweiterten Physikmodellen und alternativen Simulationsumgebungen würde eine robuste Validierungsplattform für die entwickelten Regelungsstrategien schaffen.
-
-Besonders vielversprechend ist die Möglichkeit, durch CARLA-Integration von den umfangreichen Entwicklungen im Bereich autonomer Fahrzeuge zu profitieren und gleichzeitig die spezifischen Herausforderungen der Fahrradbalancierung zu adressieren. Die systematische Multi-Environment-Evaluierung würde dabei statistische Aussagen über die Robustheit und Übertragbarkeit der Ergebnisse ermöglichen.
-
-Diese Forschungsrichtungen tragen nicht nur zur praktischen Realisierung selbstbalancierender Fahrradsysteme bei, sondern erweitern auch das methodische Verständnis für die Validierung simulationsbasierter Regelungsentwicklung in der Fahrzeugtechnik.
-
+Diese Forschungsrichtungen tragen nicht nur zur praktischen Realisierung selbstbalancierender Fahrradsysteme bei, sondern 
+erweitern auch das methodische Verständnis für die Validierung simulationsbasierter Regelungsentwicklung in der Fahrzeugtechnik.
