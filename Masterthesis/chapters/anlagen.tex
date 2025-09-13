@@ -1,0 +1,44 @@
+
+\section{Anlagen}\label{chap:anlagen}
+
+\subsection{YOLO-Fehlerberechnung}
+
+Die folgende Implementierung zeigt die detaillierte YOLO-basierte Lateral-Fehlerberechnung:
+
+\begin{lstlisting}[style=python,caption={YOLO-Fehlerberechnung - Implementierung},label={lst:yolo_error_calculation_appendix}]
+street_indices = [idx for idx, cls in enumerate(r.boxes.cls) if cls == 2]
+if street_indices:
+    x_centers = []
+    for idx in street_indices:
+        xyxy = r.boxes.xyxy[idx]  # Koordinaten der Bounding Box
+        x_center = float((xyxy[0] + xyxy[2]) / 2.0)
+        x_centers.append(x_center)
+    avg_x_center = sum(x_centers) / len(x_centers)
+    frame_center = frame.shape[1] / 2
+    error = (frame_center - avg_x_center) / frame.shape[1]  # Normiert
+    self._store_valid_values(error, mask, self.vision_mask_coverage)
+    return error, mask
+\end{lstlisting}
+
+\subsection{Fallback-Fehlerberechnung}
+
+Die folgende Implementierung zeigt die HSV-basierte Fallback-Strategie zur Lateral-Fehlerberechnung:
+
+\begin{lstlisting}[style=python,caption={Fallback-Fehlerberechnung - Implementierung},label={lst:fallback_error_calculation_appendix}]
+mask_road = cv2.inRange(hsv, road_lower, road_upper)      # Graue Strasse filtern
+mask_white = cv2.inRange(hsv, white_lower, white_upper)   # Weisse Markierungen filtern
+mask0 = cv2.bitwise_or(mask_road, mask_white)
+mask0 = cv2.morphologyEx(mask0, cv2.MORPH_CLOSE, kernel)
+mask0 = cv2.morphologyEx(mask0, cv2.MORPH_OPEN, kernel)
+contours, _ = cv2.findContours(mask0, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
+if contours:
+    largest_contour = max(contours, key=cv2.contourArea)
+    x, y, w, h = cv2.boundingRect(largest_contour)
+    center_x = int(x + w / 2)
+    error = (x_set - center_x) / float(max(1, width))   # Fehler normiert an Bildbreite
+    mask = np.zeros((height, width), dtype=np.uint8)
+    cv2.drawContours(mask, [largest_contour], -1, 255, -1)
+    ...  # (Berechnung der Maskenabdeckung)
+    self._store_valid_values(error, mask, self.vision_mask_coverage)
+    return error, mask
+\end{lstlisting}

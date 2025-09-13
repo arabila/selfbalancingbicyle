@@ -5,6 +5,11 @@ D.~Andreo, V.~Cerone, D.~Dzung, and D.~Regruto.
 \newblock Experimental results on lpv stabilization of a riderless bicycle.
 \newblock In {\em Proc. American Control Conference (ACC)}, pages 3124--3129, 2009.
 
+\bibitem{aphiratsakun2013}
+N.~Aphiratsakun and K.~Techakittiroj.
+\newblock Autonomous au bicycle: self balancing and tracking control (ausb 2).
+\newblock In {\em Proc. IEEE Int. Conf. on Robotics and Biomimetics (ROBIO)}, pages 480--485, 2013.
+
 \bibitem{bno055}
 {Bosch Sensortec}.
 \newblock Bno055 intelligent 9-axis absolute orientation sensor.
@@ -75,6 +80,11 @@ Alex Hunziker.
 \newblock Bts7960 high-current half-bridge driver.
 \newblock \url{https://www.infineon.com}, 2018.
 
+\bibitem{jakobi1995reality}
+Nick Jakobi, Phil Husbands, and Inman Harvey.
+\newblock Noise and the reality gap: The use of simulation in evolutionary robotics.
+\newblock In {\em Advances in Artificial Life: Third European Conference on Artificial Life}, volume 929 of {\em Lecture Notes in Computer Science}, pages 704--720, Berlin, Heidelberg, 1995. Springer-Verlag.
+
 \bibitem{Ultralytics2023}
 Glenn Jocher, Ayush Chaurasia, and Jing Qiu.
 \newblock Yolo by ultralytics.
@@ -94,6 +104,11 @@ Amine Karabila.
 J.~D.~G. Kooijman, J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
 \newblock A bicycle can be self-stable without gyroscopic or caster effects.
 \newblock {\em Science}, 332(6027):339--342, 2011.
+
+\bibitem{lam2011}
+P.~Y. Lam and T.~K. Sin.
+\newblock Gyroscopic stabilization of a self-balancing robot bicycle.
+\newblock {\em International Journal of Automation Technology}, 5(6):916--923, 2011.
 
 \bibitem{cyberbotics_inertialunit}
 Cyberbotics Ltd.
@@ -155,5 +170,10 @@ Jonah Zander.
 Xu~Zhao, Wenchao Ding, Yongqi An, Yinglong Du, Tao Yu, Min Li, Ming Tang, and Jinqiao Wang.
 \newblock Fast segment anything.
 \newblock arXiv:2306.12156 [cs.CV], 2023.
+
+\bibitem{astrom2005}
+Karl~J. Åström, Richard~E. Klein, and Anders Lennartsson.
+\newblock Bicycle dynamics and control: adapted bicycles for education and research.
+\newblock {\em IEEE Control Systems Magazine}, 25(4):26--47, 2005.
 
 \end{thebibliography}

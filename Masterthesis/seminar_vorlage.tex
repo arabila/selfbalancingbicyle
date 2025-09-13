@@ -25,6 +25,16 @@
   \usepackage{float}
   \usepackage{listings}
   \usepackage{fancyhdr}  % Für professionelle Header und Footer
+  \usepackage{tikz}     % Für Diagramme und Grafiken
+  \usetikzlibrary{shapes,arrows,positioning,calc}
+  \usetikzlibrary{shapes.geometric,arrows.meta}
+  \usetikzlibrary{positioning,calc}
+  
+  % Tabellen-Pakete
+  \usepackage{booktabs}  % Für professionelle Tabellen mit \toprule, \midrule, \bottomrule
+  \usepackage{array}     % Erweiterte Tabellen-Funktionalität
+  \usepackage{longtable} % Für mehrseitige Tabellen
+  \usepackage{tabularx}  % Für flexible Tabellenbreiten
 
   % Define custom commands
   \newcommand{\gh}{} % Placeholder for citations
@@ -34,7 +44,8 @@
   \usepackage{lmodern}
 
   % Farben (MUSS VOR hyperref & listings kommen!)
-  \usepackage[dvipsnames]{xcolor}
+  \usepackage[dvipsnames,table]{xcolor}  % table-Option für farbige Tabellen hinzugefügt
+  \usepackage{amssymb} % for \checkmark
 
 
 
@@ -310,7 +321,11 @@
 %--------------------------------------------------
 % Anhang (Parametertabellen, Screenshots, Release-Link)
 %--------------------------------------------------
-\newpage
+
 \bibliography{refs}
+
+\newpage
+\input{chapters/anlagen}
+
 \end{document}
 

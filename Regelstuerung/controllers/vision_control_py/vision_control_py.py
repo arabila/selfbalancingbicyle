@@ -21,6 +21,9 @@ import struct
 import time
 import math
 import json
+import platform
+import psutil
+from datetime import datetime
 from controller import Supervisor
 
 # Setze MPS Fallback für YOLO
@@ -44,6 +47,274 @@ try:
 except ImportError:
     MPC_AVAILABLE = False
     print("⚠ CVXPY nicht verfügbar - Fallback auf PID-Regelung")
+
+class PerformanceMonitor:
+    """Überwacht und misst die Rechenzeit verschiedener Komponenten"""
+    
+    def __init__(self):
+        self.timings = {
+            'yolo_computation': [],
+            'mpc_computation': [],
+            'fallback_vision': [],
+            'physics_step': [],
+            'total_loop': [],
+            'camera_processing': [],
+            'display_update': []
+        }
+        
+        # Hardware-Informationen sammeln
+        self.hardware_info = self._collect_hardware_info()
+        
+        # Simulation-Timing
+        self.simulation_start_time = None
+        self.real_start_time = None
+        self.step_count = 0
+        
+        # Performance-Report-Parameter
+        self.report_interval = 100  # Alle 100 Steps einen Report
+        self.last_report_step = 0
+        
+        print("✓ Performance Monitor initialisiert")
+        print(f"Hardware: {self.hardware_info['cpu_model']}")
+        print(f"CPU Kerne: {self.hardware_info['cpu_cores']} ({self.hardware_info['cpu_threads']} Threads)")
+        print(f"CPU Frequenz: {self.hardware_info['cpu_freq']:.1f} GHz")
+        if self.hardware_info['gpu_info']:
+            print(f"GPU: {self.hardware_info['gpu_info']}")
+        print(f"RAM: {self.hardware_info['memory_total']:.1f} GB")
+    
+    def _collect_hardware_info(self):
+        """Sammelt Hardware-Informationen des Systems"""
+        info = {}
+        
+        # CPU-Informationen
+        info['cpu_model'] = platform.processor() or "Unbekannt"
+        info['cpu_cores'] = psutil.cpu_count(logical=False)
+        info['cpu_threads'] = psutil.cpu_count(logical=True)
+        
+        # CPU-Frequenz
+        try:
+            cpu_freq = psutil.cpu_freq()
+            info['cpu_freq'] = cpu_freq.max / 1000.0 if cpu_freq else 0.0  # GHz
+        except:
+            info['cpu_freq'] = 0.0
+        
+        # Speicher
+        memory = psutil.virtual_memory()
+        info['memory_total'] = memory.total / (1024**3)  # GB
+        
+        # GPU-Informationen (falls verfügbar)
+        info['gpu_info'] = None
+        try:
+            if YOLO_AVAILABLE:
+                import torch
+                if torch.cuda.is_available():
+                    info['gpu_info'] = torch.cuda.get_device_name(0)
+                elif hasattr(torch.backends, 'mps') and torch.backends.mps.is_available():
+                    info['gpu_info'] = "Apple Metal Performance Shaders"
+        except:
+            pass
+        
+        # Betriebssystem
+        info['os'] = f"{platform.system()} {platform.release()}"
+        
+        return info
+    
+    def start_timing(self, component):
+        """Startet Zeitmessung für eine Komponente"""
+        return time.perf_counter()
+    
+    def end_timing(self, component, start_time):
+        """Beendet Zeitmessung und speichert Ergebnis"""
+        duration = time.perf_counter() - start_time
+        duration_ms = duration * 1000  # ms
+        
+        # Plausibilitätsprüfung: Extrem hohe Werte (>10s) sind wahrscheinlich Messfehler
+        if duration_ms > 10000:  # 10 Sekunden
+            print(f"⚠ WARNUNG: Unplausible Messzeit für {component}: {duration_ms:.1f}ms - ignoriert")
+            return
+        
+        if component in self.timings:
+            self.timings[component].append(duration_ms)
+            
+            # Debug-Ausgabe für ungewöhnlich hohe Zeiten
+            if duration_ms > 100 and component != 'yolo_computation':
+                print(f"DEBUG: Hohe {component}-Zeit: {duration_ms:.1f}ms")
+            
+            # Begrenzt die Liste auf die letzten 1000 Messungen
+            if len(self.timings[component]) > 1000:
+                self.timings[component] = self.timings[component][-1000:]
+    
+    def set_simulation_start(self, sim_time):
+        """Setzt den Simulationsstart-Zeitpunkt"""
+        if self.simulation_start_time is None:
+            self.simulation_start_time = sim_time
+            self.real_start_time = time.time()
+    
+    def update_step_count(self):
+        """Aktualisiert die Schrittzählung"""
+        self.step_count += 1
+    
+    def get_realtime_factor(self, current_sim_time):
+        """Berechnet den Echtzeitfaktor"""
+        if self.simulation_start_time is None or self.real_start_time is None:
+            return 0.0
+        
+        sim_duration = current_sim_time - self.simulation_start_time
+        real_duration = time.time() - self.real_start_time
+        
+        # Debug-Ausgabe für Echtzeitfaktor-Berechnung
+        if self.step_count % 100 == 0:  # Nur alle 100 Steps
+            print(f"DEBUG Echtzeitfaktor: sim_duration={sim_duration:.3f}s, real_duration={real_duration:.3f}s")
+        
+        if real_duration > 0:
+            return sim_duration / real_duration
+        return 0.0
+    
+    def get_statistics(self, component):
+        """Berechnet Statistiken für eine Komponente"""
+        if component not in self.timings or not self.timings[component]:
+            return {'count': 0, 'avg': 0, 'min': 0, 'max': 0, 'std': 0}
+        
+        data = np.array(self.timings[component])
+        
+        # Für YOLO: Filtere Cold-Start-Zeiten (> 500ms) für realistischere Statistiken
+        if component == 'yolo_computation' and len(data) > 1:
+            # Zeige sowohl gefilterte als auch ungefilterte Werte
+            cold_start_mask = data > 500  # Cold-Start-Zeiten
+            if np.any(cold_start_mask):
+                cold_starts = data[cold_start_mask]
+                warm_data = data[~cold_start_mask]
+                
+                if len(warm_data) > 0:
+                    return {
+                        'count': len(data),
+                        'count_warm': len(warm_data),
+                        'count_cold': len(cold_starts),
+                        'avg': np.mean(warm_data),  # Durchschnitt ohne Cold-Start
+                        'avg_total': np.mean(data),  # Durchschnitt mit Cold-Start
+                        'min': np.min(data),
+                        'max': np.max(data),
+                        'std': np.std(warm_data),
+                        'cold_start_times': cold_starts.tolist()
+                    }
+        
+        return {
+            'count': len(data),
+            'avg': np.mean(data),
+            'min': np.min(data),
+            'max': np.max(data),
+            'std': np.std(data)
+        }
+    
+    def print_performance_report(self, current_sim_time):
+        """Druckt einen detaillierten Performance-Report"""
+        if self.step_count - self.last_report_step < self.report_interval:
+            return
+        
+        print("\n" + "="*80)
+        print("PERFORMANCE MONITOR - RECHENZEIT & ECHTZEITFÄHIGKEIT")
+        print("="*80)
+        
+        # Hardware-Informationen
+        print(f"Hardware: {self.hardware_info['cpu_model']}")
+        print(f"CPU: {self.hardware_info['cpu_cores']} Kerne, {self.hardware_info['cpu_threads']} Threads, {self.hardware_info['cpu_freq']:.1f} GHz")
+        if self.hardware_info['gpu_info']:
+            print(f"GPU: {self.hardware_info['gpu_info']}")
+        print(f"RAM: {self.hardware_info['memory_total']:.1f} GB")
+        print(f"OS: {self.hardware_info['os']}")
+        
+        # Echtzeitfähigkeit
+        rt_factor = self.get_realtime_factor(current_sim_time)
+        print(f"\nECHTZEITFÄHIGKEIT:")
+        print(f"Simulation Zeit: {current_sim_time:.1f}s")
+        print(f"Reale Zeit: {time.time() - self.real_start_time:.1f}s" if self.real_start_time else "N/A")
+        print(f"Echtzeitfaktor: {rt_factor:.2f}x {'✓' if rt_factor >= 0.95 else '⚠' if rt_factor >= 0.8 else '✗'}")
+        
+        # Komponenten-Timing
+        print(f"\nKOMPONENTEN-TIMING (Mittelwerte der letzten {self.report_interval} Messungen):")
+        print("-"*80)
+        print(f"{'Komponente':<20} {'Anzahl':<8} {'Mittel':<10} {'Min':<10} {'Max':<10} {'Std':<10}")
+        print("-"*80)
+        
+        for component in ['yolo_computation', 'mpc_computation', 'fallback_vision', 
+                         'camera_processing', 'display_update', 'physics_step', 'total_loop']:
+            stats = self.get_statistics(component)
+            if stats['count'] > 0:
+                # Spezielle Behandlung für YOLO mit Cold-Start-Filterung
+                if component == 'yolo_computation' and 'count_warm' in stats:
+                    print(f"{component:<20} {stats['count_warm']:<8} {stats['avg']:<10.2f} "
+                          f"{stats['min']:<10.2f} {stats['max']:<10.2f} {stats['std']:<10.2f}")
+                    if stats['count_cold'] > 0:
+                        print(f"  └─ Cold-Starts     {stats['count_cold']:<8} {np.mean(stats['cold_start_times']):<10.1f} "
+                              f"{'--':<10} {max(stats['cold_start_times']):<10.1f} {'--':<10}")
+                else:
+                    print(f"{component:<20} {stats['count']:<8} {stats['avg']:<10.2f} "
+                          f"{stats['min']:<10.2f} {stats['max']:<10.2f} {stats['std']:<10.2f}")
+        
+        # CPU-Auslastung
+        try:
+            cpu_percent = psutil.cpu_percent(interval=0.1)
+            memory_percent = psutil.virtual_memory().percent
+            print(f"\nSYSTEM-AUSLASTUNG:")
+            print(f"CPU: {cpu_percent:.1f}%")
+            print(f"RAM: {memory_percent:.1f}%")
+        except:
+            pass
+        
+        # Performance-Analyse und Erklärungen
+        print(f"\nPERFORMANCE-ANALYSE:")
+        
+        # YOLO Cold-Start Erklärung
+        yolo_stats = self.get_statistics('yolo_computation')
+        if yolo_stats['count'] > 0 and 'cold_start_times' in yolo_stats:
+            if yolo_stats['count_cold'] > 0:
+                print(f"• YOLO Cold-Start erkannt: {yolo_stats['count_cold']} Aufrufe mit >500ms")
+                print(f"  (Normal bei Neural Networks - erste Inferenz lädt Modell in GPU/RAM)")
+        
+        # MPC Ausreißer-Analyse
+        mpc_stats = self.get_statistics('mpc_computation')
+        if mpc_stats['count'] > 0 and mpc_stats['max'] > 30:
+            print(f"• MPC Ausreißer: {mpc_stats['max']:.1f}ms (möglicherweise Solver-Problem)")
+        
+        # Echtzeitfaktor-Erklärung
+        if rt_factor < 0.1:
+            print(f"• Niedriger Echtzeitfaktor durch Cold-Starts - wird sich nach Warmup verbessern")
+        elif rt_factor < 0.8:
+            print(f"• Simulation läuft {1/rt_factor:.1f}x langsamer als Echtzeit")
+        
+        print("="*80)
+        
+        self.last_report_step = self.step_count
+    
+    def save_performance_report(self, filename=None):
+        """Speichert einen detaillierten Performance-Report als JSON"""
+        if filename is None:
+            timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+            filename = f"performance_report_{timestamp}.json"
+        
+        report = {
+            'timestamp': datetime.now().isoformat(),
+            'hardware_info': self.hardware_info,
+            'simulation_info': {
+                'total_steps': self.step_count,
+                'simulation_duration': time.time() - self.real_start_time if self.real_start_time else 0,
+                'realtime_factor': self.get_realtime_factor(time.time()) if self.simulation_start_time else 0
+            },
+            'timing_statistics': {}
+        }
+        
+        # Statistiken für alle Komponenten
+        for component in self.timings:
+            report['timing_statistics'][component] = self.get_statistics(component)
+        
+        try:
+            with open(filename, 'w') as f:
+                json.dump(report, f, indent=2)
+            print(f"✓ Performance-Report gespeichert: {filename}")
+        except Exception as e:
+            print(f"✗ Fehler beim Speichern des Reports: {e}")
+        
+        return filename
 
 class VisionMPCController: #Unser MPC Controller
     """Model Predictive Controller für Vision-basierte Fahrzeugkontrolle"""
@@ -325,6 +596,9 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         
         # MPC-Controller initialisieren
         self.mpc_controller = VisionMPCController()
+        
+        # Performance Monitor initialisieren
+        self.performance_monitor = PerformanceMonitor()
         
         # Initialen Zustand aus Webots-Simulation setzen
         self._initialize_mpc_state_from_webots()
@@ -633,7 +907,9 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             return self._use_last_valid_values()
         
         try:
-            # YOLO-Vorhersage
+            # YOLO-Vorhersage mit Timing
+            yolo_start = self.performance_monitor.start_timing('yolo_computation') if hasattr(self, 'performance_monitor') else time.perf_counter()
+            
             # Konfiguration ggf. aktualisieren (yolo_conf, yolo_show)
             self._load_vision_method_from_config()
             conf_thr = float(getattr(self, 'yolo_conf', 0.5))
@@ -646,6 +922,10 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                 show=show_flag, # Bildausgabe
                 verbose=False   # Ausgabe
             )
+            
+            # YOLO-Timing beenden
+            if hasattr(self, 'performance_monitor'):
+                self.performance_monitor.end_timing('yolo_computation', yolo_start)
             print(f"Yolo results: {results} End")
             
             if not results:
@@ -727,6 +1007,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
     def get_vision_error_fallback(self, frame):
         """Fallback-Vision ohne YOLO basierend auf simple_mask.py (ROI + HSV + Morphologie + Konturen)."""
         try:
+            # Fallback-Vision Timing starten
+            fallback_start = self.performance_monitor.start_timing('fallback_vision') if hasattr(self, 'performance_monitor') else time.perf_counter()
             # Bildabmessungen
             height, width = frame.shape[:2]
 
@@ -814,22 +1096,43 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                 self.debug_avg_x_center = float(center_x)
                 self.debug_frame_center = float(width / 2)
 
+                # Fallback-Vision Timing beenden
+                if hasattr(self, 'performance_monitor'):
+                    self.performance_monitor.end_timing('fallback_vision', fallback_start)
+
                 return error, mask
 
             # Keine gültige Kontur → letzte gültige Werte verwenden (mit Decay-Logik)
             # Bei Misserfolg: Letzte Masken für Debug zurücksetzen
             self.last_fallback_contour_mask = None
+            
+            # Fallback-Vision Timing beenden (auch bei Misserfolg)
+            if hasattr(self, 'performance_monitor'):
+                self.performance_monitor.end_timing('fallback_vision', fallback_start)
+            
             return self._use_last_valid_values()
 
         except Exception as e:
             print(f"Fallback-Vision-Fehler: {e}")
             self.last_fallback_contour_mask = None
+            
+            # Fallback-Vision Timing beenden (auch bei Fehler)
+            if hasattr(self, 'performance_monitor'):
+                self.performance_monitor.end_timing('fallback_vision', fallback_start)
+            
             return self._use_last_valid_values()
     
     def vision_mpc_control(self, error, dt):
         """MPC-Controller für Vision-basierte Lenkung"""
+        # MPC-Timing starten
+        mpc_start = self.performance_monitor.start_timing('mpc_computation') if hasattr(self, 'performance_monitor') else time.perf_counter()
+        
         # MPC-Regelung durchführen mit Fahrrad-Node für Position/Orientierung
         steer_rad, accel = self.mpc_controller.control(error, dt, self.bicycle)
+        
+        # MPC-Timing beenden
+        if hasattr(self, 'performance_monitor'):
+            self.performance_monitor.end_timing('mpc_computation', mpc_start)
         
         # Lenkwinkel normalisieren auf [-1, 1] für IPC
         steer_cmd = np.clip(steer_rad / self.mpc_controller.MAX_STEER, -1.0, 1.0)
@@ -1037,8 +1340,15 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         print("Vision Controller läuft...\n")
         
         while self.robot.step(self.timestep) != -1:
+            # Timing für gesamte Schleife starten
+            loop_start = self.performance_monitor.start_timing('total_loop')
+            
             current_time = self.robot.getTime() #Aktuelle Zeit in der Simulation
             self.step_counter += 1
+            
+            # Performance Monitor initialisieren bei erstem Durchlauf
+            self.performance_monitor.set_simulation_start(current_time)
+            self.performance_monitor.update_step_count()
 
             #---------------#Position der Kamera dem Fahrrad anpassen---------
             self._update_camera_position() 
@@ -1050,6 +1360,8 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
             if current_time - last_vision_time >= vision_interval:
                 if self.vision_enabled and self.camera:
                     try:
+                        # Kamera-Processing Timing starten
+                        camera_start = self.performance_monitor.start_timing('camera_processing')
                         
                         img_bytes = self.camera.getImage() #Bild von der Kamera empfangen: https://cyberbotics.com/doc/reference/camera?tab-language=python
                         if img_bytes:
@@ -1064,6 +1376,9 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             # Bild in BGR umwandeln (RGB -> BGR)
                             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGBA2BGR)
                             print(f"frame_bgr: {frame_bgr}")
+                            
+                            # Kamera-Processing Timing beenden
+                            self.performance_monitor.end_timing('camera_processing', camera_start)
                             
                             # Vision-Fehler berechnen – Methode aus GUI-Konfiguration
                             self._load_vision_method_from_config()
@@ -1088,10 +1403,16 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             # Command senden
                             self.send_vision_command(steer_cmd, speed_cmd)
                             
+                            # Display-Update Timing starten
+                            display_start = self.performance_monitor.start_timing('display_update')
+                            
                             # Display aktualisieren
                             self.update_display(frame_bgr, mask, error, steer_cmd, speed_cmd)
                             # On-Screen-Label (wie printStatus) aktualisieren
                             self.update_screen_labels(error, steer_cmd)
+                            
+                            # Display-Update Timing beenden
+                            self.performance_monitor.end_timing('display_update', display_start)
                             
                             # Status ausgeben (alle 2 Sekunden)
                             if self.step_counter % (int(2.0 / vision_interval)) == 0:
@@ -1101,9 +1422,19 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                         print(f"Vision-Processing-Fehler: {e}")
                 
                 last_vision_time = current_time
+            
+            # Timing für gesamte Schleife beenden
+            self.performance_monitor.end_timing('total_loop', loop_start)
+            
+            # Performance-Report ausgeben (alle 100 Steps)
+            if self.step_counter % 100 == 0:
+                self.performance_monitor.print_performance_report(current_time)
         
         # Cleanup
         cv2.destroyAllWindows()
+        
+        # Finalen Performance-Report speichern
+        self.performance_monitor.save_performance_report()
         print("Vision Controller beendet")
 
 def main():

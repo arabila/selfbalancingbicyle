@@ -1,31 +1,37 @@
 \section{Fazit}
 
-Diese Masterarbeit hat erfolgreich eine zweistufige Regelungsarchitektur fuer ein selbstbalancierendes Fahrrad entwickelt 
+Diese Masterarbeit hat erfolgreich eine zweistufige Regelungsarchitektur für ein selbstbalancierendes Fahrrad entwickelt 
 und in der Webots-Simulationsumgebung validiert. Die systematische Integration einer hochfrequenten PID-Balanceregelung 
 (500\,Hz) mit einer visionbasierten MPC-Spurfuehrung (20\,Hz) stellt einen wichtigen methodischen Fortschritt in der 
 Entwicklung autonomer Fahrradsysteme dar und demonstriert erstmals die praktische Machbarkeit der Kopplung beider 
-Regelungsaufgaben in einer integrierten Simulationsumgebung.
+Regelungsaufgaben in einer integrierten Simulationsumgebung. Während frühere Arbeiten entweder isolierte Balance-Regelung 
+\cite{astrom2005,andreo2009,lam2011} oder autonome Spurführung \cite{Hunziker2019} untersuchten, bzw. kombinierte Ansätze 
+nur in Hardware-Prototypen \cite{aphiratsakun2013,kanjanawanishkul2015} oder ohne systematische Validierung verschiedener 
+Störungsszenarien realisierten, vereint diese Arbeit beide Regelungsdomänen in einer hochrealistischen Simulationsumgebung 
+mit umfassender experimenteller Evaluierung. Die duale Controller-Architektur mit unterschiedlichen Programmiersprachen 
+und Abtastfrequenzen sowie die systematische Robustheitsanalyse unter verschiedenen Umweltbedingungen stellen eine neuartige 
+methodische Herangehensweise dar, die eine risikofreie Validierung komplexer Regelungsstrategien vor Hardware-Implementierung ermöglicht.
 
 \subsection{Zentrale Erkenntnisse und wissenschaftliche Beitraege}
 
-Die entwickelte duale Controller-Architektur basiert auf der erfolgreichen Portierung bewaehrter Hardware-Implementierungen 
-von Zander (2023) und Giray (2024) und zeigt die Uebertragbarkeit etablierter Regelungskonzepte zwischen verschiedenen 
+Die entwickelte duale Controller-Architektur basiert auf der erfolgreichen Portierung bewährter Hardware-Implementierungen 
+von Zander (2023) und Giray (2024), zeigt die Übertragbarkeit etablierter Regelungskonzepte zwischen verschiedenen 
 Plattformen auf. Die identischen PID-Parameter aus Zanders Hardware-Implementierung erzielen auch in der idealisierten 
-Webots-Umgebung stabile Balance-Regelung, was die Robustheit des gewaehlten Ansatzes unterstreicht.
+Webots-Umgebung stabile Balance-Regelung, was die Robustheit des gewählten Ansatzes unterstreicht.
 
-Ein ueberraschendes und wissenschaftlich bedeutsames Ergebnis ist die durchgaengige Ueberlegenheit der ROI-basierten 
-Fallback-Erkennung gegenueber der YOLO-Segmentierung. In allen Testszenarien erwies sich die klassische Bildverarbeitung 
-der neuronalen Spurdetektion als ueberlegen: Bei der Kurvenfahrt erreichte ROI-Fallback 43,62\,s stabile Fahrt 
-gegenueber 35,96\,s bei YOLO-PID mit durchgehend stabilen Rollwinkeln ($\pm$0,015\,rad vs. $\pm$0,02\,rad). In der S-Kurve 
+Ein überraschendes und ist die durchgängige Überlegenheit der ROI-basierten 
+Fallback-Erkennung gegenüber der YOLO-Segmentierung. In allen Testszenarien erwies sich die klassische Bildverarbeitung 
+der neuronalen Spurdetektion als überlegen. Bei der Kurvenfahrt erreichte das System mit ROI-Fallback 43,62\,s stabile Fahrt 
+gegenüber 35,96\,s bei System mit dem YOLO-PID und durchgehend stabilen Rollwinkeln ($\pm$0,015\,rad vs. $\pm$0,02\,rad). In der S-Kurve 
 ergab sich eine 16,8\% Verbesserung der Fahrtdauer (56,78\,s vs. 48,59\,s) mit reduzierter Rollwinkel-Amplitude und 
 halbierten Querfehlern ($\pm$0,4\,m vs. $\pm$0,8\,m). Die konstante Spurerkennung mit Mask-Coverage $>$0,8 bei ROI-Fallback 
-gegenueber $<$0,1 in kritischen Phasen bei YOLO belegt die Zuverlaessigkeit des klassischen Ansatzes.
+gegenüber $<$0,1 in kritischen Phasen bei YOLO belegt die Zuverlässigkeit des klassischen Ansatzes.
 
-Diese Ergebnisse zeigen, dass fuer strukturierte Simulationsumgebungen mit kontrollierten Lichtverhaeltnissen klassische 
-Bildverarbeitung durchaus konkurrenzfaehig zu modernen Deep-Learning-Ansaetzen sein kann. Dies ist besonders relevant 
-fuer Anwendungen, bei denen Rechenressourcen begrenzt sind oder Echtzeitfaehigkeit kritisch ist.
+Diese Ergebnisse zeigen, dass für strukturierte Simulationsumgebungen mit kontrollierten Lichtverhältnissen klassische 
+Bildverarbeitung durchaus konkurrenzfähig zu modernen Deep-Learning-Ansaetzen sein kann. Dies ist besonders relevant 
+für Anwendungen, bei denen Rechenressourcen begrenzt sind oder Echtzeitfähigkeit kritisch ist.
 
-Die systematische Evaluierung verschiedener Stoerungsszenarien belegt die bemerkenswerte Anpassungsfaehigkeit der 
+Die systematische Evaluierung verschiedener Störungsszenarien belegt die bemerkenswerte Anpassungsfähigkeit der 
 Regelungsarchitektur. Bei der Seitenwindresistenz zeigt das System mit Baseline-Parametern bei moderatem Wind 
 (0,5\,m/s) 18\,s stabile Fahrt, waehrend fuer starken Seitenwind (1,0\,m/s) adaptive PID-Parametrierung 
 ($K_p=5{,}0$, $K_i=0{,}2$, $K_d=0{,}4$) eine erfolgreiche 22\,s-Fahrt mit kontrollierten Rollwinkeln unter $\pm$0,03\,rad ermoeglicht. 

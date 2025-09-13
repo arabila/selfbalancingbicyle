@@ -67,57 +67,49 @@ Ausgangsbegrenzung & $\pm 150$ (Hardware-Einheiten) & $\pm 0.3$ rad \\
 \end{table}
 
 Die Webots-Implementierung vereinfacht die Architektur erheblich durch Elimination der sekundären Lenkpositionsregelung. 
-Listing~\ref{lst:webots_balance_pid} zeigt die zentrale Balance-Regelschleife, die direkt den Lenkwinkel setzt:
+Die zentrale Balance-Regelschleife lässt sich mathematisch als vierstufiger Prozess beschreiben:
 
-\begin{lstlisting}[style=wbt_c,caption={Vereinfachte Balance-PID-Implementierung in Webots},label={lst:webots_balance_pid}]
-// 1. Roll-Winkel messen (idealisiert, ohne Rauschen)
-float roll_angle = get_roll_rad_raw();
+\begin{align}
+\text{Schritt 1: } \quad &\phi(t) = \text{get\_roll\_rad\_raw}() \label{eq:step1} \\
+\text{Schritt 2: } \quad &u_{\text{raw}}(t) = \begin{cases}
+-\text{PID}(\phi_{\text{soll}} - \phi(t), t) & \text{if control\_enabled} \\
+0 & \text{sonst}
+\end{cases} \label{eq:step2} \\
+\text{Schritt 3: } \quad &u_{\text{sat}}(t) = \begin{cases}
+\delta_{\max} & \text{if } u_{\text{raw}}(t) > \delta_{\max} \\
+-\delta_{\max} & \text{if } u_{\text{raw}}(t) < -\delta_{\max} \\
+u_{\text{raw}}(t) & \text{sonst}
+\end{cases} \label{eq:step3} \\
+\text{Schritt 4: } \quad &\text{wb\_motor\_set\_position}(\text{motor::handlebars}, u_{\text{sat}}(t)) \label{eq:step4}
+\end{align}
 
-// 2. PID-Regelung: Roll-Winkel -> Lenkwinkel  
-if (control_enabled) {
-    steering_output = -pid_compute(&angle_pid, 0.0, roll_angle, current_time);
-}
-
-// 3. Lenkwinkel begrenzen
-if (steering_output > config.mechanical_limits.max_handlebar_angle) 
-    steering_output = config.mechanical_limits.max_handlebar_angle;
-else if (steering_output < -config.mechanical_limits.max_handlebar_angle)
-    steering_output = -config.mechanical_limits.max_handlebar_angle;
-
-// 4. Direkter Motoranschluss (keine sekundaere Regelung)
-wb_motor_set_position(handlebars_motor, -final_steer);
-\end{lstlisting}
+wobei $\phi(t)$ der gemessene Roll-Winkel, $\phi_{\text{soll}} = 0$ der Sollwert, $u_{\text{raw}}(t)$ das ungefilterte PID-Signal, $u_{\text{sat}}(t)$ das begrenzte Stellsignal und $\delta_{\max}$ die maximale Lenkwinkel-Begrenzung darstellen. Schritt 4 zeigt die direkte Motoransteuerung ohne sekundäre Regelung durch \texttt{wb\_motor\_set\_position()}.
 
 Der PID-Algorithmus selbst wurde von Zanders Implementierung adaptiert, jedoch mit verbesserter numerischer Stabilität. 
-Während Zanders Code eine komplexe Historien-Verwaltung mit zirkulären Puffern verwendet, nutzt die Webots-Version eine 
-vereinfachte Zeitberechnung basierend auf dem deterministischen Simulationszeitschritt:
+Die vereinfachte PID-Berechnung lässt sich mathematisch wie folgt beschreiben:
 
-\begin{lstlisting}[style=wbt_c,caption={Vereinfachte PID-Berechnung in der Webots-Implementierung},label={lst:webots_pid_compute}]
-// I-Term (Integral) - vereinfachte Zeitberechnung
-int prev_index = (pid->history_counter + HISTORY_LEN - 1) % HISTORY_LEN;
-float dt = (pid->time_history[pid->history_counter] - 
-           pid->time_history[prev_index]) / 1000000.0; // Mikrosekunden -> Sekunden
+\begin{align}
+\text{Zeitschritt: } \quad &\Delta t = \frac{t[n] - t[n-1]}{10^6} \text{ [s]} \label{eq:webots_dt} \\
+\text{P-Term: } \quad &P(n) = K_p \cdot e(n) \label{eq:webots_p} \\
+\text{I-Term: } \quad &I(n) = \begin{cases}
+I(n-1) + K_i \cdot e(n) \cdot \Delta t & \text{falls } 0 < \Delta t < 1 \\
+I(n-1) & \text{sonst}
+\end{cases} \label{eq:webots_i} \\
+\text{D-Term: } \quad &D(n) = K_d \cdot \frac{1}{L} \sum_{j=0}^{L-1} \frac{e(n-j) - e(n-j-1)}{\Delta t} \label{eq:webots_d} \\
+\text{Ausgabe: } \quad &u(n) = P(n) + I(n) + D(n) \label{eq:webots_output}
+\end{align}
 
-if (dt > 0.0 && dt < 1.0) {  // Plausibilitaetspruefung
-    pid->integral_term += pid->Ki * error * dt; 
-}
+wobei $e(n) = \phi_{\text{soll}} - \phi(n)$ der Roll-Winkelfehler, $t[n]$ der Zeitstempel in Mikrosekunden und $L$ die Pufferlänge (\texttt{HISTORY\_LEN}) darstellen. Die Besonderheiten der Implementierung sind:
 
-// D-Term mit gleitendem Durchschnitt (wie bei Zander)
-float current_derivative = (error - pid->error_history[prev_index]) / dt;
-pid->derivative_history[pid->history_counter] = current_derivative;
-
-float derivative_sum = 0.0;
-for (int i = 0; i < HISTORY_LEN; i++) {
-    derivative_sum += pid->derivative_history[i];
-}
-pid->derivative_term = pid->Kd * (derivative_sum / HISTORY_LEN);
-\end{lstlisting}
+\begin{itemize}
+\item \textbf{Robuste Integration:} Der I-Term wird nur bei plausiblen Zeitschritten ($0 < \Delta t < 1$) aktualisiert
+\item \textbf{Geglättete Ableitung:} Der D-Term verwendet einen gleitenden Durchschnitt über $L$ vergangene Ableitungswerte zur Rauschunterdrückung
+\item \textbf{Zirkulärer Puffer:} \texttt{prev\_index = (history\_counter + L - 1) \% L} implementiert effiziente Speicherverwaltung
+\end{itemize}
 
 Die erfolgreiche Übertragung von Zanders Regelungskonzept in die Simulation bestätigt 
-die Robustheit des gewählten PID-Ansatzes. Die identischen Parameter (\(K_p = 10\), \(K_i = 0\), \(K_d = 2{,}2\)) erzielen 
-auch in der idealisierten Webots-Umgebung stabile Balance-Regelung. Der Verzicht auf den Integralanteil erweist sich als 
-vorteilhaft, da er Drift-bedingte Instabilitäten vermeidet, was ein Aspekt, der sowohl in der Hardware- als auch in der 
-Simulationsumgebung relevant ist.
+die Robustheit des gewählten PID-Ansatzes. Die Parameter (\(K_p = 10\), \(K_i = 0\), \(K_d = 2{,}2\)) erzielen 
+in der idealisierten Webots-Umgebung stabile Balance-Regelung. 
 
 Die Portierung demonstriert, wie Hardware-spezifische Komplexitäten (Multi-Threading, Sensor-Rauschen, Aktor-Totzeiten) in 
 einer Simulationsumgebung abstrahiert werden können, ohne die regelungstechnischen Kernprinzipien zu beeinträchtigen. 
@@ -209,55 +201,94 @@ Referenzgenerierung basierend auf dem aktuellen Vision-Fehler. Die Referenztraje
 abgeleitet, indem ein Ziel-Gierwinkel berechnet und über den kurzen Horizont interpoliert wird.
 
 \textbf{MPC-Optimierungsalgorithmus:} Die Webots-Implementierung folgt Girays theoretischer Formulierung bei der Lösung des 
-Optimierungsproblems. Listing~\ref{lst:webots_mpc_solver} zeigt den Kern des MPC-Algorithmus:
+Optimierungsproblems. Abbildung~\ref{fig:mpc_blockdiagram} zeigt die strukturierte Darstellung des MPC-Algorithmus:
 
-\begin{lstlisting}[style=python,caption={MPC-Optimierungsalgorithmus in der Webots-Implementierung},label={lst:webots_mpc_solver}]
-def linear_mpc_control(self, xref, xbar, x0):
-    """Loest MPC-Optimierungsproblem"""
-    try:
-        x = cvxpy.Variable((self.NX, self.T + 1))
-        u = cvxpy.Variable((self.NU, self.T))
-        
-        cost = 0.0
-        constraints = []
-        
-        for t in range(self.T):
-            cost += cvxpy.quad_form(u[:, t], self.R)
-            
-            if t != 0:
-                cost += cvxpy.quad_form(xref[:, t] - x[:, t], self.Q)
-            
-            A, B, C = self.get_linear_model_matrix(
-                xbar[2, t], xbar[3, t], 0.0)  # Linearisierung um Referenz
-            constraints += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t] + C]
-            
-            if t < (self.T - 1):
-                cost += cvxpy.quad_form(u[:, t + 1] - u[:, t], self.Rd)
-                constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <= self.MAX_DSTEER * self.DT]
-        
-        cost += cvxpy.quad_form(xref[:, self.T] - x[:, self.T], self.Qf)
-        
-        # Randbedingungen
-        constraints += [x[:, 0] == x0]
-        constraints += [x[2, :] <= self.MAX_SPEED]
-        constraints += [x[2, :] >= self.MIN_SPEED]
-        constraints += [cvxpy.abs(u[0, :]) <= self.MAX_ACCEL]
-        constraints += [cvxpy.abs(u[1, :]) <= self.MAX_STEER]
-        
-        # Problem loesen
-        prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
-        prob.solve(verbose=False)
-        
-        if prob.status == cvxpy.OPTIMAL or prob.status == cvxpy.OPTIMAL_INACCURATE:
-            u_opt = u.value
-            if u_opt is not None:
-                return u_opt[0, 0], u_opt[1, 0]  # Erste Kontrollaktion
-        
-        return self._simple_control_fallback(xref, x0)
-        
-    except Exception as e:
-        return self._simple_control_fallback(xref, x0)
-\end{lstlisting}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+  node distance=1.2cm and 1.5cm,
+  block/.style={rectangle, draw, fill=blue!10, text width=2.8cm, text centered, minimum height=1cm},
+  decision/.style={diamond, draw, fill=yellow!20, text width=2cm, text centered, minimum height=1cm},
+  input/.style={rectangle, draw, fill=green!10, text width=2.5cm, text centered, minimum height=0.8cm},
+  output/.style={rectangle, draw, fill=red!10, text width=2.5cm, text centered, minimum height=0.8cm},
+  constraint/.style={rectangle, draw, fill=orange!10, text width=2.8cm, text centered, minimum height=0.7cm, font=\footnotesize},
+  constraint_box/.style={rectangle, draw=orange!60, fill=orange!5, thick, dashed, minimum height=2cm, minimum width=16cm},
+  arrow/.style={->, >=stealth, thick}
+]
+
+% Eingaben, Variablen und Kostenfunktion nebeneinander
+\node[input] (inputs) at (-3.5,2.2) {Eingaben\\$x_{\text{ref}}, x_0, T$};
+
+% Variablendefinition
+\node[block] (variables) at (0,2.2) {Optimierungsvar.\\$x \in \mathbb{R}^{4 \times (T+1)}$\\$u \in \mathbb{R}^{2 \times T}$};
+
+% Kostenfunktion
+\node[block] (cost) at (3.5,2.2) {Kostenfunktion\\$J = J_{\text{track}} + J_{\text{control}} + J_{\text{rate}} + J_{\text{terminal}}$};
+
+% Nebenbedingungen-Container
+\node[constraint_box, below=1.2cm of cost] (constraint_container) {};
+\node[above=0.05cm of constraint_container.north, font=\small\bfseries, color=orange!80] {Nebenbedingungen (Constraints)};
+
+% Nebenbedingungen - Kompaktere Abstände
+\node[constraint] (dynamics) at ([xshift=-6.2cm]constraint_container.center) {\textbf{Systemdynamik}\\$x[t+1] = A_t x[t] + B_t u[t] + C_t$\\$\forall t = 0, \ldots, T-1$};
+\node[constraint] (bounds) at ([xshift=-3.1cm]constraint_container.center) {\textbf{Stellbegrenzung}\\$|u_a[t]| \leq 1.0$ m/s$^2$\\$|\delta[t]| \leq 0.3$ rad\\$\forall t = 0, \ldots, T-1$};
+\node[constraint] (rate) at (constraint_container.center) {\textbf{Lenkbegrenzung}\\$|\delta[t+1] - \delta[t]| \leq 0.3 \Delta t$ rad/s\\$\forall t = 0, \ldots, T-2$};
+\node[constraint] (speed) at ([xshift=3.1cm]constraint_container.center) {\textbf{Speedlimits}\\$0.5 \leq v[t] \leq 3.0$ m/s\\$\forall t = 0, \ldots, T$};
+\node[constraint] (initial) at ([xshift=6.2cm]constraint_container.center) {\textbf{Init}\\$x[0] = x_0$};
+
+% Solver    
+\node[block, below=1.2cm of constraint_container] (solver) {cvxpy.solve()\\Konvexe Optimierung};
+
+% Entscheidung
+\node[decision, below=0.8cm of solver] (decision) {Optimal?};
+
+% Ausgaben
+\node[output, below left=0.8cm and 1.2cm of decision] (output_opt) {Optimale Lösung\\$(u_a^*[0], \delta^*[0])$};
+\node[output, below right=0.8cm and 1.2cm of decision] (output_fallback) {Fallback-Regelung\\$u_{\text{simple}}$};
+
+% Hauptfluss-Pfeile
+\draw[arrow] (inputs) -- (variables);
+\draw[arrow] (variables) -- (cost);
+\draw[arrow] (cost) -- (constraint_container.north);
+\draw[arrow] (constraint_container.south) -- (solver);
+\draw[arrow] (solver) -- (decision);
+
+% Entscheidungsausgänge
+\draw[arrow] (decision) -- node[left] {Ja} (output_opt);
+\draw[arrow] (decision) -- node[right] {Nein} (output_fallback);
+
+\end{tikzpicture}
+\caption{MPC-Optimierungsalgorithmus mit gebündelten Nebenbedingungen}
+\label{fig:mpc_blockdiagram}
+\end{figure}
+
+Die Kostenfunktion $J$ setzt sich aus folgenden Komponenten zusammen:
+
+\begin{itemize}
+    \item \textbf{Tracking-Term:} 
+    \begin{equation}
+        J_{\text{track}} = \sum_{t=1}^{T} \|x_{\text{ref}}[t] - x[t]\|_Q^2
+    \end{equation}
+    Bestraft Abweichungen von der Referenztrajektorie.
+    
+    \item \textbf{Stellaufwand:} 
+    \begin{equation}
+        J_{\text{control}} = \sum_{t=0}^{T-1} \|u[t]\|_R^2
+    \end{equation}
+    Begrenzt die Stellgrößen und verhindert übermäßige Stellaufwände.
+    
+    \item \textbf{Stellraten-Gewichtung:} 
+    \begin{equation}
+        J_{\text{rate}} = \sum_{t=0}^{T-2} \|u[t+1] - u[t]\|_{R_d}^2
+    \end{equation}
+    Sorgt für glatte Übergänge und verhindert abrupte Änderungen der Stellgrößen.
+    
+    \item \textbf{Terminal-Term:} 
+    \begin{equation}
+        J_{\text{terminal}} = \|x_{\text{ref}}[T] - x[T]\|_{Q_f}^2
+    \end{equation}
+    Gewichtet den Endzustand stärker und stellt sicher, dass das System am Ende des Prädiktionshorizonts nahe der Referenz ist.
+\end{itemize}
 
 Die Implementierung folgt dem Standard-MPC-Schema mit quadratischen Kosten und linearen Constraints. Im Gegensatz zu Girays 
 längerfristigem Horizont ermöglicht die Reduzierung auf 3 Zeitschritte eine Echtzeitausführung mit 20\,Hz.
@@ -267,28 +298,6 @@ dem bestehenden Balance-PID-Regler. Die Webots-Implementierung realisiert eine K
 langfristige Spurführung übernimmt, während der Balance-PID die kurzfristige Stabilisierung gewährleistet. Die MPC-Ausgaben werden 
 normalisiert und über IPC an den C-basierten Balance-Controller übertragen:
 
-\begin{lstlisting}[style=python,caption={IPC-Übertragung der MPC-Kommandos an den Balance-Controller},label={lst:mpc_ipc}]
-def send_vision_command(self, steer_cmd, speed_cmd):
-    """Sendet erweiterte Vision-Command an Balance-Controller"""
-    try:
-        # Begrenzungen anwenden
-        steer_cmd = max(-1.0, min(1.0, steer_cmd))
-        speed_cmd = max(0.0, min(1.0, speed_cmd))
-        
-        # Erweiterte Struct-Format: 8 Felder
-        # (steer_command, speed_command, valid, vision_error, 
-        #  vision_p_term, vision_i_term, vision_d_term, mask_coverage)
-        command_data = struct.pack('ffifffff', 
-                                 steer_cmd, speed_cmd, 1,
-                                 self.vision_error, self.mpc_controller.mpc_p_term, 
-                                 self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term, 
-                                 self.vision_mask_coverage)
-        
-        self.command_emitter.send(command_data)
-        return True
-    except Exception as e:
-        return False
-\end{lstlisting}
 
 \textbf{Bewertung der Portierung:} Die Adaptation von Girays MPC-Konzept für die Webots-Simulation demonstriert sowohl die 
 Übertragbarkeit theoretischer MPC-Ansätze als auch die Notwendigkeit praktischer Kompromisse.
@@ -315,31 +324,8 @@ Die YOLO-Strategie nutzt ein vortrainiertes YOLOv8-Segmentierungsmodell zur robu
 Das neuronale Netz identifiziert Straßenbereiche als Klasse \enquote{street\_main} und liefert sowohl Bounding Boxes 
 als auch pixelgenaue Segmentierungsmasken, wie in Kapitel \ref{chap:yolo} beschrieben ist.
 Das System sucht beim Start nach einer trainierten Gewichtsdatei (\texttt{best.pt}) 
-und lädt das YOLOv8-Modell auf das verfügbare Rechengerät. Bei Nichtverfügbarkeit erfolgt automatischer Wechsel 
-zur Fallback-Strategie:
+und lädt das YOLOv8-Modell auf das verfügbare Rechengerät.
 
-\begin{lstlisting}[style=python,caption={YOLO-Modell Initialisierung},label={lst:yolo_init}]
-  if YOLO_AVAILABLE:
-    possible_paths = [
-        "../balance_control_c/yolo_vision/runs/segment/train/weights/best.pt",
-        "yolo_weights/best.pt",
-        "best.pt"
-    ]
-    for path in possible_paths:
-        if os.path.exists(path):
-            try:
-                device = "mps" if torch.backends.mps.is_available() else \
-                         ("cuda" if torch.cuda.is_available() else "cpu")
-                self.yolo_model = YOLO(path).to(device)
-                print(f"[OK] YOLO-Modell geladen: {path} (Device: {device})")
-                break
-            except Exception as e:
-                print(f"[WARN] Fehler beim Laden von {path}: {e}")
-                continue
-    if not self.yolo_model:
-        print("[WARN] Kein YOLO-Modell gefunden - Fallback-Vision aktiviert")
-        YOLO_AVAILABLE = False
-\end{lstlisting}
 
 
 Im Echtzeitbetrieb (20\,Hz) analysiert YOLO jedes Kamerabild und filtert Straßenobjekte 
@@ -354,20 +340,43 @@ Abweichung ergibt sich als normierte Differenz zwischen Straßenmittelpunkt und 
 \end{figure}
 
 
-\begin{lstlisting}[style=python,caption={YOLO-Fehlerberechnung},label={lst:yolo_error_calculation}]
-  street_indices = [idx for idx, cls in enumerate(r.boxes.cls) if cls == 2]
-  if street_indices:
-      x_centers = []
-      for idx in street_indices:
-          xyxy = r.boxes.xyxy[idx]  # Koordinaten der Bounding Box
-          x_center = float((xyxy[0] + xyxy[2]) / 2.0)
-          x_centers.append(x_center)
-      avg_x_center = sum(x_centers) / len(x_centers)
-      frame_center = frame.shape[1] / 2
-      error = (frame_center - avg_x_center) / frame.shape[1]  # Normiert
-      self._store_valid_values(error, mask, self.vision_mask_coverage)
-      return error, mask
-\end{lstlisting}
+Die YOLO-Fehlerberechnung erfolgt durch folgende mathematische Schritte:
+
+\textbf{1. Zentrumsberechnung der Straßen-Bounding-Boxes:}
+\begin{equation}
+    x_{center,i} = \frac{x_{min,i} + x_{max,i}}{2} \quad \text{für alle Straßen-Detektionen } i
+\end{equation}
+Berechnet das horizontale Zentrum jeder von YOLO erkannten Straßen-Bounding-Box.
+
+\textbf{2. Durchschnittliches Straßenzentrum:}
+\begin{equation}
+    \bar{x}_{street} = \frac{1}{N} \sum_{i=1}^{N} x_{center,i}
+\end{equation}
+Mittelt alle Straßenzentren zu einem einzigen repräsentativen Straßenzentrum.
+
+\textbf{3. Normierter Lateral-Fehler:}
+\begin{equation}
+    e_{lateral} = \frac{x_{frame\_center} - \bar{x}_{street}}{W_{frame}}
+\end{equation}
+Berechnet den normierten Abstand zwischen Bildmitte und durchschnittlichem Straßenzentrum.
+
+Hierbei ist:
+\begin{itemize}
+    \item $x_{frame\_center} = \frac{W_{frame}}{2}$ das Bildzentrum
+    \item $W_{frame}$ die Bildbreite in Pixeln
+    \item $e_{lateral} \in [-0.5, 0.5]$ der normierte Lateral-Fehler
+\end{itemize}
+
+\textbf{Interpretation:}
+\begin{itemize}
+    \item $e_{lateral} = 0$: Straße ist zentriert im Bild
+    \item $e_{lateral} > 0$: Straße ist links vom Bildzentrum → Lenkung nach rechts erforderlich
+    \item $e_{lateral} < 0$: Straße ist rechts vom Bildzentrum → Lenkung nach links erforderlich
+\end{itemize}
+
+Die detaillierte Implementierung der YOLO-Fehlerberechnung ist in Anlage~\ref{lst:yolo_error_calculation_appendix} dargestellt.
+
+
 
 Das System implementiert eine Ausfallüberbrückung durch Zwischenspeicherung 
 der letzten gültigen Fehlerwerte. Bei Detektionsaussetzern wird der gespeicherte Fehler mit Decay-Faktor schrittweise 
@@ -381,6 +390,7 @@ temporären Erkennungsverlusten.
 Rechenleistung. Bei Abweichungen von den Trainingsdaten können Fehlerkennungen auftreten. Diese Fehlererkennungen 
 werden in Kapitel \ref{chap:teststrecken} beschrieben. 
 
+\newpage
 
 
 \subsubsection{Fallback-Strategie (ROI-basiert)}
@@ -405,25 +415,63 @@ Die größte erkannte Kontur wird als Straßenbereich interpretiert:
 
 
 
-\begin{lstlisting}[style=python,caption={Fallback-Fehlerberechnung},label={lst:fallback_error_calculation}]
-  mask_road = cv2.inRange(hsv, road_lower, road_upper)      # Graue Strasse filtern
-  mask_white = cv2.inRange(hsv, white_lower, white_upper)   # Weisse Markierungen filtern
-  mask0 = cv2.bitwise_or(mask_road, mask_white)
-  mask0 = cv2.morphologyEx(mask0, cv2.MORPH_CLOSE, kernel)
-  mask0 = cv2.morphologyEx(mask0, cv2.MORPH_OPEN, kernel)
-  contours, _ = cv2.findContours(mask0, cv2.RETR_LIST, cv2.CHAIN_APPROX_SIMPLE)
-  if contours:
-      largest_contour = max(contours, key=cv2.contourArea)
-      x, y, w, h = cv2.boundingRect(largest_contour)
-      center_x = int(x + w / 2)
-      error = (x_set - center_x) / float(max(1, width))   # Fehler normiert an Bildbreite
-      mask = np.zeros((height, width), dtype=np.uint8)
-      cv2.drawContours(mask, [largest_contour], -1, 255, -1)
-      ...  # (Berechnung der Maskenabdeckung)
-      self._store_valid_values(error, mask, self.vision_mask_coverage)
-      return error, mask
+Die Fallback-Fehlerberechnung basiert auf HSV-Farbsegmentierung und erfolgt in folgenden mathematischen Schritten:
 
-\end{lstlisting}
+\textbf{1. HSV-Farbbereich-Filterung:}
+\begin{align}
+    M_{road}(x,y) &= \begin{cases} 
+        255 & \text{falls } HSV_{lower,road} \leq HSV(x,y) \leq HSV_{upper,road} \\
+        0 & \text{sonst}
+    \end{cases} \\
+    M_{white}(x,y) &= \begin{cases} 
+        255 & \text{falls } HSV_{lower,white} \leq HSV(x,y) \leq HSV_{upper,white} \\
+        0 & \text{sonst}
+    \end{cases}
+\end{align}
+Erstellt separate Binärmasken für graue Straßenbereiche und weiße Fahrbahnmarkierungen basierend auf HSV-Farbwerten.
+
+\textbf{2. Maskenkombination und morphologische Operationen:}
+\begin{align}
+    M_{combined} &= M_{road} \vee M_{white} \\
+    M_{closed} &= \text{Close}(M_{combined}, K) \\
+    M_{final} &= \text{Open}(M_{closed}, K)
+\end{align}
+Kombiniert beide Masken und reduziert Rauschen durch morphologische Schließung und Öffnung.
+\newpage
+\textbf{3. Konturerkennung und Zentrumsberechnung:}
+\begin{align}
+    C_{max} &= \arg\max_{C \in \mathcal{C}} \text{Area}(C) \\
+    (x, y, w, h) &= \text{BoundingRect}(C_{max}) \\
+    x_{center} &= x + \frac{w}{2}
+\end{align}
+Identifiziert die größte Kontur als Straßenbereich und berechnet deren horizontales Zentrum.
+
+\textbf{4. Normierter Lateral-Fehler:}
+\begin{equation}
+    e_{fallback} = \frac{x_{target} - x_{center}}{W_{frame}}
+\end{equation}
+Berechnet den normierten Abstand zwischen Straßenzentrum und gewünschter Zielposition.
+
+Hierbei ist:
+\begin{itemize}
+    \item $x_{target}$ die gewünschte Zielposition (meist Bildmitte)
+    \item $x_{center}$ das berechnete Zentrum der größten Straßenkontur
+    \item $W_{frame}$ die Bildbreite zur Normierung
+    \item $e_{fallback} \in [-1, 1]$ der normierte Lateral-Fehler
+\end{itemize}
+
+
+\textbf{Vorteile der Fallback-Methode:}
+\begin{itemize}
+    \item Robuste Farbsegmentierung bei konstanten Lichtverhältnissen
+    \item Geringe Rechenleistung erforderlich
+    \item Deterministisches Verhalten ohne ML-Unsicherheiten
+    \item Morphologische Filterung reduziert Rauschen
+\end{itemize}
+
+Die detaillierte Implementierung der Fallback-Fehlerberechnung ist in Anlage~\ref{lst:fallback_error_calculation_appendix} dargestellt.
+
+
 
 Der Algorithmus ermittelt die größte Kontur als Straßenbereich und berechnet deren Mittelpunkt. Die normierte 
 Differenz zur Bildmitte ergibt den lateralen Fehler, analog zur YOLO-Methode. Bei Erkennungsverlusten greift 

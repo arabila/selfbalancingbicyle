@@ -1,10 +1,15 @@
 \section{Zukünftige Arbeiten}
 
-Die vorliegende Arbeit hat erfolgreich die grundsätzliche Machbarkeit einer kombinierten Balance- und Spurführungsregelung 
-in der Webots-Simulationsumgebung demonstriert. Die dabei identifizierten Limitierungen zeigen jedoch konkrete Ansatzpunkte 
-für zukünftige Forschungsarbeiten auf, die eine schrittweise Annäherung an reale Implementierungen ermöglichen würden. 
-Die folgenden Forschungsrichtungen zeigen systematische Wege auf, um die Lücke zwischen der idealisierten Simulation und 
-der praktischen Umsetzung zu schließen.
+Die erfolgreiche Implementierung der kombinierten Balance- und Spurführungsregelung in Webots stellt einen wichtigen 
+ersten Meilenstein in der Entwicklung autonomer selbstbalancierender Fahrräder dar. Dennoch offenbart die vorliegende Arbeit 
+deutlich die Diskrepanz zwischen den idealisierten Simulationsbedingungen und den Herausforderungen realer Implementierungen. 
+Diese Erkenntnisse eröffnen ein breites Spektrum zukunftsweisender Forschungsfelder, die systematisch aufeinander aufbauend 
+den Weg zur praktischen Umsetzung ebnen können.
+
+Im Zentrum zukünftiger Entwicklungen steht die Überbrückung des "Reality Gap", jener fundamentalen Lücke zwischen 
+simulierten und realen Systemen, die in der Robotik eine der größten Herausforderungen darstellt \cite{jakobi1995reality}. 
+Die nachfolgend beschriebenen Forschungsrichtungen bilden eine kohärente Roadmap, die von der Verbesserung der 
+Simulationstreue über die Optimierung der Regelungsalgorithmen bis hin zur robusten Hardware-Integration reicht.
 
 \subsection{Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}
 
@@ -66,16 +71,4 @@ Simulationsparameter sollte durch Vergleich charakteristischer Systemantworten (
 und realem System erfolgen. Dabei könnten Identifikationsverfahren wie Least-Squares-Schätzung\footnote{Die Least-Squares-Schätzung (Methode der kleinsten Quadrate) ist ein mathematisches Optimierungsverfahren zur Parameterschätzung, das die Summe der quadrierten Abweichungen zwischen Mess- und Modellwerten minimiert.} oder Kalman-Filter-basierte\footnote{Kalman-Filter sind rekursive Schätzverfahren, die Systemzustände und Parameter auch bei verrauschten Messungen optimal schätzen können, indem sie Vorhersage- und Korrekturschritte kombinieren.} 
 Parameterschätzung eingesetzt werden.
 
-\subsection{Methodischer Ausblick}
-
-Die vorgeschlagenen Erweiterungen folgen einer systematischen Methodik zur schrittweisen Überbrückung der Sim-to-Real-Lücke\footnote{Die Sim-to-Real-Lücke bezeichnet die Diskrepanz zwischen simulierten und realen Systemverhalten, die durch idealisierte Modellierungen, vereinfachte Physik und fehlende Umgebungseinflüsse in der Simulation entsteht.}. 
-Die Kombination aus hardware-orientierter Simulationsparametrierung, erweiterten Physikmodellen und alternativen 
-Simulationsumgebungen würde eine robuste Validierungsplattform für die entwickelten Regelungsstrategien schaffen.
-
-Besonders vielversprechend ist die Möglichkeit, durch CARLA-Integration von den umfangreichen Entwicklungen im Bereich 
-autonomer Fahrzeuge zu profitieren und gleichzeitig die spezifischen Herausforderungen der Fahrradbalancierung zu 
-adressieren. Die systematische Multi-Environment-Evaluierung würde dabei statistische Aussagen über die Robustheit und 
-Übertragbarkeit der Ergebnisse ermöglichen.
-
-Diese Forschungsrichtungen tragen nicht nur zur praktischen Realisierung selbstbalancierender Fahrradsysteme bei, sondern 
-erweitern auch das methodische Verständnis für die Validierung simulationsbasierter Regelungsentwicklung in der Fahrzeugtechnik.
+ 
