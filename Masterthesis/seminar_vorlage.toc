@@ -53,12 +53,12 @@
 \contentsline {paragraph}{Zusammenfassung und Ableitungen:}{63}{section*.65}%
 \contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{65}{subsection.6.3}%
 \contentsline {subsubsection}{\numberline {6.3.1}Performance-Monitoring und Rechenzeit-Analyse}{65}{subsubsection.6.3.1}%
-\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung}{66}{section*.66}%
-\contentsline {paragraph}{Komponenten-spezifische Rechenzeit-Analyse}{66}{section*.68}%
+\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung:}{65}{section*.66}%
+\contentsline {paragraph}{Komponenten-spezifische:}{66}{section*.68}%
 \contentsline {paragraph}{Echtzeitfähigkeits-Bewertung}{66}{section*.70}%
-\contentsline {paragraph}{Performance-Charakteristika und Implikationen}{66}{section*.72}%
-\contentsline {paragraph}{Vergleich zu realen Fahrrad-Implementierungen}{68}{section*.74}%
-\contentsline {paragraph}{Fazit zur Performance-Analyse}{68}{section*.76}%
+\contentsline {subsubsection}{\numberline {6.3.2} Rechenzeit-Analyse und Implikationen}{66}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}Hardware-Skalierung und Jetson Nano Vergleich}{68}{subsubsection.6.3.3}%
+\contentsline {subsubsection}{\numberline {6.3.4}Fazit zur Performance-Analyse}{68}{subsubsection.6.3.4}%
 \contentsline {section}{\numberline {7}Grenzen der Arbeit}{70}{section.7}%
 \contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{70}{subsection.7.1}%
 \contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{70}{subsubsection.7.1.1}%

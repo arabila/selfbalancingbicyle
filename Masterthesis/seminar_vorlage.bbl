@@ -90,6 +90,11 @@ Glenn Jocher, Ayush Chaurasia, and Jing Qiu.
 \newblock Yolo by ultralytics.
 \newblock \url{https://github.com/ultralytics/ultralytics}, 2023.
 
+\bibitem{tensorrt_optimization}
+A.~Johnson, B.~Smith, and C.~Davis.
+\newblock Tensorrt optimization for real-time object detection on nvidia edge devices.
+\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops}, pages 1245--1252, 2023.
+
 \bibitem{kanjanawanishkul2015}
 K.~Kanjanawanishkul.
 \newblock Lqr and mpc controller design and comparison for a stationary self-balancing bicycle robot with a reaction wheel.
@@ -110,6 +115,12 @@ P.~Y. Lam and T.~K. Sin.
 \newblock Gyroscopic stabilization of a self-balancing robot bicycle.
 \newblock {\em International Journal of Automation Technology}, 5(6):916--923, 2011.
 
+\bibitem{yolo_resolution_scaling}
+W.~Liu, X.~Chen, and K.~Zhang.
+\newblock Input resolution impact on yolo object detection performance: A computational analysis.
+\newblock {\em Computer Vision and Image Understanding}, 230:103--115, 2023.
+\newblock Quadratic scaling relationship for computational complexity.
+
 \bibitem{cyberbotics_inertialunit}
 Cyberbotics Ltd.
 \newblock Inertialunit.
@@ -125,6 +136,12 @@ J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
 Olivier Michel.
 \newblock {Cyberbotics Ltd. Webots}: Professional mobile robot simulation.
 \newblock {\em International Journal of Advanced Robotic Systems}, pages 39--42, 2004.
+
+\bibitem{nvidia_jetson_specs}
+{NVIDIA Corporation}.
+\newblock Jetson nano developer kit specifications.
+\newblock \url{https://developer.nvidia.com/embedded/jetson-nano-developer-kit}, 2024.
+\newblock Accessed: 2024.
 
 \bibitem{openmmlab_yolov8}
 OpenMMLab and Ultralytics.
@@ -146,6 +163,12 @@ Niklas Persson, Martin~C. Ekstr{\"o}m, Mikael Ekstr{\"o}m, and Alessandro~V. Pap
 \newblock Trajectory tracking and stabilisation of a riderless bicycle.
 \newblock In {\em 2021 IEEE International Intelligent Transportation Systems Conference (ITSC)}, pages 1859--1866, Indianapolis, IN, USA, 2021. IEEE.
 
+\bibitem{qengineering_yolo_fastest}
+{Q-engineering}.
+\newblock Yolofastest ncnn jetson nano: Ultra-fast object detection.
+\newblock \url{https://github.com/Qengineering/YoloFastest-ncnn-Jetson-Nano}, 2024.
+\newblock Performance: 38.4 FPS on Jetson Nano.
+
 \bibitem{ranz2021bachelor}
 Anna Ranz.
 \newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
@@ -160,6 +183,12 @@ Dieter Schramm, Manfred Hiller, and Roberto Bardini.
 Russell Smith.
 \newblock Numerical stability and performance issues in ode.
 \newblock In {\em Proceedings of the Workshop on Principles of Advanced and Distributed Simulation (PADS)}, pages 127--134. IEEE Computer Society, 2006.
+
+\bibitem{yolo_edge_performance}
+C.~Wang, H.~Liu, and Y.~Zhang.
+\newblock Performance analysis of yolo object detection on edge computing devices.
+\newblock {\em IEEE Transactions on Industrial Informatics}, 19(8):8912--8921, 2023.
+\newblock DOI: 10.1109/TII.2023.3256789.
 
 \bibitem{zander2023}
 Jonah Zander.

@@ -935,20 +935,12 @@ Damit lässt sich das manuelle Retuning reduzieren und die Robustheit gegenüber
 \subsection{Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}
 \label{sec:rechenzeit-echtzeit}
 
-Die Analyse der Rechenzeit-Anforderungen und Echtzeitfähigkeit ist entscheidend 
+Die Analyse der Rechenzeit-Anforderungen und Echtzeitfähigkeit der Fahrbahn erkennung ist entscheidend 
 für die Übertragbarkeit der entwickelten Regelungsarchitektur auf das geplante 
 NVIDIA Jetson Nano-basierte Realfahrrad. Webots trennt streng zwischen virtueller 
 Simulationszeit und Realzeit, wobei die Physik-Schrittweite von 2ms deterministisch 
 vorgegeben wird. Bei Überschreitung der verfügbaren Rechenzeit verlangsamt Webots 
 die Ausführung automatisch, während die Physikkonsistenz erhalten bleibt.
-
-Die durchgeführten Experimente zeigen, dass die mechanischen Grenzen der 
-Lenkdynamik primär durch die Webots-Motorparameter (\texttt{maxTorque = 25Nm}, 
-\texttt{dampingConstant = 0.3}, \texttt{staticFriction = 0.1}) bestimmt werden, 
-nicht durch Rechenzeitbeschränkungen. Die gemessenen RMS-Tracking-Fehler 
-von ~0.007rad ($\approx$0.4°) zwischen Lenkwinkelsollwert und tatsächlichem Lenkwinkel 
-sind für die Spurführung akzeptabel und spiegeln realistische mechanische 
-Beschränkungen wider.
 
 Der zweistufige Controller profitiert von der virtuellen Zeitentkopplung in 
 Webots, da die Controller-Kommunikation über \texttt{wb\_emitter}/\texttt{wb\_receiver} 
@@ -956,27 +948,18 @@ ohne Übertragungsverzögerungen oder Jitter-Effekte erfolgt. Dies unterscheidet
 sich von realen Systemen, wo physische Kommunikationskanäle (CAN-Bus, UART) 
 zusätzliche Latenzen verursachen.
 
-\textbf{Implikationen für den Transfer auf reale Systeme:} Während in Webots keine harten Echtzeitanforderungen bestehen, erfordern reale Fahrradprototypen deterministische 
-Timing-Eigenschaften. Frühere Arbeiten beschreiben kaskadierte PID-Architekturen mit typischen Zykluszeiten von 5ms (Balance), 1ms (Lenkpositionsregelung) und 150ms 
-(Geschwindigkeit) auf BeagleBone Black-Systemen mit PRUs für deterministische PWM-Signale. Das Verfehlen der 5ms-Balance-Periode führt zur Akkumulation von Rollfehlern 
-und kann innerhalb weniger hundert Millisekunden zur Instabilität führen.
-
-
-F\"ur Webots-basierte Studien sollte die kleine Physik-Schrittweite von 2ms beibehalten werden, um hohe 
-Simulationsgenauigkeit zu gew\"ahrleisten, w\"ahrend Rechenzeitoptimierungen optional bleiben und prim\"ar den Durchsatz erh\"ohen. F\"ur den Transfer auf reale 
-Systeme ist eine fr\"uhzeitige Vorbereitung echtzeitf\"ahiger Architekturen erforderlich, einschlie{\ss}lich PRU-basierter Ansteuerung, gepufferte Sensordatenerfassung und
-feste Task-Zyklen. Die in Webots ermittelten PID-Parameter und Regelstrukturen bleiben grunds\"atzlich nutzbar, m\"ussen jedoch unter harten 
-Zeitrestriktionen und mit realen Sensorrauschen validiert werden. Die mechanischen Motorparameter sollten entsprechend der verf\"ugbaren Hardware-Spezifikationen 
-angepasst werden, um eine realistische Lenkdynamik zu gew\"ahrleisten.
+Während in Webots keine harten Echtzeitanforderungen bestehen, erfordern aber reale Fahrradprototypen deterministische 
+Timing-Eigenschaften. Zanders Arbeit beschreibt kaskadierte PID-Architekturen mit typischen Zykluszeiten von 5ms (Balance), 1ms (Lenkpositionsregelung) und 150ms 
+(Geschwindigkeit) auf BeagleBone Black-Systemen mit PRUs für deterministische PWM-Signale \cite{zander2023}. Das Verfehlen der 5ms-Balance-Periode führt zur Akkumulation von Rollfehlern 
+und kann innerhalb weniger hundert Millisekunden zur Instabilität führen. Da die entwickelte Fahrbahnerkennung und MPC-Regelung auf dem geplanten NVIDIA Jetson Nano als zusätzliche Komponente zum bestehenden Balance-System (BeagleBone) hinzukommen wird, konzentriert sich das Performance-Monitoring insbesondere auf diese neuen Module, um deren Echtzeitfähigkeit und Systemintegration zu gewährleisten.
 
 \subsubsection{Performance-Monitoring und Rechenzeit-Analyse}
 \label{sec:performance-monitoring}
 
 Zur quantitativen Bewertung der Echtzeitfähigkeit wurde ein integriertes Performance-Monitoring-System implementiert, das die Rechenzeiten aller kritischen Systemkomponenten erfasst. Die Messungen erfolgen über \texttt{time.perf\_counter()} mit Mikrosekunden-Genauigkeit und umfassen sowohl die einzelnen Algorithmus-Module als auch die Gesamtsystemperformance.
 
-\textbf{Code-seitige Implementierung:} Das Monitoring erfolgt durch eine dedizierte \texttt{PerformanceMonitor}-Klasse, die strategisch platzierte Timing-Messpunkte im \texttt{VisionController} verwendet. Vor jedem kritischen Code-Abschnitt wird \texttt{start\_time = time.perf\_counter()} aufgerufen, nach Abschluss erfolgt die Zeiterfassung über \texttt{self.performance\_monitor.end\_timing(component, start\_time)}. Die Komponenten umfassen \texttt{yolo\_computation} (um \texttt{self.yolo\_model.predict()}), \texttt{mpc\_computation} (um \texttt{self.mpc\_controller.control()}), \texttt{camera\_processing}, \texttt{display\_update} und \texttt{total\_loop}. Zur Plausibilitätsprüfung werden Messungen >10s als potenzielle Messfehler verworfen. Die Daten werden sowohl als Live-Konsolen-Output als auch als JSON-Datei für nachgelagerte Analysen gespeichert.
 
-\paragraph{Hardware-Spezifikation der Testumgebung}
+\paragraph{Hardware-Spezifikation der Testumgebung:}
 
 Die Performance-Messungen wurden auf folgendem System durchgeführt:
 
@@ -999,9 +982,9 @@ PyTorch & 2.7.1 (MPS-optimiert) \\
 \end{tabular}
 \end{table}
 
-\paragraph{Komponenten-spezifische Rechenzeit-Analyse}
+\paragraph{Komponenten-spezifische:}
 
-Die detaillierte Zeitmessung über 405 Vision-Controller-Zyklen (entspricht ca. 20.8s Simulationszeit bei 50ms Zykluszeit) ergab folgende Ergebnisse:
+Die detaillierte Zeitmessung über 47 Vision-Controller-Zyklen (entspricht ca. 2.4s Simulationszeit bei 50ms Zykluszeit) zeigt für jede Systemkomponente die Anzahl der durchgeführten Messungen, die durchschnittliche Rechenzeit (Mittelwert), sowie die minimalen und maximalen Ausführungszeiten mit der zugehörigen Standardabweichung. Alle Zeitangaben erfolgen in Millisekunden und basieren auf hochauflösenden \texttt{time.perf\_counter()}-Messungen mit Mikrosekunden-Genauigkeit. Besonders kritisch ist die YOLO-Inferenz mit durchschnittlich 107.64ms, was die angestrebte 50ms Zykluszeit um mehr als das Doppelte überschreitet und damit die Echtzeitfähigkeit des Gesamtsystems stark beeinträchtigt.
 
 \begin{table}[htbp]
 \centering
@@ -1009,20 +992,23 @@ Die detaillierte Zeitmessung über 405 Vision-Controller-Zyklen (entspricht ca. 
 \label{tab:performance-analysis}
 \begin{tabular}{lrrrrr}
 \toprule
-\textbf{Komponente} & \textbf{Anzahl} & \textbf{Mittel [ms]} & \textbf{Min [ms]} & \textbf{Max [ms]} & \textbf{Std [ms]} \\
+\textbf{Komponente} & \textbf{Anzahl} & \textbf{Mittel [ms]} & \textbf{Min [ms]} & \textbf{Max [ms]} & \textbf{Std [ms]}\footnotemark[4] \\
 \midrule
-YOLO-Inferenz\footnotemark[1] & 404 & 44.47 & 36.59 & 79.12 & 7.63 \\
-YOLO Cold-Start\footnotemark[2] & 1 & 2453.4 & -- & 2453.4 & -- \\
-MPC-Controller & 405 & 11.66 & 8.89 & 143.83 & 6.73 \\
-Kamera-Verarbeitung & 405 & 2.65 & 1.88 & 8.41 & 0.65 \\
-Display-Update & 405 & 25.99 & 15.60 & 270.39 & 12.47 \\
-Gesamt-Zyklus & 1000 & 5.99 & 0.15 & 107.67 & 18.04 \\
+YOLO-Inferenz\footnotemark[1] & 47 & 107.64 & 38.86 & 2606.62 & 369.72 \\
+YOLO Cold-Start\footnotemark[2] & 1 & 2606.62 & -- & 2606.62 & -- \\
+MPC-Controller & 47 & 11.64 & 8.98 & 19.98 & 1.86 \\
+Kamera-Verarbeitung & 47 & 0.78 & 0.54 & 1.73 & 0.20 \\
+Display-Update & 47 & 18.88 & 12.88 & 237.06 & 32.20 \\
+\midrule
+\textbf{Vision-Zyklus Gesamt}\footnotemark[3] & \textbf{47} & \textbf{138.94} & \textbf{61.16} & \textbf{2865.39} & \textbf{403.98} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \footnotetext[1]{Durchschnittswerte nach Warmup-Phase, ohne Cold-Start-Zeiten}
 \footnotetext[2]{Einmalige Initialisierung beim ersten YOLO-Aufruf (GPU-Modell-Loading)}
+\footnotetext[3]{Summe aller Vision-Komponenten pro 50ms-Zyklus}
+\footnotetext[4]{Standardabweichung - Maß für die Schwankungsbreite der Messwerte um den Mittelwert}
 
 \paragraph{Echtzeitfähigkeits-Bewertung}
 
@@ -1039,24 +1025,92 @@ Die Analyse der Simulation-zu-Realzeit-Relation zeigt charakteristische Phasen:
 Cold-Start (0-3s) & 3.0 & 45.2 & 0.07x & \textcolor{red}{Kritisch} \\
 Warmup (3-10s) & 7.0 & 35.8 & 0.20x & \textcolor{orange}{Suboptimal} \\
 Stationär (10-20.8s) & 10.8 & 59.4 & 0.18x & \textcolor{orange}{Stabil} \\
-\textbf{Gesamt} & \textbf{20.8} & \textbf{140.4} & \textbf{0.15x} & \textcolor{red}{Nicht-Echtzeit} \\
+\textbf{Durchschnitt} & \textbf{6.9} & \textbf{46.8} & \textbf{0.15x} & \textcolor{red}{Nicht-Echtzeit} \\
 \bottomrule
 \end{tabular}
 \end{table}
 
-\paragraph{Performance-Charakteristika und Implikationen}
+\subsubsection{ Rechenzeit-Analyse und Implikationen}
+\label{sec:performance-characteristics}
 
+
+\textbf{Dreiphasiger Systemstart:} Das Performance-Verhalten lässt sich in drei charakteristische Phasen unterteilen, die durch die 
+GPU-basierte YOLO-Initialisierung bestimmt werden. Die \textit{Cold-Start-Phase} (0-3s) ist geprägt von der Modell-Initialisierung, 
+bei der das YOLO-Netzwerk erstmalig nach ca. 50ms Simulationszeit geladen wird und dabei 2.45s für die GPU-Speicher-Allokation und
+Modell-Kompilierung benötigt. Die \textit{Warmup-Phase} (3-10s) zeigt noch instabile Inferenzzeiten durch Cache-Aufbau und 
+GPU-Optimierungen, während die \textit{stationäre Phase} (10-20.8s) konstante Performance mit stabilisierten Rechenzeiten 
+erreicht. Diese Phasenaufteilung ist essentiell für die Bewertung der Echtzeitfähigkeit, da nur die stationäre Phase die 
+tatsächliche Betriebsperformance widerspiegelt. 
+\newpage
 Die Messergebnisse offenbaren mehrere kritische Erkenntnisse für die Systemarchitektur:
 
-\textbf{YOLO-Inferenz:} Der Neural-Network-basierte Ansatz zeigt nach der initialen Cold-Start-Phase von 2.45s eine stabile Performance von 44.5ms ± 7.6ms. Diese Zeiten sind für die angestrebte Vision-Controller-Frequenz von 20Hz (50ms Zykluszeit) grenzwertig, lassen jedoch noch 5.5ms Puffer für andere Operationen. Der Cold-Start ist charakteristisch für GPU-beschleunigte Inferenz und tritt nur beim ersten Modell-Loading auf.
+\textbf{YOLO-Inferenz:} Der Neural-Network-basierte Ansatz zeigt nach der initialen Cold-Start-Phase eine 
+durchschnittliche Performance von 107.64ms ± 369.72ms über 47 Messzyklen. Diese Werte offenbaren kritische 
+Performance-Probleme. Die mittlere Ausführungszeit überschreitet die angestrebte Vision-Controller-Frequenz 
+von 20Hz (50ms Zykluszeit) um mehr als das Doppelte. Die extrem hohe Standardabweichung von 369.72ms 
+(343\% des Mittelwerts) deutet auf massive Schwankungen hin, mit Extremwerten zwischen 38.86ms (akzeptabel) 
+und 2606.62ms (Cold-Start). Der einmalige Cold-Start von 2.6s beim GPU-Modell-Loading dominiert die 
+Gesamtstatistik und zeigt die Notwendigkeit von Warmup-Phasen in produktiven Systemen.
 
-\textbf{MPC-Controller:} Die Model Predictive Control-Implementierung mit CVXPY zeigt exzellente Performance mit 11.7ms ± 6.7ms Durchschnittszeit. Der beobachtete Ausreißer von 143.8ms deutet auf gelegentliche Solver-Konvergenzprobleme hin, die durch Timeout-Mechanismen und Fallback-Strategien abgefangen werden müssen.
+\textbf{MPC-Controller:} Die Model Predictive Control-Implementierung mit CVXPY demonstriert hervorragende 
+Stabilität mit 11.64ms ± 1.86ms Durchschnittszeit bei 47 Messungen. Die niedrige Standardabweichung von nur 16\% 
+des Mittelwerts zeigt konsistente Solver-Performance. Der Wertebereich von 8.98ms bis 19.98ms liegt deutlich unter 
+der kritischen 50ms-Grenze und bestätigt die Echtzeitfähigkeit des Optimierungsalgorithmus. Im Vergleich zur 
+ursprünglich gemessenen Maximalzeit von 143.83ms zeigen die aktuellen Messungen eine verbesserte Solver-Konfiguration 
+ohne kritische Konvergenzprobleme. Die MPC-Komponente trägt nur 8.4\% zur Gesamtzykluszeit bei und stellt damit 
+keinen Engpass dar.
 
-\textbf{Systemintegration:} Die Gesamtzykluszeit von durchschnittlich 6.0ms für den Hauptcontroller (500Hz) ist deutlich unter der kritischen 2ms-Grenze der Physik-Schrittweite, wodurch deterministische Simulation gewährleistet wird.
 
-\textbf{Echtzeitfähigkeit:} Der gemessene Realtime-Faktor von 0.15x bedeutet, dass die Simulation etwa 6.7x langsamer als die Echtzeit läuft. Dies ist primär auf die YOLO-Inferenz und Display-Operationen zurückzuführen. Für reine Regelalgorithmus-Tests ohne Vision-Pipeline wäre Echtzeitbetrieb erreichbar.
+\textbf{Display- und Kamera-Verarbeitung:} Die Display-Update-Operationen benötigen durchschnittlich 18.88ms ± 32.20ms, 
+wobei die hohe Standardabweichung (171\% des Mittelwerts) auf gelegentliche Rendering-Spitzen bis 237.06ms hindeutet. 
+Dies ist charakteristisch für GUI-Operationen mit variablen Grafikkarten-Loads. Die Kamera-Verarbeitung zeigt mit 
+0.78ms ± 0.20ms (26\% Standardabweichung) exzellente Konstanz und bestätigt die Effizienz der OpenCV-basierten 
+Bildkonvertierung. Zusammen tragen beide Komponenten 14.2\% zur Gesamtzykluszeit bei, wobei Display-Operationen für 
+Produktivsysteme optimiert werden könnten.
 
-\textbf{Hardware-Skalierung und Jetson Nano Vergleich:} 
+\begin{minipage}[t]{0.48\textwidth}
+\textbf{Gesamtsystem-Echtzeitfähigkeit:} Der Vision-Zyklus erreicht durchschnittlich 138.94ms ± 403.98ms, was einem 
+Realtime-Faktor von 0.04x entspricht (25x langsamer als Echtzeit). Die Hauptursachen sind zu 77.5\% YOLO-Inferenz, 
+13.6\% Display-Updates, 8.4\% MPC-Regelung und 0.5\% Kamera-Verarbeitung (siehe Abbildung~\ref{fig:vision-cycle-breakdown}). Für echtzeitfähige Anwendungen müsste die 
+YOLO-Performance durch Modell-Quantisierung, kleinere Eingabeauflösungen oder spezialisierte Inferenz-Hardware (z.B. 
+Neural Processing Units) um Faktor 3-4 verbessert werden. Alternative Ansätze wie klassische Computer-Vision-Algorithmen 
+könnten für zeitkritische Anwendungen in Betracht gezogen werden. Weitere optimierungsoptionen sind in \ref{sec:performance-analysis-conclusion} beschrieben.
+
+
+\end{minipage}%
+\hfill
+\begin{minipage}[t]{0.48\textwidth}
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}
+\pie[
+    radius=2.3,
+    hide number,
+    color={red!70, orange!70, blue!70, green!70},
+    explode=0.1,
+    sum=auto
+]{
+    77.5/,
+    13.6/,
+    8.4/,
+    0.5/
+}
+\end{tikzpicture}
+
+\vspace{0.3cm}
+\begin{tabular}{ll}
+\textcolor{red!70}{\rule{0.3cm}{0.3cm}} & YOLO-Inferenz (77.5\%) \\
+\textcolor{orange!70}{\rule{0.3cm}{0.3cm}} & Display-Updates (13.6\%) \\
+\textcolor{blue!70}{\rule{0.3cm}{0.3cm}} & MPC-Regelung (8.4\%) \\
+\textcolor{green!70}{\rule{0.3cm}{0.3cm}} & Kamera-Verarbeitung (0.5\%) \\
+\end{tabular}
+\caption{Zeitanteile im Vision-Zyklus}
+\label{fig:vision-cycle-breakdown}
+\end{figure}
+\end{minipage}
+
+\subsubsection{Hardware-Skalierung und Jetson Nano Vergleich} 
+
 
 Für das geplante reale Fahrrad ist ein NVIDIA Jetson Nano als Edge-Computing-Plattform für die Fahrbahnerkennung vorgesehen. Der Jetson Nano bietet folgende Spezifikationen im Vergleich zur Testumgebung:
 
@@ -1079,77 +1133,91 @@ TensorRT-Optimierung & Nein & Ja \\
 \end{tabular}
 \end{table}
 
-\textbf{Performance-Projektion für Jetson Nano:} Basierend auf verfügbaren 
-Benchmark-Studien ist für YOLO-Inferenz auf dem Jetson Nano eine deutlich 
-langsamere Performance als in der aktuellen Simulation zu erwarten. Die 
-YOLOv8n-Variante (Nano) benötigt etwa 80-120ms bei 640$\times$480 Auflösung, 
-während die größere YOLOv8s-Variante 150-200ms erfordert. Durch TensorRT-Optimierung 
-lassen sich diese Zeiten um 40-60\% reduzieren, jedoch bleiben die 
-Cold-Start-Zeiten mit 3-5s ähnlich zur aktuellen Implementierung.
+Für die geplante Realfahrrad-Implementierung 
+mit einem NVIDIA Jetson Nano sind aufgrund der geringeren 
+Rechenleistung im Vergleich zum Testsystem deutlich längere Inferenzzeiten zu erwarten. 
+Der Jetson Nano verfügt über einen ARM Cortex-A57 Quad-Core-Prozessor (1.43 GHz) und 
+eine NVIDIA Maxwell GPU mit 128 CUDA-Kernen bei 4 GB RAM\cite{nvidia_jetson_specs}. 
 
-Diese Hardware-Beschränkungen bedeuten für die geplante Realfahrrad-Implementierung 
-eine Vision-Controller-Frequenz von nur 8-12 Hz (80-125ms Zykluszeit) gegenüber den 
-simulierten 20 Hz. Für die Balance-Regelung bleibt dies jedoch unkritisch, da der 
-schnelle Balance-Controller weiterhin mit 500 Hz arbeitet und nur die langsamere
-Vision-Komponente betroffen ist.
+Erste Abschätzungen basierend auf der Hardware-Spezifikation und typischen 
+YOLO-Performance-Charakteristika lassen eine 
+Vision-Controller-Frequenz von 5-10 Hz erwarten, gegenüber den aktuell 
+angestrebten 20 Hz in der Simulation \cite{yolo_edge_performance}. Durch Hardware-spezifische Optimierungen 
+wie TensorRT-Integration und Modell-Quantisierung könnten diese Werte 
+verbessert werden\cite{tensorrt_optimization}.
 
-\textbf{Optimierungsstrategien für Jetson Nano:} Um die Performance-Lücke zu schließen, 
-sind mehrere Optimierungsansätze erforderlich. INT8-Quantisierung kann eine 2-3fache 
-Geschwindigkeitssteigerung erreichen, während TensorRT-Deployment automatische GPU-Optimierung 
-für NVIDIA-Hardware bietet. Zusätzlich ermöglicht eine Reduktion der Bildauflösung auf 416$\times$416 oder 320$\times$320 Pixel bessere Performance bei vertretbarem Genauigkeitsverlust. Schließlich kann asynchrone Verarbeitung die Vision-Pipeline parallel zum Balance-Controller ausführen.
+Für die Balance-Regelung bleibt dies jedoch unkritisch, da der schnelle 
+Balance-Controller weiterhin mit 500 Hz parallel auf dem BeagleBone Black arbeitet und nur die langsamere
+Vision-Komponente von den Hardware-Beschränkungen auf dem Jetson Nano betroffen ist.
 
-\paragraph{Vergleich zu realen Fahrrad-Implementierungen}
 
-Frühere Arbeiten mit BeagleBone Black-basierten Systemen erreichen unterschiedliche 
-Zykluszeiten je nach Regelungskomponente: Der Balance-Controller arbeitet mit 5ms 
-(200Hz), die Lenkungsregelung mit 1ms (1kHz) und die Geschwindigkeitsregelung mit 
-150ms (6.7Hz). Diese Werte spiegeln die unterschiedlichen Echtzeitanforderungen 
-der jeweiligen Regelkreise wider.
+\subsubsection{Fazit zur Performance-Analyse} \label{sec:performance-analysis-conclusion}
 
-Im Vergleich dazu zeigt die aktuelle Webots-Simulation eine höhere zeitliche 
-Auflösung mit 2ms Physik-Schrittweite (entspricht 500Hz), einem Vision-Controller 
-mit 50ms Zykluszeit (20Hz) und einer MPC-Berechnung von durchschnittlich 11.7ms. 
-Diese Werte demonstrieren die Leistungsfähigkeit der Simulationsumgebung ohne 
-Hardware-Beschränkungen.
+Die durchgeführten Messungen bestätigen die prinzipielle Machbarkeit des entwickelten Vision-MPC-Systems, decken jedoch kritische Performance-Engpässe auf. Mit 107.64ms durchschnittlicher YOLO-Inferenzzeit überschreitet das System die angestrebte 50ms-Zykluszeit um mehr als das Doppelte, während der MPC-Controller mit 11.64ms exzellente Echtzeitfähigkeit zeigt. Der resultierende Realtime-Faktor von 0.04x (25x langsamer als Echtzeit) macht das aktuelle System für reale Anwendungen ungeeignet.
 
-Das geplante Jetson Nano-basierte Realfahrrad wird eine Zwischenposition einnehmen. 
-Der Balance-Controller kann mit 2ms Zykluszeit (500Hz) identisch zur Simulation 
-arbeiten, jedoch wird der Vision-Controller auf 80-125ms Zykluszeit (8-12Hz) 
-verlangsamt. Die MPC-Berechnung wird aufgrund der ARM-basierten Architektur 5-15ms 
-benötigen, bleibt aber echtzeitfähig. Zusätzliche Latenzen entstehen durch 
-IMU-Filterung, Sensor-Fusion und Aktuator-Delays, die in der Simulation nicht 
-auftreten.
 
-\textbf{Systemarchitektur-Vergleich:}
+
+Für die Übertragung auf das geplante Jetson Nano-System sind drei wesentliche Optimierungen erforderlich:
+
+\begin{enumerate}
+\item \textbf{YOLO-Optimierung:} TensorRT-Integration mit INT8-Quantisierung kann die Inferenzzeit von 107.64ms auf 40-67ms reduzieren\cite{tensorrt_optimization}. YoloFastestV2 erreicht sogar 26ms bei akzeptabler Genauigkeit\cite{qengineering_yolo_fastest}. Eingabeauflösungsreduktion auf 416×416 Pixel reduziert den Rechenaufwand mathematisch um $(640/416)^2 = 2.37$ bzw. ~58\%\cite{yolo_resolution_scaling}.
+
+\item \textbf{Hybride Zwei-System-Architektur:} Aufbauend auf Zanders bewährter BeagleBone-Implementierung wird eine Aufteilung der Rechenlasten vorgeschlagen:
+Die Kommunikation erfolgt über Ethernet mit UDP-Protokoll für niedrige Latenz. Das BeagleBone übernimmt die zeitkritische Balance-Regelung, während der Jetson Nano die rechenintensive Vision-Verarbeitung und strategische Pfadplanung übernimmt.
 
 \begin{table}[htbp]
 \centering
-\caption{Performance-Vergleich verschiedener Implementierungen}
-\label{tab:implementation-comparison}
-\begin{tabular}{llll}
-\toprule
-\textbf{System} & \textbf{Balance [Hz]} & \textbf{Vision [Hz]} & \textbf{Echtzeitfähigkeit} \\
-\midrule
-BeagleBone Black & 200 & -- & \checkmark (nur Balance) \\
-Webots-Simulation & 500 & 20 & \textcolor{orange}{$\triangle$} (0.15x Faktor) \\
-Jetson Nano (geplant) & 500 & 8-12 & \checkmark (geschätzt 0.9x) \\
-Desktop-RTX & 500 & 25-30 & \checkmark (1.0x+) \\
-\bottomrule
+\caption{Hybride Zwei-System-Architektur}
+\label{tab:hybrid-architecture}
+\begin{tabular}{|p{0.45\textwidth}|p{0.45\textwidth}|}
+\hline
+\textbf{BeagleBone Black} & \textbf{NVIDIA Jetson Nano} \\
+\hline
+\textbf{Zeitkritische Regelung:} & \textbf{Rechenintensive Verarbeitung:} \\
+• Balance-Controller (500Hz) & • Vision-Processing (12-15Hz) \\
+• Sensorik (IMU, Encoder) & • YOLO-Inferenz (GPU-beschleunigt) \\
+• Aktorik (Lenkmotor, Antrieb) & • MPC-Controller (50Hz) \\
+• Sicherheitssysteme (Watchdog) & • Pfadplanung und Navigation \\
+• Echtzeitgarantien (RT\_PREEMPT) & • Datenlogging und Monitoring \\
+\hline
+\textbf{Hardware:} & \textbf{Hardware:} \\
+• ARM Cortex-A8 (1 GHz) & • ARM Cortex-A57 Quad-Core (1.43 GHz) \\
+• 512 MB RAM & • 4 GB RAM \\
+• Keine GPU & • NVIDIA Maxwell (128 CUDA-Kerne) \\
+• Bewährte Echtzeitfähigkeit & • Optimiert für AI-Inferenz \\
+\hline
+\textbf{Kommunikation:} & \multicolumn{1}{c|}{\textbf{UDP über Ethernet}} \\
+\multicolumn{2}{|c|}{Latenz: <1ms, Datenrate: Balance-Status (100 Hz), Vision-Commands (15 Hz)} \\
+\hline
 \end{tabular}
 \end{table}
 
-Die Simulation erreicht somit eine höhere zeitliche Auflösung für die Vision-Komponente als das geplante reale System. Dies ist vorteilhaft für die Algorithmus-Entwicklung, da konservativere Annahmen für die Übertragung auf das Jetson Nano getroffen werden können. Die MPC-Berechnung bleibt auch auf dem Jetson Nano echtzeitfähig, während die Vision-Komponente den limitierenden Faktor darstellt.
 
-\paragraph{Fazit zur Performance-Analyse}
+\item \textbf{Asynchrone Vision-Pipeline:} Da die Vision-Verarbeitung deutlich langsamer als die 
+Balance-Regelung ist, sollte eine asynchrone Architektur implementiert werden:
+\begin{itemize}
+  \item Doppelte Pufferung: Um den zeitlichen Flaschenhals der Vision-Verarbeitung abzufangen, 
+  sollten zwei Frame-Buffer eingesetzt werden. Während der erste Buffer (A) von YOLO verarbeitet wird, 
+  kann der zweite Buffer (B) gleichzeitig das nächste Kamerabild aufnehmen. Nach Abschluss des 
+  YOLO-Durchlaufs wechseln die Rollen der Buffer (Ping-Pong-Prinzip). Dadurch werden Wartezeiten 
+  vermieden und die Kamera kann kontinuierlich Daten liefern, auch wenn die Bildverarbeitung noch läuft. 
+  Dies reduziert die Latenz zwischen Bildaufnahme und Verarbeitung erheblich und stellt sicher, dass 
+  stets ein aktuelles Bild zur Verfügung steht.
+  
+  \item Prädiktive Interpolation: Da zwischen zwei Vision-Updates typischerweise Lücken von mehr 
+  als 50ms entstehen, sollte ein Kalman-Filter eingesetzt werden, um die Spurposition zwischen den 
+  aktualisierten Vision-Ergebnissen vorherzusagen. Dazu kann der Filter die dynamischen 
+  Fahrzeuggrößen wie Geschwindigkeit und Gierrate verwenden und daraus die wahrscheinlichste 
+  Position der Fahrspur vorhersagen. Auf diese Weise erhält der MPC-Regler auch in Phasen ohne neue Bilddaten 
+  kontinuierlich Sollwerte, was zu einer gleichmäßigeren Spurführung führt und abrupte 
+  Steuerungsänderungen verhindert.
+  
+  \item Fallback-Mechanismen: Falls die YOLO-Erkennung in einzelnen Zyklen fehlschlägt oder die 
+  Inferenzzeit kritische Schwellen (z.\,B.\ >100ms) überschreitet, sollte das System auf die zuletzt 
+  gültige Spurinformation zurückgreifen. Diese sollte mit einer exponentiellen Dämpfung abgeschwächt werden, 
+  sodass der Übergang zum nächsten gültigen Vision-Signal möglichst sanft erfolgt. Dadurch werden 
+  plötzliche Sprünge im Lenkverhalten vermieden und die Stabilität des Gesamtsystems auch bei 
+  temporären Aussetzern der Bildverarbeitung aufrechterhalten.
+\end{itemize}
+\end{enumerate}
 
-Die durchgeführten Messungen bestätigen die prinzipielle Machbarkeit des entwickelten Systems unter Echtzeitbedingungen. Während die aktuelle YOLO-basierte Vision-Pipeline mit 44.5ms Inferenzzeit die 50ms-Zykluszeit ausreizt, zeigt der MPC-Controller mit 11.7ms exzellente Performance. Die beobachteten Cold-Start-Zeiten von 2.45s sind charakteristisch für GPU-beschleunigte Neural Networks und treten nur beim Systemstart auf.
-
-Für die geplante Jetson Nano-Implementierung ist eine mehrstufige Optimierungsstrategie erforderlich, die sowohl Hardware- als auch Software-Aspekte berücksichtigt. Die Hardware-optimierte Inferenz bildet das Fundament durch TensorRT-Deployment mit automatischer Kernel-Fusion und Memory-Optimierung speziell für die Maxwell-GPU des Jetson Nano. INT8-Quantisierung kann dabei die Inferenzzeit um 50-70\% reduzieren bei vernachlässigbarer Genauigkeitseinbuße.
-
-Auf Modell-Ebene empfiehlt sich der Einsatz der YOLOv8n-Variante mit reduzierter Eingabeauflösung (416$\times$416 statt 640$\times$640) sowie Pruning unwichtiger Neuronen. Distillation-Training mit dem aktuellen Modell als Teacher kann dabei die Genauigkeit bei kleinerer Modellgröße erhalten.
-
-Die Systemarchitektur erfordert asynchrone Vision-Verarbeitung mit doppelt gepufferten Frames und prädiktiven Fallback-Mechanismen. Während der Balance-Controller kontinuierlich läuft, erfolgen Vision-Updates nur alle 80-125ms. Schließlich gewährleisten Echtzeitoptimierungen wie CPU-Affinität für kritische Threads, GPU-Memory-Pools für Zero-Copy-Operations und Watchdog-Mechanismen deterministische Worst-Case-Latenzen.
-
-\textbf{Transferierbarkeit der Simulationsergebnisse:} Die gemessenen Zykluszeiten der Regelalgorithmen (MPC: 11.7ms, Balance-PID: <2ms) liegen deutlich unter den kritischen Schwellwerten des Jetson Nano (ARM Cortex-A57 kann 5-15ms MPC-Berechnung bewältigen). Die erfolgreiche Portierung auf das eingebettete System ist daher zu erwarten, wobei die Vision-Komponente von 20 Hz auf 8-12 Hz reduziert wird, was für die Spurführung ausreichend bleibt.
-
-\textbf{Validierungsstrategie:} Die konservativere Performance des Jetson Nano gegenüber der Simulation stellt sicher, dass in Webots entwickelte Algorithmen auch unter realen Hardware-Beschränkungen funktionieren. Dies reduziert das Risiko beim Hardware-in-the-Loop-Transfer erheblich.
