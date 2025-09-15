@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  15 SEP 2025 16:35
+This is pdfTeX, Version 3.141592653-2.6-1.40.27 (TeX Live 2025/Homebrew) (preloaded format=pdflatex 2025.3.15)  15 SEP 2025 21:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -1387,7 +1387,7 @@ Overfull \hbox (3.04842pt too wide) in paragraph at lines 92--97
 [42]
 
 [43]
-Underfull \hbox (badness 5022) in paragraph at lines 140--142
+Underfull \hbox (badness 5022) in paragraph at lines 141--143
 []\T1/lmr/bx/n/10.95 (+10) Positionen\T1/lmr/m/n/10.95 (+10) : Welt-ko-or-di-na-ten (\T1/lmtt/m/n/10.95 pos_x\T1/lmr/m/n/10.95 (+10) , \T1/lmtt/m/n/10.95 pos_y\T1/lmr/m/n/10.95 (+10) , \T1/lmtt/m/n/10.95 pos_z\T1/lmr/m/n/10.95 (+10) ) in Me-tern re-la-tiv zum Webots-
  []
 
@@ -1397,17 +1397,17 @@ Underfull \hbox (badness 5022) in paragraph at lines 140--142
 <figures/Kurve.jpeg, id=1008, 4015.0pt x 4015.0pt>
 File: figures/Kurve.jpeg Graphic file (type jpg)
 <use figures/Kurve.jpeg>
-Package pdftex.def Info: figures/Kurve.jpeg  used on input line 169.
+Package pdftex.def Info: figures/Kurve.jpeg  used on input line 170.
 (pdftex.def)             Requested size: 196.57149pt x 196.53455pt.
 <figures/Kurve/Test P und PID/P/Daten.png, id=1012, 1329.96875pt x 349.305pt>
 File: figures/Kurve/Test P und PID/P/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Daten.png  used on input line 197.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Daten.png  used on input line 198.
 (pdftex.def)             Requested size: 491.43622pt x 129.07027pt.
 <figures/Kurve/Test P und PID/P/Error.png, id=1013, 1774.63pt x 396.48125pt>
 File: figures/Kurve/Test P und PID/P/Error.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Error.png  used on input line 213.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Error.png  used on input line 214.
 (pdftex.def)             Requested size: 491.43622pt x 109.79192pt.
 
 
@@ -1415,12 +1415,12 @@ Package pdftex.def Info: figures/Kurve/Test P und PID/P/Error.png  used on input
 <figures/Kurve/Test P und PID/P/Strecke.png, id=1024, 564.1075pt x 564.1075pt>
 File: figures/Kurve/Test P und PID/P/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/P/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/P/Strecke.png  used on input line 224.
+Package pdftex.def Info: figures/Kurve/Test P und PID/P/Strecke.png  used on input line 225.
 (pdftex.def)             Requested size: 196.57149pt x 196.57121pt.
 <figures/Kurve/Test P und PID/YOLO PID/Daten.png, id=1026, 1319.93124pt x 348.30125pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Daten.png  used on input line 248.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Daten.png  used on input line 249.
 (pdftex.def)             Requested size: 491.43622pt x 129.67726pt.
 
 
@@ -1428,15 +1428,15 @@ Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Daten.png  used o
 <figures/Kurve/Test P und PID/YOLO PID/Error.png, id=1034, 1768.6075pt x 405.515pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Error.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Error.png  used on input line 260.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Error.png  used on input line 261.
 (pdftex.def)             Requested size: 491.43622pt x 112.67714pt.
 <figures/Kurve/Test P und PID/YOLO PID/Strecke.png, id=1035, 564.1075pt x 565.11125pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke.png  used on input line 268.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke.png  used on input line 269.
 (pdftex.def)             Requested size: 196.57149pt x 196.92097pt.
 
-Underfull \hbox (badness 3323) in paragraph at lines 269--269
+Underfull \hbox (badness 3323) in paragraph at lines 270--270
 []\T1/lmr/m/n/10.95 (+10) Abbildung 19: |Ge-fah-re-ne Tra-jek-to-rie
  []
 
@@ -1446,33 +1446,33 @@ Underfull \hbox (badness 3323) in paragraph at lines 269--269
 <figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png, id=1049, 961.5925pt x 538.01pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png  used on input line 293.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png  used on input line 294.
 (pdftex.def)             Requested size: 235.88728pt x 131.97368pt.
 <figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png, id=1050, 961.5925pt x 540.0175pt>
 File: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png  used on input line 297.
+Package pdftex.def Info: figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png  used on input line 298.
 (pdftex.def)             Requested size: 235.88728pt x 132.46613pt.
-<figures/Kurve/Test P und PID/PID/Daten.png, id=1052, 1326.9575pt x 347.2975pt>
+<figures/Kurve/Test P und PID/PID/Daten.png, id=1052, 1324.95pt x 347.2975pt>
 File: figures/Kurve/Test P und PID/PID/Daten.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/PID/Daten.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Daten.png  used on input line 314.
-(pdftex.def)             Requested size: 491.43622pt x 128.61993pt.
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Daten.png  used on input line 315.
+(pdftex.def)             Requested size: 491.43622pt x 128.81601pt.
 
 
 [48 <./figures/Kurve/Test P und PID/YOLO PID/Strecke gut.png> <./figures/Kurve/Test P und PID/YOLO PID/Stecke schlecht.png> <./figures/Kurve/Test P und PID/PID/Daten.png>]
 <figures/Kurve/Test P und PID/PID/Error.png, id=1065, 1773.62625pt x 401.5pt>
 File: figures/Kurve/Test P und PID/PID/Error.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/PID/Error.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Error.png  used on input line 331.
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Error.png  used on input line 332.
 (pdftex.def)             Requested size: 491.43622pt x 111.24908pt.
 <figures/Kurve/Test P und PID/PID/Strecke.png, id=1066, 565.11125pt x 562.1pt>
 File: figures/Kurve/Test P und PID/PID/Strecke.png Graphic file (type png)
 <use figures/Kurve/Test P und PID/PID/Strecke.png>
-Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Strecke.png  used on input line 339.
+Package pdftex.def Info: figures/Kurve/Test P und PID/PID/Strecke.png  used on input line 340.
 (pdftex.def)             Requested size: 196.57149pt x 195.52002pt.
 
-Underfull \hbox (badness 3323) in paragraph at lines 340--340
+Underfull \hbox (badness 3323) in paragraph at lines 341--341
 []\T1/lmr/m/n/10.95 (+10) Abbildung 23: |Ge-fah-re-ne Tra-jek-to-rie
  []
 
@@ -1482,12 +1482,12 @@ Underfull \hbox (badness 3323) in paragraph at lines 340--340
 <figures/S-Kurve.png, id=1078, 1535.7375pt x 490.83376pt>
 File: figures/S-Kurve.png Graphic file (type png)
 <use figures/S-Kurve.png>
-Package pdftex.def Info: figures/S-Kurve.png  used on input line 384.
+Package pdftex.def Info: figures/S-Kurve.png  used on input line 385.
 (pdftex.def)             Requested size: 491.43622pt x 157.06252pt.
 <figures/S-Kurve/YOLO/Strecke.png, id=1081, 831.105pt x 232.87pt>
 File: figures/S-Kurve/YOLO/Strecke.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Strecke.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Strecke.png  used on input line 411.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Strecke.png  used on input line 412.
 (pdftex.def)             Requested size: 491.43622pt x 137.69768pt.
 
 
@@ -1495,17 +1495,17 @@ Package pdftex.def Info: figures/S-Kurve/YOLO/Strecke.png  used on input line 41
 <figures/S-Kurve/YOLO/Daten.png, id=1090, 2360.82pt x 554.07pt>
 File: figures/S-Kurve/YOLO/Daten.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Daten.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Daten.png  used on input line 430.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Daten.png  used on input line 431.
 (pdftex.def)             Requested size: 491.43622pt x 115.33514pt.
 
-Underfull \hbox (badness 1521) in paragraph at lines 435--439
+Underfull \hbox (badness 1521) in paragraph at lines 436--440
 []\T1/lmr/m/n/10.95 (+10) Der Feh-ler-plot in [][]Fi-gu-re 27[][][] be-st�-tigt dies. Der vi-si-on-ba-sier-te Quer-feh-ler $[]$ ist im In-ter-vall
  []
 
 <figures/S-Kurve/YOLO/Error.png, id=1092, 1762.585pt x 399.4925pt>
 File: figures/S-Kurve/YOLO/Error.png Graphic file (type png)
 <use figures/S-Kurve/YOLO/Error.png>
-Package pdftex.def Info: figures/S-Kurve/YOLO/Error.png  used on input line 447.
+Package pdftex.def Info: figures/S-Kurve/YOLO/Error.png  used on input line 448.
 (pdftex.def)             Requested size: 491.43622pt x 111.38165pt.
 
 
@@ -1513,7 +1513,7 @@ Package pdftex.def Info: figures/S-Kurve/YOLO/Error.png  used on input line 447.
 <figures/S-Kurve/Fallback/Strecke.png, id=1108, 835.12pt x 220.825pt>
 File: figures/S-Kurve/Fallback/Strecke.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Strecke.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Strecke.png  used on input line 472.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Strecke.png  used on input line 473.
 (pdftex.def)             Requested size: 491.43622pt x 129.94865pt.
 
 
@@ -1521,29 +1521,29 @@ Package pdftex.def Info: figures/S-Kurve/Fallback/Strecke.png  used on input lin
 <figures/S-Kurve/Fallback/Daten.png, id=1118, 2362.8275pt x 553.06625pt>
 File: figures/S-Kurve/Fallback/Daten.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Daten.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Daten.png  used on input line 490.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Daten.png  used on input line 491.
 (pdftex.def)             Requested size: 491.43622pt x 115.02493pt.
 <figures/S-Kurve/Fallback/Error.png, id=1120, 1759.57375pt x 401.5pt>
 File: figures/S-Kurve/Fallback/Error.png Graphic file (type png)
 <use figures/S-Kurve/Fallback/Error.png>
-Package pdftex.def Info: figures/S-Kurve/Fallback/Error.png  used on input line 506.
+Package pdftex.def Info: figures/S-Kurve/Fallback/Error.png  used on input line 507.
 (pdftex.def)             Requested size: 491.43622pt x 112.13129pt.
 
 
 [53 <./figures/S-Kurve/Fallback/Daten.png> <./figures/S-Kurve/Fallback/Error.png>]
-Underfull \hbox (badness 1661) in paragraph at lines 551--561
+Underfull \hbox (badness 1661) in paragraph at lines 552--562
 []\T1/lmr/m/n/10.95 (+10) Das An-str�m-feld ist sta-tio-n�r und ho-mo-gen mit Wind-ge-schwin-dig-kei-ten $\OML/lmm/m/it/10.95 v[] \OMS/lmsy/m/n/10.95 2 f\OT1/lmr/m/n/10.95 (+10) 0[]5\OML/lmm/m/it/10.95 ; \OT1/lmr/m/n/10.95 (+10) 1[]0\OMS/lmsy/m/n/10.95 g []$
  []
 
 
-Underfull \hbox (badness 1199) in paragraph at lines 551--561
+Underfull \hbox (badness 1199) in paragraph at lines 552--562
 \T1/lmr/m/n/10.95 (+10) in den Aus-wer-tun-gen. Die ae-ro-dy-na-mi-sche Kopp-lung er-folgt �ber We-bots' \T1/lmtt/m/n/10.95 Fluid\T1/lmr/m/n/10.95 (+10) -System mit
  []
 
 <figures/Wind/Wind/Strecke.png, id=1129, 1418.29875pt x 855.195pt>
 File: figures/Wind/Wind/Strecke.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke.png  used on input line 574.
+Package pdftex.def Info: figures/Wind/Wind/Strecke.png  used on input line 575.
 (pdftex.def)             Requested size: 491.43622pt x 296.32143pt.
 
 
@@ -1551,7 +1551,7 @@ Package pdftex.def Info: figures/Wind/Wind/Strecke.png  used on input line 574.
 <figures/Wind/Wind/Strecke_1.png, id=1136, 643.40375pt x 134.5025pt>
 File: figures/Wind/Wind/Strecke_1.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_1.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_1.png  used on input line 588.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_1.png  used on input line 589.
 (pdftex.def)             Requested size: 491.43622pt x 102.73808pt.
 
 
@@ -1559,17 +1559,17 @@ Package pdftex.def Info: figures/Wind/Wind/Strecke_1.png  used on input line 588
 <figures/Wind/Wind/Daten.png, id=1148, 1764.5925pt x 407.5225pt>
 File: figures/Wind/Wind/Daten.png Graphic file (type png)
 <use figures/Wind/Wind/Daten.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten.png  used on input line 602.
+Package pdftex.def Info: figures/Wind/Wind/Daten.png  used on input line 603.
 (pdftex.def)             Requested size: 491.43622pt x 113.4899pt.
 <figures/Wind/Wind/Strecke_2.png, id=1151, 644.4075pt x 148.555pt>
 File: figures/Wind/Wind/Strecke_2.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_2.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_2.png  used on input line 623.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_2.png  used on input line 624.
 (pdftex.def)             Requested size: 491.43622pt x 113.2951pt.
 <figures/Wind/Wind/Daten_2.png, id=1152, 1798.72pt x 409.53pt>
 File: figures/Wind/Wind/Daten_2.png Graphic file (type png)
 <use figures/Wind/Wind/Daten_2.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten_2.png  used on input line 631.
+Package pdftex.def Info: figures/Wind/Wind/Daten_2.png  used on input line 632.
 (pdftex.def)             Requested size: 491.43622pt x 111.88684pt.
 
 
@@ -1577,12 +1577,12 @@ Package pdftex.def Info: figures/Wind/Wind/Daten_2.png  used on input line 631.
 <figures/Wind/Wind/Strecke_3.png, id=1164, 559.59062pt x 167.12437pt>
 File: figures/Wind/Wind/Strecke_3.png Graphic file (type png)
 <use figures/Wind/Wind/Strecke_3.png>
-Package pdftex.def Info: figures/Wind/Wind/Strecke_3.png  used on input line 656.
+Package pdftex.def Info: figures/Wind/Wind/Strecke_3.png  used on input line 657.
 (pdftex.def)             Requested size: 491.43622pt x 146.77663pt.
 <figures/Wind/Wind/Daten_3.png, id=1165, 1307.88625pt x 347.2975pt>
 File: figures/Wind/Wind/Daten_3.png Graphic file (type png)
 <use figures/Wind/Wind/Daten_3.png>
-Package pdftex.def Info: figures/Wind/Wind/Daten_3.png  used on input line 664.
+Package pdftex.def Info: figures/Wind/Wind/Daten_3.png  used on input line 665.
 (pdftex.def)             Requested size: 491.43622pt x 130.4959pt.
 
 
@@ -1592,17 +1592,17 @@ Package pdftex.def Info: figures/Wind/Wind/Daten_3.png  used on input line 664.
 <figures/Huegel.png, id=1182, 1116.17pt x 887.315pt>
 File: figures/Huegel.png Graphic file (type png)
 <use figures/Huegel.png>
-Package pdftex.def Info: figures/Huegel.png  used on input line 734.
+Package pdftex.def Info: figures/Huegel.png  used on input line 735.
 (pdftex.def)             Requested size: 235.88728pt x 187.51956pt.
 <figures/Tunnel.png, id=1183, 1114.1625pt x 891.33pt>
 File: figures/Tunnel.png Graphic file (type png)
 <use figures/Tunnel.png>
-Package pdftex.def Info: figures/Tunnel.png  used on input line 738.
+Package pdftex.def Info: figures/Tunnel.png  used on input line 739.
 (pdftex.def)             Requested size: 235.88728pt x 188.70808pt.
 <figures/Höhe/-1/Strecke.png, id=1186, 560.59438pt x 127.97812pt>
 File: figures/Höhe/-1/Strecke.png Graphic file (type png)
 <use figures/Höhe/-1/Strecke.png>
-Package pdftex.def Info: figures/Höhe/-1/Strecke.png  used on input line 761.
+Package pdftex.def Info: figures/Höhe/-1/Strecke.png  used on input line 762.
 (pdftex.def)             Requested size: 491.43622pt x 112.19537pt.
 
 
@@ -1610,17 +1610,17 @@ Package pdftex.def Info: figures/Höhe/-1/Strecke.png  used on input line 761.
 <figures/Höhe/-1/Daten.png, id=1197, 1314.9125pt x 347.2975pt>
 File: figures/Höhe/-1/Daten.png Graphic file (type png)
 <use figures/Höhe/-1/Daten.png>
-Package pdftex.def Info: figures/Höhe/-1/Daten.png  used on input line 768.
+Package pdftex.def Info: figures/Höhe/-1/Daten.png  used on input line 769.
 (pdftex.def)             Requested size: 491.43622pt x 129.79639pt.
 <figures/Höhe/-2/Strecke.png, id=1200, 564.1075pt x 185.19188pt>
 File: figures/Höhe/-2/Strecke.png Graphic file (type png)
 <use figures/Höhe/-2/Strecke.png>
-Package pdftex.def Info: figures/Höhe/-2/Strecke.png  used on input line 781.
+Package pdftex.def Info: figures/Höhe/-2/Strecke.png  used on input line 782.
 (pdftex.def)             Requested size: 491.43622pt x 161.33603pt.
 <figures/Höhe/-2/Daten.png, id=1201, 1322.9425pt x 352.31625pt>
 File: figures/Höhe/-2/Daten.png Graphic file (type png)
 <use figures/Höhe/-2/Daten.png>
-Package pdftex.def Info: figures/Höhe/-2/Daten.png  used on input line 788.
+Package pdftex.def Info: figures/Höhe/-2/Daten.png  used on input line 789.
 (pdftex.def)             Requested size: 491.43622pt x 130.87105pt.
 
 
@@ -1628,12 +1628,12 @@ Package pdftex.def Info: figures/Höhe/-2/Daten.png  used on input line 788.
 <figures/Höhe/-2PID/Strecke.png, id=1215, 565.11125pt x 145.54375pt>
 File: figures/Höhe/-2PID/Strecke.png Graphic file (type png)
 <use figures/Höhe/-2PID/Strecke.png>
-Package pdftex.def Info: figures/Höhe/-2PID/Strecke.png  used on input line 811.
+Package pdftex.def Info: figures/Höhe/-2PID/Strecke.png  used on input line 812.
 (pdftex.def)             Requested size: 491.43622pt x 126.57094pt.
 <figures/Höhe/-2PID/Daten.png, id=1216, 1328.965pt x 342.27875pt>
 File: figures/Höhe/-2PID/Daten.png Graphic file (type png)
 <use figures/Höhe/-2PID/Daten.png>
-Package pdftex.def Info: figures/Höhe/-2PID/Daten.png  used on input line 818.
+Package pdftex.def Info: figures/Höhe/-2PID/Daten.png  used on input line 819.
 (pdftex.def)             Requested size: 491.43622pt x 126.56802pt.
 
 
@@ -1641,12 +1641,12 @@ Package pdftex.def Info: figures/Höhe/-2PID/Daten.png  used on input line 818.
 <figures/Höhe/+2/Strecke.png, id=1227, 568.1225pt x 163.61125pt>
 File: figures/Höhe/+2/Strecke.png Graphic file (type png)
 <use figures/Höhe/+2/Strecke.png>
-Package pdftex.def Info: figures/Höhe/+2/Strecke.png  used on input line 838.
+Package pdftex.def Info: figures/Höhe/+2/Strecke.png  used on input line 839.
 (pdftex.def)             Requested size: 491.43622pt x 141.53175pt.
 <figures/Höhe/+2/Daten.png, id=1230, 1313.90875pt x 345.29pt>
 File: figures/Höhe/+2/Daten.png Graphic file (type png)
 <use figures/Höhe/+2/Daten.png>
-Package pdftex.def Info: figures/Höhe/+2/Daten.png  used on input line 855.
+Package pdftex.def Info: figures/Höhe/+2/Daten.png  used on input line 856.
 (pdftex.def)             Requested size: 491.43622pt x 129.14622pt.
 
 
@@ -1654,12 +1654,12 @@ Package pdftex.def Info: figures/Höhe/+2/Daten.png  used on input line 855.
 <figures/Höhe/+4 /Strecke.png, id=1240, 565.11125pt x 217.31187pt>
 File: figures/Höhe/+4 /Strecke.png Graphic file (type png)
 <use figures/Höhe/+4 /Strecke.png>
-Package pdftex.def Info: figures/Höhe/+4 /Strecke.png  used on input line 870.
+Package pdftex.def Info: figures/Höhe/+4 /Strecke.png  used on input line 871.
 (pdftex.def)             Requested size: 491.43622pt x 188.98352pt.
 <figures/Höhe/+4 /Daten.png, id=1242, 1329.96875pt x 345.29pt>
 File: figures/Höhe/+4 /Daten.png Graphic file (type png)
 <use figures/Höhe/+4 /Daten.png>
-Package pdftex.def Info: figures/Höhe/+4 /Daten.png  used on input line 884.
+Package pdftex.def Info: figures/Höhe/+4 /Daten.png  used on input line 885.
 (pdftex.def)             Requested size: 491.43622pt x 127.58669pt.
 
 
@@ -1672,14 +1672,14 @@ Package pdftex.def Info: figures/Höhe/+4 /Daten.png  used on input line 884.
 [66]
 
 [67]
-Underfull \hbox (badness 5302) in paragraph at lines 1072--1078
+Underfull \hbox (badness 5302) in paragraph at lines 1073--1079
 \T1/lmr/m/n/10.95 (+10) Zyklus er-reicht durch-schnitt-lich 138.94ms \TS1/lmr/m/n/10.95 (+10) �
  []
 
 
 
 [68]
-Underfull \hbox (badness 6625) in paragraph at lines 1165--1167
+Underfull \hbox (badness 6625) in paragraph at lines 1166--1168
 []\T1/lmr/bx/n/10.95 (+10) Hybride Zwei-System-Architektur: \T1/lmr/m/n/10.95 (+10) Auf-bau-end auf Zan-ders be-w�hr-ter BeagleBone-
  []
 
@@ -1791,16 +1791,16 @@ Package rerunfilecheck Info: File `seminar_vorlage.out' has not changed.
 Here is how much of TeX's memory you used:
  43536 strings out of 473190
  907980 string characters out of 5704335
- 1802272 words of memory out of 5000000
+ 1804948 words of memory out of 5000000
  65151 multiletter control sequences out of 15000+600000
  667617 words of font info for 236 fonts, out of 8000000 for 9000
  1168 hyphenation exceptions out of 8191
  84i,18n,131p,1068b,2917s stack positions out of 10000i,1000n,20000p,200000b,200000s
 </opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmbx9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmcsc10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmex10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmmi9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr12.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr17.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmr9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmri10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy6.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmsy9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtk10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt8.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtt9.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/lm/lmtti10.pfb></opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on seminar_vorlage.pdf (86 pages, 16810036 bytes).
+Output written on seminar_vorlage.pdf (86 pages, 16866140 bytes).
 PDF statistics:
- 1854 PDF objects out of 2073 (max. 8388607)
- 1597 compressed objects within 16 object streams
+ 1866 PDF objects out of 2073 (max. 8388607)
+ 1608 compressed objects within 17 object streams
  595 named destinations out of 1000 (max. 500000)
  64738 words of extra memory for PDF output out of 74296 (max. 10000000)
 

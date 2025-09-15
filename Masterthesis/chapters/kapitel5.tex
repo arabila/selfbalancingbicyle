@@ -134,9 +134,10 @@ beim Transfer auf reale Systeme minimiert wird.
   mit folgenden Maßeinheiten:
   
   \begin{itemize}
-    \item \textbf{Winkelgrößen}: Rollwinkel (\texttt{roll\_angle}) in Grad zur besseren Lesbarkeit, alle anderen 
-    Winkel (Lenkwinkel \texttt{steering\_output}, \texttt{final\_steer}, Orientierung \texttt{yaw}, \texttt{pitch}) 
-    in Radiant entsprechend der Webots-API
+    \item \textbf{Winkelgrößen}: Alle Winkelgrößen werden in den Diagrammen in Grad dargestellt zur besseren Lesbarkeit 
+    (Umrechnung von Radiant zu Grad erfolgt bei der Darstellung). In den CSV-Rohdaten sind alle 
+    Winkel (Rollwinkel \texttt{roll\_angle}, Lenkwinkel \texttt{steering\_output}, \texttt{final\_steer}, 
+    Orientierung \texttt{yaw}, \texttt{pitch}) in Radiant entsprechend der Webots-API gespeichert
     \item \textbf{Positionen}: Weltkoordinaten (\texttt{pos\_x}, \texttt{pos\_y}, \texttt{pos\_z}) in Metern 
     relativ zum Webots-Koordinatensystem mit Ursprung im Weltmittelpunkt
     \item \textbf{Geschwindigkeiten}: Zielgeschwindigkeit (\texttt{target\_speed}) in rad/s für Motoransteuerung, 
@@ -195,7 +196,7 @@ beim Transfer auf reale Systeme minimiert wird.
   \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/P/Daten.png}
-    \caption{Kurvenfahrt mit reinem P-Regler (Zeitreihen)}
+    \caption{Kurvenfahrt mit reinem P-Regler (Zeitreihen). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:kurvenfahrt-p}
   \end{figure}
   Die quantitative Analyse der Logdaten (17{,}04\,s Fahrtdauer, 8{,}521 Datenpunkte bei 2\,ms Abtastung) zeigt 
@@ -246,7 +247,7 @@ x
   \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/YOLO PID/Daten.png}
-    \caption{Kurvenfahrt mit PID-Regler und YOLO-Spurführung}
+    \caption{Kurvenfahrt mit PID-Regler und YOLO-Spurführung. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:kurvenfahrt-pid-yolo}
   \end{figure}
   
@@ -312,7 +313,7 @@ x
   \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{figures/Kurve/Test P und PID/PID/Daten.png}
-    \caption{Kurvenfahrt mit PID\mbox{-}Regler und ROI\mbox{-}Fallback\mbox{-}Erkennung}
+    \caption{Kurvenfahrt mit PID\mbox{-}Regler und ROI\mbox{-}Fallback\mbox{-}Erkennung. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:kurvenfahrt-pid-roi}
   \end{figure}
   
@@ -428,7 +429,7 @@ x
     \begin{figure}[H]
       \centering
       \includegraphics[width=\textwidth]{figures/S-Kurve/YOLO/Daten.png}
-      \caption{S\,-Kurve: ausgewählte Zeitreihen (Rollwinkel, Balance-Soll, \texttt{final\_steer})}
+      \caption{S\,-Kurve: ausgewählte Zeitreihen (Rollwinkel, Balance-Soll, \texttt{final\_steer}). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
       \label{fig:skurve-yolo-daten}
     \end{figure}
     
@@ -488,7 +489,7 @@ x
     \begin{figure}[H]
       \centering
       \includegraphics[width=\textwidth]{figures/S-Kurve/Fallback/Daten.png}
-      \caption{S-Kurve mit ROI-Regler Daten}
+      \caption{S-Kurve mit ROI-Regler Daten. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
       \label{fig:skurve-roi-daten}
     \end{figure}
 
@@ -602,7 +603,7 @@ x
       \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten.png}
       \caption{Zeitreihen bei $0{,}5\,\text{m/s}$ Seitenwind: Rollwinkel, Balance-Steer und finales Lenkkommando. 
       Die Richtung der Seitenböe spiegelt sich in der Vorzeichenfolge des Rollwinkels wider; 
-      der D-Anteil dämpft die schnelle Nick-/Roll-Dynamik.}
+      der D-Anteil dämpft die schnelle Nick-/Roll-Dynamik. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
       \label{fig:gerade-strecke-mit-seitenwind-daten}
     \end{figure}
     
@@ -630,7 +631,7 @@ x
       \centering
       \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten_2.png}
       \caption{Zeitverlauf bei $1{,}0\,\text{m/s}$ (Baseline-Regler): 
-      ansteigende Rollauslenkung und instabiles Verhalten nach $\approx 7\,\text{s}$.}
+      ansteigende Rollauslenkung und instabiles Verhalten nach $\approx 7\,\text{s}$. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
       \label{fig:gerade-strecke-mit-seitenwind-daten1}
     \end{figure}
     
@@ -663,7 +664,7 @@ x
       \centering
       \includegraphics[width=1.0\textwidth]{figures/Wind/Wind/Daten_3.png}
       \caption{Zeitreihen bei $1{,}0\,\text{m/s}$ mit erhöhten Gains: 
-      gedämpfter Rollwinkelverlauf; höhere, aber tolerierbare Lenkaktivität (keine Sättigung, keine Divergenz).}
+      gedämpfter Rollwinkelverlauf; höhere, aber tolerierbare Lenkaktivität (keine Sättigung, keine Divergenz). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
       \label{fig:gerade-strecke-mit-seitenwind-daten2}
     \end{figure}
     
@@ -766,7 +767,7 @@ x
   \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/Höhe/-1/Daten.png}
-    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~A, \(M=1{,}0\,\text{m}\)).}
+    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~A, \(M=1{,}0\,\text{m}\)). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:tunnel-daten-1}
   \end{figure}
   
@@ -786,7 +787,7 @@ x
   \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/Höhe/-2/Daten.png}
-    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~B, \(M=2{,}0\,\text{m}\), Baseline-Gewichte).}
+    \caption{Zeitverläufe Rollwinkel/Balancelenkung (Fall~B, \(M=2{,}0\,\text{m}\), Baseline-Gewichte). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:tunnel-daten-2}
   \end{figure}
   
@@ -816,7 +817,7 @@ x
   \begin{figure}[H]
     \centering
     \includegraphics[width=1.0\textwidth]{figures/Höhe/-2PID/Daten.png}
-    \caption{Zeitverläufe mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text{m}\)).}
+    \caption{Zeitverläufe mit retuntem Balance-PID (Fall~B, \(M=2{,}0\,\text{m}\)). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
     \label{fig:tunnel-daten-pid}
   \end{figure}
 
@@ -853,7 +854,7 @@ Schwingungen rasch ab und der Verlauf nähert sich wieder dem stationären Berei
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/Höhe/+2/Daten.png}
-  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~D, \(M=2{,}0\,\text{m}\)).}
+  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~D, \(M=2{,}0\,\text{m}\)). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
   \label{fig:tunnel-daten-pid-2}
 \end{figure}
 
@@ -882,7 +883,7 @@ nähert sich einer geraden Spur.
 \begin{figure}[H]
   \centering
   \includegraphics[width=1.0\textwidth]{figures/Höhe/+4 /Daten.png}
-  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~E, \(M=4{,}0\,\text{m}\)).}
+  \caption{Zeitverläufe mit angepasstem Balance PID (Fall~E, \(M=4{,}0\,\text{m}\)). X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}
   \label{fig:tunnel-daten-pid-4}
 \end{figure}
 
