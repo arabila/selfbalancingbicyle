@@ -2,7 +2,7 @@
 \subsection{Portierung des Balance-PID (Zander)}
 
 Jonah Zanders Bachelorarbeit (2023) implementiert eine dreistufige Kaskadenregelung für ein selbstbalancierendes Fahrrad, die als Grundlage 
-für die in dieser Arbeit entwickelte Simulationsregelung dient \cite{zander2023}. Die Hardware-Architektur umfasst einen BNO055-IMU-Sensor 
+für die in dieser Arbeit entwickelte Simulationsregelung dient \citep{zander2023}. Die Hardware-Architektur umfasst einen BNO055-IMU-Sensor 
 zur Neigungsmessung, einen BeagleBone-Black-Einplatinencomputer als Steuerungseinheit sowie separate Motorcontroller für Lenkung und Antrieb. 
 Die Regelungsarchitektur gliedert sich in drei hierarchische Ebenen: eine primäre Balance-PID-Regelung (Angle-to-Steering), eine sekundäre 
 Lenkpositionsregelung und eine vereinfachte Geschwindigkeitssteuerung.
@@ -121,13 +121,13 @@ Pfadführung, die in den folgenden Abschnitten behandelt wird.
 \subsection{Portierung des Fahrtrichtungs-MPC (Giray)} \label{chap:MPC_KAPITEL}
 Yasin Giray entwickelte in seiner Masterarbeit einen vision-basierten 
 Fahrtrichtungsregler auf Basis von Model Predictive Control (MPC), 
-um das selbstbalancierende Fahrrad autonom der Fahrspur folgen zu lassen \cite{vision_mpc_readme}. Dieser Regler modelliert die Fahrzeugdynamik mittels Einspurmodell 
+um das selbstbalancierende Fahrrad autonom der Fahrspur folgen zu lassen \citep{vision_mpc_readme}. Dieser Regler modelliert die Fahrzeugdynamik mittels Einspurmodell 
 und nutzt zwei Steuergrößen, die aktuelle Geschwindigkeit \(v\) und Lenkwinkel \(\phi\) als Eingaben für die Prädiktion. Der MPC berechnet 
 also auf Grundlage von \(v\) und Lenkeinschlag die Fahrzeugbewegung voraus. Für den prädiktiven Regler wird ein 
 Zustandsvektor \(x=[x, y, v, \text{yaw}]\) (Position, Geschwindigkeit, Gierwinkel) und ein Eingangsvektor \(u=[\text{accel}, \text{steer}]\) 
 definiert. Giray wählte einen Zeithorizont von etwa 2~s und formulierte ein Optimierungsproblem, das die Abweichung von einer Soll-Trajektorie 
 minimiert sowie Steuerungsaufwand und -änderungen übernimmt. Die Kostenfunktion des MPC addiert quadrierte Abweichungen der Zustände und Eingriffe über den Horizont sowie eine 
-Endzustands-Strafe, z.\,B. \(J=\sum (x^T Q x + u^T R u + \Delta u^T R_d \Delta u) + x_{\text{final}}^T Q_f x_{\text{final}}\) \cite{vision_mpc_readme}. 
+Endzustands-Strafe, z.\,B. \(J=\sum (x^T Q x + u^T R u + \Delta u^T R_d \Delta u) + x_{\text{final}}^T Q_f x_{\text{final}}\) \citep{vision_mpc_readme}. 
 Neben den Kosten werden physikalische Nebenbedingungen wie maximaler Lenkwinkel, Lenkwinkelrate und Geschwindigkeit im Optimierungsproblem 
 berücksichtigt, um realistische Lösungen zu gewährleisten.
 
@@ -169,7 +169,8 @@ Integration & Standalone & Gekoppelt mit Balance-PID \\
 
 Die Webots-Implementierung vereinfacht Girays Ansatz erheblich durch Reduzierung des Prädiktionshorizonts auf 3 Zeitschritte 
 (\(\approx 0{,}3\,\mathrm{s}\)). Diese Entscheidung wurde aus Echtzeitgründen getroffen, da die Integration mit dem Balance-Controller 
-eine höhere Regelfrequenz (20\,Hz) erfordert. Listing~\ref{lst:webots_mpc_init} zeigt die Initialisierung des MPC-Controllers 
+eine höhere Regelfrequenz (20\,Hz) erfordert. Bei niedrigeren Regelfrequenzen würde die Regelung instabiler werden, da das System 
+weniger Zeit für die Bildverarbeitung und MPC-Berechnung hätte, was zu verzögerten Reaktionen auf Pfadabweichungen führen würde. Listing~\ref{lst:webots_mpc_init} zeigt die Initialisierung des MPC-Controllers 
 mit den angepassten Parametern:
 
 \begin{lstlisting}[style=python,caption={MPC-Controller Initialisierung in der Webots-Implementierung},label={lst:webots_mpc_init}]
@@ -262,6 +263,8 @@ Optimierungsproblems. Abbildung~\ref{fig:mpc_blockdiagram} zeigt die strukturier
 \label{fig:mpc_blockdiagram}
 \end{figure}
 
+Die vollständige Implementierung des MPC-Optimierungsalgorithmus ist in Listing~\ref{lst:webots_mpc_solver_appendix} in den Anlagen dargestellt.
+
 Die Kostenfunktion $J$ setzt sich aus folgenden Komponenten zusammen:
 
 \begin{itemize}
@@ -270,7 +273,6 @@ Die Kostenfunktion $J$ setzt sich aus folgenden Komponenten zusammen:
         J_{\text{track}} = \sum_{t=1}^{T} \|x_{\text{ref}}[t] - x[t]\|_Q^2
     \end{equation}
     Bestraft Abweichungen von der Referenztrajektorie.
-    
     \item \textbf{Stellaufwand:} 
     \begin{equation}
         J_{\text{control}} = \sum_{t=0}^{T-1} \|u[t]\|_R^2
@@ -293,22 +295,96 @@ Die Kostenfunktion $J$ setzt sich aus folgenden Komponenten zusammen:
 Die Implementierung folgt dem Standard-MPC-Schema mit quadratischen Kosten und linearen Constraints. Im Gegensatz zu Girays 
 längerfristigem Horizont ermöglicht die Reduzierung auf 3 Zeitschritte eine Echtzeitausführung mit 20\,Hz.
 
-\textbf{Integration mit Balance-Controller:} Ein wesentlicher Unterschied zu Girays Standalone-Ansatz liegt in der Integration mit 
-dem bestehenden Balance-PID-Regler. Die Webots-Implementierung realisiert eine Kaskadenregelung, bei der der MPC-Controller die 
-langfristige Spurführung übernimmt, während der Balance-PID die kurzfristige Stabilisierung gewährleistet. Die MPC-Ausgaben werden 
-normalisiert und über IPC an den C-basierten Balance-Controller übertragen:
+\textbf{Integration mit Balance-Controller:} Im Gegensatz zu Girays Standalone-Ansatz realisiert die Webots-Implementierung 
+eine zweistufige Kaskadenregelung (Abbildung \ref{fig:cascade_controller}). Der Vision Controller (MPC, 20\,Hz) übernimmt die 
+Spurführung basierend auf dem Kamerabild, während der Balance Controller (PID, 500\,Hz) die Stabilisierung anhand des Rollwinkels 
+gewährleistet. Die MPC-Ausgaben werden über IPC an den C-basierten Balance-Controller übertragen, der zusätzlich einen separaten 
+Soll-Rollwinkel-Eingang erhält (siehe Abbildung \ref{fig:cascade_controller}).
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    node distance=2cm and 3.5cm,
+    block/.style={rectangle, draw, fill=blue!10, text width=2.5cm, text centered, minimum height=1.2cm, font=\footnotesize},
+    vision_block/.style={rectangle, draw, fill=green!15, text width=2.5cm, text centered, minimum height=1.2cm, font=\footnotesize},
+    balance_block/.style={rectangle, draw, fill=orange!15, text width=2.5cm, text centered, minimum height=1.2cm, font=\footnotesize},
+    sensor_block/.style={rectangle, draw, fill=purple!10, text width=2.2cm, text centered, minimum height=1cm, font=\footnotesize},
+    summing/.style={circle, draw, minimum size=0.8cm, font=\footnotesize},
+    arrow/.style={->, >=stealth, thick},
+    stage_label/.style={font=\footnotesize\bfseries, text=red!70!black}
+]
+
+% Stage Labels - positioned further left
+\node[stage_label] at (-3.5, 0.25) {Stufe 1: 20Hz};
+\node[stage_label] at (-3.4, -0.25) {Stufe 2: 500Hz};
+
+% Reference input - moved further left
+\node[coordinate] (ref_input) at (-3, 1.5) {};
+\node[left] at (ref_input) {\footnotesize Sollpfad $r_{path}(t)$};
+
+% Soll-Rollwinkel input for Stage 2
+\node[coordinate] (roll_ref_input) at (-3, -2.5) {};
+\node[left] at (roll_ref_input) {\footnotesize Soll-Rollwinkel $r_{roll}(t)$};
+
+% Stage 1: Vision Controller (MPC) - repositioned
+\node[vision_block] (vision_controller) at (1, 1.5) {Vision Controller\\(MPC)\\Python};
+\node[below=0.1cm of vision_controller, font=\tiny] {vision\_control\_py};
+
+% Summing junction for Stage 1 - moved left
+\node[summing] (sum1) at (-2, 1.5) {$+$};
+\node[above left=0.15cm of sum1] {\tiny $-$};
+
+% IPC Communication - moved right
+\node[block, fill=gray!10] (ipc) at (5, 1.5) {IPC\\Kommunikation};
+
+% Stage 2: Balance Controller (PID) - repositioned
+\node[balance_block] (balance_controller) at (1, -2.5) {Balance Controller\\(PID)\\C};
+\node[below=0.1cm of balance_controller, font=\tiny] {balance\_control\_c};
+
+% Summing junction for Stage 2 - moved left
+\node[summing] (sum2) at (-2, -2.5) {$+$};
+\node[above left=0.15cm of sum2] {\tiny $-$};
+
+% Plant (Bicycle) - moved right
+\node[block, fill=yellow!15] (plant) at (8, -2.5) {Fahrrad\\(Webots)};
+
+% Feedback sensors - better positioned
+\node[sensor_block] (camera) at (1, 4) {Kamera\\(Pfaderkennung)};
+\node[sensor_block] (imu) at (8, -5) {IMU\\(Balance)};
+
+% Arrows - Stage 1 (dünnere Pfeile für Sollwerte)
+\draw[->, >=stealth, thin] (ref_input) -- (sum1);
+\draw[arrow] (sum1) -- (vision_controller);
+\draw[arrow] (vision_controller) -- node[above, font=\scriptsize] {$u_{path}$} (ipc);
+
+% Soll-Rollwinkel to Stage 2 (dünnere Pfeile für Sollwerte)
+\draw[->, >=stealth, thin] (roll_ref_input) -- (sum2);
+
+% IPC to Stage 2 - cleaner routing
+\draw[arrow] (ipc) -- ++(0,-1.2) node[right, font=\scriptsize] {$r_{balance}$} -- ++(0,-1.3) -| (sum2);
+
+% Arrows - Stage 2
+\draw[arrow] (sum2) -- (balance_controller);
+\draw[arrow] (balance_controller) -- node[above, font=\scriptsize] {$u_{motor}$} (plant);
+
+% Feedback paths - cleaner routing
+\draw[arrow] (plant) |- node[near start, right, font=\scriptsize] {Kamerabild} (camera);
+\draw[arrow] (camera) -| node[near start, above, font=\scriptsize] {$y_{path}$} (sum1);
+
+\draw[arrow] (plant) -- node[right, font=\scriptsize] {Rollwinkel} (imu);
+\draw[arrow] (imu) -| node[near start, below, font=\scriptsize] {$y_{balance}$} (sum2);
+
+% Stage separation line - extended
+\draw[dashed, gray, thick] (-6, 0) -- (9.5, 0);
 
 
-\textbf{Bewertung der Portierung:} Die Adaptation von Girays MPC-Konzept für die Webots-Simulation demonstriert sowohl die 
-Übertragbarkeit theoretischer MPC-Ansätze als auch die Notwendigkeit praktischer Kompromisse.
-Die vereinfachte Referenzgenerierung verzichtet auf Girays komplexe Spline-Interpolation, bietet jedoch ausreichende Genauigkeit 
-für die Spurhaltung in der Simulation.
 
-Die erfolgreiche Kopplung mit dem Balance-Controller zeigt, dass MPC-basierte Spurführung und PID-basierte Stabilisierung 
-komplementäre Regelungsebenen darstellen können. Girays theoretischer Beitrag zur modellprädiktiven Fahrzeugführung findet 
-somit praktische Anwendung in einem hybriden Regelungskonzept, das die Vorteile beider Ansätze kombiniert.
+\end{tikzpicture}
+\caption{Zweistufige Kaskadenregelung: Vision-MPC (Stufe 1) für Spurführung und Balance-PID (Stufe 2) für Stabilisierung}
+\label{fig:cascade_controller}
+\end{figure}
 
-\newpage
+
 
 
 \subsection{Strategien der Spurführung}
@@ -379,7 +455,7 @@ Die detaillierte Implementierung der YOLO-Fehlerberechnung ist in Anlage~\ref{ls
 
 
 Das System implementiert eine Ausfallüberbrückung durch Zwischenspeicherung 
-der letzten gültigen Fehlerwerte. Bei Detektionsaussetzern wird der gespeicherte Fehler mit Decay-Faktor schrittweise 
+der letzten gültigen Fehlerwerte. Bei Detektionsaussetzern wird der gespeicherte Fehler mit Decay-Faktor\footnote{Der Decay-Faktor reduziert den gespeicherten Fehlerwert in jedem Zyklus um einen festen Prozentsatz, um ein allmähliches Abklingen zu gewährleisten.} schrittweise 
 abgeschwächt, bis er nach definierten Ausbleib-Zyklen auf Null fällt. Dies verhindert abrupte Lenkbewegungen bei 
 temporären Erkennungsverlusten.
 
@@ -428,7 +504,10 @@ Die Fallback-Fehlerberechnung basiert auf HSV-Farbsegmentierung und erfolgt in f
         0 & \text{sonst}
     \end{cases}
 \end{align}
-Erstellt separate Binärmasken für graue Straßenbereiche und weiße Fahrbahnmarkierungen basierend auf HSV-Farbwerten.
+Das Eingangsbild wird vom RGB- in den HSV-Farbraum konvertiert, da dieser robustere Farbsegmentierung bei 
+wechselnden Lichtverhältnissen ermöglicht. Für jeden Pixel wird geprüft, ob seine HSV-Werte innerhalb der 
+definierten Bereiche für Straßenoberfläche (grau) oder Fahrbahnmarkierungen (weiß) liegen. Entsprechende 
+Pixel erhalten in der jeweiligen Binärmaske den Wert 255 (weiß), alle anderen 0 (schwarz).
 
 \textbf{2. Maskenkombination und morphologische Operationen:}
 \begin{align}
@@ -436,21 +515,30 @@ Erstellt separate Binärmasken für graue Straßenbereiche und weiße Fahrbahnma
     M_{closed} &= \text{Close}(M_{combined}, K) \\
     M_{final} &= \text{Open}(M_{closed}, K)
 \end{align}
-Kombiniert beide Masken und reduziert Rauschen durch morphologische Schließung und Öffnung.
-\newpage
+Die beiden Binärmasken werden durch logisches ODER verknüpft, um eine vereinte Straßenmaske zu erzeugen. 
+Anschließend werden morphologische Operationen mit einem strukturierenden Element K (typisch 5×5 Kernel) 
+angewendet: Die Schließung\footnote{Close (Schließung): Morphologische Operation, die kleine Löcher in Objekten füllt und Konturen glättet. Entspricht einer Dilatation gefolgt von einer Erosion.} füllt kleine Lücken in der Straßenkontur und verbindet getrennte Bereiche, 
+während die Öffnung\footnote{Open (Öffnung): Morphologische Operation, die kleine Objekte und Rauschen entfernt. Entspricht einer Erosion gefolgt von einer Dilatation.} störende kleine Objekte und Bildrauschen eliminiert, ohne die 
+Hauptkonturen zu beeinträchtigen.\newline
 \textbf{3. Konturerkennung und Zentrumsberechnung:}
 \begin{align}
     C_{max} &= \arg\max_{C \in \mathcal{C}} \text{Area}(C) \\
     (x, y, w, h) &= \text{BoundingRect}(C_{max}) \\
     x_{center} &= x + \frac{w}{2}
 \end{align}
-Identifiziert die größte Kontur als Straßenbereich und berechnet deren horizontales Zentrum.
+Aus der gefilterten Maske werden alle geschlossenen Konturen extrahiert und nach ihrer Fläche sortiert. 
+Die größte Kontur wird als Hauptstraßenbereich interpretiert, da sie typischerweise den dominanten 
+fahrbaren Bereich repräsentiert. Um deren horizontales Zentrum zu bestimmen, wird eine achsenparallele 
+Bounding Box berechnet und deren Mittelpunkt in x-Richtung als Straßenzentrum verwendet.
 
 \textbf{4. Normierter Lateral-Fehler:}
 \begin{equation}
     e_{fallback} = \frac{x_{target} - x_{center}}{W_{frame}}
 \end{equation}
-Berechnet den normierten Abstand zwischen Straßenzentrum und gewünschter Zielposition.
+Der finale Regelfehler wird als normierter Abstand zwischen der gewünschten Zielposition (meist Bildmitte) 
+und dem detektierten Straßenzentrum berechnet. Die Normierung durch die Bildbreite $W_{frame}$ stellt 
+sicher, dass der Fehler unabhängig von der Auflösung im Bereich [-1, 1] liegt, wobei negative Werte 
+eine Abweichung nach links und positive Werte eine Abweichung nach rechts signalisieren.
 
 Hierbei ist:
 \begin{itemize}
@@ -462,12 +550,12 @@ Hierbei ist:
 
 
 \textbf{Vorteile der Fallback-Methode:}
-\begin{itemize}
+\begin{enumerate}
     \item Robuste Farbsegmentierung bei konstanten Lichtverhältnissen
     \item Geringe Rechenleistung erforderlich
     \item Deterministisches Verhalten ohne ML-Unsicherheiten
     \item Morphologische Filterung reduziert Rauschen
-\end{itemize}
+\end{enumerate}
 
 Die detaillierte Implementierung der Fallback-Fehlerberechnung ist in Anlage~\ref{lst:fallback_error_calculation_appendix} dargestellt.
 

@@ -21,7 +21,7 @@ Hardware-Limitierungen. Die Arbeiten von Ranz (2021) und Karabila (2022) dokumen
 zeigen die Komplexität der realen Sensordatenverarbeitung auf.
 
 Der BNO055 arbeitet als 9-Achsen-Fusionssensor, der Accelerometer-, Gyroscope- und Magnetometer-Daten intern verarbeitet und 
-über I²C-Kommunikation 16-Bit-Rohwerte ausgibt. Diese müssen über konfigurierbare Skalierungsfaktoren in physikalische Einheiten konvertiert werden \cite{ranz2021bachelor}. Die endliche Auflösung führt zwangsläufig 
+über I²C-Kommunikation 16-Bit-Rohwerte ausgibt. Diese müssen über konfigurierbare Skalierungsfaktoren in physikalische Einheiten konvertiert werden \citep{ranz2021bachelor}. Die endliche Auflösung führt zwangsläufig 
 zu Quantisierungsfehlern, die bei der hochfrequenten Balance-Regelung (500\,Hz) akkumulieren können. Zusätzlich erfordert der Sensor 
 eine mehrstufige Kalibrierung seiner Teilkomponenten, wobei Ranz die Implementierung einer \texttt{set\_axis\_mode()}-Funktion für 
 das erforderliche Achsenremapping dokumentiert.
@@ -50,7 +50,7 @@ Die Webots-Kamera erzeugt perfekte, rauschfreie Bilder mit konstanter Beleuchtun
 Verzerrungen. Girays reale Implementierung auf dem NVIDIA Jetson Nano hingegen musste verschiedene hardware- und umgebungsbedingte 
 Herausforderungen bewältigen. Das YOLOv8-Segmentierungsmodell wurde mit einem spezifischen Datensatz für vier Klassen trainiert 
 (\textit{meadow}, \textit{obstacle}, \textit{street\_main}, \textit{street\_side}) und mittels TensorRT für die Inferenz optimiert, 
-um Bildauswertungszyklen von etwa 100\,ms zu erreichen \cite{vision_mpc_readme}.
+um Bildauswertungszyklen von etwa 100\,ms zu erreichen \citep{vision_mpc_readme}.
 
 Während die Webots-Simulation deterministisch identische Bilder unter kontrollierten Bedingungen liefert, unterliegt die reale 
 Kameraverarbeitung verschiedenen Störfaktoren. Girays Implementierung dokumentiert Herausforderungen bei der Echtzeitverarbeitung, 
@@ -84,12 +84,12 @@ auf die Realitätstreue der Fahrradsimulation haben und die Übertragbarkeit der
 Die kritischsten Limitierungen betreffen die vereinfachte Reifen-Fahrbahn-Modellierung und numerische Stabilitätsprobleme. ODE reduziert 
 den Reifenkontakt auf eine Punkt-zu-Ebene-Interaktion mit konstantem Reibungskoeffizienten, während reale Reifen komplexe nichtlineare 
 Charakteristika aufweisen. Besonders die fehlende Modellierung des Seitenschlupfes, der bei Kurvenfahrten die lateralen Führungskräfte 
-bestimmt, beeinträchtigt die Realitätstreue der Fahrdynamik erheblich \cite{catto2009ode_friction}. Im Gegensatz zu den in der 
-Fahrzeugdynamik etablierten detaillierten Reifenmodellen \cite{schramm2018fahrzeugdynamik} vernachlässigt die ODE-Simulation 
+bestimmt, beeinträchtigt die Realitätstreue der Fahrdynamik erheblich \citep{catto2009ode_friction}. Im Gegensatz zu den in der 
+Fahrzeugdynamik etablierten detaillierten Reifenmodellen \citep{schramm2018fahrzeugdynamik} vernachlässigt die ODE-Simulation 
 fundamentale Aspekte der Reifen-Fahrbahn-Interaktion.
 
 Der verwendete explizite Euler-Integrator\footnote{Der Euler-Integrator ist ein numerisches Verfahren zur Lösung von Differentialgleichungen, das aufgrund seiner einfachen Implementierung weit verbreitet ist, jedoch bei großen Zeitschritten oder steifen Systemen zu Stabilitätsproblemen neigt.} kann bei der hochfrequenten Balance-Regelung (500\,Hz) zu numerischen Instabilitäten führen, 
-was die Validität der Simulationsergebnisse gefährdet \cite{smith2006ode_stability}. Zusätzlich vernachlässigt die vereinfachte 
+was die Validität der Simulationsergebnisse gefährdet \citep{smith2006ode_stability}. Zusätzlich vernachlässigt die vereinfachte 
 Mehrkörperdynamik-Modellierung wichtige Aspekte wie Spiel in Lagern und elastische Verformungen des Rahmens.
 
 Diese fundamentalen Limitierungen der ODE-basierten Physikmodellierung stellen eine erhebliche Einschränkung für die Übertragbarkeit der 

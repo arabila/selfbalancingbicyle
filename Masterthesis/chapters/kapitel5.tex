@@ -216,7 +216,7 @@ beim Transfer auf reale Systeme minimiert wird.
   \end{figure}
 
 
-
+x
 
   \begin{wrapfigure}{r}{0.40\textwidth}
     \vspace{-0.8\baselineskip}
@@ -607,7 +607,7 @@ beim Transfer auf reale Systeme minimiert wird.
     \end{figure}
     
     \paragraph{Fall B: Seitenwind $1{,}0\,\text{m/s}$ (Baseline-Regler):}
-    Erhöhen wir die Windstärke auf $1{,}0\,\text{m/s}$, vergrößert sich die laterale Abweichung deutlich
+    Erhöht man die Windstärke auf $1{,}0\,\text{m/s}$, vergrößert sich die laterale Abweichung deutlich
     (\autoref{fig:gerade-strecke-mit-seitenwind-strecke2}). Die Analyse der Versuchsdaten 
     (ca. 7{,}5\,s Fahrtdauer bis zum Umkippen, entsprechend 3{,}750 Datenpunkten bei 2\,ms Abtastung) 
     zeigt kritische Instabilität.
@@ -635,8 +635,8 @@ beim Transfer auf reale Systeme minimiert wird.
     \end{figure}
     
     \paragraph{Fall C: Gain-Erhöhung für die Balance-Regelung:}
-    Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften erhöhen wir die Balance-Reglerparameter auf 
-    $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$. Die quantitative Analyse der Versuchsdaten 
+    Zur Verbesserung der Robustheit gegenüber konstanten Seitenkräften werden die Balance-Reglerparameter auf 
+    $K_p=5{,}0$, $K_i=0{,}2$ und $K_d=0{,}4$ erhöht. Die quantitative Analyse der Versuchsdaten 
     (ca. 22{,}0\,s erfolgreiche Fahrtdauer, entsprechend 11{,}000 Datenpunkten bei 2\,ms Abtastung) 
     belegt die deutliche Verbesserung der Windresistenz.
     
@@ -721,10 +721,10 @@ beim Transfer auf reale Systeme minimiert wird.
   Die Fahrradkonfiguration entspricht den vorherigen Experimenten mit reduzierter Reifenbreite 
   (Entspricht ca. $2\,\text{cm}$ Breite) für erhöhte Balance-Anforderungen.
   
-  In diesem Abschnitt bewerten wir die Stabilität der reinen Balance-Regelung auf definierten Höhenprofilen. 
+  In diesem Abschnitt wird die Stabilität der reinen Balance-Regelung auf definierten Höhenprofilen bewertet. 
   Untersucht werden zwei Szenarien: das Überfahren eines Hügels sowie das Durchfahren einer 
-  Senke (vgl. \autoref{fig:huegel-tunnel}). Soweit nicht anders angegeben verwenden wir die 
-  Baseline-Parameter der Balance-PID-Regelung ($K_p = 2{,}0$, $K_i = 0{,}05$, $K_d = 0{,}2$). 
+  Senke (vgl. \autoref{fig:huegel-tunnel}). Soweit nicht anders angegeben wird die 
+  Baseline-Parametrierung der Balance-PID-Regelung ($K_p = 2{,}0$, $K_i = 0{,}05$, $K_d = 0{,}2$) verwendet. 
   Die Höhendifferenz $M$ wird schrittweise variiert ($1\,\text{m}$, $2\,\text{m}$, $4\,\text{m}$) 
   um den Einfluss auf Roll- und Spurverhalten systematisch zu untersuchen.
   
@@ -827,7 +827,7 @@ beim Transfer auf reale Systeme minimiert wird.
 
 
 
-Wir betrachten nun die Auffahrt auf einen Hügel mit einer maximalen Höhe von $+2{,}0\,\text{m}$ 
+Betrachtet man nun die Auffahrt auf einen Hügel mit einer maximalen Höhe von $+2{,}0\,\text{m}$ 
 mit angepassten Balance-PID-Gewichten ($K_p=3{,}5$, $K_i=0{,}2$, $K_d=0{,}4$). Die quantitative Analyse 
 der Versuchsdaten (22{,}15\,s Fahrtdauer, 2{,}216 Datenpunkte bei 2\,ms Abtastung) zeigt vergleichbare 
 Stabilität zur entsprechenden Senke (Fall C). Ziel ist die Beurteilung der Stabilität bei umgekehrtem 
@@ -950,7 +950,7 @@ zusätzliche Latenzen verursachen.
 
 Während in Webots keine harten Echtzeitanforderungen bestehen, erfordern aber reale Fahrradprototypen deterministische 
 Timing-Eigenschaften. Zanders Arbeit beschreibt kaskadierte PID-Architekturen mit typischen Zykluszeiten von 5ms (Balance), 1ms (Lenkpositionsregelung) und 150ms 
-(Geschwindigkeit) auf BeagleBone Black-Systemen mit PRUs für deterministische PWM-Signale \cite{zander2023}. Das Verfehlen der 5ms-Balance-Periode führt zur Akkumulation von Rollfehlern 
+(Geschwindigkeit) auf BeagleBone Black-Systemen mit PRUs für deterministische PWM-Signale \citep{zander2023}. Das Verfehlen der 5ms-Balance-Periode führt zur Akkumulation von Rollfehlern 
 und kann innerhalb weniger hundert Millisekunden zur Instabilität führen. Da die entwickelte Fahrbahnerkennung und MPC-Regelung auf dem geplanten NVIDIA Jetson Nano als zusätzliche Komponente zum bestehenden Balance-System (BeagleBone) hinzukommen wird, konzentriert sich das Performance-Monitoring insbesondere auf diese neuen Module, um deren Echtzeitfähigkeit und Systemintegration zu gewährleisten.
 
 \subsubsection{Performance-Monitoring und Rechenzeit-Analyse}
@@ -1137,14 +1137,14 @@ Für die geplante Realfahrrad-Implementierung
 mit einem NVIDIA Jetson Nano sind aufgrund der geringeren 
 Rechenleistung im Vergleich zum Testsystem deutlich längere Inferenzzeiten zu erwarten. 
 Der Jetson Nano verfügt über einen ARM Cortex-A57 Quad-Core-Prozessor (1.43 GHz) und 
-eine NVIDIA Maxwell GPU mit 128 CUDA-Kernen bei 4 GB RAM\cite{nvidia_jetson_specs}. 
+eine NVIDIA Maxwell GPU mit 128 CUDA-Kernen bei 4 GB RAM\citep{nvidia_jetson_specs}. 
 
 Erste Abschätzungen basierend auf der Hardware-Spezifikation und typischen 
 YOLO-Performance-Charakteristika lassen eine 
 Vision-Controller-Frequenz von 5-10 Hz erwarten, gegenüber den aktuell 
-angestrebten 20 Hz in der Simulation \cite{yolo_edge_performance}. Durch Hardware-spezifische Optimierungen 
+angestrebten 20 Hz in der Simulation \citep{yolo_edge_performance}. Durch Hardware-spezifische Optimierungen 
 wie TensorRT-Integration und Modell-Quantisierung könnten diese Werte 
-verbessert werden\cite{tensorrt_optimization}.
+verbessert werden\citep{tensorrt_optimization}.
 
 Für die Balance-Regelung bleibt dies jedoch unkritisch, da der schnelle 
 Balance-Controller weiterhin mit 500 Hz parallel auf dem BeagleBone Black arbeitet und nur die langsamere
@@ -1160,7 +1160,7 @@ Die durchgeführten Messungen bestätigen die prinzipielle Machbarkeit des entwi
 Für die Übertragung auf das geplante Jetson Nano-System sind drei wesentliche Optimierungen erforderlich:
 
 \begin{enumerate}
-\item \textbf{YOLO-Optimierung:} TensorRT-Integration mit INT8-Quantisierung kann die Inferenzzeit von 107.64ms auf 40-67ms reduzieren\cite{tensorrt_optimization}. YoloFastestV2 erreicht sogar 26ms bei akzeptabler Genauigkeit\cite{qengineering_yolo_fastest}. Eingabeauflösungsreduktion auf 416×416 Pixel reduziert den Rechenaufwand mathematisch um $(640/416)^2 = 2.37$ bzw. ~58\%\cite{yolo_resolution_scaling}.
+\item \textbf{YOLO-Optimierung:} TensorRT-Integration mit INT8-Quantisierung kann die Inferenzzeit von 107.64ms auf 40-67ms reduzieren\citep{tensorrt_optimization}. YoloFastestV2 erreicht sogar 26ms bei akzeptabler Genauigkeit\citep{qengineering_yolo_fastest}. Eingabeauflösungsreduktion auf 416×416 Pixel reduziert den Rechenaufwand mathematisch um $(640/416)^2 = 2.37$ bzw. ~58\%\citep{yolo_resolution_scaling}.
 
 \item \textbf{Hybride Zwei-System-Architektur:} Aufbauend auf Zanders bewährter BeagleBone-Implementierung wird eine Aufteilung der Rechenlasten vorgeschlagen:
 Die Kommunikation erfolgt über Ethernet mit UDP-Protokoll für niedrige Latenz. Das BeagleBone übernimmt die zeitkritische Balance-Regelung, während der Jetson Nano die rechenintensive Vision-Verarbeitung und strategische Pfadplanung übernimmt.

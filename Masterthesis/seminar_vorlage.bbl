@@ -1,208 +1,135 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{xx}
 
-\bibitem{andreo2009}
-D.~Andreo, V.~Cerone, D.~Dzung, and D.~Regruto.
-\newblock Experimental results on lpv stabilization of a riderless bicycle.
-\newblock In {\em Proc. American Control Conference (ACC)}, pages 3124--3129, 2009.
+\harvarditem[Andreo et~al.]{Andreo, Cerone, Dzung \harvardand\ Regruto}{2009}{andreo2009}
+Andreo, D., Cerone, V., Dzung, D. \harvardand\ Regruto, D.  \harvardyearleft 2009\harvardyearright , Experimental results on lpv stabilization of a riderless bicycle, {\em in} `Proc. American Control Conference (ACC)', pp.~3124--3129.
 
-\bibitem{aphiratsakun2013}
-N.~Aphiratsakun and K.~Techakittiroj.
-\newblock Autonomous au bicycle: self balancing and tracking control (ausb 2).
-\newblock In {\em Proc. IEEE Int. Conf. on Robotics and Biomimetics (ROBIO)}, pages 480--485, 2013.
+\harvarditem{Aphiratsakun \harvardand\ Techakittiroj}{2013}{aphiratsakun2013}
+Aphiratsakun, N. \harvardand\ Techakittiroj, K.  \harvardyearleft 2013\harvardyearright , Autonomous au bicycle: self balancing and tracking control (ausb 2), {\em in} `Proc. IEEE Int. Conf. on Robotics and Biomimetics (ROBIO)', pp.~480--485.
 
-\bibitem{bno055}
-{Bosch Sensortec}.
-\newblock Bno055 intelligent 9-axis absolute orientation sensor.
-\newblock \url{https://www.bosch-sensortec.com}, 2020.
+\harvarditem{{Bosch Sensortec}}{2020}{bno055}
+{Bosch Sensortec}  \harvardyearleft 2020\harvardyearright , `Bno055 intelligent 9-axis absolute orientation sensor', \url{https://www.bosch-sensortec.com}.
 
-\bibitem{catto2009ode_friction}
-Erin Catto.
-\newblock Modeling and solving constraints.
-\newblock In {\em Game Developers Conference}, 2009.
+\harvarditem{Catto}{2009}{catto2009ode_friction}
+Catto, E.  \harvardyearleft 2009\harvardyearright , Modeling and solving constraints, {\em in} `Game Developers Conference'.
 \newblock Physics simulation in game engines.
 
-\bibitem{concurrent_rt_inverted_pendulum}
-{Concurrent Real-Time}.
-\newblock Inverted pendulum, 2024.
+\harvarditem{{Concurrent Real-Time}}{2024}{concurrent_rt_inverted_pendulum}
+{Concurrent Real-Time}  \harvardyearleft 2024\harvardyearright , `Inverted pendulum'.
+\newline\harvardurl{https://concurrent-rt.com/inverted-pendulum/}
 
-\bibitem{cyberbotics2025}
-Cyberbotics.
-\newblock Webots -- open source robot simulator.
-\newblock \url{https://cyberbotics.com}, 2025.
+\harvarditem{Cyberbotics}{2025}{cyberbotics2025}
+Cyberbotics  \harvardyearleft 2025\harvardyearright , `Webots -- open source robot simulator', \url{https://cyberbotics.com}.
 
-\bibitem{cyberbotics_controller_programming}
-{Cyberbotics Ltd.}
-\newblock Controller programming.
-\newblock \url{https://cyberbotics.com/doc/guide/controller-programming}, 2025.
+\harvarditem{{Cyberbotics Ltd.}}{2025{\em a}}{cyberbotics_controller_programming}
+{Cyberbotics Ltd.}  \harvardyearleft 2025{\em a}\harvardyearright , `Controller programming', \url{https://cyberbotics.com/doc/guide/controller-programming}.
 \newblock Zugriff am 27.08.2025.
 
-\bibitem{cyberbotics_emitter}
-{Cyberbotics Ltd.}
-\newblock Emitter.
-\newblock \url{https://cyberbotics.com/doc/reference/emitter}, 2025.
+\harvarditem{{Cyberbotics Ltd.}}{2025{\em b}}{cyberbotics_emitter}
+{Cyberbotics Ltd.}  \harvardyearleft 2025{\em b}\harvardyearright , `Emitter', \url{https://cyberbotics.com/doc/reference/emitter}.
 \newblock Zugriff am 27.08.2025.
 
-\bibitem{cyberbotics_receiver}
-{Cyberbotics Ltd.}
-\newblock Receiver.
-\newblock \url{https://cyberbotics.com/doc/reference/receiver}, 2025.
+\harvarditem{{Cyberbotics Ltd.}}{2025{\em c}}{cyberbotics_receiver}
+{Cyberbotics Ltd.}  \harvardyearleft 2025{\em c}\harvardyearright , `Receiver', \url{https://cyberbotics.com/doc/reference/receiver}.
 \newblock Zugriff am 27.08.2025.
 
-\bibitem{md49}
-{Devantech Ltd.}
-\newblock Md49 dual motor driver datasheet.
-\newblock \url{https://www.robot-electronics.co.uk}, 2019.
+\harvarditem{{Devantech Ltd.}}{2019}{md49}
+{Devantech Ltd.}  \harvardyearleft 2019\harvardyearright , `Md49 dual motor driver datasheet', \url{https://www.robot-electronics.co.uk}.
 
-\bibitem{vision_mpc_readme}
-Yasin Giray.
-\newblock Video- und sensorgestütztes autonomes fahren für ein selbstbalancierendes fahrrad.
-\newblock Master's thesis, Goethe-Universität Frankfurt am Main, 2024.
+\harvarditem{Giray}{2024}{vision_mpc_readme}
+Giray, Y.  \harvardyearleft 2024\harvardyearright , Video- und sensorgestütztes autonomes fahren für ein selbstbalancierendes fahrrad, Master's thesis, Goethe-Universität Frankfurt am Main.
 \newblock Describes the MPC-based vision controller and its integration with the balance controller.
 
-\bibitem{githubWebots}
-{GitHub contributors}.
-\newblock Webots simulation framework.
-\newblock \url{https://github.com/cyberbotics/webots}, 2025.
+\harvarditem{{GitHub contributors}}{2025}{githubWebots}
+{GitHub contributors}  \harvardyearleft 2025\harvardyearright , `Webots simulation framework', \url{https://github.com/cyberbotics/webots}.
 \newblock Zugriff am 24.08.2025.
 
-\bibitem{apmonitor_pid}
-John Hedengren et~al.
-\newblock Proportional integral derivative (pid).
-\newblock \url{https://apmonitor.com/pdc/index.php/Main/ProportionalIntegralDerivative}, 2024.
+\harvarditem{Hedengren et~al.}{2024}{apmonitor_pid}
+Hedengren, J. et~al.  \harvardyearleft 2024\harvardyearright , `Proportional integral derivative (pid)', \url{https://apmonitor.com/pdc/index.php/Main/ProportionalIntegralDerivative}.
 
-\bibitem{Hunziker2019}
-Alex Hunziker.
-\newblock Autonomous steering of an electric bicycle based on sensor fusion using model predictive control.
-\newblock Master's thesis, Goethe-Universit\"at Frankfurt am Main, 2019.
+\harvarditem{Hunziker}{2019}{Hunziker2019}
+Hunziker, A.  \harvardyearleft 2019\harvardyearright , Autonomous steering of an electric bicycle based on sensor fusion using model predictive control, Master's thesis, Goethe-Universit\"at Frankfurt am Main.
 
-\bibitem{bts7960}
-{Infineon Technologies}.
-\newblock Bts7960 high-current half-bridge driver.
-\newblock \url{https://www.infineon.com}, 2018.
+\harvarditem{{Infineon Technologies}}{2018}{bts7960}
+{Infineon Technologies}  \harvardyearleft 2018\harvardyearright , `Bts7960 high-current half-bridge driver', \url{https://www.infineon.com}.
 
-\bibitem{jakobi1995reality}
-Nick Jakobi, Phil Husbands, and Inman Harvey.
-\newblock Noise and the reality gap: The use of simulation in evolutionary robotics.
-\newblock In {\em Advances in Artificial Life: Third European Conference on Artificial Life}, volume 929 of {\em Lecture Notes in Computer Science}, pages 704--720, Berlin, Heidelberg, 1995. Springer-Verlag.
+\harvarditem[Jakobi et~al.]{Jakobi, Husbands \harvardand\ Harvey}{1995}{jakobi1995reality}
+Jakobi, N., Husbands, P. \harvardand\ Harvey, I.  \harvardyearleft 1995\harvardyearright , Noise and the reality gap: The use of simulation in evolutionary robotics, {\em in} `Advances in Artificial Life: Third European Conference on Artificial Life', Vol. 929 of {\em Lecture Notes in Computer Science}, Springer-Verlag, Berlin, Heidelberg, pp.~704--720.
 
-\bibitem{Ultralytics2023}
-Glenn Jocher, Ayush Chaurasia, and Jing Qiu.
-\newblock Yolo by ultralytics.
-\newblock \url{https://github.com/ultralytics/ultralytics}, 2023.
+\harvarditem[Jocher et~al.]{Jocher, Chaurasia \harvardand\ Qiu}{2023}{Ultralytics2023}
+Jocher, G., Chaurasia, A. \harvardand\ Qiu, J.  \harvardyearleft 2023\harvardyearright , `Yolo by ultralytics', \url{https://github.com/ultralytics/ultralytics}.
 
-\bibitem{tensorrt_optimization}
-A.~Johnson, B.~Smith, and C.~Davis.
-\newblock Tensorrt optimization for real-time object detection on nvidia edge devices.
-\newblock In {\em Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops}, pages 1245--1252, 2023.
+\harvarditem[Johnson et~al.]{Johnson, Smith \harvardand\ Davis}{2023}{tensorrt_optimization}
+Johnson, A., Smith, B. \harvardand\ Davis, C.  \harvardyearleft 2023\harvardyearright , Tensorrt optimization for real-time object detection on nvidia edge devices, {\em in} `Proceedings of the IEEE Conference on Computer Vision and Pattern Recognition Workshops', pp.~1245--1252.
 
-\bibitem{kanjanawanishkul2015}
-K.~Kanjanawanishkul.
-\newblock Lqr and mpc controller design and comparison for a stationary self-balancing bicycle robot with a reaction wheel.
-\newblock {\em Kybernetika}, 54(1):173--191, 2015.
+\harvarditem{Kanjanawanishkul}{2015}{kanjanawanishkul2015}
+Kanjanawanishkul, K.  \harvardyearleft 2015\harvardyearright , `Lqr and mpc controller design and comparison for a stationary self-balancing bicycle robot with a reaction wheel', {\em Kybernetika} {\bf 54}(1),~173--191.
 
-\bibitem{karabila2022}
-Amine Karabila.
-\newblock Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance.
-\newblock Master's thesis, Goethe-Universität Frankfurt, 2022.
+\harvarditem{Karabila}{2022}{karabila2022}
+Karabila, A.  \harvardyearleft 2022\harvardyearright , Auf dem weg zum selbstfahrenden fahrrad: Analyse und implementierung einer regelung der balance, Master's thesis, Goethe-Universität Frankfurt.
 
-\bibitem{kooijman2011}
-J.~D.~G. Kooijman, J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
-\newblock A bicycle can be self-stable without gyroscopic or caster effects.
-\newblock {\em Science}, 332(6027):339--342, 2011.
+\harvarditem[Kooijman et~al.]{Kooijman, Meijaard, Papadopoulos, Ruina \harvardand\ Schwab}{2011}{kooijman2011}
+Kooijman, J. D.~G., Meijaard, J.~P., Papadopoulos, J.~M., Ruina, A. \harvardand\ Schwab, A.~L.  \harvardyearleft 2011\harvardyearright , `A bicycle can be self-stable without gyroscopic or caster effects', {\em Science} {\bf 332}(6027),~339--342.
 
-\bibitem{lam2011}
-P.~Y. Lam and T.~K. Sin.
-\newblock Gyroscopic stabilization of a self-balancing robot bicycle.
-\newblock {\em International Journal of Automation Technology}, 5(6):916--923, 2011.
+\harvarditem{Lam \harvardand\ Sin}{2011}{lam2011}
+Lam, P.~Y. \harvardand\ Sin, T.~K.  \harvardyearleft 2011\harvardyearright , `Gyroscopic stabilization of a self-balancing robot bicycle', {\em International Journal of Automation Technology} {\bf 5}(6),~916--923.
 
-\bibitem{yolo_resolution_scaling}
-W.~Liu, X.~Chen, and K.~Zhang.
-\newblock Input resolution impact on yolo object detection performance: A computational analysis.
-\newblock {\em Computer Vision and Image Understanding}, 230:103--115, 2023.
+\harvarditem[Liu et~al.]{Liu, Chen \harvardand\ Zhang}{2023}{yolo_resolution_scaling}
+Liu, W., Chen, X. \harvardand\ Zhang, K.  \harvardyearleft 2023\harvardyearright , `Input resolution impact on yolo object detection performance: A computational analysis', {\em Computer Vision and Image Understanding} {\bf 230},~103--115.
 \newblock Quadratic scaling relationship for computational complexity.
 
-\bibitem{cyberbotics_inertialunit}
-Cyberbotics Ltd.
-\newblock Inertialunit.
-\newblock \url{https://cyberbotics.com/doc/reference/inertialunit}, 2025.
+\harvarditem{Ltd.}{2025}{cyberbotics_inertialunit}
+Ltd., C.  \harvardyearleft 2025\harvardyearright , `Inertialunit', \url{https://cyberbotics.com/doc/reference/inertialunit}.
 \newblock Geräte-Referenz, Zugriff: 24.08.2025.
 
-\bibitem{meijaard2007}
-J.~P. Meijaard, Jim~M. Papadopoulos, Andy Ruina, and A.~L. Schwab.
-\newblock Linearized dynamics equations for the balance and steer of a bicycle: a benchmark and review.
-\newblock {\em Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences}, 463(2084):1955--1982, 2007.
+\harvarditem[Meijaard et~al.]{Meijaard, Papadopoulos, Ruina \harvardand\ Schwab}{2007}{meijaard2007}
+Meijaard, J.~P., Papadopoulos, J.~M., Ruina, A. \harvardand\ Schwab, A.~L.  \harvardyearleft 2007\harvardyearright , `Linearized dynamics equations for the balance and steer of a bicycle: a benchmark and review', {\em Proceedings of the Royal Society A: Mathematical, Physical and Engineering Sciences} {\bf 463}(2084),~1955--1982.
 
-\bibitem{michel2004}
-Olivier Michel.
-\newblock {Cyberbotics Ltd. Webots}: Professional mobile robot simulation.
-\newblock {\em International Journal of Advanced Robotic Systems}, pages 39--42, 2004.
+\harvarditem{Michel}{2004}{michel2004}
+Michel, O.  \harvardyearleft 2004\harvardyearright , `{Cyberbotics Ltd. Webots}: Professional mobile robot simulation', {\em International Journal of Advanced Robotic Systems} pp.~39--42.
 
-\bibitem{nvidia_jetson_specs}
-{NVIDIA Corporation}.
-\newblock Jetson nano developer kit specifications.
-\newblock \url{https://developer.nvidia.com/embedded/jetson-nano-developer-kit}, 2024.
+\harvarditem{{NVIDIA Corporation}}{2024}{nvidia_jetson_specs}
+{NVIDIA Corporation}  \harvardyearleft 2024\harvardyearright , `Jetson nano developer kit specifications', \url{https://developer.nvidia.com/embedded/jetson-nano-developer-kit}.
 \newblock Accessed: 2024.
 
-\bibitem{openmmlab_yolov8}
-OpenMMLab and Ultralytics.
-\newblock Dive into yolov8: How does this state-of-the-art model work?, 2023.
+\harvarditem{OpenMMLab \harvardand\ Ultralytics}{2023}{openmmlab_yolov8}
+OpenMMLab \harvardand\ Ultralytics  \harvardyearleft 2023\harvardyearright , `Dive into yolov8: How does this state-of-the-art model work?'.
 \newblock Accessed 23 August 2025.
+\newline\harvardurl{https://openmmlab.medium.com/dive-into-yolov8-how-does-this-state-of-the-art-model-work-10f18f74bab1}
 
-\bibitem{park2020}
-Sang-Hyun Park and Seung-Yun Yi.
-\newblock {Active Balancing Control for Unmanned Bicycle Using Scissored-pair Control Moment Gyroscope}.
-\newblock {\em International Journal of Control, Automation and Systems}, 18(1):217--224, 2020.
+\harvarditem{Park \harvardand\ Yi}{2020}{park2020}
+Park, S.-H. \harvardand\ Yi, S.-Y.  \harvardyearleft 2020\harvardyearright , `{Active Balancing Control for Unmanned Bicycle Using Scissored-pair Control Moment Gyroscope}', {\em International Journal of Control, Automation and Systems} {\bf 18}(1),~217--224.
 
-\bibitem{pei2019tianjic}
-Jing Pei, Lei Deng, Sen Song, Mingguo Zhao, Shuang Zhang, et~al.
-\newblock Towards artificial general intelligence with hybrid tianjic chip architecture.
-\newblock {\em Nature}, 572(7767):106--111, 2019.
+\harvarditem[Pei et~al.]{Pei, Deng, Song, Zhao, Zhang et~al.}{2019}{pei2019tianjic}
+Pei, J., Deng, L., Song, S., Zhao, M., Zhang, S. et~al.  \harvardyearleft 2019\harvardyearright , `Towards artificial general intelligence with hybrid tianjic chip architecture', {\em Nature} {\bf 572}(7767),~106--111.
 
-\bibitem{persson2021}
-Niklas Persson, Martin~C. Ekstr{\"o}m, Mikael Ekstr{\"o}m, and Alessandro~V. Papadopoulos.
-\newblock Trajectory tracking and stabilisation of a riderless bicycle.
-\newblock In {\em 2021 IEEE International Intelligent Transportation Systems Conference (ITSC)}, pages 1859--1866, Indianapolis, IN, USA, 2021. IEEE.
+\harvarditem[Persson et~al.]{Persson, Ekstr{\"o}m, Ekstr{\"o}m \harvardand\ Papadopoulos}{2021}{persson2021}
+Persson, N., Ekstr{\"o}m, M.~C., Ekstr{\"o}m, M. \harvardand\ Papadopoulos, A.~V.  \harvardyearleft 2021\harvardyearright , Trajectory tracking and stabilisation of a riderless bicycle, {\em in} `2021 IEEE International Intelligent Transportation Systems Conference (ITSC)', IEEE, Indianapolis, IN, USA, pp.~1859--1866.
 
-\bibitem{qengineering_yolo_fastest}
-{Q-engineering}.
-\newblock Yolofastest ncnn jetson nano: Ultra-fast object detection.
-\newblock \url{https://github.com/Qengineering/YoloFastest-ncnn-Jetson-Nano}, 2024.
+\harvarditem{{Q-engineering}}{2024}{qengineering_yolo_fastest}
+{Q-engineering}  \harvardyearleft 2024\harvardyearright , `Yolofastest ncnn jetson nano: Ultra-fast object detection', \url{https://github.com/Qengineering/YoloFastest-ncnn-Jetson-Nano}.
 \newblock Performance: 38.4 FPS on Jetson Nano.
 
-\bibitem{ranz2021bachelor}
-Anna Ranz.
-\newblock Entwicklung eines selbstbalancierenden fahrrad­prototyps.
-\newblock Master's thesis, HWR Berlin, 2021.
+\harvarditem{Ranz}{2021}{ranz2021bachelor}
+Ranz, A.  \harvardyearleft 2021\harvardyearright , Entwicklung eines selbstbalancierenden fahrrad­prototyps, Master's thesis, HWR Berlin.
 
-\bibitem{schramm2018fahrzeugdynamik}
-Dieter Schramm, Manfred Hiller, and Roberto Bardini.
-\newblock {\em Modellbildung und Simulation der Dynamik von Kraftfahrzeugen}.
-\newblock Springer-Verlag Berlin Heidelberg, 3., {\"u}berarbeitete auflage edition, 2018.
+\harvarditem[Schramm et~al.]{Schramm, Hiller \harvardand\ Bardini}{2018}{schramm2018fahrzeugdynamik}
+Schramm, D., Hiller, M. \harvardand\ Bardini, R.  \harvardyearleft 2018\harvardyearright , {\em Modellbildung und Simulation der Dynamik von Kraftfahrzeugen}, 3., {\"u}berarbeitete auflage edn, Springer-Verlag Berlin Heidelberg.
 
-\bibitem{smith2006ode_stability}
-Russell Smith.
-\newblock Numerical stability and performance issues in ode.
-\newblock In {\em Proceedings of the Workshop on Principles of Advanced and Distributed Simulation (PADS)}, pages 127--134. IEEE Computer Society, 2006.
+\harvarditem{Smith}{2006}{smith2006ode_stability}
+Smith, R.  \harvardyearleft 2006\harvardyearright , Numerical stability and performance issues in ode, {\em in} `Proceedings of the Workshop on Principles of Advanced and Distributed Simulation (PADS)', IEEE Computer Society, pp.~127--134.
 
-\bibitem{yolo_edge_performance}
-C.~Wang, H.~Liu, and Y.~Zhang.
-\newblock Performance analysis of yolo object detection on edge computing devices.
-\newblock {\em IEEE Transactions on Industrial Informatics}, 19(8):8912--8921, 2023.
+\harvarditem[Wang et~al.]{Wang, Liu \harvardand\ Zhang}{2023}{yolo_edge_performance}
+Wang, C., Liu, H. \harvardand\ Zhang, Y.  \harvardyearleft 2023\harvardyearright , `Performance analysis of yolo object detection on edge computing devices', {\em IEEE Transactions on Industrial Informatics} {\bf 19}(8),~8912--8921.
 \newblock DOI: 10.1109/TII.2023.3256789.
 
-\bibitem{zander2023}
-Jonah Zander.
-\newblock {Entwurf einer Steuerung f{\"u}r ein selbstbalancierendes Fahrrad}.
+\harvarditem{Zander}{2023}{zander2023}
+Zander, J.  \harvardyearleft 2023\harvardyearright , `{Entwurf einer Steuerung f{\"u}r ein selbstbalancierendes Fahrrad}'.
 \newblock Bachelorarbeit, Göethe Universität Frankfurt, 2023.
 
-\bibitem{Zhao2023}
-Xu~Zhao, Wenchao Ding, Yongqi An, Yinglong Du, Tao Yu, Min Li, Ming Tang, and Jinqiao Wang.
-\newblock Fast segment anything.
-\newblock arXiv:2306.12156 [cs.CV], 2023.
+\harvarditem[Zhao et~al.]{Zhao, Ding, An, Du, Yu, Li, Tang \harvardand\ Wang}{2023}{Zhao2023}
+Zhao, X., Ding, W., An, Y., Du, Y., Yu, T., Li, M., Tang, M. \harvardand\ Wang, J.  \harvardyearleft 2023\harvardyearright , `Fast segment anything', arXiv:2306.12156 [cs.CV].
 
-\bibitem{astrom2005}
-Karl~J. Åström, Richard~E. Klein, and Anders Lennartsson.
-\newblock Bicycle dynamics and control: adapted bicycles for education and research.
-\newblock {\em IEEE Control Systems Magazine}, 25(4):26--47, 2005.
+\harvarditem[Åström et~al.]{Åström, Klein \harvardand\ Lennartsson}{2005}{astrom2005}
+Åström, K.~J., Klein, R.~E. \harvardand\ Lennartsson, A.  \harvardyearleft 2005\harvardyearright , `Bicycle dynamics and control: adapted bicycles for education and research', {\em IEEE Control Systems Magazine} {\bf 25}(4),~26--47.
 
 \end{thebibliography}

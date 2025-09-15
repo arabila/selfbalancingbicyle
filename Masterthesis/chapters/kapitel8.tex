@@ -1,25 +1,25 @@
 \section{Fazit}
 
-Diese Masterarbeit hat erfolgreich eine zweistufige Regelungsarchitektur für ein selbstbalancierendes Fahrrad entwickelt 
+Diese Masterarbeit hat eine zweistufige Regelungsarchitektur für ein selbstbalancierendes Fahrrad entwickelt 
 und in der Webots-Simulationsumgebung validiert. Die systematische Integration einer hochfrequenten PID-Balanceregelung 
-(500\,Hz) mit einer visionbasierten MPC-Spurfuehrung (20\,Hz) stellt einen wichtigen methodischen Fortschritt in der 
+(500\,Hz) mit einer visionbasierten MPC-Spurf{"u}hrung (20\,Hz) stellt einen wichtigen methodischen Fortschritt in der 
 Entwicklung autonomer Fahrradsysteme dar und demonstriert erstmals die praktische Machbarkeit der Kopplung beider 
 Regelungsaufgaben in einer integrierten Simulationsumgebung. Während frühere Arbeiten entweder isolierte Balance-Regelung 
-\cite{astrom2005,andreo2009,lam2011} oder autonome Spurführung \cite{Hunziker2019} untersuchten, bzw. kombinierte Ansätze 
-nur in Hardware-Prototypen \cite{aphiratsakun2013,kanjanawanishkul2015} oder ohne systematische Validierung verschiedener 
-Störungsszenarien realisierten, vereint diese Arbeit beide Regelungsdomänen in einer hochrealistischen Simulationsumgebung 
+\citep{astrom2005,andreo2009,lam2011} oder autonome Spurführung \citep{Hunziker2019} untersuchten, bzw. kombinierte Ansätze 
+in Hardware-Prototypen \citep{aphiratsakun2013,kanjanawanishkul2015} oder ohne systematische Validierung verschiedener 
+Störungsszenarien realisierten, vereint diese Arbeit beide Regelungsdomänen in einer Simulationsumgebung 
 mit umfassender experimenteller Evaluierung. Die duale Controller-Architektur mit unterschiedlichen Programmiersprachen 
 und Abtastfrequenzen sowie die systematische Robustheitsanalyse unter verschiedenen Umweltbedingungen stellen eine neuartige 
 methodische Herangehensweise dar, die eine risikofreie Validierung komplexer Regelungsstrategien vor Hardware-Implementierung ermöglicht.
 
-\subsection{Zentrale Erkenntnisse und wissenschaftliche Beitraege}
+\subsection{Zentrale Erkenntnisse und wissenschaftliche Beitr{"a}ge}
 
 Die entwickelte duale Controller-Architektur basiert auf der erfolgreichen Portierung bewährter Hardware-Implementierungen 
 von Zander (2023) und Giray (2024), zeigt die Übertragbarkeit etablierter Regelungskonzepte zwischen verschiedenen 
 Plattformen auf. Die identischen PID-Parameter aus Zanders Hardware-Implementierung erzielen auch in der idealisierten 
 Webots-Umgebung stabile Balance-Regelung, was die Robustheit des gewählten Ansatzes unterstreicht.
 
-Ein überraschendes und ist die durchgängige Überlegenheit der ROI-basierten 
+Überraschend ist die durchgängige Überlegenheit der ROI-basierten 
 Fallback-Erkennung gegenüber der YOLO-Segmentierung. In allen Testszenarien erwies sich die klassische Bildverarbeitung 
 der neuronalen Spurdetektion als überlegen. Bei der Kurvenfahrt erreichte das System mit ROI-Fallback 43,62\,s stabile Fahrt 
 gegenüber 35,96\,s bei System mit dem YOLO-PID und durchgehend stabilen Rollwinkeln ($\pm$0,015\,rad vs. $\pm$0,02\,rad). In der S-Kurve 
@@ -28,77 +28,77 @@ halbierten Querfehlern ($\pm$0,4\,m vs. $\pm$0,8\,m). Die konstante Spurerkennun
 gegenüber $<$0,1 in kritischen Phasen bei YOLO belegt die Zuverlässigkeit des klassischen Ansatzes.
 
 Diese Ergebnisse zeigen, dass für strukturierte Simulationsumgebungen mit kontrollierten Lichtverhältnissen klassische 
-Bildverarbeitung durchaus konkurrenzfähig zu modernen Deep-Learning-Ansaetzen sein kann. Dies ist besonders relevant 
+Bildverarbeitung durchaus konkurrenzfähig zu modernen Deep-Learning-Ans{"a}tzen sein kann. Dies ist besonders relevant 
 für Anwendungen, bei denen Rechenressourcen begrenzt sind oder Echtzeitfähigkeit kritisch ist.
 
 Die systematische Evaluierung verschiedener Störungsszenarien belegt die bemerkenswerte Anpassungsfähigkeit der 
 Regelungsarchitektur. Bei der Seitenwindresistenz zeigt das System mit Baseline-Parametern bei moderatem Wind 
-(0,5\,m/s) 18\,s stabile Fahrt, waehrend fuer starken Seitenwind (1,0\,m/s) adaptive PID-Parametrierung 
-($K_p=5{,}0$, $K_i=0{,}2$, $K_d=0{,}4$) eine erfolgreiche 22\,s-Fahrt mit kontrollierten Rollwinkeln unter $\pm$0,03\,rad ermoeglicht. 
-Das System bewaeltigt Hoehenunterschiede bis 4\,m durch systematische PID-Parametrierung, wobei sich Senken als weniger 
-kritisch als Huegel erweisen, da die symmetrische Hangabtriebskraft stabilisierend wirkt. Die erforderlichen PID-Parameter 
-wachsen systematisch mit der Hoehendifferenz, wobei erhoehte Proportional- und Differentialverstaerkung die dominanten 
+(0,5\,m/s) 18\,s stabile Fahrt, w{"a}hrend f{"u}r starken Seitenwind (1,0\,m/s) adaptive PID-Parametrierung 
+($K_p=5{,}0$, $K_i=0{,}2$, $K_d=0{,}4$) eine erfolgreiche 22\,s-Fahrt mit kontrollierten Rollwinkeln unter $\pm$0,03\,rad erm{"o}glicht. 
+Das System bew{"a}ltigt H{"o}henunterschiede bis 4\,m durch systematische PID-Parametrierung, wobei sich Senken als weniger 
+kritisch als H{"u}gel erweisen, da die symmetrische Hangabtriebskraft stabilisierend wirkt. Die erforderlichen PID-Parameter 
+wachsen systematisch mit der H{"o}hendifferenz, wobei erh{"o}hte Proportional- und Differentialverst{"a}rkung die dominanten 
 Anpassungen darstellen.
 
-Die Arbeit etabliert darueber hinaus eine systematische Methodik fuer die risikofreie Entwicklung und Validierung komplexer 
-Regelungsstrategien in Webots. Das entwickelte JSON-basierte Konfigurationssystem mit grafischem Interface unterstuetzt 
+Die Arbeit etabliert dar{"u}ber hinaus eine systematische Methodik f{"u}r die risikofreie Entwicklung und Validierung komplexer 
+Regelungsstrategien in Webots. Das entwickelte JSON-basierte Konfigurationssystem mit grafischem Interface unterst{"u}tzt 
 iteratives Parameter-Tuning unter direkter Beobachtung des Systemverhaltens. Die implementierte Logging-Architektur mit 
-hochfrequenter Datenerfassung (2\,ms Abtastung) ermoeglicht detaillierte Regeldynamik-Analysen durch die Kombination aus 
-quantitativen Zeitreihendaten, qualitativen Spurabweichungsanalysen und raeumlicher Trajektorienvisualisierung.
+hochfrequenter Datenerfassung (2\,ms Abtastung) erm{"o}glicht detaillierte Regeldynamik-Analysen durch die Kombination aus 
+quantitativen Zeitreihendaten, qualitativen Spurabweichungsanalysen und r{"a}umlicher Trajektorienvisualisierung.
 
-Diese Arbeit leistet vier wesentliche Beitraege zur Forschung: (1) die erstmalige erfolgreiche Integration von Balance- 
-und Spurfuehrungsregelung bei konstanter Geschwindigkeit in einer realitaetsnahen Simulationsumgebung, (2) systematische 
+Diese Arbeit leistet vier wesentliche Beitr{"a}ge zur Forschung: (1) die erstmalige erfolgreiche Integration von Balance- 
+und Spurf{"u}hrungsregelung bei konstanter Geschwindigkeit in einer realit{"a}tsnahen Simulationsumgebung, (2) systematische 
 Methodenvergleiche zwischen YOLO- und ROI-basierter Spurerkennung sowie verschiedenen PID-Konfigurationen, (3) umfassende 
-Robustheitsvalidierung unter verschiedenen Stoerungsszenarien mit quantifizierten Systemgrenzen und (4) die Entwicklung 
-einer modularen, erweiterbaren Regelungsarchitektur mit klaren Schnittstellen fuer zukuenftige Erweiterungen.
+Robustheitsvalidierung unter verschiedenen St{"o}rungsszenarien mit quantifizierten Systemgrenzen und (4) die Entwicklung 
+einer modularen, erweiterbaren Regelungsarchitektur mit klaren Schnittstellen f{"u}r zuk{"u}nftige Erweiterungen.
 
 \subsection{Limitierungen und kritische Reflexion}
 
-Die identifizierten Grenzen der vorliegenden Arbeit schmaelern nicht die Bedeutung der erzielten Ergebnisse, sondern ordnen 
+Die identifizierten Grenzen der vorliegenden Arbeit schm{"a}lern nicht die Bedeutung der erzielten Ergebnisse, sondern ordnen 
 sie in einen realistischen wissenschaftlichen Kontext ein. Die systematische Analyse der Limitierungen zeigt deutlich auf, 
 dass zwischen der idealisierten Simulationsumgebung und realen Implementierungen erhebliche Diskrepanzen bestehen.
 
-Besonders kritisch fuer eine praktische Umsetzung erweisen sich die sensorischen Idealisierungen. Waehrend die Webots-InertialUnit 
-ueber die API-Funktion exakte Euler-Winkel ohne jegliche Messfehler bereitstellt, unterliegt der in den Vorarbeiten eingesetzte 
-BNO055-IMU-Sensor einer Vielzahl von Fehlerquellen: Quantisierungsfehlern durch endliche Aufloesung, temperaturabhaengigen 
-Bias-Fehlern, I$^2$C-Kommunikationslatenzen und charakteristischem Sensorrauschen. Aehnliche Diskrepanzen bestehen bei der 
-Kamerasensorik, wo die Webots-Simulation perfekte, rauschfreie Bilder mit konstanter Beleuchtung erzeugt, waehrend reale 
-Implementierungen mit Bewegungsunschaerfe, optischen Verzerrungen und variierenden Lichtverhaeltnissen umgehen muessen.
+Besonders kritisch f{"u}r eine praktische Umsetzung erweisen sich die sensorischen Idealisierungen. W{"a}hrend die Webots-InertialUnit 
+{"u}ber die API-Funktion exakte Euler-Winkel ohne jegliche Messfehler bereitstellt, unterliegt der in den Vorarbeiten eingesetzte 
+BNO055-IMU-Sensor einer Vielzahl von Fehlerquellen: Quantisierungsfehlern durch endliche Aufl{"o}sung, temperaturabh{"a}ngigen 
+Bias-Fehlern, I$^2$C-Kommunikationslatenzen und charakteristischem Sensorrauschen. {"A}hnliche Diskrepanzen bestehen bei der 
+Kamerasensorik, wo die Webots-Simulation perfekte, rauschfreie Bilder mit konstanter Beleuchtung erzeugt, w{"a}hrend reale 
+Implementierungen mit Bewegungsunsch{"a}rfe, optischen Verzerrungen und variierenden Lichtverh{"a}ltnissen umgehen m{"u}ssen.
 
-Die vereinfachte ODE-basierte Physikmodellierung vernachlaessigt komplexe Reifen-Fahrbahn-Interaktionen, insbesondere die 
-fehlende Modellierung des Seitenschlupfes, der bei Kurvenfahrten die lateralen Fuehrungskraefte bestimmt. Der verwendete 
-explizite Euler-Integrator kann bei der hochfrequenten Balance-Regelung zu numerischen Instabilitaeten fuehren, waehrend 
-wichtige Aspekte wie Spiel in Lagern und elastische Verformungen des Rahmens vollstaendig abstrahiert werden.
+Die vereinfachte ODE-basierte Physikmodellierung vernachl{"a}ssigt komplexe Reifen-Fahrbahn-Interaktionen, insbesondere die 
+fehlende Modellierung des Seitenschlupfes, der bei Kurvenfahrten die lateralen F{"u}hrungskr{"a}fte bestimmt. Der verwendete 
+explizite Euler-Integrator kann bei der hochfrequenten Balance-Regelung zu numerischen Instabilit{"a}ten f{"u}hren, w{"a}hrend 
+wichtige Aspekte wie Spiel in Lagern und elastische Verformungen des Rahmens vollst{"a}ndig abstrahiert werden.
 
-Die Hardware-Transfer-Problematik manifestiert sich auf mehreren Ebenen: von der numerischen Stabilitaet der Physiksimulation 
-ueber Kommunikationslatenzen zwischen den Controllern bis hin zu mechanischen Toleranzen und elektronischen Nichtlinearitaeten, 
-die in der Simulation vollstaendig abstrahiert werden. Diese Faktoren koennen das reale Systemverhalten erheblich von den 
+Die Hardware-Transfer-Problematik manifestiert sich auf mehreren Ebenen: von der numerischen Stabilit{"a}t der Physiksimulation 
+{"u}ber Kommunikationslatenzen zwischen den Controllern bis hin zu mechanischen Toleranzen und elektronischen Nichtlinearit{"a}ten, 
+die in der Simulation vollst{"a}ndig abstrahiert werden. Diese Faktoren k{"o}nnen das reale Systemverhalten erheblich von den 
 Simulationsergebnissen abweichen lassen und erfordern robuste Adaptationsstrategien bei der Hardware-Implementierung.
 
-\subsection{Ausblick und zukuenftige Forschungsrichtungen}
+\subsection{Ausblick und zuk{"u}nftige Forschungsrichtungen}
 
 Methodisch unterstreichen die aufgezeigten Grenzen die Notwendigkeit einer mehrstufigen Validierungsstrategie, die von der 
-Simulation ueber Hardware-in-the-Loop-Tests bis hin zu systematischen Feldversuchen reicht. Die ausschliesslich 
+Simulation {"u}ber Hardware-in-the-Loop-Tests bis hin zu systematischen Feldversuchen reicht. Die ausschlie{\ss}lich 
 simulationsbasierte Validierung der vorliegenden Arbeit stellt daher eine bewusste Fokussierung auf die algorithmische 
 Entwicklung dar, erfordert aber zwingend eine experimentelle Absicherung in nachfolgenden Arbeiten.
 
-Zukuenftige Forschungsrichtungen sollten sich systematisch auf die Ueberbrueckung der Sim-to-Real-Luecke konzentrieren. Die 
-Integration hardware-spezifischer Charakteristika wie BNO055-Rauschen, I$^2$C-Latenzen und PWM-Nichtlinearitaeten wuerde die 
-Simulationsrealitaet erheblich verbessern. Die Implementierung von Pacejka-Reifenmodellen und komplexeren Kontaktmechaniken 
-koennte die vereinfachte ODE-Physik erweitern. Systematisches Multi-Environment-Training mit Monte-Carlo-Simulationen wuerde 
-statistische Aussagen ueber die Robustheit ermoeglichen, waehrend die Evaluierung in alternativen Simulationsplattformen wie 
-CARLA oder Gazebo erweiterte Realitaetstreue bieten koennte.
+Zuk{"u}nftige Forschungsrichtungen sollten sich systematisch auf die {"U}berbr{"u}ckung der Sim-to-Real-L{"u}cke konzentrieren. Die 
+Integration hardware-spezifischer Charakteristika wie BNO055-Rauschen, I$^2$C-Latenzen und PWM-Nichtlinearit{"a}ten w{"u}rde die 
+Simulationsrealit{"a}t erheblich verbessern. Die Implementierung von Pacejka-Reifenmodellen und komplexeren Kontaktmechaniken 
+k{"o}nnte die vereinfachte ODE-Physik erweitern. Systematisches Multi-Environment-Training mit Monte-Carlo-Simulationen w{"u}rde 
+statistische Aussagen {"u}ber die Robustheit erm{"o}glichen, w{"a}hrend die Evaluierung in alternativen Simulationsplattformen wie 
+CARLA oder Gazebo erweiterte Realit{"a}tstreue bieten k{"o}nnte.
 
-Besonders vielversprechend ist die Moeglichkeit der MPC-Optimierung durch erweiterte Modellierung mit dynamischen Erweiterungen 
-wie Reifenschlupf-Modellierung, aerodynamischen Kraeften und Traegheitseffekten. Adaptive MPC-Ansaetze koennten Online-Parameterschaetzung 
-implementieren, um sich an veraenderte Fahrbedingungen anzupassen. Die Integration von SUMO (Simulation of Urban Mobility) in Webots 
-koennte komplexe Verkehrsszenarien mit dynamischen Hindernissen ermoeglichen.
+Besonders vielversprechend ist die M{"o}glichkeit der MPC-Optimierung durch erweiterte Modellierung mit dynamischen Erweiterungen 
+wie Reifenschlupf-Modellierung, aerodynamischen Kr{"a}ften und Tr{"a}gheitseffekten. Adaptive MPC-Ans{"a}tze k{"o}nnten Online-Parametersch{\"a}tzung 
+implementieren, um sich an ver{"a}nderte Fahrbedingungen anzupassen. Die Integration von SUMO (Simulation of Urban Mobility) in Webots 
+k{"o}nnte komplexe Verkehrsszenarien mit dynamischen Hindernissen erm{"o}glichen.
 
-Trotz der identifizierten Limitierungen bildet die vorliegende Arbeit eine fundierte Grundlage fuer die Weiterentwicklung autonomer 
+Trotz der identifizierten Limitierungen bildet die vorliegende Arbeit eine fundierte Grundlage f{"u}r die Weiterentwicklung autonomer 
 selbstbalancierender Fahrradsysteme. Die erfolgreiche Demonstration der kombinierten Regelungsarchitektur, die systematische 
-Evaluierung verschiedener Ansaetze und die detaillierte Dokumentation der Systemgrenzen schaffen eine solide Basis fuer zukuenftige 
-Forschungsarbeiten. Die entwickelte Methodik ermoeglicht risikofreie Validierung komplexer Regelungsstrategien und systematische 
-Optimierung vor Hardware-Implementierung. Die Ergebnisse demonstrieren, dass die Kombination bewaehrter regelungstechnischer 
-Ansaetze mit modernen Methoden in einer durchdachten Architektur zu robusten und leistungsfaehigen Systemen fuehren kann, was 
-vielversprechende Perspektiven fuer die praktische Realisierung autonomer Fahrradsysteme und die Entwicklung nachhaltiger urbaner 
-Mobilitaetsloeungen eroeffnet.
+Evaluierung verschiedener Ans{"a}tze und die detaillierte Dokumentation der Systemgrenzen schaffen eine solide Basis f{"u}r zuk{"u}nftige 
+Forschungsarbeiten. Die entwickelte Methodik erm{"o}glicht risikofreie Validierung komplexer Regelungsstrategien und systematische 
+Optimierung vor Hardware-Implementierung. Die Ergebnisse demonstrieren, dass die Kombination bew{"a}hrter regelungstechnischer 
+Ans{"a}tze mit modernen Methoden in einer durchdachten Architektur zu robusten und leistungsf{"a}higen Systemen f{"u}hren kann, was 
+vielversprechende Perspektiven f{"u}r die praktische Realisierung autonomer Fahrradsysteme und die Entwicklung nachhaltiger urbaner 
+Mobilit{"a}tsl{"o}sungen er{"o}ffnet.

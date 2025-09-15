@@ -1,8 +1,9 @@
-\babel@toc {english}{}\relax 
+\babel@toc {ngerman}{}\relax 
+\babel@toc {ngerman}{}\relax 
 \contentsline {section}{\numberline {1}Abstract}{2}{section.1}%
 \contentsline {section}{\numberline {2}Einleitung}{5}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Problemstellung}{5}{subsection.2.1}%
-\contentsline {paragraph}{Abgrenzung zu realitätsnahen und simulationsbasierten Ansätzen}{5}{section*.2}%
+\contentsline {paragraph}{Abgrenzung zu realen und simulationsbasierten Ansätzen}{5}{section*.2}%
 \contentsline {subsection}{\numberline {2.2}Stand der Technik}{5}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Bisherige Arbeiten}{6}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Anna Ranz (2021) – Hardware-Grundlagen}{7}{subsubsection.2.3.1}%
@@ -30,49 +31,50 @@
 \contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{36}{subsection.5.3}%
 \contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8)}{36}{subsubsection.5.3.1}%
 \contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (ROI-basiert)}{38}{subsubsection.5.3.2}%
-\contentsline {section}{\numberline {6}Ergebnisse}{40}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{40}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Teststrecken}{43}{subsection.6.2}%
-\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{44}{subsubsection.6.2.1}%
-\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers:}{44}{section*.17}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers: }{45}{section*.21}%
-\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung:}{47}{section*.26}%
-\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{49}{subsubsection.6.2.2}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung:}{49}{section*.31}%
-\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{53}{subsubsection.6.2.3}%
-\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler):}{54}{section*.39}%
-\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler):}{55}{section*.42}%
-\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung:}{56}{section*.45}%
-\contentsline {paragraph}{Einordnung und Grenzen:}{57}{section*.48}%
-\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{58}{subsubsection.6.2.4}%
-\contentsline {paragraph}{Fall A: Senke, $M=1{,}0\,\text {m}$ (Baseline-Parameter):}{58}{section*.50}%
-\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte):}{59}{section*.53}%
-\contentsline {paragraph}{Fall C: Senke, $M=2{,}0\,\text {m}$ mit angepassten Balance-PID-Gewichten:}{60}{section*.56}%
-\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{61}{section*.59}%
-\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{62}{section*.62}%
-\contentsline {paragraph}{Zusammenfassung und Ableitungen:}{63}{section*.65}%
-\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{65}{subsection.6.3}%
-\contentsline {subsubsection}{\numberline {6.3.1}Performance-Monitoring und Rechenzeit-Analyse}{65}{subsubsection.6.3.1}%
-\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung:}{65}{section*.66}%
-\contentsline {paragraph}{Komponenten-spezifische:}{66}{section*.68}%
-\contentsline {paragraph}{Echtzeitfähigkeits-Bewertung}{66}{section*.70}%
-\contentsline {subsubsection}{\numberline {6.3.2} Rechenzeit-Analyse und Implikationen}{66}{subsubsection.6.3.2}%
-\contentsline {subsubsection}{\numberline {6.3.3}Hardware-Skalierung und Jetson Nano Vergleich}{68}{subsubsection.6.3.3}%
-\contentsline {subsubsection}{\numberline {6.3.4}Fazit zur Performance-Analyse}{68}{subsubsection.6.3.4}%
-\contentsline {section}{\numberline {7}Grenzen der Arbeit}{70}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{70}{subsection.7.1}%
-\contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{70}{subsubsection.7.1.1}%
-\contentsline {subsubsection}{\numberline {7.1.2}Kamera und Vision-Pipeline}{71}{subsubsection.7.1.2}%
+\contentsline {section}{\numberline {6}Ergebnisse}{41}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{41}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Teststrecken}{44}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{45}{subsubsection.6.2.1}%
+\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers:}{45}{section*.18}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers: }{46}{section*.22}%
+\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung:}{48}{section*.27}%
+\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{50}{subsubsection.6.2.2}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung:}{50}{section*.32}%
+\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{54}{subsubsection.6.2.3}%
+\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler):}{55}{section*.40}%
+\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler):}{56}{section*.43}%
+\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung:}{57}{section*.46}%
+\contentsline {paragraph}{Einordnung und Grenzen:}{58}{section*.49}%
+\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{59}{subsubsection.6.2.4}%
+\contentsline {paragraph}{Fall A: Senke, $M=1{,}0\,\text {m}$ (Baseline-Parameter):}{59}{section*.51}%
+\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte):}{60}{section*.54}%
+\contentsline {paragraph}{Fall C: Senke, $M=2{,}0\,\text {m}$ mit angepassten Balance-PID-Gewichten:}{61}{section*.57}%
+\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{62}{section*.60}%
+\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{63}{section*.63}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen:}{64}{section*.66}%
+\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{66}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Performance-Monitoring und Rechenzeit-Analyse}{66}{subsubsection.6.3.1}%
+\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung:}{66}{section*.67}%
+\contentsline {paragraph}{Komponenten-spezifische:}{67}{section*.69}%
+\contentsline {paragraph}{Echtzeitfähigkeits-Bewertung}{67}{section*.71}%
+\contentsline {subsubsection}{\numberline {6.3.2} Rechenzeit-Analyse und Implikationen}{67}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}Hardware-Skalierung und Jetson Nano Vergleich}{69}{subsubsection.6.3.3}%
+\contentsline {subsubsection}{\numberline {6.3.4}Fazit zur Performance-Analyse}{69}{subsubsection.6.3.4}%
+\contentsline {section}{\numberline {7}Grenzen der Arbeit}{71}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{71}{subsection.7.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{71}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.2}Kamera und Vision-Pipeline}{72}{subsubsection.7.1.2}%
 \contentsline {subsubsection}{\numberline {7.1.3}Vereinfachte Physikmodellierung}{72}{subsubsection.7.1.3}%
-\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{73}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}{73}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}MPC-Optimierung und erweiterte Physikmodellierung}{73}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Präzise geometrische Modellierung und Systemkalibrierung}{74}{subsection.8.3}%
-\contentsline {section}{\numberline {9}Fazit}{75}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse und wissenschaftliche Beitraege}{75}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Limitierungen und kritische Reflexion}{76}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Ausblick und zukuenftige Forschungsrichtungen}{76}{subsection.9.3}%
-\contentsline {section}{\numberline {10}Literaturverzeichnis}{78}{section.10}%
-\contentsline {section}{\numberline {11}Anlagen}{84}{section.11}%
-\contentsline {subsection}{\numberline {11.1}YOLO-Fehlerberechnung}{84}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Fallback-Fehlerberechnung}{84}{subsection.11.2}%
+\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{74}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}{74}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}MPC-Optimierung und erweiterte Physikmodellierung}{74}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Präzise geometrische Modellierung und Systemkalibrierung}{75}{subsection.8.3}%
+\contentsline {section}{\numberline {9}Fazit}{76}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse und wissenschaftliche Beitr{"a}ge}{76}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Limitierungen und kritische Reflexion}{77}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Ausblick und zuk{"u}nftige Forschungsrichtungen}{77}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Literaturverzeichnis}{79}{section.10}%
+\contentsline {section}{\numberline {11}Anlagen}{85}{section.11}%
+\contentsline {subsection}{\numberline {11.1}YOLO-Fehlerberechnung}{85}{subsection.11.1}%
+\contentsline {subsection}{\numberline {11.2}Fallback-Fehlerberechnung}{85}{subsection.11.2}%
+\contentsline {subsection}{\numberline {11.3}MPC-Optimierungsalgorithmus}{86}{subsection.11.3}%

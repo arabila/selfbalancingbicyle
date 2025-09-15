@@ -42,3 +42,56 @@ if contours:
     self._store_valid_values(error, mask, self.vision_mask_coverage)
     return error, mask
 \end{lstlisting}
+
+\newpage
+\subsection{MPC-Optimierungsalgorithmus}
+
+Die folgende Implementierung zeigt den vollständigen MPC-Optimierungsalgorithmus aus der Webots-Implementierung:
+
+\begin{lstlisting}[style=python,caption={MPC-Optimierungsalgorithmus in der Webots-Implementierung},label={lst:webots_mpc_solver_appendix}]
+def linear_mpc_control(self, xref, xbar, x0):
+    """Loest MPC-Optimierungsproblem"""
+    try:
+        x = cvxpy.Variable((self.NX, self.T + 1))
+        u = cvxpy.Variable((self.NU, self.T))
+        
+        cost = 0.0
+        constraints = []
+        
+        for t in range(self.T):
+            cost += cvxpy.quad_form(u[:, t], self.R)
+            
+            if t != 0:
+                cost += cvxpy.quad_form(xref[:, t] - x[:, t], self.Q)
+            
+            A, B, C = self.get_linear_model_matrix(
+                xbar[2, t], xbar[3, t], 0.0)  # Linearisierung um Referenz
+            constraints += [x[:, t + 1] == A @ x[:, t] + B @ u[:, t] + C]
+            
+            if t < (self.T - 1):
+                cost += cvxpy.quad_form(u[:, t + 1] - u[:, t], self.Rd)
+                constraints += [cvxpy.abs(u[1, t + 1] - u[1, t]) <= self.MAX_DSTEER * self.DT]
+        
+        cost += cvxpy.quad_form(xref[:, self.T] - x[:, self.T], self.Qf)
+        
+        # Randbedingungen
+        constraints += [x[:, 0] == x0]
+        constraints += [x[2, :] <= self.MAX_SPEED]
+        constraints += [x[2, :] >= self.MIN_SPEED]
+        constraints += [cvxpy.abs(u[0, :]) <= self.MAX_ACCEL]
+        constraints += [cvxpy.abs(u[1, :]) <= self.MAX_STEER]
+        
+        # Problem loesen
+        prob = cvxpy.Problem(cvxpy.Minimize(cost), constraints)
+        prob.solve(verbose=False)
+        
+        if prob.status == cvxpy.OPTIMAL or prob.status == cvxpy.OPTIMAL_INACCURATE:
+            u_opt = u.value
+            if u_opt is not None:
+                return u_opt[0, 0], u_opt[1, 0]  # Erste Kontrollaktion
+        
+        return self._simple_control_fallback(xref, x0)
+        
+    except Exception as e:
+        return self._simple_control_fallback(xref, x0)
+\end{lstlisting}

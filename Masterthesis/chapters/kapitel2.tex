@@ -17,7 +17,7 @@ Ein PID‑Regler ermittelt die Stellgröße \(u(t)\) aus dem Fehler \(e(t)\) zwi
 wobei \(K_{\mathrm{P}}\), \(K_{\mathrm{I}}\) und \(K_{\mathrm{D}}\) die Verstärkungsparameter für proportionale, integrale und 
 derivative Anteile sind.  Der proportionale Anteil erzeugt eine Stellgröße, proportional zur momentanen 
 Fehlergröße und reduziert so die Anstiegszeit.  Der Integrator akkumuliert den Fehler und eliminiert stationäre Abweichungen, kann 
-aber langsame Dynamik verursachen \cite{apmonitor_pid}.  Die Derivative wirkt der Änderung des Fehlers entgegen und dämpft dadurch Überschwinger. Sie 
+aber langsame Dynamik verursachen \citep{apmonitor_pid}.  Die Derivative wirkt der Änderung des Fehlers entgegen und dämpft dadurch Überschwinger. Sie 
 erhöht jedoch die Empfindlichkeit gegenüber Messrauschen, weshalb in vielen Anwendungen filternde Maßnahmen erforderlich sind.
 
 PID‑Regler werden eingesetzt, wenn eine robuste und einfach implementierbare Rückführung 
@@ -34,7 +34,7 @@ zum Kippen führen.  Um das System aufrecht zu halten, muss der Regler in Echtze
 Drehmomenten entgegenwirken.  Die Anforderungen an geringe Latenz und hohe Abtastrate werden etwa beim inversen Pendel mit Updatefrequenzen 
 von mehreren Kilohertz umgesetzt.  Dies verdeutlicht, dass auch beim Fahrrad eine schnelle Regelungsschleife erforderlich ist, wie sie 
 beispielsweise in den Bachelorarbeiten von Karabila und Zander implementiert wurde. Beide Arbeiten basieren auf P‑ bzw. PID‑Reglern, die den 
-Neigungswinkel mittels IMU messen und über den Lenkmotor oder den Antrieb korrigieren \cite{concurrent_rt_inverted_pendulum}.
+Neigungswinkel mittels IMU messen und über den Lenkmotor oder den Antrieb korrigieren \citep{concurrent_rt_inverted_pendulum}.
 
 Insgesamt ist die PID‑Regelung für das Balance‑Problem des autonomen Fahrrads wegen ihrer geringen Komplexität und Rechenlast, der 
 einfachen Implementierung auf Mikrocontrollern sehr gut geeignet.  Die Nichtlinearität 
@@ -68,7 +68,7 @@ Anschließend löst der MPC ein konvexes Optimierungsproblem, das die Abweichung
 und Beschleunigung ergänzt.  Stehen geeignete Optimierungslöser (z.\,B. \texttt{cvxpy}) zur Verfügung, werden aus diesem Problem kontinuierliche 
 Stellgrößen \(\delta\in[-\delta_{\max},\delta_{\max}]\) berechnet, andernfalls fällt der Controller auf eine einfache P‑Regelung zurück.  
 Vor der Weitergabe an den schnellen Balance‑Controller werden die resultierenden Lenkwinkel und Beschleunigungen normiert, geglättet und auf Änderungsraten 
-begrenzt, um ruckfreie Übergänge zu gewährleisten \cite{vision_mpc_readme}. Eine spezifische erklärung der implementierten Regelung findet sich in Kapitel 5.2.
+begrenzt, um ruckfreie Übergänge zu gewährleisten \citep{vision_mpc_readme}. Eine spezifische erklärung der implementierten Regelung findet sich in Kapitel 5.2.
 
 Die Eignung der MPC Regelung für das Fahrtrichtungsproblem ergibt sich aus der Vorhersagefähigkeit und der Einbeziehung von Beschränkungen.  
 Das Fahrradsystem ist nichtlinear und um einer gekrümmten Spur zu folgen, muss der Regler zukünftige Kurvenverläufe 
@@ -84,28 +84,28 @@ entlang einer vorgegebenen Fahrtrichtung zu steuern.
 
 You Only Look Once (YOLO) ist eine Reihe von Echtzeit‑Objekterkennungsverfahren, die auf Convolutional Neural Networks basieren.  Das ursprüngliche YOLO wurde 
 2015 von Redmon et al. vorgestellt und erfordert im Gegensatz zu region‑proposal‑basierten Ansätzen nur einen Vorwärtsdurchlauf durch das Netz, um Klassen und 
-Bounding Boxes für alle Objekte in einem Bild bestimmen \cite{yolo_wikipedia}.  Neuere Modelle wie YOLOv8 erweitern die ursprüngliche YOLO-Architektur. 
+Bounding Boxes für alle Objekte in einem Bild bestimmen \citep{yolo_wikipedia}.  Neuere Modelle wie YOLOv8 erweitern die ursprüngliche YOLO-Architektur. 
 Sie können nicht nur Objekte erkennen, sondern auch Bilder klassifizieren und Instanzen segmentieren. Ein moderner, leichter Backbone
 \footnote{Der Backbone ist das Merkmalsextraktionsnetz der Architektur. Er transformiert das Eingabebild in hierarchische, mehrskalige 
 Feature-Maps, die die Grundlage für Klassifikation, Lokalisierung und Segmentierung bilden.}, ein ankerfreier 
 Detektionskopf \footnote{Ankerfrei bedeutet ohne vordefinierte Ankerboxen. Der Kopf schätzt pro Bildposition direkt Objektzentren und 
 Boxparameter sowie Klassenwahrscheinlichkeiten, was Hyperparameter reduziert und das Matching im Training vereinfacht.} und verbesserte 
-Verlustfunktionen erhöhen Effizienz und Genauigkeit. Dadurch laufen die Modelle auf vielen Hardwareplattformen zuverlässig und schnell \cite{openmmlab_yolov8}.
+Verlustfunktionen erhöhen Effizienz und Genauigkeit. Dadurch laufen die Modelle auf vielen Hardwareplattformen zuverlässig und schnell \citep{openmmlab_yolov8}.
 
 Bei der Bildsegmentierung wird jedem Pixel eines Bildes ein Label zugeordnet.  Semantic Segmentation ordnet jedem Pixel eine Objektklasse zu, ohne zwischen 
-einzelnen Instanzen zu unterscheiden, während Instance Segmentation jedes Pixel einer individuellen Objektinstanz zuordnet \cite{image_segmentation_wikipedia}.  
-Panoptic Segmentation kombiniert beide Ansätze, indem sie sowohl die Klasse als auch die Instanz für jedes Pixel identifiziert \cite{image_segmentation_wikipedia}. 
+einzelnen Instanzen zu unterscheiden, während Instance Segmentation jedes Pixel einer individuellen Objektinstanz zuordnet \citep{image_segmentation_wikipedia}.  
+Panoptic Segmentation kombiniert beide Ansätze, indem sie sowohl die Klasse als auch die Instanz für jedes Pixel identifiziert \citep{image_segmentation_wikipedia}. 
  In der Instanzsegmentierung liefert das Netzwerk neben Bounding Boxes auch Masken, die die Form jedes erkannten Objekts abbilden.
 
  YOLOv8 erweitert die Objekterkennung um Instanzsegmentierung, wobei ein auf YOLACT \footnote{YOLACT steht für You Only Look At Coefficients 
  und ist ein einstufiges Verfahren zur Instanzsegmentierung. Es erzeugt Prototypmasken und kombiniert sie mit Koeffizienten zu Objektmasken} 
- basierender Kopf für jedes erkannte Objekt eine zusätzliche Maske berechnet \cite{openmmlab_yolov8}.  
+ basierender Kopf für jedes erkannte Objekt eine zusätzliche Maske berechnet \citep{openmmlab_yolov8}.  
  Durch diese Erweiterung kann ein Modell in einem einzigen Forward‑Pass sowohl Objekte lokalisieren als auch 
 deren pixelgenauen Umrisse bestimmen.  Wie bei früheren YOLO‑Versionen werden Varianten unterschiedlicher Größe bereitgestellt (Nano, Small, Medium, Large usw.), 
-um den Kompromiss zwischen Geschwindigkeit und Genauigkeit zu steuern \cite{openmmlab_yolov8}.
+um den Kompromiss zwischen Geschwindigkeit und Genauigkeit zu steuern \citep{openmmlab_yolov8}.
 
 In dieser Arbeit wird eine YOLOv8‑basierte Segmentierung für die Umfeldwahrnehmung genutzt.  Das Modell ist auf vier Klassen trainiert: Wiese 
-(„meadow“), Hindernis („obstacle“), Hauptfahrbahn („street\_main“) und Seitenfahrbahn („street\_side“), wie in Abbildung \ref{fig:yolo} zu sehen ist \cite{vision_mpc_readme}. Dabei liefert es
+(„meadow“), Hindernis („obstacle“), Hauptfahrbahn („street\_main“) und Seitenfahrbahn („street\_side“), wie in Abbildung \ref{fig:yolo} zu sehen ist \citep{vision_mpc_readme}. Dabei liefert es
 pro Klasse ein Pixelmasken Overlay sowie die zugehörigen Bounding Boxes.  Anschließend wird aus dem Segment „street\_main“ der laterale Fehler 
 bestimmt, der als Eingang für die Pfadverfolgung dient.  Die genauen Details zur Modellauswahl, Datensatzgenerierung und Implementierung werden 
 in einem späteren Kapitel beschrieben.  Hier soll lediglich hervorgehoben werden, dass die Kombination aus schneller YOLO‑Detektion und Instanzsegmentierung 

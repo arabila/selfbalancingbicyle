@@ -5,15 +5,15 @@
   Testumgebung zu schaffen, in dem das physikalische Fahrverhalten, die sensorgeführte Pfadverfolgung sowie die Kopplung von schneller
   Balance-Regelung und langsamer Vision-/Trajektorienplanung unter kontrollierten Bedingungen untersucht werden können. Webots
   bietet dafür eine deterministische Dynamiksimulation auf Basis von ODE, eine hierarchische Szenenbeschreibung und eine klare
-  Trennung von Geometrie, Physik, Sensorik, Aktuatorik und Controllern \cite{cyberbotics2025}.
+  Trennung von Geometrie, Physik, Sensorik, Aktuatorik und Controllern \citep{cyberbotics2025}.
 
 
   \subsection{Überblick}
   Webots ist ein frei verfügbares, quelloffenes und plattformunabhängiges Robotik Simulationsprogramm, das seit 1998 kontinuierlich 
-  gepflegt wird und in Forschung, Lehre und Industrie breite Anwendung findet \cite{michel2004,cyberbotics2025}. Es kombiniert eine 
+  gepflegt wird und in Forschung, Lehre und Industrie breite Anwendung findet \citep{michel2004,cyberbotics2025}. Es kombiniert eine 
   moderne Qt\-Benutzeroberfläche mit einer Mehrkörper\-Dynamiksimulation auf Basis der \emph{Open Dynamics Engine} (ODE) sowie einer 
   OpenGL\-gestützten Rendering\-Pipeline. Dadurch lassen sich fotorealistische 3D\-Szenen mit deterministischem Integrationsschema und 
-  feingranularer Kontrolle der Simulationszeit schrittgenau ausführen \cite{cyberbotics2025}.
+  feingranularer Kontrolle der Simulationszeit schrittgenau ausführen \citep{cyberbotics2025}.
 
   Kern des Webotsmodells ist die hierarchische Szenenrepräsentation in \textit{World}-Dateien 
   (\texttt{*.wbt}; VRML\-basiert). 
@@ -21,8 +21,8 @@
   sowie Roboterknoten mit Sensorik, Aktuatorik und Masseneigenschaften. Geräte (z.\,B.\ Kamera, IMU, Lidar, RotationalMotor) 
   sind als Nodes mit klar definierten Schnittstellen realisiert, ihre Parameter (Auflösung, Bildfrequenz, Dämpfung, Grenzwerte) sind 
   reproduzierbar konfigurierbar. Controller laufen als getrennte Prozesse in C/C++, Python, Java oder MATLAB und kommunizieren zur Laufzeit 
-  über APIs mit der Simulationswelt\cite{cyberbotics2025}. Eine spezielle \emph{Supervisor}\-API erlaubt höherwertige Eingriffe (Positionsreset, automatisiertes 
-  Logging, Metrik\-Auswertung) und bildet die Grundlage für reproduzierbare Benchmarking\-Pipelines \cite{cyberbotics2025}.
+  über APIs mit der Simulationswelt\citep{cyberbotics2025}. Eine spezielle \emph{Supervisor}\-API erlaubt höherwertige Eingriffe (Positionsreset, automatisiertes 
+  Logging, Metrik\-Auswertung) und bildet die Grundlage für reproduzierbare Benchmarking\-Pipelines \citep{cyberbotics2025}.
 
   Für regelungsorientierte Studien bietet Webots drei Eigenschaften, die in dieser Arbeit zentral sind:
 
@@ -34,13 +34,13 @@
   untersucht werden können.
 
   (iii) \emph{Automatisierbarkeit} über den Supervisor, u.\,a.\ für Szenario\-Resets, Störgrößeninjizierung, Batch\-Runs 
-  und standardisierte Ergebnisberichte \cite{cyberbotics2025}.
+  und standardisierte Ergebnisberichte \citep{cyberbotics2025}.
 
 
   Für diese Arbeit ist Webots folglich ein geeignetes Testumgebung, um die Kopplung einer schnellen Balance-PID-Regelung mit einer 
   langsameren vision\- bzw.\ modellprädiktiven Pfadführung systematisch zu entwerfen, zu parametrieren und zu evaluieren. Die klare Trennung 
   der Subsysteme (Physik, Sensorik, Controller) erlaubt Variantenstudien (z.\,B.\ Variation von Zeitschritt/Reibung, Sensorausfall, Verzögerungen), 
-  während die Supervisor Schnittstelle reproduzierbare Testreihen mit konsistentem Logging unterstützt \cite{cyberbotics2025}.
+  während die Supervisor Schnittstelle reproduzierbare Testreihen mit konsistentem Logging unterstützt \citep{cyberbotics2025}.
 
 
 
@@ -53,7 +53,7 @@
   und Gelenken für Vortrieb und Lenkung modelliert. Der schnelle Balance-PID in C läuft 
   direkt auf dem Roboter, während ein externer \emph{Supervisor} mit Kamera die Spur wahrnimmt und mittels MPC Lenksollwerte 
   berechnet. Der Datenaustausch erfolgt über \texttt{Emitter}/\texttt{Receiver}, wobei das Logging und die Auswertung beim Supervisor liegen. 
-  Wie schon erwähnt sin daher, durch die Trennung von Physikmodell, Sensorik und Regellogik gezielte Parameterstudien bei gleichbleibender Szenengeometrie möglich.
+  Wie schon erwähnt sind daher, durch die Trennung von Physikmodell, Sensorik und Regellogik gezielte Parameterstudien bei gleichbleibender Szenengeometrie möglich.
   Der in Listing:\ref{lst:wbt_min} gezeigte Pseudocode beschreibt die Struktur der in unseren Testfahrten verwendeten Webots-\texttt{.wbt}-Weltdatei und zeigt die minimalen Knoten 
   (\texttt{WorldInfo}, \texttt{RectangleArena}, \texttt{Robot}, \texttt{Supervisor}) in ihrer Kernkonfiguration.
 
@@ -149,12 +149,12 @@
  
   \subsection{Physikmodell: Open Dynamics Engine (ODE) in Webots} \label{sec:ode}
   Die \emph{Open Dynamics Engine} (ODE) ist eine freie, plattformunabhängige Physikbibliothek zur Simulation starrer Mehrkörpersysteme 
-  mit Gelenken und Kollisionen. Sie kombiniert integrierte Kollisionserkennung mit einem constraintsbasierten Dynamikmodell und wird 
+  mit Gelenken und Kollisionen. Sie kombiniert integrierte Kollisionserkennung mit einem constraint-basierten Dynamikmodell und wird 
   in zahlreichen Simulationsumgebungen eingesetzt.  Das Welt- und Objektverhalten 
   wird über \texttt{WorldInfo} und \texttt{Physics} konfiguriert. Dort werden unter anderem der Zeitschritt sowie die ODE-Kernparameter 
   ERP (Error Reduction Parameter) und CFM (Constraint Force Mixing) gesetzt. ERP/CFM steuern die „Feder-/Dämpfer“-Eigenschaften 
   restringierter Bewegungen und Kontaktauflösungen und sind für stabile, nicht-schwingende Lenkeingriffe wesentlich. Kontakte 
-  werden als \emph{contact joints} mit Coulomb-Reibung gelöst, zusätzliche Felder Rückprall und weiche Grenzen erlauben.
+  werden als \emph{contact joints} mit Coulomb-Reibung gelöst, während zusätzliche Felder Rückprall und weiche Grenzen erlauben.
   
   In Webots wird die Reibung über den Knoten \texttt{ContactProperties} festgelegt (Listing~\ref{lst:wbt_min} Zeile 31). Neben der üblichen Gleitreibung 
   können auch Roll- und Drehwiderstände definiert werden. Für bestimmte einfache Grundkörper ist zudem richtungsabhängige, Reibung möglich.
@@ -182,15 +182,15 @@
   \subsubsection{Inertialmesseinheit (IMU)}
 
   \textbf{Physikalisches Prinzip:} Eine Inertial Measurement Unit (IMU) erfasst Trägheitsgrößen des Fahrzeugs, typischerweise mit kombinierter \textbf{Beschleunigungsmessung} (Accelerometer) und 
-  \newline\textbf{Drehratensensoren} (Gyroskope) auf drei Raumachsen \cite{cyberbotics_inertialunit}. Durch Fusion dieser Signale (oft ergänzt um einen Magnetometer-Kompass),
+  \newline\textbf{Drehratensensoren} (Gyroskope) auf drei Raumachsen \citep{cyberbotics_inertialunit}. Durch Fusion dieser Signale (oft ergänzt um einen Magnetometer-Kompass),
   lässt sich die Orientierung im Raum bestimmen. Im realen Prototyp kommt z.\,B. der IMU-Sensor \textbf{BNO055} zum Einsatz, der intern die Rohdaten filtert und direkt \textbf{Euler-Winkel} 
-  (Roll, Pitch, Yaw) bereitstellt \cite{bno055}. Die Rollachse (Seitenneigung) ist beim Fahrrad die entscheidende Stabilitätsgröße.  Reale IMUs liefern diese Winkel mit begrenzter Auflösung 
+  (Roll, Pitch, Yaw) bereitstellt \citep{bno055}. Die Rollachse (Seitenneigung) ist beim Fahrrad die entscheidende Stabilitätsgröße.  Reale IMUs liefern diese Winkel mit begrenzter Auflösung 
   und unterliegen Rauschen sowie Drift, was meist durch Kalibrierung und Sensorfusion 
-  kompensiert werden muss. Die Ausgaberate moderner IMUs liegt im Bereich mehrerer hundert Hertz (der BNO055 etwa $\sim$200~Hz \cite{bno055}), 
+  kompensiert werden muss. Die Ausgaberate moderner IMUs liegt im Bereich mehrerer hundert Hertz (der BNO055 etwa $\sim$200~Hz \citep{bno055}), 
   was für eine schnelle Lagekontrolle ausreicht.
 
   \textbf{IMU-Modell in Webots:} Webots stellt mit dem \texttt{InertialUnit}-Knoten ein abstraktes IMU-Modell bereit, das idealisierte Orientierungsdaten liefert. Konkret berechnet und 
-  aktualisiert das InertialUnit-Gerät in jeder Simulationsschleife den \textbf{Kipp- und Gierwinkel} des Roboters relativ zu einem globalen Bezugssystem \cite{cyberbotics_inertialunit}. 
+  aktualisiert das InertialUnit-Gerät in jeder Simulationsschleife den \textbf{Kipp- und Gierwinkel} des Roboters relativ zu einem globalen Bezugssystem \citep{cyberbotics_inertialunit}. 
   Im Gegensatz zu einer realen IMU entfallen hier Kalibrierfehler und Rauschen, wodurch die Orientierungswinkel praktisch \textbf{fehlerfrei und ohne Drift} sind. 
   Das im Webots-Weltmodell definierte Gerät \texttt{imu} (Listing~\ref{lst:wbt_min} Zeile 49) ist starr im Fahrradrahmen verbaut (an geeigneter Position, etwa nahe dem Schwerpunkt) und gibt standardmäßig 
   Roll-, Pitch- und Yaw-Winkel in \textit{Radiant} aus. Die Abtastung erfolgt synchron mit dem physikalischen Simulationszeitschritt.
@@ -209,7 +209,7 @@
   \emph{Regelgröße} im inneren Regelkreis,  wobei das Fahrrad nach links/rechts abweicht, 
   soll durch einen entsprechenden Lenkeinschlag gegengesteuert werden, 
   bis $\varphi_{\text{roll}} = 0$ (senkrechte Lage) erreicht ist.  Im vorliegenden Modell ist der \texttt{basicTimeStep} 
-  der Welt auf 2~ms gesetzt \cite{githubWebots}, was einer Messfrequenz von 500~Hz entspricht (Listing~\ref{lst:wbt_min} Zeile 9). Dadurch  können selbst schnelle Kippbewegungen des Fahrrads in Echtzeit erfasst werden \cite{githubWebots}.
+  der Welt auf 2~ms gesetzt \citep{githubWebots}, was einer Messfrequenz von 500~Hz entspricht (Listing~\ref{lst:wbt_min} Zeile 9). Dadurch  können selbst schnelle Kippbewegungen des Fahrrads in Echtzeit erfasst werden \citep{githubWebots}.
   Dadurch reagiert der PID-Regler sehr schnell auf Lageänderungen, was eine Grundvoraussetzung ist, 
   um die instabilität beherrschen zu können. Im äußeren (vision-basierten) 
   Regelkreis spielt die IMU direkt keine Rolle, allerdings fließen die Balancierinformationen indirekt ein, wenn die Vision-Steuerung, 
@@ -367,8 +367,8 @@
     \texttt{"maxTorque"}  auf \texttt{25} gesetzt, was einen Moment von 25\,N\,m bedeutet.
     Was dazu führt, dass der Istwinkel nicht 1:1 dem Sollwert folgen kann.
     Die Parameter \texttt{dampingConstant} \texttt{0.3} und \texttt{staticFriction} \texttt{0.1} erzeugen zusätzliche Gegenmomente, die besonders um den Nullbereich kleine Sprünge abbremsen.
-    Die Gabel sowie das Vorderrad besitzen eine Masse von \texttt{2.5 kg} und eine Trägheitsmatrix von \texttt{0.06 0.07 0.12}, die schnelle Winkeländerungen begrenzen.
-    Die beobachtete Verzögerung liegt damit nicht an einer Rechen oder Übertragungsverzögerung, sondern an den Momentgrenzen und Verlusten im Gelenk.
+    Die Gabel sowie das Vorderrad besitzen eine Masse von \texttt{2.5 kg} und eine Trägheitsmatrix von \texttt{0.06 0.07 0.12}, die die schnelle Winkeländerungen begrenzen.
+    Die beobachtete Verzögerung liegt damit nicht an einer Rechen- oder Übertragungsverzögerung, sondern an den Momentgrenzen und Verlusten im Gelenk.
     Das ist in Abbildung~\ref{fig:sensor_api} erkennbar, da steile Sollsprünge geglättet werden, was dämpfend wirkt und zu weniger harten Lenkreaktionen führt.
     
     \begin{figure}[H]
@@ -417,14 +417,14 @@
     \item \textbf{Der Lenkmotor} wird von einem BTS7960 Treibermodul mit PWM Signalen angesteuert. 
     Die Winkelrückmeldung kommt vom Encoder am Lenkgetriebe. 
     Der MD49 verarbeitet die Encodersignale und stellt Zählwerte zur Positionsbestimmung bereit. 
-    Der Antrieb arbeitet als Positionsantrieb auf einen Sollwinkel mit begrenztem Bereichen in beide Richtungen. 
-    Abweichungen zwischen Soll und Ist Lenkeinschlag, werden durch den Regler ausgeregelt bis der gewünschte Winkel erreicht ist. 
+    Der Antrieb arbeitet als Positionsantrieb auf einem Soll-Winkel mit begrenztem Bereichen in beide Richtungen. 
+    Abweichungen zwischen Soll- und Ist-Lenkeinschlag, werden durch den Regler ausgeregelt bis der gewünschte Winkel erreicht ist. 
     Der Antrieb muss ausreichend schnell und drehmomentstark sein um die Querstabilität sicherzustellen.
   
   
     \item \textbf{Der Antriebsmotor} am Hinterrad sorgt für den Vortrieb. 
     Dieser wird im Unterschied zum Lenker meist als \textbf{Drehzahl- bzw. Drehmomentantrieb} betrieben. 
-    Im realen System regelt ein separater PID die Raddrehzahl konstant, indem er den Motorstrom anhand des Hall-Encoder-Feedbacks justiert. 
+    Im realen System regelt ein separater PID-Regler die Raddrehzahl konstant, indem er den Motorstrom anhand des Hall-Encoder-Feedbacks justiert. 
     Physikalisch verleiht das rotierende Hinterrad dem System einen \textbf{gyroskopischen Effekt}, 
     der stabilisierend wirkt, weshalb eine gewisse Grundgeschwindigkeit hilfreich ist. 
     Gleichzeitig muss der Motor aber auch schnell drosseln oder bremsen können, um Kurven sicher zu durchfahren, ohne umzukippen.
@@ -602,7 +602,7 @@
   Control\mbox{-}Step\mbox{-}Dauer (in Millisekunden) an den Simulator und bewirkt, dass Webots die 
   Simulation um genau diesen Zeitschritt fortsetzt und dabei alle bis dahin vom Controller gesetzten 
   Befehle anwendet. Danach erhält der Controller die aktualisierten Sensorwerte des neuen Simulationszustands 
-  zurück. Abbildung \ref{fig:controller_sync} veranschaulicht diese Synchronisation \cite{cyberbotics_controller_programming}.
+  zurück. Abbildung \ref{fig:controller_sync} veranschaulicht diese Synchronisation \citep{cyberbotics_controller_programming}.
   
 
 
@@ -624,7 +624,7 @@
   aktiviert. Entsprechende Methoden existieren dabei ebenfalls in Python (\texttt{robot.getDevice()}, \texttt{device.enable()}). Ein Sensor liefert 
   erst ab dem nächsten \texttt{wb\_robot\_step()} gültige Messwerte, da die Simulationszeit dann fortgeschritten ist. 
 
-  \begin{wrapfigure}{r}{0.4\textwidth} % r=rechts, l=links
+  \begin{wrapfigure}{r}{0.5\textwidth} % r=rechts, l=links
     \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
     \centering
     \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
@@ -647,7 +647,7 @@
   Über Channel 1 sendet der Vision-Controller Steuerkommandos an das Fahrrad, 
   und über Channel 2 übermittelt der Balance-Controller seinerseits Statusdaten zurück (z.\,B.\ aktueller Rollwinkel, Lenkwinkel, 
   Geschwindigkeit). Beide Controller laufen im \emph{synchronen Modus}, d.\,h.\ Webots hält die Physik so lange an, bis sowohl der 
-  schnelle C-Controller (alle 2\,ms) als auch der langsamere Python-Controller ihren Schritt abgearbeitet haben \cite{cyberbotics_emitter}\cite{cyberbotics_receiver}. 
+  schnelle C-Controller (alle 2\,ms) als auch der langsamere Python-Controller ihren Schritt abgearbeitet haben \citep{cyberbotics_emitter}\citep{cyberbotics_receiver}. 
   Praktisch bedeutet dies, dass der Balance\mbox{-}Regler bei jedem Simulationsschritt neue Motorbefehle berechnet, während der
   Vision\mbox{-}Algorithmus nur alle 25 Schritte (50\,ms) ein neues Lenkkommando liefert. ‚
   Webots gewährleistet die Synchronisierung beider Teilprozesse, sodass Kommandos verlustfrei und deterministisch am 

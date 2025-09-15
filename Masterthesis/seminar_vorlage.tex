@@ -11,12 +11,12 @@
   \usepackage{graphicx}
   \usepackage{amsmath}              %% für \text{} Befehl
   %\usepackage[german]{babel}
-  \usepackage[ngerman,english,shorthands=off]{babel}
+  % Babel wird später nach fontenc geladen
   \usepackage{url}
   \newcommand{\urlBiBTeX}[1]{\url{#1}}
   \usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
   \usepackage{multicol} % für mehrere Spalten
-  \usepackage{cite}
+  \usepackage[round,sort&compress]{natbib}
   \usepackage{pdfcomment}
   \usepackage{amssymb}   % Symbole wie ℝ
   \usepackage{siunitx}   % saubere Darstellung physikalischer Einheiten
@@ -43,6 +43,23 @@
   % Schrift & Trennungen
   \usepackage[T1]{fontenc}
   \usepackage{lmodern}
+  
+  % Mikrotypografie für bessere Zeilenumbrüche und weniger Overfull \hbox
+  \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
+  
+  % Erweiterte deutsche Silbentrennung
+  \usepackage[ngerman]{babel}
+  \selectlanguage{ngerman}
+  
+  % Manuelle Silbentrennungen für technische Begriffe
+  \hyphenation{We-bots Si-mu-la-tion Fahr-rad-mo-dell Ba-lan-ce-Con-trol-ler
+              Iner-tial-Unit Ro-ta-tio-nal-Mo-tor Hin-ge-Joint Con-tact-Pro-per-ties
+              Text-ured-Back-ground Rec-tan-gle-Are-na View-point World-Info
+              Ka-me-ra-bild Ver-ar-bei-tung Bild-ver-ar-bei-tung Re-gel-schlei-fe
+              Stell-grö-ße Re-gel-ab-wei-chung Füh-rungs-grö-ße Stör-grö-ße
+              Über-tra-gungs-funk-tion Fre-quenz-be-reich Zeit-be-reich
+              Sta-bi-li-täts-ana-ly-se Pol-stel-len-ver-tei-lung
+              Eigen-wert-ana-ly-se Zu-stands-raum-dar-stel-lung}
 
   % Farben (MUSS VOR hyperref & listings kommen!)
   \usepackage[dvipsnames,table]{xcolor}  % table-Option für farbige Tabellen hinzugefügt
@@ -187,20 +204,29 @@
     morekeywords=[2]{np, math, cv2, cvxpy, struct, time, os, sys},
     keywordstyle=[2]\color{purple}
   }
-\bibliographystyle{plain}
+\bibliographystyle{agsm}
 
 %--------------------------------------------------
 % Seiten-Layout
 %--------------------------------------------------
-\setlength{\textwidth}{6.5in}     % Textbreite
+\setlength{\textwidth}{6.8in}     % Textbreite leicht erhöht für weniger Overfull \hbox
 \setlength{\hoffset}{0in}
 \setlength{\voffset}{0in}
 \setlength{\textheight}{9in}      % Texthöhe 
 \setlength{\topmargin}{-0.2in}    % oberer Rand
-\setlength{\oddsidemargin}{+.1cm} % linker Rand
+\setlength{\oddsidemargin}{-0.1cm} % linker Rand reduziert für mehr Platz
+\setlength{\evensidemargin}{-0.1cm} % rechter Rand für doppelseitige Dokumente
 
 \setlength\parskip{\medskipamount}
 \setlength\parindent{0pt}
+
+% Zusätzliche Einstellungen für bessere Zeilenumbrüche
+\tolerance=1000
+\hbadness=1000
+\emergencystretch=1.5em
+\hfuzz=0.3pt
+\widowpenalty=10000
+\clubpenalty=10000
 
 % Header-Konfiguration
 \pagestyle{fancy}

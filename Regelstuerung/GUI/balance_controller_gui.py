@@ -1209,7 +1209,7 @@ class BalanceControllerGUI:
         # Vision-Error zu Plot 1 hinzufügen (falls verfügbar)
         if "vision_error" in df.columns and (show_all or self.plot_visibility["vision_error"].get()):
             # Vision Error normalisiert auf ±30° für bessere Darstellung
-            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="orange", linewidth=1, linestyle=':')
+            self.ax1.plot(df["timestamp"], df["vision_error"] * 30, label="🎯 Vision Error (×30)", color="black", linewidth=1, linestyle=':')
         
         self.ax1.set_ylabel("Winkel [°] / Vision-Werte", fontsize=self.axis_label_size)
         legend_fs = self._compute_legend_fontsize()

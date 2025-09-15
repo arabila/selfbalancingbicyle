@@ -1,7 +1,7 @@
 This is BibTeX, Version 0.99d (TeX Live 2025/Homebrew)
 Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
 The top-level auxiliary file: seminar_vorlage.aux
-The style file: plain.bst
+The style file: agsm.bst
 A level-1 auxiliary file: chapters/abstract.aux
 A level-1 auxiliary file: chapters/Einleitung.aux
 A level-1 auxiliary file: chapters/kapitel1.aux
@@ -16,44 +16,44 @@ Database file #1: refs.bib
 Warning--I didn't find a database entry for "yolo_wikipedia"
 Warning--I didn't find a database entry for "image_segmentation_wikipedia"
 You've used 39 entries,
-            2118 wiz_defined-function locations,
-            731 strings with 10818 characters,
-and the built_in function-call counts, 12012 in all, are:
-= -- 1210
-> -- 511
-< -- 8
-+ -- 206
-- -- 166
-* -- 688
-:= -- 1969
-add.period$ -- 130
+            2909 wiz_defined-function locations,
+            874 strings with 11705 characters,
+and the built_in function-call counts, 149899 in all, are:
+= -- 24359
+> -- 1922
+< -- 1
++ -- 11482
+- -- 581
+* -- 12683
+:= -- 30338
+add.period$ -- 52
 call.type$ -- 39
-change.case$ -- 199
-chr.to.int$ -- 0
+change.case$ -- 547
+chr.to.int$ -- 37
 cite$ -- 39
-duplicate$ -- 439
-empty$ -- 1006
-format.name$ -- 166
-if$ -- 2579
-int.to.chr$ -- 0
-int.to.str$ -- 39
+duplicate$ -- 587
+empty$ -- 1238
+format.name$ -- 690
+if$ -- 26927
+int.to.chr$ -- 7
+int.to.str$ -- 0
 missing$ -- 19
-newline$ -- 208
-num.names$ -- 78
-pop$ -- 267
+newline$ -- 135
+num.names$ -- 403
+pop$ -- 230
 preamble$ -- 1
-purify$ -- 159
+purify$ -- 585
 quote$ -- 0
-skip$ -- 357
+skip$ -- 541
 stack$ -- 0
-substring$ -- 663
-swap$ -- 109
-text.length$ -- 8
+substring$ -- 34241
+swap$ -- 119
+text.length$ -- 547
 text.prefix$ -- 0
 top$ -- 0
 type$ -- 154
 warning$ -- 0
-while$ -- 116
-width$ -- 41
-write$ -- 438
+while$ -- 857
+width$ -- 0
+write$ -- 538
 (There were 2 warnings)
