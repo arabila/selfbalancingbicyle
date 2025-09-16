@@ -1,9 +1,9 @@
 {
     "balance_control": {
         "angle_pid": {
-            "angle_Kp": 4.5,
+            "angle_Kp": 5.5,
             "angle_Ki": 0.2,
-            "angle_Kd": 0.4,
+            "angle_Kd": 0.5,
             "angle_output_min": -0.3,
             "angle_output_max": 0.3,
             "angle_integral_min": -60.0,
@@ -11,7 +11,7 @@
         },
         "speed_control": {
             "base_speed": 6.172839506172839,
-            "min_speed": 3.0864197530864197,
+            "min_speed": 4.320987654320987,
             "max_speed": 6.172839506172839
         },
         "mechanical_limits": {
@@ -25,7 +25,7 @@
             "filter_size": 5
         },
         "vision_control": {
-            "method": "yolo",
+            "method": "fallback",
             "yolo_conf": 0.5,
             "yolo_show": 0,
             "fallback_roi_top_frac": 0.5,

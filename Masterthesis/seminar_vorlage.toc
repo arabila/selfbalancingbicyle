@@ -1,80 +1,81 @@
 \babel@toc {ngerman}{}\relax 
 \babel@toc {ngerman}{}\relax 
-\contentsline {section}{\numberline {1}Abstract}{2}{section.1}%
-\contentsline {section}{\numberline {2}Einleitung}{5}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Problemstellung}{5}{subsection.2.1}%
-\contentsline {paragraph}{Abgrenzung zu realen und simulationsbasierten Ansätzen}{5}{section*.2}%
-\contentsline {subsection}{\numberline {2.2}Stand der Technik}{5}{subsection.2.2}%
-\contentsline {subsection}{\numberline {2.3}Bisherige Arbeiten}{6}{subsection.2.3}%
-\contentsline {subsubsection}{\numberline {2.3.1}Anna Ranz (2021) – Hardware-Grundlagen}{7}{subsubsection.2.3.1}%
-\contentsline {subsubsection}{\numberline {2.3.2}Amine Karabila (2022) – Erste funktionierende Regelung}{7}{subsubsection.2.3.2}%
-\contentsline {subsubsection}{\numberline {2.3.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{8}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{8}{subsubsection.2.3.4}%
-\contentsline {section}{\numberline {3}Grundlagen}{10}{section.3}%
-\contentsline {subsection}{\numberline {3.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{10}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{11}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}YOLO-Grundlagen und Segmentierung}{12}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Simulationsumgebung}{14}{section.4}%
-\contentsline {subsection}{\numberline {4.1}Überblick}{14}{subsection.4.1}%
-\contentsline {subsection}{\numberline {4.2}Struktur der Simulationsumgebung}{15}{subsection.4.2}%
-\contentsline {subsection}{\numberline {4.3}Physikmodell: Open Dynamics Engine (ODE) in Webots}{17}{subsection.4.3}%
-\contentsline {subsection}{\numberline {4.4}Sensoren}{17}{subsection.4.4}%
-\contentsline {subsubsection}{\numberline {4.4.1}Inertialmesseinheit (IMU)}{17}{subsubsection.4.4.1}%
-\contentsline {subsubsection}{\numberline {4.4.2}Kamera (Videosensor)}{19}{subsubsection.4.4.2}%
-\contentsline {subsubsection}{\numberline {4.4.3}Motorsensoren (Inkrementalgeber)}{21}{subsubsection.4.4.3}%
-\contentsline {subsection}{\numberline {4.5}Aktuatoren}{22}{subsection.4.5}%
-\contentsline {subsection}{\numberline {4.6}Controller}{26}{subsection.4.6}%
-\contentsline {subsection}{\numberline {4.7}Integriertes Konfigurationssystem}{28}{subsection.4.7}%
-\contentsline {section}{\numberline {5}Kombinierte Regelung}{30}{section.5}%
-\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{30}{subsection.5.1}%
-\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{32}{subsection.5.2}%
-\contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{36}{subsection.5.3}%
-\contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8)}{36}{subsubsection.5.3.1}%
-\contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (ROI-basiert)}{38}{subsubsection.5.3.2}%
-\contentsline {section}{\numberline {6}Ergebnisse}{41}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{41}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Teststrecken}{44}{subsection.6.2}%
-\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{45}{subsubsection.6.2.1}%
-\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers:}{45}{section*.18}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers: }{46}{section*.22}%
-\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung:}{48}{section*.27}%
-\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{50}{subsubsection.6.2.2}%
-\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung:}{50}{section*.32}%
-\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{54}{subsubsection.6.2.3}%
-\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler):}{55}{section*.40}%
-\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler):}{56}{section*.43}%
-\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung:}{57}{section*.46}%
-\contentsline {paragraph}{Einordnung und Grenzen:}{58}{section*.49}%
-\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{59}{subsubsection.6.2.4}%
-\contentsline {paragraph}{Fall A: Senke, $M=1{,}0\,\text {m}$ (Baseline-Parameter):}{59}{section*.51}%
-\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte):}{60}{section*.54}%
-\contentsline {paragraph}{Fall C: Senke, $M=2{,}0\,\text {m}$ mit angepassten Balance-PID-Gewichten:}{61}{section*.57}%
-\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{62}{section*.60}%
-\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{63}{section*.63}%
-\contentsline {paragraph}{Zusammenfassung und Ableitungen:}{64}{section*.66}%
-\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{66}{subsection.6.3}%
-\contentsline {subsubsection}{\numberline {6.3.1}Performance-Monitoring und Rechenzeit-Analyse}{66}{subsubsection.6.3.1}%
-\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung:}{66}{section*.67}%
-\contentsline {paragraph}{Komponenten-spezifische:}{67}{section*.69}%
-\contentsline {paragraph}{Echtzeitfähigkeits-Bewertung}{67}{section*.71}%
-\contentsline {subsubsection}{\numberline {6.3.2} Rechenzeit-Analyse und Implikationen}{67}{subsubsection.6.3.2}%
-\contentsline {subsubsection}{\numberline {6.3.3}Hardware-Skalierung und Jetson Nano Vergleich}{69}{subsubsection.6.3.3}%
-\contentsline {subsubsection}{\numberline {6.3.4}Fazit zur Performance-Analyse}{69}{subsubsection.6.3.4}%
-\contentsline {section}{\numberline {7}Grenzen der Arbeit}{71}{section.7}%
-\contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{71}{subsection.7.1}%
-\contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{71}{subsubsection.7.1.1}%
-\contentsline {subsubsection}{\numberline {7.1.2}Kamera und Vision-Pipeline}{72}{subsubsection.7.1.2}%
-\contentsline {subsubsection}{\numberline {7.1.3}Vereinfachte Physikmodellierung}{72}{subsubsection.7.1.3}%
-\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{74}{section.8}%
-\contentsline {subsection}{\numberline {8.1}Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}{74}{subsection.8.1}%
-\contentsline {subsection}{\numberline {8.2}MPC-Optimierung und erweiterte Physikmodellierung}{74}{subsection.8.2}%
-\contentsline {subsection}{\numberline {8.3}Präzise geometrische Modellierung und Systemkalibrierung}{75}{subsection.8.3}%
-\contentsline {section}{\numberline {9}Fazit}{76}{section.9}%
-\contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse und wissenschaftliche Beitr{"a}ge}{76}{subsection.9.1}%
-\contentsline {subsection}{\numberline {9.2}Limitierungen und kritische Reflexion}{77}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Ausblick und zuk{"u}nftige Forschungsrichtungen}{77}{subsection.9.3}%
-\contentsline {section}{\numberline {10}Literaturverzeichnis}{79}{section.10}%
-\contentsline {section}{\numberline {11}Anlagen}{85}{section.11}%
-\contentsline {subsection}{\numberline {11.1}YOLO-Fehlerberechnung}{85}{subsection.11.1}%
-\contentsline {subsection}{\numberline {11.2}Fallback-Fehlerberechnung}{85}{subsection.11.2}%
-\contentsline {subsection}{\numberline {11.3}MPC-Optimierungsalgorithmus}{86}{subsection.11.3}%
+\contentsline {section}{\numberline {1}Abstract}{vi}{section.1}%
+\contentsline {section}{\numberline {2}Einleitung}{1}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Problemstellung}{1}{subsection.2.1}%
+\contentsline {paragraph}{Abgrenzung zu realen und simulationsbasierten Ansätzen}{1}{section*.4}%
+\contentsline {subsection}{\numberline {2.2}Stand der Technik}{1}{subsection.2.2}%
+\contentsline {subsection}{\numberline {2.3}Bisherige Arbeiten}{2}{subsection.2.3}%
+\contentsline {subsubsection}{\numberline {2.3.1}Anna Ranz (2021) – Hardware-Grundlagen}{3}{subsubsection.2.3.1}%
+\contentsline {subsubsection}{\numberline {2.3.2}Amine Karabila (2022) – Erste funktionierende Regelung}{3}{subsubsection.2.3.2}%
+\contentsline {subsubsection}{\numberline {2.3.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{4}{subsubsection.2.3.3}%
+\contentsline {subsubsection}{\numberline {2.3.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{4}{subsubsection.2.3.4}%
+\contentsline {section}{\numberline {3}Grundlagen}{6}{section.3}%
+\contentsline {subsection}{\numberline {3.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{6}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{7}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}YOLO-Grundlagen und Segmentierung}{8}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Simulationsumgebung}{10}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Überblick}{10}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Struktur der Simulationsumgebung}{11}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Physikmodell: Open Dynamics Engine (ODE) in Webots}{12}{subsection.4.3}%
+\contentsline {subsection}{\numberline {4.4}Sensoren}{13}{subsection.4.4}%
+\contentsline {subsubsection}{\numberline {4.4.1}Inertialmesseinheit (IMU)}{13}{subsubsection.4.4.1}%
+\contentsline {subsubsection}{\numberline {4.4.2}Kamera (Videosensor)}{15}{subsubsection.4.4.2}%
+\contentsline {subsubsection}{\numberline {4.4.3}Motorsensoren (Inkrementalgeber)}{17}{subsubsection.4.4.3}%
+\contentsline {subsection}{\numberline {4.5}Aktuatoren}{18}{subsection.4.5}%
+\contentsline {subsection}{\numberline {4.6}Controller}{22}{subsection.4.6}%
+\contentsline {subsection}{\numberline {4.7}Integriertes Konfigurationssystem}{24}{subsection.4.7}%
+\contentsline {section}{\numberline {5}Kombinierte Regelung}{26}{section.5}%
+\contentsline {subsection}{\numberline {5.1}Portierung des Balance-PID (Zander)}{26}{subsection.5.1}%
+\contentsline {subsection}{\numberline {5.2}Portierung des Fahrtrichtungs-MPC (Giray)}{28}{subsection.5.2}%
+\contentsline {subsection}{\numberline {5.3}Strategien der Spurführung}{32}{subsection.5.3}%
+\contentsline {subsubsection}{\numberline {5.3.1}YOLO-Segmentierung (YOLOv8)}{32}{subsubsection.5.3.1}%
+\contentsline {subsubsection}{\numberline {5.3.2}Fallback-Strategie (ROI-basiert)}{34}{subsubsection.5.3.2}%
+\contentsline {section}{\numberline {6}Ergebnisse}{37}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Fahrrad Datenblatt}{37}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Teststrecken}{39}{subsection.6.2}%
+\contentsline {subsubsection}{\numberline {6.2.1}Kurvenfahrt}{40}{subsubsection.6.2.1}%
+\contentsline {paragraph}{Einsatz eines vereinfachten Balance-P-Reglers:}{41}{section*.20}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance-PID-Reglers: }{42}{section*.24}%
+\contentsline {paragraph}{Einsatz der ROI\mbox {-}Fallback\mbox {-}Erkennung:}{43}{section*.29}%
+\contentsline {paragraph}{Einsatz eines einfachen P\mbox {-}Reglers anstelle des MPC\mbox {-}Reglers:}{45}{section*.33}%
+\contentsline {subsubsection}{\numberline {6.2.2}S-Kurve}{47}{subsubsection.6.2.2}%
+\contentsline {paragraph}{Einsatz des erweiterten Balance\,-PID mit YOLO\,-basierter Spurführung:}{47}{section*.39}%
+\contentsline {subsubsection}{\numberline {6.2.3}Gerade Strecke mit Seitenwind}{51}{subsubsection.6.2.3}%
+\contentsline {paragraph}{Fall A: Seitenwind $0{,}5\,\text {m/s}$ (Baseline-Regler):}{52}{section*.46}%
+\contentsline {paragraph}{Fall B: Seitenwind $1{,}0\,\text {m/s}$ (Baseline-Regler):}{53}{section*.49}%
+\contentsline {paragraph}{Fall C: Gain-Erhöhung für die Balance-Regelung:}{53}{section*.52}%
+\contentsline {paragraph}{Einordnung und Grenzen:}{55}{section*.55}%
+\contentsline {subsubsection}{\numberline {6.2.4}Gerade Strecke mit Höhenunterschied}{56}{subsubsection.6.2.4}%
+\contentsline {paragraph}{Fall A: Senke, $M=1{,}0\,\text {m}$ (Baseline-Parameter):}{56}{section*.57}%
+\contentsline {paragraph}{Fall B: Senke, \(M=2{,}0\,\text {m}\) (Baseline-Gewichte):}{57}{section*.60}%
+\contentsline {paragraph}{Fall C: Senke, $M=2{,}0\,\text {m}$ mit angepassten Balance-PID-Gewichten:}{58}{section*.63}%
+\contentsline {paragraph}{Fall D: Hügel, \(M=2{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{59}{section*.66}%
+\contentsline {paragraph}{Fall E: Hügel, \(M=4{,}0\,\text {m}\) mit angepassten Balance PID Gewichten:}{60}{section*.69}%
+\contentsline {paragraph}{Zusammenfassung und Ableitungen:}{61}{section*.72}%
+\contentsline {subsection}{\numberline {6.3}Rechenzeit \& Echtzeitfähigkeit in Webots (Vergleich zum Realfahrrad)}{62}{subsection.6.3}%
+\contentsline {subsubsection}{\numberline {6.3.1}Performance-Monitoring und Rechenzeit-Analyse}{62}{subsubsection.6.3.1}%
+\contentsline {paragraph}{Hardware-Spezifikation der Testumgebung:}{62}{section*.73}%
+\contentsline {paragraph}{Komponenten-spezifische:}{63}{section*.75}%
+\contentsline {paragraph}{Echtzeitfähigkeits-Bewertung}{63}{section*.77}%
+\contentsline {subsubsection}{\numberline {6.3.2} Rechenzeit-Analyse und Implikationen}{63}{subsubsection.6.3.2}%
+\contentsline {subsubsection}{\numberline {6.3.3}Hardware-Skalierung und Jetson Nano Vergleich}{65}{subsubsection.6.3.3}%
+\contentsline {subsubsection}{\numberline {6.3.4}Fazit zur Performance-Analyse}{65}{subsubsection.6.3.4}%
+\contentsline {section}{\numberline {7}Grenzen der Arbeit}{67}{section.7}%
+\contentsline {subsection}{\numberline {7.1}Simulationsbedingte Limitierungen}{67}{subsection.7.1}%
+\contentsline {subsubsection}{\numberline {7.1.1}Inertial Measurement Unit (IMU)}{67}{subsubsection.7.1.1}%
+\contentsline {subsubsection}{\numberline {7.1.2}Kamera und Vision-Pipeline}{68}{subsubsection.7.1.2}%
+\contentsline {subsubsection}{\numberline {7.1.3}Vereinfachte Physikmodellierung}{69}{subsubsection.7.1.3}%
+\contentsline {section}{\numberline {8}Zukünftige Arbeiten}{70}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Realitätsnahe Simulationskonfiguration und alternative Simulationsumgebungen}{70}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}MPC-Optimierung und erweiterte Physikmodellierung}{70}{subsection.8.2}%
+\contentsline {subsection}{\numberline {8.3}Präzise geometrische Modellierung und Systemkalibrierung}{71}{subsection.8.3}%
+\contentsline {subsection}{\numberline {8.4}GPS-basierte Spurführung als Fallback-System}{71}{subsection.8.4}%
+\contentsline {section}{\numberline {9}Fazit}{73}{section.9}%
+\contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse und wissenschaftliche Beitr{"a}ge}{73}{subsection.9.1}%
+\contentsline {subsection}{\numberline {9.2}Limitierungen und kritische Reflexion}{74}{subsection.9.2}%
+\contentsline {subsection}{\numberline {9.3}Ausblick und zuk{"u}nftige Forschungsrichtungen}{74}{subsection.9.3}%
+\contentsline {section}{\numberline {10}Anlagen}{79}{section.10}%
+\contentsline {subsection}{\numberline {10.1}YOLO-Fehlerberechnung}{79}{subsection.10.1}%
+\contentsline {subsection}{\numberline {10.2}Fallback-Fehlerberechnung}{79}{subsection.10.2}%
+\contentsline {subsection}{\numberline {10.3}MPC-Optimierungsalgorithmus}{80}{subsection.10.3}%

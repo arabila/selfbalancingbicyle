@@ -322,6 +322,13 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/pgf/f
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/generic/pgf/libraries/pgflibraryarrows.meta.code.tex
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfpages/pdfpages.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/eso-pic/eso-pic.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfpages/pppdftex.def
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfpages/pppdftex.def
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdfpages/pppdftex.def
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/booktabs/booktabs.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/booktabs/booktabs.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/tools/longtable.sty
@@ -427,6 +434,12 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/transla
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/translations/translations-basic-dictionary-german.trsl
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/caption/ltcaption.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/caption/ltcaption.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdflscape/pdflscape.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/pdflscape/pdflscape-nometadata.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/graphics/lscape.sty
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/graphics/lscape.sty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/microtype/mt-cmr.cfg
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/microtype/mt-cmr.cfg
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/microtype/mt-cmr.cfg
@@ -444,20 +457,22 @@ INPUT ./header_hwr-eps-converted-to.pdf
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr17.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
 OUTPUT seminar_vorlage.upa
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/map/pdftex/updmap/pdftex.map
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-ec.enc
-INPUT ./chapters/abstract.tex
-INPUT ./chapters/abstract.tex
-OUTPUT chapters/abstract.aux
-INPUT ./chapters/abstract.tex
-INPUT ./chapters/abstract.tex
-INPUT chapters/abstract.tex
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
+INPUT ./PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr12.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
 INPUT ./seminar_vorlage.toc
 INPUT ./seminar_vorlage.toc
 INPUT seminar_vorlage.toc
@@ -503,6 +518,32 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/microty
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
 OUTPUT seminar_vorlage.toc
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr10.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmcsc10.tfm
+INPUT ./seminar_vorlage.lof
+INPUT ./seminar_vorlage.lof
+INPUT seminar_vorlage.lof
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtt10.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr8.tfm
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr6.tfm
+OUTPUT seminar_vorlage.lof
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
+INPUT ./seminar_vorlage.lol
+INPUT ./seminar_vorlage.lol
+INPUT seminar_vorlage.lol
+OUTPUT seminar_vorlage.lol
+INPUT ./chapters/abstract.tex
+INPUT ./chapters/abstract.tex
+OUTPUT chapters/abstract.aux
+INPUT ./chapters/abstract.tex
+INPUT ./chapters/abstract.tex
+INPUT chapters/abstract.tex
 INPUT ./chapters/Einleitung.tex
 INPUT ./chapters/Einleitung.tex
 OUTPUT chapters/Einleitung.aux
@@ -511,7 +552,6 @@ INPUT ./chapters/Einleitung.tex
 INPUT chapters/Einleitung.tex
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmbx12.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmri10.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr8.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr9.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmr9.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/rm-lmr5.tfm
@@ -523,15 +563,7 @@ INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmr6.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/tex/latex/lm/t1lmtt.fd
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtt10.tfm
 INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtt8.tfm
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc
-INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc
 OUTPUT chapters/kapitel1.aux
 INPUT ./chapters/kapitel2.tex
 INPUT ./chapters/kapitel2.tex
@@ -692,6 +724,21 @@ INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
 INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
 INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
 INPUT ./figures/Kurve/Test P und PID/PID/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Daten.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Daten.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Daten.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Daten.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Daten.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Error.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Error.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Error.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Error.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Error.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Strecke.png
+INPUT ./figures/Kurve/Test P und PID/p-p.p/Strecke.png
 INPUT ./figures/S-Kurve.png
 INPUT ./figures/S-Kurve.png
 INPUT ./figures/S-Kurve.png
@@ -842,17 +889,10 @@ OUTPUT chapters/kapitel8.aux
 INPUT ./chapters/kapitel8.tex
 INPUT ./chapters/kapitel8.tex
 INPUT chapters/kapitel8.tex
-INPUT ./seminar_vorlage.lof
-INPUT ./seminar_vorlage.lof
-INPUT seminar_vorlage.lof
-OUTPUT seminar_vorlage.lof
-INPUT ./seminar_vorlage.lol
-INPUT ./seminar_vorlage.lol
-INPUT seminar_vorlage.lol
-OUTPUT seminar_vorlage.lol
 INPUT ./seminar_vorlage.bbl
 INPUT ./seminar_vorlage.bbl
 INPUT seminar_vorlage.bbl
+INPUT /opt/homebrew/Cellar/texlive/20250308_1/share/texmf-dist/fonts/tfm/public/lm/ec-lmtti10.tfm
 INPUT ./chapters/anlagen.tex
 INPUT ./chapters/anlagen.tex
 INPUT ./chapters/anlagen.tex

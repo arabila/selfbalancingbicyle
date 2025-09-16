@@ -609,6 +609,11 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         self.min_speed = 0.3      # Minimale Geschwindigkeit
         self.max_speed = 0.6      # Maximale Geschwindigkeit
         
+        # P-Controller Parameter
+        self.p_gain_steer = -2.0   # P-Verstärkung für Lenkung
+        self.p_gain_speed = 0.1   # P-Verstärkung für Geschwindigkeitsanpassung
+        self.using_mpc = True     # Flag um zu verfolgen welcher Controller verwendet wird
+        
         # MPC-Zustand für IPC
         self.vision_error = 0.0
         self.vision_mask_coverage = 0.0
@@ -1151,6 +1156,32 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
         
         return steer_cmd, speed_cmd
     
+    def vision_p_control(self, error, dt):
+        """Einfacher P-Controller für Vision-basierte Lenkung"""
+        # P-Controller: Lenkbefehl proportional zum Fehler
+        steer_cmd = self.p_gain_steer * error
+        
+        # Lenkbefehl auf [-1, 1] begrenzen
+        steer_cmd = np.clip(steer_cmd, -1.0, 1.0)
+        
+        # Geschwindigkeitsanpassung basierend auf Fehlergröße
+        # Bei großen Fehlern langsamer fahren
+        abs_error = abs(error)
+        speed_reduction = self.p_gain_speed * abs_error
+        target_speed = self.base_speed - speed_reduction
+        
+        # Geschwindigkeit in erlaubtem Bereich halten
+        target_speed = np.clip(target_speed, self.min_speed, self.max_speed)
+        
+        # Geschwindigkeit auf [0, 1] normalisieren
+        speed_cmd = (target_speed - self.min_speed) / (self.max_speed - self.min_speed)
+        speed_cmd = np.clip(speed_cmd, 0.0, 1.0)
+        
+        # Vision-Fehler für IPC-Übertragung speichern
+        self.vision_error = error
+        
+        return steer_cmd, speed_cmd
+    
     def update_display(self, frame, mask, error, steer_cmd, speed_cmd):
         """Aktualisiert das Display mit Vision-Overlay"""
         if not self.display:
@@ -1389,9 +1420,15 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                                 
                              
                             print("error: ", error)
-                            # MPC-Regelung
+                            # Controller-Auswahl: MPC oder einfacher P-Controller
                             dt = current_time - last_vision_time
-                            steer_cmd, speed_cmd = self.vision_mpc_control(error, dt)
+                            mpc = True  # Setze auf False für P-Controller
+                            self.using_mpc = mpc
+                            if (mpc == True):
+                                steer_cmd, speed_cmd = self.vision_mpc_control(error, dt)
+                            else:
+                                # Einfacher P-Controller als Alternative
+                                steer_cmd, speed_cmd = self.vision_p_control(error, dt)
 
                             steer_cmd = self.optimize_steer_cmd(steer_cmd, last_steer_cmd)
 
@@ -1416,7 +1453,12 @@ class VisionController: #Unser Vision Controller -> MPC Controller wird hier ver
                             
                             # Status ausgeben (alle 2 Sekunden)
                             if self.step_counter % (int(2.0 / vision_interval)) == 0:
-                                self.print_status(error, steer_cmd, speed_cmd, self.mpc_controller.mpc_p_term, self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term)
+                                if self.using_mpc:
+                                    self.print_status(error, steer_cmd, speed_cmd, self.mpc_controller.mpc_p_term, self.mpc_controller.mpc_i_term, self.mpc_controller.mpc_d_term)
+                                else:
+                                    # Bei P-Controller nur P-Term anzeigen, I und D sind 0
+                                    p_term = self.p_gain_steer * error
+                                    self.print_status(error, steer_cmd, speed_cmd, p_term, 0.0, 0.0)
                     
                     except Exception as e:
                         print(f"Vision-Processing-Fehler: {e}")

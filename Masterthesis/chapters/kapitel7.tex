@@ -71,4 +71,32 @@ Simulationsparameter sollte durch Vergleich charakteristischer Systemantworten (
 und realem System erfolgen. Dabei könnten Identifikationsverfahren wie Least-Squares-Schätzung\footnote{Die Least-Squares-Schätzung (Methode der kleinsten Quadrate) ist ein mathematisches Optimierungsverfahren zur Parameterschätzung, das die Summe der quadrierten Abweichungen zwischen Mess- und Modellwerten minimiert.} oder Kalman-Filter-basierte\footnote{Kalman-Filter sind rekursive Schätzverfahren, die Systemzustände und Parameter auch bei verrauschten Messungen optimal schätzen können, indem sie Vorhersage- und Korrekturschritte kombinieren.} 
 Parameterschätzung eingesetzt werden.
 
+\subsection{GPS-basierte Spurführung als Fallback-System}
+
+Die aktuelle Implementierung der Spurführungsregelung basiert ausschließlich auf kamerabasierter Wahrnehmung mittels YOLO-Segmentierung 
+und ROI-basierter Fallback-Erkennung. Diese Ansätze zeigen jedoch charakteristische Schwächen bei ungünstigen Lichtverhältnissen, 
+Verschmutzung der Kameraoptik oder strukturell ungeeigneten Fahrbahnmarkierungen. Eine GPS-basierte Spurführung würde als 
+robustes Fallback-System dienen, das unabhängig von visuellen Umgebungsbedingungen operiert.
+
+Die technische Grundlage für eine solche Implementierung ist bereits in der entwickelten GUI-Anwendung vorhanden. Die 
+Live-Pfad-Visualisierung in der \texttt{balance\_controller\_gui.py} demonstriert den erfolgreichen Zugriff auf GPS-Koordinaten 
+aus Webots über die CSV-Monitoring-Schnittstelle. Diese Implementierung nutzt die Webots-GPS-Sensordaten zur Echtzeitdarstellung 
+der Fahrzeugtrajectorie und beweist die Verfügbarkeit und Qualität der Positionsdaten in der Simulationsumgebung.
+
+Für eine produktive GPS-basierte Spurführung müssten vordefinierte Referenzpfade für die Teststrecken etabliert werden. Diese 
+Referenzlinien könnten durch mehrfache Abfahrung der gewünschten Ideallinien mit einem manuell gesteuerten Fahrzeug generiert 
+und als GPS-Koordinatensequenzen gespeichert werden. Der Spurführungsalgorithmus würde dann kontinuierlich die Abweichung 
+zwischen aktueller GPS-Position und nächstgelegenem Punkt der Referenzlinie berechnen. Diese laterale Abweichung könnte 
+direkt in Lenkbefehle umgewandelt werden, analog zur aktuellen Vision-Pipeline.
+
+Die Integration einer GPS-basierten Spurführung erfordert die Entwicklung geeigneter Koordinatentransformationen zwischen 
+Webots-Weltkoordinaten und lokalen Fahrzeugkoordinaten. Zusätzlich müssten Algorithmen zur effizienten Suche des nächstgelegenen 
+Referenzpunktes implementiert werden, beispielsweise durch k-d-Baum-Strukturen\footnote{k-d-Bäume (k-dimensionale Bäume) sind Datenstrukturen zur effizienten Speicherung und Suche von Punkten in k-dimensionalen Räumen. Sie ermöglichen die Suche nach dem nächsten Nachbarn in logarithmischer Zeit O(log n) und sind besonders geeignet für räumliche Abfragen in GPS-Koordinatensystemen.} oder Spline-Interpolation zwischen den 
+Referenzpunkten. Die Genauigkeit der GPS-Simulation in Webots ermöglicht dabei eine Positionsauflösung im Zentimeterbereich, 
+die für präzise Spurführung ausreichend ist.
+
+Ein hybrides System könnte die Stärken beider Ansätze kombinieren: Kamerabasierte Spurführung für präzise lokale Korrekturen 
+bei guten Sichtverhältnissen, GPS-basierte Führung für globale Pfadplanung und als Fallback bei Kameraausfall. Die Fusion 
+beider Systeme über Kalman-Filter oder Particle-Filter\footnote{Particle-Filter sind probabilistische Filter, die die Zustände eines Systems durch eine Menge von Partikeln approximieren. Sie sind besonders geeignet für nichtlineare und nicht-Gaußsche Systeme.} würde robuste und redundante Spurführung gewährleisten.
+
  

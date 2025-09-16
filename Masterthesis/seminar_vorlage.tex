@@ -1,4 +1,4 @@
-\documentclass[11pt]{article}
+\documentclass[11pt,twoside,openright]{article}
 
   %--------------------------------------------------
   % Pakete
@@ -30,6 +30,7 @@
   \usetikzlibrary{shapes,arrows,positioning,calc}
   \usetikzlibrary{shapes.geometric,arrows.meta}
   \usetikzlibrary{positioning,calc}
+  \usepackage{pdfpages} % Für das Einbinden von PDF-Dokumenten
   
   % Tabellen-Pakete
   \usepackage{booktabs}  % Für professionelle Tabellen mit \toprule, \midrule, \bottomrule
@@ -207,15 +208,15 @@
 \bibliographystyle{agsm}
 
 %--------------------------------------------------
-% Seiten-Layout
+% Seiten-Layout für Buchbindung
 %--------------------------------------------------
-\setlength{\textwidth}{6.8in}     % Textbreite leicht erhöht für weniger Overfull \hbox
+\setlength{\textwidth}{6.5in}     % Textbreite für Buchbindung angepasst
 \setlength{\hoffset}{0in}
 \setlength{\voffset}{0in}
 \setlength{\textheight}{9in}      % Texthöhe 
 \setlength{\topmargin}{-0.2in}    % oberer Rand
-\setlength{\oddsidemargin}{-0.1cm} % linker Rand reduziert für mehr Platz
-\setlength{\evensidemargin}{-0.1cm} % rechter Rand für doppelseitige Dokumente
+\setlength{\oddsidemargin}{0.5cm} % rechte Seiten: größerer innerer Rand für Bindung
+\setlength{\evensidemargin}{-0.2cm} % linke Seiten: kleinerer innerer Rand
 
 \setlength\parskip{\medskipamount}
 \setlength\parindent{0pt}
@@ -232,10 +233,13 @@
 \pagestyle{fancy}
 \fancyhf{} % Alle Header und Footer löschen
 
-% Header-Stil definieren
-\fancyhead[L]{\small\textsc{Masterarbeit}} % Links: Autor
-\fancyhead[C]{\small\textsc{\leftmark}} % Mitte: Aktuelles Kapitel
-\fancyhead[R]{\small\thepage} % Rechts: Seitenzahl
+% Header-Stil für doppelseitige Dokumente definieren
+\fancyhead[LE]{\small\thepage} % Links auf geraden Seiten: Seitenzahl
+\fancyhead[CE]{\small\textsc{Masterarbeit}} % Mitte auf geraden Seiten: Titel
+\fancyhead[RE]{\small\textsc{\leftmark}} % Rechts auf geraden Seiten: Kapitel
+\fancyhead[LO]{\small\textsc{\leftmark}} % Links auf ungeraden Seiten: Kapitel
+\fancyhead[CO]{\small\textsc{Masterarbeit}} % Mitte auf ungeraden Seiten: Titel
+\fancyhead[RO]{\small\thepage} % Rechts auf ungeraden Seiten: Seitenzahl
 
 % Footer leer lassen
 \fancyfoot{}
@@ -272,21 +276,46 @@
 \end{center}
 
 
+%--------------------------------------------------
+% Erklärung zur Abschlussarbeit
+%--------------------------------------------------
+\includepdf[pages=-]{PA_Erklaerung-zur-Abschlussarbeit-Master-Informatik_PO2019.pdf}
+
 \newpage
+%--------------------------------------------------
+% Inhaltsverzeichnis
+%--------------------------------------------------
+\pagenumbering{roman} % Römische Seitenzahlen für Verzeichnisse
+\setcounter{page}{1} % Seitenzählung bei 1 beginnen
+\thispagestyle{plain} % Inhaltsverzeichnis ohne Header
+\setcounter{tocdepth}{3} % bis zur Ebene subsubsection anzeigen
+\tableofcontents
+\newpage
+
+%--------------------------------------------------
+% Abbildungsverzeichnis
+%--------------------------------------------------
+\thispagestyle{plain} % Abbildungsverzeichnis ohne Header
+\listoffigures
+\newpage
+
+%--------------------------------------------------
+% Codesnippet-Verzeichnis (Listings)
+%--------------------------------------------------
+\thispagestyle{plain} % Codesnippet-Verzeichnis ohne Header
+\lstlistoflistings
+\newpage
+
 %--------------------------------------------------
 % Abstract
 %--------------------------------------------------
 \include{chapters/abstract}
 
-%--------------------------------------------------
-% Inhaltsverzeichnis
-%--------------------------------------------------
-\thispagestyle{plain} % Inhaltsverzeichnis ohne Header
-\setcounter{tocdepth}{3} % bis zur Ebene subsubsection anzeigen
-\tableofcontents
-\newpage
 \pagestyle{fancy} % Ab hier wieder mit Header
 
+% Arabische Seitenzahlen für Hauptinhalt
+\pagenumbering{arabic}
+\setcounter{page}{1}
 
 %--------------------------------------------------
 % Kapitelstruktur
@@ -328,31 +357,14 @@
 %--------------------------------------------------
 % Literaturverzeichnis
 %--------------------------------------------------
-\section{Literaturverzeichnis}
-
-
-%--------------------------------------------------
-% Abbildungsverzeichnis
-%--------------------------------------------------
-\thispagestyle{plain} % Abbildungsverzeichnis ohne Header
-\listoffigures
-\newpage
-
-%--------------------------------------------------
-% Codesnippet-Verzeichnis (Listings)
-%--------------------------------------------------
-\thispagestyle{plain} % Codesnippet-Verzeichnis ohne Header
-\lstlistoflistings
-\newpage
+\bibliography{refs}
 
 %--------------------------------------------------
 % Anhang (Parametertabellen, Screenshots, Release-Link)
 %--------------------------------------------------
-
-\bibliography{refs}
-
 \newpage
 \input{chapters/anlagen}
 
 \end{document}
+
 

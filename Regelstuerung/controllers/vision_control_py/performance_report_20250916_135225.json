@@ -1,0 +1,68 @@
+{
+  "timestamp": "2025-09-16T13:52:25.213218",
+  "hardware_info": {
+    "cpu_model": "i386",
+    "cpu_cores": 8,
+    "cpu_threads": 8,
+    "cpu_freq": 3.204,
+    "memory_total": 8.0,
+    "gpu_info": "Apple Metal Performance Shaders",
+    "os": "Darwin 24.5.0"
+  },
+  "simulation_info": {
+    "total_steps": 12300,
+    "simulation_duration": 114.28735876083374,
+    "realtime_factor": 15382484.262437902
+  },
+  "timing_statistics": {
+    "yolo_computation": {
+      "count": 0,
+      "avg": 0,
+      "min": 0,
+      "max": 0,
+      "std": 0
+    },
+    "mpc_computation": {
+      "count": 479,
+      "avg": 10.859279956171664,
+      "min": 8.91766600034316,
+      "max": 62.295833999087336,
+      "std": 4.181817824957769
+    },
+    "fallback_vision": {
+      "count": 479,
+      "avg": 12.515192947796479,
+      "min": 8.798667000519345,
+      "max": 21.20450000074925,
+      "std": 1.640482672781775
+    },
+    "physics_step": {
+      "count": 0,
+      "avg": 0,
+      "min": 0,
+      "max": 0,
+      "std": 0
+    },
+    "total_loop": {
+      "count": 1000,
+      "avg": 2.76342141195164,
+      "min": 0.08720900041225832,
+      "max": 108.7362079997547,
+      "std": 12.204950359765062
+    },
+    "camera_processing": {
+      "count": 479,
+      "avg": 2.7551890271488277,
+      "min": 1.96654200044577,
+      "max": 5.472499999086722,
+      "std": 0.4084857350848005
+    },
+    "display_update": {
+      "count": 479,
+      "avg": 41.811178242142454,
+      "min": 30.723332998604747,
+      "max": 216.273457999705,
+      "std": 8.724600610592708
+    }
+  }
+}

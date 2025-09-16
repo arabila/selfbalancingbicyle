@@ -13,11 +13,13 @@ A level-1 auxiliary file: chapters/kapitel6.aux
 A level-1 auxiliary file: chapters/kapitel7.aux
 A level-1 auxiliary file: chapters/kapitel8.aux
 Database file #1: refs.bib
+Warning--entry type for "concurrent_rt_inverted_pendulum" isn't style-file defined
+--line 292 of file refs.bib
 Warning--I didn't find a database entry for "yolo_wikipedia"
 Warning--I didn't find a database entry for "image_segmentation_wikipedia"
 You've used 39 entries,
             2909 wiz_defined-function locations,
-            874 strings with 11705 characters,
+            874 strings with 11711 characters,
 and the built_in function-call counts, 149899 in all, are:
 = -- 24359
 > -- 1922
@@ -56,4 +58,4 @@ warning$ -- 0
 while$ -- 857
 width$ -- 0
 write$ -- 538
-(There were 2 warnings)
+(There were 3 warnings)

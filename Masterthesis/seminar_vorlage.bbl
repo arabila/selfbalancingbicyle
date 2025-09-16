@@ -15,7 +15,7 @@ Catto, E.  \harvardyearleft 2009\harvardyearright , Modeling and solving constra
 
 \harvarditem{{Concurrent Real-Time}}{2024}{concurrent_rt_inverted_pendulum}
 {Concurrent Real-Time}  \harvardyearleft 2024\harvardyearright , `Inverted pendulum'.
-\newline\harvardurl{https://concurrent-rt.com/inverted-pendulum/}
+\newline\harvardurl{\url{https://concurrent-rt.com/inverted-pendulum/}}
 
 \harvarditem{Cyberbotics}{2025}{cyberbotics2025}
 Cyberbotics  \harvardyearleft 2025\harvardyearright , `Webots -- open source robot simulator', \url{https://cyberbotics.com}.

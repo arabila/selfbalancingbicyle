@@ -144,8 +144,7 @@
       ]
     }
   \end{lstlisting}
-  \newpage
-
+  
  
   \subsection{Physikmodell: Open Dynamics Engine (ODE) in Webots} \label{sec:ode}
   Die \emph{Open Dynamics Engine} (ODE) ist eine freie, plattformunabhängige Physikbibliothek zur Simulation starrer Mehrkörpersysteme 
@@ -234,7 +233,7 @@
   (nur ein Zeiger auf interne Simulationsdaten) trägt dazu bei, dass der Balance-Regelkreis 
   praktisch ohne zusätzliche Verzögerung arbeitet.
 
-
+  \newpage
   \begin{lstlisting}[style=wbt_c,caption={IMU-Initialisierung und -Abfrage im C-Controller (Balance-Regelung)},label={lst:imu}]
     // IMU-Geraet initialisieren (in init_devices)
     imu_sensor = wb_robot_get_device("imu");
@@ -245,6 +244,7 @@
     // Roll-, Pitch- und Gierwinkel vom IMU-Sensor abrufen
     const double *rpy = wb_inertial_unit_get_roll_pitch_yaw(imu_sensor);
     double roll_angle = rpy[0];  // aktueller Rollwinkel [Bogenmass]
+
   \end{lstlisting}
   
 
@@ -283,7 +283,7 @@
   Jedes Frame kann vom Controller über \texttt{camera.getImage()} abgeholt und weiterverarbeitet werden. 
   Zu beachten ist, dass Webots standardmäßig keine Kamerarausfälle oder Sensorschwächen simuliert, sodass
   die gelieferten Bilder idealisiert sind (scharf, bei gleichbleibender Beleuchtung). 
-
+  \newpage
 
   \begin{figure}[H]
     \centering
@@ -299,8 +299,6 @@
   den lateralen Positionsfehler $e$ der Straße.
 
   Diese Bildverarbeitung geschieht in mehreren Schritten:
-
-
   \begin{enumerate}
     \item \textbf{Merkmalsextraktion:} Zunächst werden relevante Bildmerkmale berechnet, 
     etwa mittels \textbf{Segmentierung} der Straße. 
@@ -309,8 +307,7 @@
     Kantenerkennung und Auswertung eines definierten \textit{Region-of-Interest} liefert ebenfalls einen Schätzwert 
     für die Spurmittellage. 
     Ergebnis dieses Schritts ist der Querfehler $e$ (in normierter Form, z.\,B. $-0.5 \dots +0.5$ relativ zur Bildmitte) 
-    sowie ggf. zusätzliche Qualitätskennzahlen (etwa die erkannte Kontur oder den Bedeckungsgrad der Fahrbahnmaske).
-  
+    sowie ggf. zusätzliche Qualitätskennzahlen (etwa die erkannte Kontur oder den Bedeckungsgrad der Fahrbahnmaske).  
     \item \textbf{Spurführungsregelung:} Auf Basis des visuellen Fehlers bestimmt der Controller 
     einen passenden \textbf{Lenksollwert}. 
     Im entwickelten System kommt hierfür vorzugsweise ein 
@@ -321,6 +318,7 @@
     Fahrdynamikgrenzen eingehalten werden. 
   \end{enumerate}
 
+  \newpage
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/querfehler.png}
@@ -496,7 +494,6 @@
   welches ebenfalls als \texttt{wheel} benannt ist, so können Kollisionen in der Namensauflösung vermieden werden. 
   Im Controller-Code greift man dann genau mit diesem Namen zu.
 
-  \newpage
   \textbf{Rolle im Regelkreis: }
 
   Die Aktuatoren setzen die vom Regler berechneten Sollgrößen in physikalische Bewegung um 
@@ -591,6 +588,14 @@
 
   
   \subsection{Controller} \label{sec:controller}
+ 
+  \begin{wrapfigure}{r}{0.5\textwidth} % r=rechts, l=links
+    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
+    \centering
+    \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
+    \caption{Synchronisation zwischen Controller und Simulation.}
+    \label{fig:controller_sync}
+  \end{wrapfigure}
 
 
   Ein Webots\mbox{-}Controller ist ein separates Prozess, der einen Roboter in der Simulation steuert
@@ -605,7 +610,7 @@
   zurück. Abbildung \ref{fig:controller_sync} veranschaulicht diese Synchronisation \citep{cyberbotics_controller_programming}.
   
 
-
+ 
 
   Alle Anweisungen vor dem nächsten Zeitschritt \path{wb\_robot\_step}\mbox{-}Aufruf\path{)} werden zunächst gesammelt.
   Mit dem Step\mbox{-}Aufruf rechnet der Simulator den nächsten Physikschritt und aktualisiert die Sensoren, bevor 
@@ -624,13 +629,6 @@
   aktiviert. Entsprechende Methoden existieren dabei ebenfalls in Python (\texttt{robot.getDevice()}, \texttt{device.enable()}). Ein Sensor liefert 
   erst ab dem nächsten \texttt{wb\_robot\_step()} gültige Messwerte, da die Simulationszeit dann fortgeschritten ist. 
 
-  \begin{wrapfigure}{r}{0.5\textwidth} % r=rechts, l=links
-    \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
-    \centering
-    \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
-    \caption{Synchronisation zwischen Controller und Simulation.}
-    \label{fig:controller_sync}
-  \end{wrapfigure}
   
   Aktuatorbefehle (z.\,B.\ \texttt{wb\_motor\_set\_position()} oder \texttt{motor.setPosition()} in Python) werden zunächst lokal 
   gepuffert. Die tatsächliche Ausführung in der Physik\mbox{-}Engine erfolgt erst am nächsten Step-Synchronisationspunkt. 
@@ -654,8 +652,7 @@
   Step\mbox{-}Synchronisationspunkt ausgetauscht werden.
 
 
-  \clearpage
-
+  
   \begin{lstlisting}[style=wbt_c,caption={Nachrichtenkanal zwischen Controller und Simulation},label={lst:imu4}]
     Robot {
       Controller "balance_control_c"
