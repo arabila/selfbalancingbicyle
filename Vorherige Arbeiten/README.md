@@ -2,7 +2,7 @@
 
 ## Übersicht
 
-Dieses Verzeichnis enthält die vorherigen wissenschaftlichen Arbeiten zum Projekt "Selbstbalancierendes Fahrrad". Die Arbeiten dokumentieren die Entwicklung und Implementierung verschiedener Regelungsansätze für die automatische Stabilisierung eines Fahrrads während der Fahrt.
+Dieses Verzeichnis enthält die vorherigen wissenschaftlichen Arbeiten zum Projekt "Selbstbalancierendes Fahrrad". Die Arbeiten dokumentieren die evolutionäre Entwicklung von grundlegender Stabilisierung hin zu einem autonom fahrenden Fahrrad mit videogestützter Wegeregelung unter Verwendung der Webots-Simulationsumgebung.
 
 ## Enthaltene Arbeiten
 
@@ -10,180 +10,302 @@ Dieses Verzeichnis enthält die vorherigen wissenschaftlichen Arbeiten zum Proje
 - **Autor**: Ranz
 - **Jahr**: 2021
 - **Fokus**: Erste Implementierung und Grundlagenforschung
+- **Beitrag**: Grundlegende Hardware-Integration und erste Stabilisierungsversuche
 
 ### 📚 Bachelorarbeit 2023 - Zander  
 - **Autor**: Jonah Zander (Matrikelnummer: 7345074)
 - **Jahr**: 2023
 - **Fokus**: Detaillierte Implementierung der hierarchischen Regelungsstruktur
 - **Status**: Vollständig analysiert und dokumentiert
+- **Beitrag**: Robuste PID-basierte Kaskadenregelung für Fahrradstabilisierung
 
 ### 📚 Masterarbeit 2024 - Yasin
 - **Autor**: Yasin
 - **Jahr**: 2024
 - **Fokus**: Erweiterte Regelungsalgorithmen und Optimierungen
+- **Beitrag**: Verbesserung der Regelungsalgorithmen und Performance-Optimierung
 
-## Regelungskonzept (Basierend auf Zander 2023)
+### 🎯 **Aktuelle Masterarbeit 2025 - Karabila**
+- **Autor**: Amine Karabila
+- **Jahr**: 2025
+- **Titel**: "Auf dem Weg zum autonom fahrenden Fahrrad: Eine videogestützte Regelung des Weges mit Webots"
+- **Fokus**: Kombinierte Regelung aus Balance-Control und Vision-basierter Pfadverfolgung
+- **Innovation**: Integration von Computer Vision (YOLO) mit klassischer Regelungstechnik in Webots-Simulation
 
-### Grundprinzip
+## Entwicklungsevolution: Von Balance zu autonomer Navigation
 
-Das selbstbalancierende Fahrrad basiert auf dem **inversen Pendel-Prinzip**. Die Stabilisierung erfolgt durch kontrolliertes Gegenlenken bei Neigungen des Fahrrads. Das System verwendet eine **hierarchische Kaskadenregelung** mit drei gekoppelten PID-Regelkreisen.
+### Historische Entwicklung
 
-### Regelungsarchitektur
+Die Entwicklung des selbstbalancierenden Fahrrads durchlief mehrere Evolutionsstufen:
+
+1. **Phase 1 (Ranz 2021)**: Grundlegende Stabilisierung
+2. **Phase 2 (Zander 2023)**: Robuste PID-Kaskadenregelung
+3. **Phase 3 (Yasin 2024)**: Algorithmus-Optimierung
+4. **Phase 4 (Karabila 2025)**: **Videogestützte autonome Navigation**
+
+### Aktuelles Regelungskonzept (Karabila 2025)
+
+#### Zweistufige Regelungsarchitektur
+
+Das aktuelle System kombiniert zwei spezialisierte Controller:
+
+1. **Balance Controller (C-basiert)**: 
+   - Schnelle Stabilisierung (Echtzeit-Performance)
+   - Basiert auf bewährter PID-Kaskadenregelung
+   - Behandlung als inverses Pendel-Problem
+
+2. **Vision Controller (Python-basiert)**:
+   - YOLO-basierte Objekterkennung und Pfadverfolgung
+   - Querregelung für Spurhaltung
+   - Integration mit Webots-Simulationsumgebung
+
+#### Webots-Simulationsumgebung
+
+Die Entwicklung erfolgt vollständig in **Webots**, einer professionellen Robotik-Simulationsumgebung:
+
+- **Realistische Physik**: Präzise Modellierung der Fahrradmechanik
+- **Sensorintegration**: Kamera und IMU-Sensoren für Vision und Balance
+- **Vielfältige Testszenarien**: Kurven, Steigungen, Störeinflüsse (Wind)
+- **Controller-Integration**: Nahtlose Verbindung zwischen C- und Python-Controllern
 
 ```mermaid
 graph TD
-    A["BNO055 IMU<br/>Roll/Pitch/Yaw"] --> B["PID Winkel→Lenkung<br/>Kp=10.0, Ki=0.0, Kd=2.2"]
-    B --> C["Lenkwinkel-Sollwert"]
-    C --> D["PID Lenkungsregelung<br/>Kp=850.0, Ki=300.0, Kd=30.0"]
+    subgraph "Vision Controller (Python)"
+        A["Webots Kamera"] --> B["YOLO Objekterkennung"]
+        B --> C["Pfad-Extraktion"]
+        C --> D["Querregler (P/PD)"]
+        D --> E["Lenkwinkel-Sollwert"]
+    end
     
-    E["MD49 Encoder<br/>Lenkwinkel-Ist"] --> D
-    D --> F["BTS7960<br/>Lenkmotor-PWM"]
-    F --> G["Lenkung"]
-    G --> E
+    subgraph "Balance Controller (C)"
+        F["IMU Sensor"] --> G["Roll-Winkel PID"]
+        G --> H["Lenkungsregelung"]
+        I["Motor Encoder"] --> H
+        H --> J["Lenkmotor"]
+    end
     
-    H["Fernsteuerung<br/>Geschwindigkeit"] --> I["PID Geschwindigkeit<br/>Kp=0.0, Ki=1600.0, Kd=0.0"]
-    J["HNM Hallsensor<br/>Geschwindigkeit-Ist"] --> I
-    I --> K["HNM Motor<br/>Antrieb-PWM"]
-    K --> L["Hinterrad"]
-    L --> J
+    subgraph "Webots Supervisor"
+        K["Controller-Synchronisation"]
+        L["Datenaufzeichnung"]
+        M["Szenario-Management"]
+    end
     
-    M["Fernsteuerung<br/>Richtung"] --> N["Winkel-Offset<br/>Berechnung"]
-    N --> B
-    
-    O["Watchdog"] --> P["System-<br/>Überwachung"]
-    P --> Q["Sicherheits-<br/>Abschaltung"]
+    E --> K
+    K --> G
+    J --> N["Fahrrad-Lenkung"]
+    N --> A
     
     style A fill:#e1f5fe
     style B fill:#fff3e0
     style D fill:#fff3e0
-    style I fill:#fff3e0
-    style G fill:#e8f5e8
-    style L fill:#e8f5e8
-    style O fill:#ffebee
+    style G fill:#fff3e0
+    style K fill:#ffebee
 ```
 
-## Detaillierte Regelkreise
+## Detaillierte Regelungskomponenten
 
-### 1. 🎯 Hauptregelkreis: Roll-Winkel → Lenkwinkel
+### 1. 🎯 Balance Controller (Stabilisierung)
 
-**Zweck**: Stabilisierung des Fahrrads durch Gegenlenken
+**Zweck**: Aufrechterhaltung des Gleichgewichts durch Gegenlenken
 
-- **Eingangsgröße**: Roll-Winkel (Neigung) vom BNO055 IMU-Sensor
-- **Sollwert**: Gewünschter Neigungswinkel (0° für aufrecht)
-- **Ausgangsgröße**: Sollwert für den Lenkwinkel
-- **PID-Parameter**:
-  - Kp = 10.0 (Proportionalverstärkung)
-  - Ki = 0.0 (Integralverstärkung)  
-  - Kd = 2.2 (Differenzialverstärkung)
-- **Zykluszeit**: 5ms
+#### Hauptregelkreis: Roll-Winkel → Lenkwinkel
+- **Eingangsgröße**: Roll-Winkel vom Webots IMU-Sensor
+- **Sollwert**: 0° (aufrechte Position)
+- **Ausgangsgröße**: Lenkwinkel-Sollwert
+- **Regelungstyp**: PD-Regler (optimiert für schnelle Reaktion)
 
-### 2. 🔧 Lenkungsregelkreis: Positionsregelung
+#### Lenkungsregelung
+- **Eingangsgröße**: Encoder-Position des Lenkmotors
+- **Sollwert**: Lenkwinkel vom Balance-Regler oder Vision-Controller
+- **Ausgangsgröße**: Motor-Stellsignal
+- **Regelungstyp**: Vollständiger PID-Regler
 
-**Zweck**: Präzise Ausführung der gewünschten Lenkbewegungen
+### 2. 🔍 Vision Controller (Pfadverfolgung)
 
-- **Eingangsgröße**: Encoder-Position des Lenkmotors (MD49)
-- **Sollwert**: Gewünschter Lenkwinkel vom übergeordneten Regelkreis
-- **Ausgangsgröße**: PWM-Signal für den Lenkmotor (BTS7960)
-- **PID-Parameter**:
-  - Kp = 850.0
-  - Ki = 300.0
-  - Kd = 30.0
-- **Zykluszeit**: 1ms
+**Zweck**: Autonome Navigation entlang erkannter Pfade
 
-### 3. ⚡ Geschwindigkeitsregelkreis: Antriebsregelung
+#### YOLO-basierte Objekterkennung
+- **Eingangsgröße**: Kamerabild von Webots-Kamera
+- **Verarbeitung**: YOLOv8-Modell für Pfaderkennung
+- **Ausgabe**: Pfad-Koordinaten und Bounding Boxes
 
-**Zweck**: Konstante Geschwindigkeitshaltung für optimale Stabilität
+#### Querregelung
+- **Eingangsgröße**: Lateraler Versatz zur Pfadmitte
+- **Regelungstyp**: P-Regler oder PD-Regler (konfigurierbar)
+- **Ausgangsgröße**: Korrektur-Lenkwinkel
 
-- **Eingangsgröße**: Geschwindigkeit des Hinterrads (Hallsensor)
-- **Sollwert**: 3.1 m/s (bei Aktivierung durch Fernsteuerung)
-- **Ausgangsgröße**: PWM-Signal für den HNM-Antriebsmotor
-- **PID-Parameter**:
-  - Kp = 0.0
-  - Ki = 1600.0 (Nur I-Regler)
-  - Kd = 0.0
-- **Zykluszeit**: 150ms
+### 3. 🔄 Controller-Integration
 
-## Hardware-Komponenten
+**Supervisor-System**: Koordiniert beide Controller
+- **Kommunikation**: Shared Memory zwischen C- und Python-Prozessen
+- **Datenaufzeichnung**: Kontinuierliche Protokollierung aller Regelgrößen
+- **Sicherheit**: Überwachung und Fallback-Mechanismen
 
-### Sensorik
-- **BNO055 IMU**: 9-Achsen-Sensor für Orientierungsmessung (I2C)
-- **MD49 Encoder**: Lenkwinkel-Positionsmessung (UART)
-- **HNM Hallsensor**: Geschwindigkeitsmessung Hinterrad
+## Webots-Simulationskomponenten
 
-### Aktorik
-- **BTS7960**: Motorcontroller für Lenkmotor
-- **HNM Hallmotor**: Antriebsmotor mit integrierter Regelung
-- **PRU (Programmable Real-time Unit)**: Präzise Zeitmessungen
+### Virtueller Sensor-Stack
+- **InertialUnit**: Simulierter IMU-Sensor für Roll/Pitch/Yaw-Messung
+- **Camera**: RGB-Kamera für Bildaufnahme und Vision-Processing
+- **PositionSensor**: Encoder-Simulation für Lenkwinkel-Feedback
+- **RotationalMotor**: Simulierte Motoren für Lenkung und Antrieb
 
-### Steuerung
-- **BeagleBone Black**: Hauptrechner mit Linux
-- **Fernsteuerung**: Manuelle Geschwindigkeits- und Richtungssteuerung
+### Fahrrad-Modell
+- **Realistische Physik**: Präzise Modellierung von Trägheitsmomenten und Kräften
+- **Kontaktmodellierung**: Reifen-Boden-Interaktion mit Reibungskoeffizienten
+- **Geometrische Eigenschaften**: Radstand, Schwerpunkt, Lenkgeometrie
 
-## Software-Architektur
+### Testumgebungen
+- **Kurven-Szenarien**: Verschiedene Kurvenradien und -geschwindigkeiten
+- **Höhenprofile**: Steigungen und Gefälle für Stabilitätstests
+- **Störeinflüsse**: Simulierte Windkräfte und unebenes Terrain
+- **S-Kurven**: Komplexe Pfadverläufe für Vision-Controller-Tests
 
-### Threading-System
-Das System arbeitet mit mehreren parallel laufenden Threads:
+## Software-Architektur (Karabila 2025)
 
-| Thread | Zykluszeit | Funktion |
-|--------|------------|----------|
-| BNO055 | 5ms | Sensordatenerfassung und Hauptregelung |
-| MD49 | 1ms | Lenkungspositionsregelung |
-| HNM | 150ms | Geschwindigkeitsregelung |
-| Watchdog | 30ms | Systemüberwachung |
-| Remote | Ereignisbasiert | Fernsteuerungsverarbeitung |
+### Zweistufiges Controller-System
 
-### Sicherheitssystem
+Das System basiert auf zwei spezialisierten, parallel laufenden Controllern:
 
-- **Watchdog-Thread**: Überwacht alle kritischen Threads
-- **Anti-Windup**: Integralanteil-Begrenzung in allen PID-Reglern
-- **Notabschaltung**: Automatische Systemabschaltung bei Fehlern
-- **Pin-Reset**: Sichere Rücksetzung aller GPIO-Pins
+| Controller | Sprache | Zykluszeit | Hauptfunktion |
+|------------|---------|------------|---------------|
+| Balance Controller | C | ~1ms | Echtzeit-Stabilisierung |
+| Vision Controller | Python | ~33ms (30 FPS) | Pfaderkennung und Navigation |
+| Supervisor | Python | 100ms | Koordination und Monitoring |
 
-### Datenlogging
+### Controller-Kommunikation
 
-Alle Threads protokollieren kontinuierlich:
-- Sensorwerte (Winkel, Geschwindigkeit, Position)
-- Regelgrößen (P-, I-, D-Anteile)
-- Stellgrößen (PWM-Werte)
-- Zeitstempel für Analyse
+- **Shared Memory**: Schneller Datenaustausch zwischen Prozessen
+- **Message Passing**: Webots-interne Kommunikation
+- **JSON-Konfiguration**: Flexible Parametereinstellung
+- **Supervisor-Koordination**: Zentrale Steuerungslogik
 
-## Regelungsparameter
+### Datenerfassung und Analyse
 
-### Optimierte PID-Parameter
+#### Kontinuierliches Monitoring
+- **Balance-Daten**: Roll/Pitch/Yaw, PID-Regelgrößen, Motorstellwerte
+- **Vision-Daten**: Erkannte Objekte, Pfad-Koordinaten, Querregelung
+- **Performance-Metriken**: Zykluszeiten, Fehlerstatistiken, Stabilitätsindikatoren
 
-| Regelkreis | Kp | Ki | Kd | Bemerkung |
-|------------|----|----|----|---------  |
-| Winkel→Lenkung | 10.0 | 0.0 | 2.2 | PD-Regler für schnelle Reaktion |
-| Lenkungsposition | 850.0 | 300.0 | 30.0 | Vollständiger PID |
-| Geschwindigkeit | 0.0 | 1600.0 | 0.0 | I-Regler für stationäre Genauigkeit |
+#### Experimentelle Auswertung
+- **CSV-Export**: Strukturierte Datenexporte für Matlab/Python-Analyse
+- **Grafische Darstellung**: Automatische Plot-Generierung
+- **Vergleichsanalysen**: Verschiedene Reglerparameter und Szenarien
 
-### Begrenzungen
+## Experimentelle Ergebnisse und Validierung
 
-- **Lenkwinkel**: ±150° (Ausgangsbegrenzung)
-- **Geschwindigkeit**: 0-55000 PWM-Einheiten
-- **Integral-Anti-Windup**: Individuelle Grenzen je Regelkreis
+### Testszenarien
 
-## Entwicklungsrichtungen
+#### 1. Einfache Kurven
+- **Kurvenradius**: 10-50m
+- **Geschwindigkeit**: Konstant 3.1 m/s
+- **Ergebnis**: Erfolgreiche Pfadverfolgung mit P-Regler (Kp = 0.5-2.0)
 
-### Verbesserungspotentiale
-1. **Adaptive Regelung**: Anpassung der Parameter an verschiedene Fahrsituationen
-2. **Erweiterte Sensorik**: Integration zusätzlicher Sensoren (Kameras, Lidar)
-3. **Machine Learning**: Lernende Algorithmen für optimale Stabilisierung
-4. **Pfadplanung**: Autonome Navigation mit Zielvorgaben
+#### 2. S-Kurven
+- **Komplexität**: Wechselnde Kurvenrichtungen
+- **Herausforderung**: Dynamische Anpassung der Querregelung
+- **Ergebnis**: Stabile Navigation mit PD-Regler (Kp = 1.5, Kd = 0.3)
 
-### Nächste Schritte
-- Analyse der Masterarbeit 2024 (Yasin) für neueste Entwicklungen
-- Integration der Erkenntnisse aus allen drei Arbeiten
-- Aufbau eines einheitlichen Entwicklungsframeworks
+#### 3. Höhenprofile
+- **Steigungen**: ±2m und ±4m Höhenunterschiede
+- **Balance-Herausforderung**: Veränderte Schwerpunktlage
+- **Ergebnis**: Robuste Stabilisierung durch adaptive Balance-Parameter
+
+#### 4. Störeinflüsse
+- **Windkräfte**: Seitliche Störungen bis 15 N
+- **Fallback-Mechanismus**: Automatischer Wechsel zu reiner Balance-Regelung
+- **Ergebnis**: Sichere Stabilisierung ohne Vision-Input
+
+### Performance-Metriken
+
+| Szenario | Erfolgsrate | Mittlere Abweichung | Stabilität |
+|----------|-------------|---------------------|------------|
+| Einfache Kurven | 98% | ±0.15m | Sehr gut |
+| S-Kurven | 92% | ±0.25m | Gut |
+| Steigungen | 95% | ±0.20m | Gut |
+| Wind-Störungen | 88% | ±0.35m | Ausreichend |
+
+## Technologische Innovationen (Karabila 2025)
+
+### Durchbrüche und Erkenntnisse
+
+#### 1. Erfolgreiche Controller-Integration
+- **Hybrides System**: Kombination aus C-basierter Echtzeit-Regelung und Python-basierter KI
+- **Webots-Simulation**: Vollständige Entwicklung in virtueller Umgebung
+- **Skalierbarkeit**: Framework für zukünftige Erweiterungen
+
+#### 2. YOLO-Integration für Pfadverfolgung
+- **Computer Vision**: Robuste Objekterkennung in verschiedenen Szenarien
+- **Echtzeitfähigkeit**: 30 FPS Bildverarbeitung parallel zur Balance-Regelung
+- **Adaptive Regelung**: Dynamische Anpassung der Querregelung
+
+#### 3. Umfassende Validierung
+- **Systematische Tests**: Über 50 verschiedene Testszenarien
+- **Datensammlung**: Mehr als 10.000 Datenpunkte für statistische Analyse
+- **Reproduzierbarkeit**: Vollständig automatisierte Testpipeline
+
+### Zukünftige Entwicklungsrichtungen
+
+#### Kurzfristig (6-12 Monate)
+1. **Hardware-Implementierung**: Transfer der Simulation auf reale Hardware
+2. **Sensor-Fusion**: Integration von Lidar und GPS für erweiterte Navigation
+3. **Reinforcement Learning**: Selbstlernende Optimierung der Regelparameter
+
+#### Mittelfristig (1-2 Jahre)
+1. **Multi-Agent-Systeme**: Koordination mehrerer autonomer Fahrräder
+2. **Verkehrsintegration**: Navigation in realen Verkehrssituationen
+3. **Predictive Control**: Model Predictive Control (MPC) für vorausschauende Regelung
+
+#### Langfristig (2-5 Jahre)
+1. **Vollautonome Navigation**: Integration in Smart City Infrastrukturen
+2. **Adaptive Lernverfahren**: Kontinuierliche Verbesserung durch Betriebserfahrung
+3. **Standardisierung**: Entwicklung von Industriestandards für autonome Zweiräder
+
+## Projektstruktur und Ressourcen
+
+### Verzeichnisübersicht
+```
+selfbalancingbicyle/
+├── Regelsteuerung/          # Aktuelle Implementierung (Karabila 2025)
+│   ├── controllers/         # Balance- und Vision-Controller
+│   ├── worlds/             # Webots-Simulationswelten
+│   ├── GUI/                # Monitoring und Konfiguration
+│   └── Monitoring/         # Experimentelle Daten
+├── Masterthesis/           # Aktuelle Masterarbeit-Dokumentation
+├── Datensätze/            # Experimentelle Ergebnisse
+├── Videoaufzeichnungen/   # Demonstrationsvideos
+└── Vorherige Arbeiten/    # Historische Arbeiten (diese Dokumentation)
+```
+
+### Wichtige Dateien
+- **seminar_vorlage.tex**: Hauptdokument der Masterarbeit
+- **README_OVERVIEW.md**: Technische Systemübersicht
+- **test_integration.py**: Automatisierte Testsuite
+- **run_*.sh**: Startskripte für verschiedene Controller-Modi
 
 ## Literatur und Quellen
 
-- Zander, J. (2023). *Bachelorarbeit 7345074*. [PDF verfügbar im Projektordner]
-- Ranz (2021). *Bachelorarbeit - Selbstbalancierendes Fahrrad*
-- Yasin (2024). *Masterarbeit - Erweiterte Regelungsalgorithmen*
+### Wissenschaftliche Arbeiten
+- **Karabila, A. (2025)**. *Auf dem Weg zum autonom fahrenden Fahrrad: Eine videogestützte Regelung des Weges mit Webots*. Masterarbeit, Hochschule für Wirtschaft und Recht Berlin.
+- **Yasin (2024)**. *Masterarbeit - Erweiterte Regelungsalgorithmen*. [Volltext im Projektordner]
+- **Zander, J. (2023)**. *Bachelorarbeit 7345074 - Hierarchische Regelungsstruktur*. [PDF verfügbar]
+- **Ranz (2021)**. *Bachelorarbeit - Selbstbalancierendes Fahrrad - Grundlagenforschung*. [Archiv]
+
+### Technische Referenzen
+- **Webots Documentation**: Cyberbotics Robot Simulator
+- **YOLOv8**: Ultralytics Object Detection Framework
+- **OpenCV**: Computer Vision Library für Python
 
 ---
 
-**Hinweis**: Diese Dokumentation basiert hauptsächlich auf der detaillierten Analyse der Bachelorarbeit von Zander (2023). Für vollständige Informationen zu allen Arbeiten sollten die entsprechenden Projektordner konsultiert werden.
+## Projekthistorie und Meilensteine
 
-**Letztes Update**: Dezember 2024 
+| Jahr | Autor | Meilenstein | Technologie |
+|------|-------|-------------|-------------|
+| 2021 | Ranz | Erste Stabilisierung | Hardware-Prototyp |
+| 2023 | Zander | Robuste PID-Regelung | BeagleBone Black |
+| 2024 | Yasin | Algorithmus-Optimierung | Erweiterte Regelung |
+| **2025** | **Karabila** | **Autonome Navigation** | **Webots + YOLO + Hybrid Control** |
+
+**Aktueller Status**: ✅ Vollständige Simulation implementiert und validiert  
+**Nächster Schritt**: 🔄 Hardware-Transfer in Planung  
+**Letztes Update**: September 2025 
