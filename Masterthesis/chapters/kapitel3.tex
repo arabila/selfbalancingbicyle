@@ -197,7 +197,7 @@
   \begin{figure}[h]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/enu_nue.thumbnail.jpg}
-    \caption{IMU-Knoten in Webots.}
+    \caption{IMU-Knoten in Webots.\\ \footnotesize{Quelle: \url{https://cyberbotics.com/doc/reference/inertialunit}}}
     \label{fig:imu}
   \end{figure}
   
@@ -288,7 +288,7 @@
   \begin{figure}[H]
     \centering
     \includegraphics[width=0.8\textwidth]{figures/camera.png}
-    \caption{Kamera-Knoten in Webots.}
+    \caption{Kamera-Knoten in Webots.\\ \footnotesize{Quelle: \url{https://cyberbotics.com/doc/reference/camera}}}
     \label{fig:camera}
   \end{figure}
 
@@ -435,7 +435,7 @@
     \begin{figure}[H]
       \centering
       \includegraphics[width=0.6\textwidth]{figures/rotational_motor.png}
-      \caption{Aktuatoren im Fahrradmodell.}
+      \caption{\centering Aktuatoren im Fahrradmodell. \\ \footnotesize{Quelle: \url{https://cyberbotics.com/doc/reference/rotationalmotor}}}
       \label{fig:aktuatoren}
     \end{figure}
     
@@ -593,7 +593,7 @@
     \vspace{-0.8\baselineskip}          % optional: nach Bedarf anpassen
     \centering
     \includegraphics[width=\linewidth]{figures/controller_synchronization.png}
-    \caption{Synchronisation zwischen Controller und Simulation.}
+    \caption{\centering Synchronisation zwischen Controller und Simulation. \\ \footnotesize{Quelle: \url{https://cyberbotics.com/doc/reference/controller}}}
     \label{fig:controller_sync}
   \end{wrapfigure}
 
@@ -612,7 +612,7 @@
 
  
 
-  Alle Anweisungen vor dem nächsten Zeitschritt \path{wb\_robot\_step}\mbox{-}Aufruf\path{)} werden zunächst gesammelt.
+  Alle Anweisungen vor dem nächsten Zeitschritt \texttt{wb\_robot\_step}\mbox{-}Aufruf() werden zunächst gesammelt.
   Mit dem Step\mbox{-}Aufruf rechnet der Simulator den nächsten Physikschritt und aktualisiert die Sensoren, bevor 
   der Controller weiterläuft. Auf diese Weise laufen Simulation und Controller \emph{synchron} in gleichmäßigen
    Zeitschritten. Standardmäßig wartet Webots in diesem synchronen Modus darauf, dass jeder Controller seinen \texttt{wb\_robot\_step} 
@@ -653,7 +653,7 @@
 
 
   
-  \begin{lstlisting}[style=wbt_c,caption={Nachrichtenkanal zwischen Controller und Simulation},label={lst:imu4}]
+  \begin{lstlisting}[style=wbt_c,caption={Nachrichtenkanal zwischen Controller und Simulation \texttt{*.wbt}},label={lst:imu4}]
     Robot {
       Controller "balance_control_c"
       Receiver { name "command_rx"  channel 1  bufferSize 64 }

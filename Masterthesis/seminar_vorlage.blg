@@ -15,47 +15,45 @@ A level-1 auxiliary file: chapters/kapitel8.aux
 Database file #1: refs.bib
 Warning--entry type for "concurrent_rt_inverted_pendulum" isn't style-file defined
 --line 292 of file refs.bib
-Warning--I didn't find a database entry for "yolo_wikipedia"
-Warning--I didn't find a database entry for "image_segmentation_wikipedia"
-You've used 39 entries,
+You've used 40 entries,
             2909 wiz_defined-function locations,
-            874 strings with 11711 characters,
-and the built_in function-call counts, 149899 in all, are:
-= -- 24359
-> -- 1922
+            877 strings with 11896 characters,
+and the built_in function-call counts, 155944 in all, are:
+= -- 25354
+> -- 2013
 < -- 1
-+ -- 11482
-- -- 581
-* -- 12683
-:= -- 30338
-add.period$ -- 52
-call.type$ -- 39
-change.case$ -- 547
-chr.to.int$ -- 37
-cite$ -- 39
-duplicate$ -- 587
-empty$ -- 1238
-format.name$ -- 690
-if$ -- 26927
++ -- 11976
+- -- 609
+* -- 13218
+:= -- 31526
+add.period$ -- 53
+call.type$ -- 40
+change.case$ -- 561
+chr.to.int$ -- 38
+cite$ -- 40
+duplicate$ -- 604
+empty$ -- 1271
+format.name$ -- 721
+if$ -- 28017
 int.to.chr$ -- 7
 int.to.str$ -- 0
-missing$ -- 19
-newline$ -- 135
-num.names$ -- 403
-pop$ -- 230
+missing$ -- 20
+newline$ -- 138
+num.names$ -- 414
+pop$ -- 237
 preamble$ -- 1
-purify$ -- 585
+purify$ -- 600
 quote$ -- 0
-skip$ -- 541
+skip$ -- 552
 stack$ -- 0
-substring$ -- 34241
-swap$ -- 119
-text.length$ -- 547
+substring$ -- 35663
+swap$ -- 120
+text.length$ -- 561
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 154
+type$ -- 158
 warning$ -- 0
-while$ -- 857
+while$ -- 878
 width$ -- 0
-write$ -- 538
-(There were 3 warnings)
+write$ -- 553
+(There was 1 warning)

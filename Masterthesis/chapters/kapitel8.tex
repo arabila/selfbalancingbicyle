@@ -31,7 +31,14 @@ Diese Ergebnisse zeigen, dass für strukturierte Simulationsumgebungen mit kontr
 Bildverarbeitung durchaus konkurrenzfähig zu modernen Deep-Learning-Ans{"a}tzen sein kann. Dies ist besonders relevant 
 für Anwendungen, bei denen Rechenressourcen begrenzt sind oder Echtzeitfähigkeit kritisch ist.
 
-Die systematische Evaluierung verschiedener Störungsszenarien belegt die bemerkenswerte Anpassungsfähigkeit der 
+Ein besonders wichtiger Beitrag ist der systematische Vergleich zwischen Model Predictive Control (MPC) und 
+klassischer P-Regelung f{"u}r die Spurf{"u}hrung. Der direkte Vergleich zeigt die klare {"U}berlegenheit des MPC-Reglers: 
+W{"a}hrend die P-Vision/PID-Balance-Kombination nur 26{,}68\,s Fahrtdauer erreicht und dabei erh{"o}hte Balance-Parameter 
+($K_p = 5{,}5$ gegen{"u}ber Standard 2{,}0) ben{"o}tigt, erzielt die MPC-ROI-Variante 43{,}62\,s bei stabilen Standard-Parametern. 
+Der MPC-Regler kompensiert durch seine pr{"a}diktive Komponente St{"o}rungen besser und reduziert die Belastung des 
+Balance-Regelkreises. Der P-Regler erfordert aggressive Korrekturen, die letztendlich zur Instabilit{"a}t f{"u}hren.
+
+Die systematische Evaluierung verschiedener St{"o}rungsszenarien belegt die bemerkenswerte Anpassungsf{"a}higkeit der 
 Regelungsarchitektur. Bei der Seitenwindresistenz zeigt das System mit Baseline-Parametern bei moderatem Wind 
 (0,5\,m/s) 18\,s stabile Fahrt, w{"a}hrend f{"u}r starken Seitenwind (1,0\,m/s) adaptive PID-Parametrierung 
 ($K_p=5{,}0$, $K_i=0{,}2$, $K_d=0{,}4$) eine erfolgreiche 22\,s-Fahrt mit kontrollierten Rollwinkeln unter $\pm$0,03\,rad erm{"o}glicht. 

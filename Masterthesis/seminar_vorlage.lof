@@ -2,12 +2,12 @@
 \babel@toc {ngerman}{}\relax 
 \contentsline {figure}{\numberline {1}{\ignorespaces Verständnisschema der MPC-Regelung}}{7}{figure.caption.5}%
 \contentsline {figure}{\numberline {2}{\ignorespaces YOLO-Segmentierung mit YOLOv8}}{9}{figure.caption.6}%
-\contentsline {figure}{\numberline {3}{\ignorespaces IMU-Knoten in Webots.}}{14}{figure.caption.7}%
-\contentsline {figure}{\numberline {4}{\ignorespaces Kamera-Knoten in Webots.}}{16}{figure.caption.8}%
+\contentsline {figure}{\numberline {3}{\ignorespaces IMU-Knoten in Webots. \footnotesize {Quelle: \url {https://cyberbotics.com/doc/reference/inertialunit}}}}{14}{figure.caption.7}%
+\contentsline {figure}{\numberline {4}{\ignorespaces Kamera-Knoten in Webots. \footnotesize {Quelle: \url {https://cyberbotics.com/doc/reference/camera}}}}{16}{figure.caption.8}%
 \contentsline {figure}{\numberline {5}{\ignorespaces Querfehler $e$ der Straße.}}{17}{figure.caption.9}%
 \contentsline {figure}{\numberline {6}{\ignorespaces Lenk-Sollwert und Lenk-Istwert.}}{18}{figure.caption.10}%
-\contentsline {figure}{\numberline {7}{\ignorespaces Aktuatoren im Fahrradmodell.}}{19}{figure.caption.11}%
-\contentsline {figure}{\numberline {8}{\ignorespaces Synchronisation zwischen Controller und Simulation.}}{22}{figure.caption.12}%
+\contentsline {figure}{\numberline {7}{\ignorespaces \centering Aktuatoren im Fahrradmodell. \footnotesize {Quelle: \url {https://cyberbotics.com/doc/reference/rotationalmotor}}}}{19}{figure.caption.11}%
+\contentsline {figure}{\numberline {8}{\ignorespaces \centering Synchronisation zwischen Controller und Simulation. \footnotesize {Quelle: \url {https://cyberbotics.com/doc/reference/controller}}}}{22}{figure.caption.12}%
 \contentsline {figure}{\numberline {9}{\ignorespaces MPC-Optimierungsalgorithmus mit gebündelten Nebenbedingungen}}{30}{figure.caption.15}%
 \contentsline {figure}{\numberline {10}{\ignorespaces Zweistufige Kaskadenregelung: Vision-MPC (Stufe 1) für Spurführung und Balance-PID (Stufe 2) für Stabilisierung}}{32}{figure.caption.16}%
 \contentsline {figure}{\numberline {11}{\ignorespaces YOLOv8-Segmentierung.}}{33}{figure.caption.17}%
@@ -19,7 +19,7 @@
 \contentsline {figure}{\numberline {17}{\ignorespaces Kurvenfahrt mit PID-Regler und YOLO-Spurführung. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}}{42}{figure.caption.25}%
 \contentsline {figure}{\numberline {18}{\ignorespaces ROI-Querfehler während der PID-Regler-Fahrt (YOLO)}}{42}{figure.caption.26}%
 \contentsline {figure}{\numberline {19}{\ignorespaces Gefahrene Trajektorie (PID-Regler mit YOLO)}}{43}{figure.caption.27}%
-\contentsline {figure}{\numberline {20}{\ignorespaces Strecke gut und schlecht nebeneinander.}}{43}{figure.caption.28}%
+\contentsline {figure}{\numberline {20}{\ignorespaces Vergleich der YOLO-Segmentierungsqualität.}}{43}{figure.caption.28}%
 \contentsline {figure}{\numberline {21}{\ignorespaces Kurvenfahrt mit PID\mbox {-}Regler und ROI\mbox {-}Fallback\mbox {-}Erkennung. X-Achse: Zeit in Sekunden, Y-Achse: Winkel in Grad}}{44}{figure.caption.30}%
 \contentsline {figure}{\numberline {22}{\ignorespaces ROI\mbox {-}Querfehler während der PID\mbox {-}Regler\mbox {-}Fahrt (ROI)}}{44}{figure.caption.31}%
 \contentsline {figure}{\numberline {23}{\ignorespaces Gefahrene Trajektorie (PID\mbox {-}Regler, ROI)}}{44}{figure.caption.32}%

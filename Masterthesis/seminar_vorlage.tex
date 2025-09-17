@@ -5,6 +5,9 @@
   %--------------------------------------------------
   \usepackage{epsfig}
   \usepackage[utf8]{inputenc}       %% deutsche Umlaute wie normale
+  \usepackage[ngerman]{babel}
+  \selectlanguage{ngerman}
+    
   \usepackage{csquotes}
   \usepackage{wrapfig}
   \usepackage{graphics}
@@ -14,7 +17,7 @@
   % Babel wird später nach fontenc geladen
   \usepackage{url}
   \newcommand{\urlBiBTeX}[1]{\url{#1}}
-  \usepackage[colorlinks=true, linkcolor=black, citecolor=red, urlcolor=blue]{hyperref}
+  \usepackage[colorlinks=true, linkcolor=black, citecolor=black, urlcolor=blue]{hyperref}
   \usepackage{multicol} % für mehrere Spalten
   \usepackage[round,sort&compress]{natbib}
   \usepackage{pdfcomment}
@@ -48,10 +51,7 @@
   % Mikrotypografie für bessere Zeilenumbrüche und weniger Overfull \hbox
   \usepackage[activate={true,nocompatibility},final,tracking=true,kerning=true,spacing=true,factor=1100,stretch=10,shrink=10]{microtype}
   
-  % Erweiterte deutsche Silbentrennung
-  \usepackage[ngerman]{babel}
-  \selectlanguage{ngerman}
-  
+
   % Manuelle Silbentrennungen für technische Begriffe
   \hyphenation{We-bots Si-mu-la-tion Fahr-rad-mo-dell Ba-lan-ce-Con-trol-ler
               Iner-tial-Unit Ro-ta-tio-nal-Mo-tor Hin-ge-Joint Con-tact-Pro-per-ties

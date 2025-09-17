@@ -58,6 +58,18 @@ frühzeitig gegensteuern und gleichzeitig harte Grenzen, etwa Stellweg‑ oder G
   \label{fig:mpc_scheme_basic}
 \end{figure}
 
+Abbildung \ref{fig:mpc_scheme_basic} verdeutlicht das fundamentale Prinzip der modellprädiktiven Regelung. Das Schema zeigt die charakteristische 
+Zeitaufteilung zwischen Vergangenheit (PAST) und Zukunft (FUTURE), wobei der aktuelle Zeitpunkt \(k\) die Grenze bildet. Die rote 
+Referenztrajektorie stellt den gewünschten Sollverlauf dar, während die gelbe Linie den vorhergesagten Systemausgang (Predicted Output) 
+über den Prädiktionshorizont \(p\) zeigt. Besonders deutlich wird die Diskrepanz zwischen der orangenen Linie (Measured Output), die den 
+tatsächlich gemessenen Systemausgang repräsentiert, und der Vorhersage. 
+
+Die türkise Linie zeigt den vorhergesagten Stellgrößenverlauf (Predicted Control Input), während die dunkelblaue Linie den bisherigen 
+Stellgrößenverlauf (Past Control Input) darstellt. Ein zentrales Merkmal von MPC wird durch den rechteckigen Verlauf der Stellgrößen 
+deutlich: Die Optimierung erfolgt in diskreten Zeitschritten, und die berechneten Stellgrößen werden über die jeweiligen Abtastintervalle 
+konstant gehalten. Der Prädiktionshorizont erstreckt sich vom aktuellen Zeitpunkt \(k\) bis zum Zeitpunkt \(k+p\), wobei das System sein 
+zukünftiges Verhalten basierend auf dem internen Modell vorhersagt und die Stellgrößensequenz entsprechend optimiert.
+
 Beim selbstbalancierenden Fahrrad besteht das Fahrtrichtungsproblem darin, aus Kamerainformationen einen Sollkurs abzuleiten und das Fahrzeug 
 mit begrenztem Lenkradius und Lenkrate entlang dieser Trajektorie zu führen.  Der in der Vision‑Regelung verwendete \texttt{VisionMPCController} 
 modelliert das Fahrzeug als einfaches Fahrraddynamikmodell mit Zustandsvektor \(x=[x, y, v,\psi]\) für Position, Geschwindigkeit und Gierwinkel 
@@ -83,8 +95,8 @@ entlang einer vorgegebenen Fahrtrichtung zu steuern.
 \subsection{YOLO-Grundlagen und Segmentierung} \label{chap:yolo}
 
 You Only Look Once (YOLO) ist eine Reihe von Echtzeit‑Objekterkennungsverfahren, die auf Convolutional Neural Networks basieren.  Das ursprüngliche YOLO wurde 
-2015 von Redmon et al. vorgestellt und erfordert im Gegensatz zu region‑proposal‑basierten Ansätzen nur einen Vorwärtsdurchlauf durch das Netz, um Klassen und 
-Bounding Boxes für alle Objekte in einem Bild bestimmen \citep{yolo_wikipedia}.  Neuere Modelle wie YOLOv8 erweitern die ursprüngliche YOLO-Architektur. 
+2016 von Redmon et al. vorgestellt und erfordert im Gegensatz zu region‑proposal‑basierten Ansätzen nur einen Vorwärtsdurchlauf durch das Netz, um Klassen und 
+Bounding Boxes für alle Objekte in einem Bild zu bestimmen \citep{redmon2016you}.  Neuere Modelle wie YOLOv8 erweitern die ursprüngliche YOLO-Architektur. 
 Sie können nicht nur Objekte erkennen, sondern auch Bilder klassifizieren und Instanzen segmentieren. Ein moderner, leichter Backbone
 \footnote{Der Backbone ist das Merkmalsextraktionsnetz der Architektur. Er transformiert das Eingabebild in hierarchische, mehrskalige 
 Feature-Maps, die die Grundlage für Klassifikation, Lokalisierung und Segmentierung bilden.}, ein ankerfreier 
@@ -93,8 +105,8 @@ Boxparameter sowie Klassenwahrscheinlichkeiten, was Hyperparameter reduziert und
 Verlustfunktionen erhöhen Effizienz und Genauigkeit. Dadurch laufen die Modelle auf vielen Hardwareplattformen zuverlässig und schnell \citep{openmmlab_yolov8}.
 
 Bei der Bildsegmentierung wird jedem Pixel eines Bildes ein Label zugeordnet.  Semantic Segmentation ordnet jedem Pixel eine Objektklasse zu, ohne zwischen 
-einzelnen Instanzen zu unterscheiden, während Instance Segmentation jedes Pixel einer individuellen Objektinstanz zuordnet \citep{image_segmentation_wikipedia}.  
-Panoptic Segmentation kombiniert beide Ansätze, indem sie sowohl die Klasse als auch die Instanz für jedes Pixel identifiziert \citep{image_segmentation_wikipedia}. 
+einzelnen Instanzen zu unterscheiden, während Instance Segmentation jedes Pixel einer individuellen Objektinstanz zuordnet.  
+Panoptic Segmentation kombiniert beide Ansätze, indem sie sowohl die Klasse als auch die Instanz für jedes Pixel identifiziert. 
  In der Instanzsegmentierung liefert das Netzwerk neben Bounding Boxes auch Masken, die die Form jedes erkannten Objekts abbilden.
 
  YOLOv8 erweitert die Objekterkennung um Instanzsegmentierung, wobei ein auf YOLACT \footnote{YOLACT steht für You Only Look At Coefficients 

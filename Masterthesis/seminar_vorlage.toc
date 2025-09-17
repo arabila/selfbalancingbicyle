@@ -1,15 +1,15 @@
 \babel@toc {ngerman}{}\relax 
 \babel@toc {ngerman}{}\relax 
-\contentsline {section}{\numberline {1}Abstract}{vi}{section.1}%
+\contentsline {section}{\numberline {1}Abstract}{vii}{section.1}%
 \contentsline {section}{\numberline {2}Einleitung}{1}{section.2}%
 \contentsline {subsection}{\numberline {2.1}Problemstellung}{1}{subsection.2.1}%
-\contentsline {paragraph}{Abgrenzung zu realen und simulationsbasierten Ansätzen}{1}{section*.4}%
+\contentsline {paragraph}{Abgrenzung zu realen und simulationsbasierten Ansätzen:}{1}{section*.4}%
 \contentsline {subsection}{\numberline {2.2}Stand der Technik}{1}{subsection.2.2}%
 \contentsline {subsection}{\numberline {2.3}Bisherige Arbeiten}{2}{subsection.2.3}%
 \contentsline {subsubsection}{\numberline {2.3.1}Anna Ranz (2021) – Hardware-Grundlagen}{3}{subsubsection.2.3.1}%
 \contentsline {subsubsection}{\numberline {2.3.2}Amine Karabila (2022) – Erste funktionierende Regelung}{3}{subsubsection.2.3.2}%
 \contentsline {subsubsection}{\numberline {2.3.3}Jonah Zander (2023) – Optimierte PID-Balanceregelung}{4}{subsubsection.2.3.3}%
-\contentsline {subsubsection}{\numberline {2.3.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{4}{subsubsection.2.3.4}%
+\contentsline {subsubsection}{\numberline {2.3.4}Yasin Giray (2024) – YOLO + MPC-Fahrtrichtung}{5}{subsubsection.2.3.4}%
 \contentsline {section}{\numberline {3}Grundlagen}{6}{section.3}%
 \contentsline {subsection}{\numberline {3.1}PID-Regelung – Prinzip und Eignung für das Balance-Problem}{6}{subsection.3.1}%
 \contentsline {subsection}{\numberline {3.2}MPC-Regelung – Prinzip und Eignung für das Fahrtrichtungsproblem}{7}{subsection.3.2}%
@@ -74,7 +74,7 @@
 \contentsline {section}{\numberline {9}Fazit}{73}{section.9}%
 \contentsline {subsection}{\numberline {9.1}Zentrale Erkenntnisse und wissenschaftliche Beitr{"a}ge}{73}{subsection.9.1}%
 \contentsline {subsection}{\numberline {9.2}Limitierungen und kritische Reflexion}{74}{subsection.9.2}%
-\contentsline {subsection}{\numberline {9.3}Ausblick und zuk{"u}nftige Forschungsrichtungen}{74}{subsection.9.3}%
+\contentsline {subsection}{\numberline {9.3}Ausblick und zuk{"u}nftige Forschungsrichtungen}{75}{subsection.9.3}%
 \contentsline {section}{\numberline {10}Anlagen}{79}{section.10}%
 \contentsline {subsection}{\numberline {10.1}YOLO-Fehlerberechnung}{79}{subsection.10.1}%
 \contentsline {subsection}{\numberline {10.2}Fallback-Fehlerberechnung}{79}{subsection.10.2}%

@@ -55,7 +55,7 @@ um Bildauswertungszyklen von etwa 100\,ms zu erreichen \citep{vision_mpc_readme}
 Während die Webots-Simulation deterministisch identische Bilder unter kontrollierten Bedingungen liefert, unterliegt die reale 
 Kameraverarbeitung verschiedenen Störfaktoren. Girays Implementierung dokumentiert Herausforderungen bei der Echtzeitverarbeitung, 
 wobei die Inferenzzeit des YOLOv8-Modells auf eingebetteter Hardware kritisch für die angestrebte 20\,Hz-Abtastrate der Vision-Pipeline 
-wird. \pdfcomment{Hier sich sein mit den hz}Die in der Simulation problemlos erreichbare Bildverarbeitung erfordert in der Realität komplexe 
+wird. Die in der Simulation problemlos erreichbare Bildverarbeitung erfordert in der Realität komplexe 
 Optimierungsstrategien wie TensorRT-Beschleunigung und Modellkompression.
 
 Die monokulare Kameraarchitektur in Girays System limitiert zusätzlich die Tiefenwahrnehmung auf geometrische Approximationen. Während 
